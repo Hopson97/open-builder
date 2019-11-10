@@ -145,10 +145,10 @@ namespace client::GeometryFactory {
 			min.x, max.y, max.z,
 			min.x, min.y, max.z,
 			// bottom
-			min.x, max.y, max.z,
-			max.x, max.y, max.z,
-			max.x, max.y, min.z,
-			min.x, max.y, min.z,
+			min.x, min.y, max.z,
+			max.x, min.y, max.z,
+			max.x, min.y, min.z,
+			min.x, min.y, min.z,
 			// top
 			min.x, max.y, max.z,
 			min.x, max.y, min.z,
