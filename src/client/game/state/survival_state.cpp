@@ -45,16 +45,16 @@ namespace client {
     {
         m_inputState = 0;
         if (keyboard.isKeyDown(sf::Keyboard::Key::W)) {
-            m_inputState |= KeyInput::Forwards;
+            m_inputState |= PlayerInput::Forwards;
         }
         else if (keyboard.isKeyDown(sf::Keyboard::Key::S)) {
-            m_inputState |= KeyInput::Back;
+            m_inputState |= PlayerInput::Back;
         }
         if (keyboard.isKeyDown(sf::Keyboard::Key::D)) {
-            m_inputState |= KeyInput::Right;
+            m_inputState |= PlayerInput::Right;
         }
         else if (keyboard.isKeyDown(sf::Keyboard::Key::A)) {
-            m_inputState |= KeyInput::Left;
+            m_inputState |= PlayerInput::Left;
         }
 
         // Mouse input

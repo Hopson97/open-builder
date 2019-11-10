@@ -19,7 +19,9 @@ enum class CommandToServer : Command {
     /// Command_t: CommandToServer
     /// ClientId: id
     /// Input: input
-    KeyInput,
+    /// float: players x look direction
+    /// float: players y look direction
+    PlayerInput,
 
 };
 

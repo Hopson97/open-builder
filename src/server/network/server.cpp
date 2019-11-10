@@ -74,7 +74,7 @@ namespace server {
         while (getFromClient(package)) {
             auto &packet = package.packet;
             switch (package.command) {
-                case CommandToServer::KeyInput:
+                case CommandToServer::PlayerInput:
                     handleKeyInput(packet);
                     break;
 
@@ -99,25 +99,25 @@ namespace server {
             auto &velocity = entity.velocity;
             auto &rotation = entity.transform.rotation;
 
-            auto isPressed = [input](KeyInput key) {
+            auto isPressed = [input](PlayerInput key) {
                 return (input & key) == key;
             };
 
             float speed = 0.8f;
             float s = speed;
-            if (isPressed(KeyInput::Forwards)) {
+            if (isPressed(PlayerInput::Forwards)) {
                 velocity.x += -glm::cos(glm::radians(rotation.y + 90)) * s;
                 velocity.z += -glm::sin(glm::radians(rotation.y + 90)) * s;
             }
-            else if (isPressed(KeyInput::Back)) {
+            else if (isPressed(PlayerInput::Back)) {
                 velocity.x += glm::cos(glm::radians(rotation.y + 90)) * speed;
                 velocity.z += glm::sin(glm::radians(rotation.y + 90)) * speed;
             }
-            if (isPressed(KeyInput::Left)) {
+            if (isPressed(PlayerInput::Left)) {
                 velocity.x += -glm::cos(glm::radians(rotation.y)) * speed;
                 velocity.z += -glm::sin(glm::radians(rotation.y)) * speed;
             }
-            else if (isPressed(KeyInput::Right)) {
+            else if (isPressed(PlayerInput::Right)) {
                 velocity.x += glm::cos(glm::radians(rotation.y)) * speed;
                 velocity.z += glm::sin(glm::radians(rotation.y)) * speed;
             }
