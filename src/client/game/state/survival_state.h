@@ -2,7 +2,7 @@
 
 #include "game_state.h"
 
-#include <common/net/input_state.h>
+#include <common/network/input_state.h>
 #include <common/types.h>
 
 #include "../../network/client.h"

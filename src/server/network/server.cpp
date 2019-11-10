@@ -2,8 +2,8 @@
 
 #include <SFML/Network/Packet.hpp>
 
-#include <common/net/commands.h>
-#include <common/net/input_state.h>
+#include <common/network/commands.h>
+#include <common/network/input_state.h>
 
 #include <ctime>
 #include <iostream>

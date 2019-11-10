@@ -3,8 +3,8 @@
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/UdpSocket.hpp>
 
-#include <common/net/commands.h>
-#include <common/net/input_state.h>
+#include <common/network/commands.h>
+#include <common/network/input_state.h>
 
 #include "../game/entity.h"
 

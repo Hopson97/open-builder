@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/Network/IpAddress.hpp>
-#include <common/net/constants.h>
+#include <common/network/constants.h>
 #include <common/types.h>
 
 namespace server {

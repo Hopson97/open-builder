@@ -10,8 +10,8 @@
 #include <vector>
 
 #include "endpoint.h"
-#include "entity.h"
-#include <common/net/commands.h>
+#include "../game/entity.h"
+#include <common/network/commands.h>
 
 namespace server {
     class Server final {

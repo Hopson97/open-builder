@@ -5,7 +5,7 @@
 #include <string>
 
 namespace client {
-    class TexturedModel {
+    class TexturedModel final {
       public:
         TexturedModel();
         TexturedModel(const std::string &modelFileName,

@@ -6,7 +6,7 @@ project(open-builder
 )
 
 add_executable(${PROJECT_NAME} 
-    src/server/server.cpp
+    src/server/network/server.cpp
     src/main.cpp
     src/client/util/maths.cpp
     src/client/util/model_loader.cpp
@@ -23,8 +23,8 @@ add_executable(${PROJECT_NAME}
     src/client/renderer/gl/shader.cpp
     src/client/renderer/gl/vertex_array.cpp
     src/client/renderer/gl/texture2d.cpp
-    src/client/renderer/gl/cube_texture.cpp
     src/client/renderer/gl/gl_errors.cpp
+    src/client/renderer/gl/cube_texture.cpp
     src/client/renderer/textured_model.cpp
     src/client/renderer/camera.cpp
     src/client/renderer/texture_atlas.cpp

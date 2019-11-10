@@ -1,7 +1,7 @@
 #pragma once
 
 #include <array>
-#include <common/net/constants.h>
+#include <common/network/constants.h>
 #include <common/types.h>
 #include <common/util/maths.h>
 

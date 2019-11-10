@@ -6,7 +6,7 @@
 
 namespace client {
     class Camera;
-    class SkyboxRenderer {
+    class SkyboxRenderer final {
       public:
         SkyboxRenderer();
 

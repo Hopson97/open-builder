@@ -1,12 +1,12 @@
 #include <common/launch_config.h>
-#include <common/net/constants.h>
+#include <common/network/constants.h>
 #include <fstream>
 #include <iostream>
 #include <thread>
 #include <vector>
 
 #include "client/engine.h"
-#include "server/server.h"
+#include "server/network/server.h"
 
 namespace {
     void loadFromConfigFile(LaunchConfig &config)
