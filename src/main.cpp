@@ -124,7 +124,7 @@ namespace {
         return exitFailure("Unknown error");
     }
 
-    int launchBoth(const LaunchConfig& config)
+    int launchBoth(const LaunchConfig &config)
     {
         std::thread serverThread(launchServer, config, sf::milliseconds(500));
         int exit = launchClient(config);

@@ -17,18 +17,18 @@ namespace client {
 
         float size = 128.0f;
         Mesh mesh;
-        mesh.vertices = GeometryFactory::createCubeVerticies({-size, -size, -size},
-                                                             {size, size, size});
+        mesh.vertices = GeometryFactory::createInvertedCubeVerticies(
+            {-size, -size, -size}, {size, size, size});
         mesh.indices = GeometryFactory::createCubeIndices();
         m_skybox.create(mesh);
 
-        m_texture.loadFromFiles(
-            {"day_side", "day_side", "day_top", "day_bottom", "day_side", "day_side"});
+        m_texture.loadFromFiles({"day_side", "day_side", "day_top",
+                                 "day_bottom", "day_side", "day_side"});
     }
 
     void SkyboxRenderer::render(const Camera &camera)
     {
-        glCheck(glDisable(GL_CULL_FACE));
+        // glCheck(glDisable(GL_CULL_FACE));
         m_shader.use();
         m_skybox.bind();
         m_texture.bind();
@@ -46,6 +46,6 @@ namespace client {
         glCheck(glDrawElements(GL_TRIANGLES, m_skybox.getIndicesCount(),
                                GL_UNSIGNED_INT, nullptr));
 
-        glCheck(glEnable(GL_CULL_FACE));
+        // glCheck(glEnable(GL_CULL_FACE));
     }
 } // namespace client

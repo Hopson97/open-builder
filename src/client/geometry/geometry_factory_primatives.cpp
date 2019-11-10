@@ -121,6 +121,42 @@ namespace client::GeometryFactory {
 		};
 	}
 
+	std::vector<GLfloat> createInvertedCubeVerticies(const glm::vec3& min, const glm::vec3& max)
+	{
+		return {
+			//Front
+			min.x, min.y, max.z,
+			min.x, max.y, max.z,
+			max.x, max.y, max.z,
+			max.x, min.y, max.z,
+			// right
+			max.x, min.y, max.z,
+			max.x, max.y, max.z,
+			max.x, max.y, min.z,
+			max.x, min.y, min.z,
+			// back
+			min.x, min.y, min.z,
+			min.x, max.y, min.z,
+			max.x, max.y, min.z,
+			max.x, min.y, min.z,
+			// left
+			min.x, min.y, min.z,
+			min.x, min.y, max.z,
+			min.x, max.y, max.z,
+			min.x, max.y, min.z,
+			// bottom
+			min.x, min.y, max.z,
+			min.x, min.y, min.z,
+			max.x, min.y, min.z,
+			max.x, min.y, max.z,
+			// top
+			min.x, max.y, max.z,
+			max.x, max.y, max.z,
+			max.x, max.y, min.z,
+			min.x, max.y, min.z
+		};
+	}
+
 	std::vector<GLuint> createCubeIndices(GLuint start)
 	{
 		std::vector<GLuint> indices;

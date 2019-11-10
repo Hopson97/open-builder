@@ -9,8 +9,8 @@
 #include <queue>
 #include <vector>
 
-#include "endpoint.h"
 #include "../game/entity.h"
+#include "endpoint.h"
 #include <common/network/commands.h>
 
 namespace server {

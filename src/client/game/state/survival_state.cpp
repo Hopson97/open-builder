@@ -33,7 +33,8 @@ namespace client {
         }
     }
 
-    void SurvivalState::handleKeyUp(sf::Keyboard::Key key){
+    void SurvivalState::handleKeyUp(sf::Keyboard::Key key)
+    {
         if (key == sf::Keyboard::L) {
             m_isMouseLocked = !m_isMouseLocked;
         }
@@ -78,7 +79,7 @@ namespace client {
 
             sf::Mouse::setPosition({static_cast<int>(window.getSize().x / 2),
                                     static_cast<int>(window.getSize().y / 2)},
-                                window);
+                                   window);
 
             lastMousePosition = sf::Mouse::getPosition();
         }
@@ -94,7 +95,7 @@ namespace client {
 
     void SurvivalState::render(Renderer &renderer)
     {
-        unsigned i  = 0;
+        unsigned i = 0;
         for (const auto &e : m_entities) {
             if (e.alive && i++ != m_client.getClientId()) {
                 renderer.process(e);

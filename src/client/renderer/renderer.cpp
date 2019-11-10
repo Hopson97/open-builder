@@ -47,8 +47,6 @@ namespace client {
 
     void Renderer::render(const Camera &camera)
     {
-        m_skyboxRenderer.render(camera);
-
         m_entityShader.use();
         m_entityShader.loadVector3(m_locationColour, {1, 1, 1});
         m_entityShader.loadMatrix4(m_locationProjectionViewMatrix,
@@ -67,8 +65,7 @@ namespace client {
             }
         }
 
-        auto mat = makeModelMatrix(maths::Transform{}, {0.5f, 0.f, 0.5f});
-        m_entityShader.loadMatrix4(m_locationModelMatrix, mat);
+        m_skyboxRenderer.render(camera);
 
         m_entityBatches.clear();
     }

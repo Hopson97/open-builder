@@ -14,6 +14,8 @@ namespace client::GeometryFactory {
 
     void addBox(Mesh &mesh, const glm::vec3 &min, const glm::vec3 &max);
 
+    std::vector<GLfloat> createInvertedCubeVerticies(const glm::vec3 &min,
+                                                     const glm::vec3 &max);
     std::vector<GLfloat> createCubeVerticies(const glm::vec3 &min,
                                              const glm::vec3 &max);
     std::vector<GLuint> createCubeIndices(GLuint start = 0);

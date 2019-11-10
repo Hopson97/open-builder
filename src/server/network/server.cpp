@@ -24,8 +24,8 @@ namespace server {
         std::cout << "\n\nServer has started!" << std::endl;
         std::cout << "Listening for connections...\n" << std::endl;
 
-        for (auto& entity : m_entities) {
-            entity.alive = false;
+        for (auto &entity : m_entities) {
+            entity.alive = true;
         }
         m_entities[maxConnections + 1].alive = true;
         m_entities[maxConnections + 1].transform.position = {20, 1, 20};
@@ -127,7 +127,6 @@ namespace server {
         }
 
         for (u16 i = m_maxConnections; i < m_entities.size(); i++) {
-            
         }
     }
 

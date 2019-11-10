@@ -1,12 +1,13 @@
 #include "textured_model.h"
 
-#include "../util/model_loader.h"
 #include "../geometry/geometry_factory.h"
+#include "../util/model_loader.h"
 
 namespace client {
     TexturedModel::TexturedModel()
     {
-        create(GeometryFactory::createCubeWithNormals({0, 0, 0}, {1, 2, 1}), "empty.png");
+        create(GeometryFactory::createCubeWithNormals({0, 0, 0}, {1, 2, 1}),
+               "empty.png");
     }
 
     TexturedModel::TexturedModel(const std::string &modelFileName,
