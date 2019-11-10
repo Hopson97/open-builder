@@ -15,7 +15,7 @@ namespace client {
             m_shader.getUniformLocation("projectionMatrix");
         m_locationViewMatrix = m_shader.getUniformLocation("viewMatrix");
 
-        float size = 128.0f;
+        float size = 4.0f;
         Mesh mesh;
         mesh.vertices = GeometryFactory::createInvertedCubeVerticies(
             {-size, -size, -size}, {size, size, size});
@@ -28,7 +28,7 @@ namespace client {
 
     void SkyboxRenderer::render(const Camera &camera)
     {
-        // glCheck(glDisable(GL_CULL_FACE));
+        // glCheck(glDisable(GL_DEPTH_TEST));
         m_shader.use();
         m_skybox.bind();
         m_texture.bind();
@@ -45,7 +45,6 @@ namespace client {
 
         glCheck(glDrawElements(GL_TRIANGLES, m_skybox.getIndicesCount(),
                                GL_UNSIGNED_INT, nullptr));
-
-        // glCheck(glEnable(GL_CULL_FACE));
+        // glCheck(glEnable(GL_DEPTH_TEST));
     }
 } // namespace client

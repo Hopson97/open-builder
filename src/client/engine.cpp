@@ -32,7 +32,7 @@ namespace client {
         }
 
         if (config.graphicOptions.isFpsCapped) {
-            // m_window.setFramerateLimit(config.graphicOptions.fpsLimit);
+            m_window.setFramerateLimit(config.graphicOptions.fpsLimit);
         }
 
         if (!gladLoadGL()) {
@@ -64,8 +64,10 @@ namespace client {
 
             if (frame++ == 256) {
                 std::cout << "Frame Time: " << m_fpsCounter.currentMsPerFrame()
-                          << " ms" << '\n'
-                          << "FPS: " << m_fpsCounter.currentFps() << std::endl;
+                          << " ms"
+                          << '\n'
+                          //<< "FPS: " << m_fpsCounter.currentFps()
+                          << std::endl;
                 frame = 0;
             }
 

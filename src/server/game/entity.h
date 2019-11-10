@@ -1,9 +1,9 @@
 #pragma once
 
 #include <array>
+#include <common/network/constants.h>
 #include <common/types.h>
 #include <common/util/maths.h>
-#include <common/network/constants.h>
 
 namespace server {
     /// Per-Instance information about the entities of the world

@@ -47,6 +47,7 @@ namespace client {
 
     void Renderer::render(const Camera &camera)
     {
+
         m_entityShader.use();
         m_entityShader.loadVector3(m_locationColour, {1, 1, 1});
         m_entityShader.loadMatrix4(m_locationProjectionViewMatrix,
@@ -64,9 +65,8 @@ namespace client {
                 drawElements(batch.first->getIndicesCount());
             }
         }
-
-        m_skyboxRenderer.render(camera);
-
         m_entityBatches.clear();
+
+        // m_skyboxRenderer.render(camera);
     }
 } // namespace client

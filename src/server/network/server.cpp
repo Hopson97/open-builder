@@ -127,6 +127,7 @@ namespace server {
         }
 
         for (u16 i = m_maxConnections; i < m_entities.size(); i++) {
+            m_entities[i].transform.position = {rand() % 64, 0, rand() % 64};
         }
     }
 
