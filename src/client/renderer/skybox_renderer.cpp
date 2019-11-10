@@ -15,7 +15,7 @@ namespace client {
             m_shader.getUniformLocation("projectionMatrix");
         m_locationViewMatrix = m_shader.getUniformLocation("viewMatrix");
 
-        float size = 4.0f;
+        float size = 256.0f;
         Mesh mesh;
         mesh.vertices = GeometryFactory::createInvertedCubeVerticies(
             {-size, -size, -size}, {size, size, size});
