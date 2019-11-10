@@ -6,7 +6,7 @@
 namespace client {
     TexturedModel::TexturedModel()
     {
-        create(GeometryFactory::createCubeWithNormals({0, 0, 0}, {1, 2, 1}),
+        create(GeometryFactory::createCube({0, 0, 0}, {1, 2, 1}),
                "empty.png");
     }
 

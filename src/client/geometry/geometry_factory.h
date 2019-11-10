@@ -8,7 +8,6 @@
 namespace client::GeometryFactory {
     Mesh createQuad(float width, float depth);
     Mesh createCube(const glm::vec3 &min, const glm::vec3 &max);
-    Mesh createCubeWithNormals(const glm::vec3 &min, const glm::vec3 &max);
 
     void addBox(Mesh &mesh, const glm::vec3 &min, const glm::vec3 &max);
 
