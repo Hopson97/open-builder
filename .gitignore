@@ -1,0 +1,29 @@
+#
+#   Common
+#
+
+.vscode
+
+*.temp
+
+#
+#   Linux
+#
+
+bin/
+
+#
+#   Windows
+#
+
+*.dll
+
+# Visual Studio
+*.sln
+*.vcxproj
+*.filters
+*.user
+*.vs
+
+Debug/
+Release/
