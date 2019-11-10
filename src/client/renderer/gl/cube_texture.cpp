@@ -10,16 +10,29 @@ namespace client {
         loadFromFiles(files);
     }
 
+    CubeTexture::CubeTexture(CubeTexture &&other)
+    {
+        m_textureId = other.m_textureId;
+        other.m_textureId = 0;
+    }
+
+    CubeTexture &CubeTexture::operator=(CubeTexture &&other)
+    {
+        m_textureId = other.m_textureId;
+        other.m_textureId = 0;
+        return *this;
+    }
+
     CubeTexture::~CubeTexture()
     {
-        glCheck(glDeleteTextures(1, &m_texId));
+        glCheck(glDeleteTextures(1, &m_textureId));
     }
 
     void CubeTexture::loadFromFiles(const std::array<std::string, 6> &files)
     {
-        glCheck(glGenTextures(1, &m_texId));
+        glCheck(glGenTextures(1, &m_textureId));
         glCheck(glActiveTexture(GL_TEXTURE0));
-        glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, m_texId));
+        glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureId));
 
         for (int i = 0; i < 6; i++) {
             auto &str = files[i];
@@ -50,7 +63,7 @@ namespace client {
 
     void CubeTexture::bind() const
     {
-        glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, m_texId));
+        glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureId));
     }
 
 } // namespace client

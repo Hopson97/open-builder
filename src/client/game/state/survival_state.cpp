@@ -42,7 +42,8 @@ namespace client {
 
     void SurvivalState::handleInput(const Keyboard &keyboard,
                                     const sf::Window &window)
-    {
+    {   
+        // Keyboard input
         m_inputState = 0;
         if (keyboard.isKeyDown(sf::Keyboard::Key::W)) {
             m_inputState |= PlayerInput::Forwards;

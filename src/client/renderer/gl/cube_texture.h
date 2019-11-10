@@ -9,9 +9,15 @@ namespace client {
     class CubeTexture final {
       public:
         CubeTexture() = default;
+
         CubeTexture(const std::array<std::string, 6> &files);
+
+        CubeTexture(CubeTexture &&other);
+        CubeTexture &operator=(CubeTexture &&other);
+
         CubeTexture(const CubeTexture &other) = delete;
         CubeTexture &operator=(const CubeTexture &other) = delete;
+
         ~CubeTexture();
 
         /**
@@ -28,7 +34,7 @@ namespace client {
         void bind() const;
 
       private:
-        GLuint m_texId;
+        GLuint m_textureId;
     };
 
 } // namespace client
