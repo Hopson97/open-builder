@@ -13,7 +13,6 @@ add_executable(${PROJECT_NAME}
     src/client/util/fps_counter.cpp
     src/client/input/keyboard.cpp
     src/client/geometry/geometry_factory_primatives.cpp
-    src/client/geometry/geometry_factory_terrain.cpp
     src/client/geometry/geometry_factory_models.cpp
     src/client/game/state/survival_state.cpp
     src/client/game/state/game_state.cpp

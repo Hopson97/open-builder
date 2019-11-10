@@ -10,8 +10,6 @@ namespace client::GeometryFactory {
     Mesh createCube(const glm::vec3 &min, const glm::vec3 &max);
     Mesh createCubeWithNormals(const glm::vec3 &min, const glm::vec3 &max);
 
-    Mesh createTerrain(int width, int depth);
-
     void addBox(Mesh &mesh, const glm::vec3 &min, const glm::vec3 &max);
 
     std::vector<GLfloat> createInvertedCubeVerticies(const glm::vec3 &min,
