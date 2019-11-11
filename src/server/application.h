@@ -2,8 +2,8 @@
 
 #include <common/network/constants.h>
 
-#include "world/entity.h"
 #include "network/server.h"
+#include "world/entity.h"
 
 class LaunchConfig;
 
