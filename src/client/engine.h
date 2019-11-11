@@ -3,7 +3,7 @@
 #include <SFML/Window/Window.hpp>
 #include <memory>
 
-#include "game/state/state_handler.h"
+#include "game_states/state_handler.h"
 #include "input/keyboard.h"
 #include "renderer/camera.h"
 #include "renderer/renderer.h"

@@ -6,7 +6,7 @@
 #include <SFML/Window/Event.hpp>
 #include <glad/glad.h>
 
-#include "game/state/survival_state.h"
+#include "game_states/survival_state.h"
 #include <common/launch_config.h>
 
 namespace client {

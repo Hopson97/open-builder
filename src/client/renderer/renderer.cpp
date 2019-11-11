@@ -7,7 +7,7 @@
 #include "../geometry/geometry_factory.h"
 #include "../util/maths.h"
 
-#include "../game/entity.h"
+#include "../world/entity.h"
 
 namespace client {
     void drawElements(GLsizei count)

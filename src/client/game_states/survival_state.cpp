@@ -3,10 +3,10 @@
 #include <glad/glad.h>
 #include <iostream>
 
-#include "../../geometry/geometry_factory.h"
-#include "../../input/keyboard.h"
-#include "../../renderer/camera.h"
-#include "../../renderer/renderer.h"
+#include "../geometry/geometry_factory.h"
+#include "../input/keyboard.h"
+#include "../renderer/camera.h"
+#include "../renderer/renderer.h"
 #include "state_handler.h"
 
 #include <SFML/Window/Mouse.hpp>

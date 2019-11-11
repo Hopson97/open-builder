@@ -5,7 +5,7 @@
 #include <common/network/input_state.h>
 #include <common/types.h>
 
-#include "../../network/client.h"
+#include "../network/client.h"
 
 namespace client {
     class StateHandler;

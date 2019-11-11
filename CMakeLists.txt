@@ -10,15 +10,15 @@ add_executable(${PROJECT_NAME}
     src/server/game/entity.cpp
     src/server/network/server.cpp
     src/main.cpp
+    src/client/game_states/survival_state.cpp
+    src/client/game_states/game_state.cpp
+    src/client/game_states/state_handler.cpp
     src/client/util/maths.cpp
     src/client/util/model_loader.cpp
     src/client/util/fps_counter.cpp
     src/client/input/keyboard.cpp
     src/client/geometry/geometry_factory_primatives.cpp
     src/client/geometry/geometry_factory_models.cpp
-    src/client/game/state/survival_state.cpp
-    src/client/game/state/game_state.cpp
-    src/client/game/state/state_handler.cpp
     src/client/engine.cpp
     src/client/network/client.cpp
     src/client/renderer/gl/shader.cpp

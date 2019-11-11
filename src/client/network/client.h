@@ -6,7 +6,7 @@
 #include <common/network/commands.h>
 #include <common/network/input_state.h>
 
-#include "../game/entity.h"
+#include "../world/entity.h"
 
 namespace client {
     class Client final {
