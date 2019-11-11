@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../game/entity.h"
+#include "../world/entity.h"
 #include "endpoint.h"
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Packet.hpp>

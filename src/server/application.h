@@ -2,7 +2,7 @@
 
 #include <common/network/constants.h>
 
-#include "game/entity.h"
+#include "world/entity.h"
 #include "network/server.h"
 
 class LaunchConfig;
