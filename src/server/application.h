@@ -16,6 +16,7 @@ namespace server {
 
       private:
         void update(sf::Time deltaTime);
+        void sendState();
 
         EntityArray m_entities;
         Server m_server;

@@ -9,6 +9,7 @@ namespace server {
         sf::IpAddress address;
         Port port = 0;
         Input keyState = 0;
+        Entity *p_entity = nullptr;
     };
 
     enum class ClientStatus : u8 {

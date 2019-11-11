@@ -11,7 +11,7 @@
 #include <thread>
 
 namespace server {
-    Server::Server(int maxConnections, Port port)
+    Server::Server(int maxConnections, Port port, EntityArray &entities)
         : m_clientSessions(maxConnections)
         , m_clientStatuses(maxConnections)
     {
@@ -21,15 +21,9 @@ namespace server {
         m_socket.setBlocking(false);
         m_socket.bind(port);
 
-        std::cout << "\n\nServer has started!" << std::endl;
-        std::cout << "Listening for connections...\n" << std::endl;
-
-        for (auto &entity : m_entities) {
-            entity.alive = true;
+        for (int i = 0; i < m_maxConnections; i++) {
+            m_clientSessions[i].p_entity = &entities[i];
         }
-        m_entities[maxConnections + 1].alive = true;
-        m_entities[maxConnections + 1].transform.position = {20, 1, 20};
-        m_isRunning = true;
     }
 
     int Server::connectedPlayes() const
@@ -77,7 +71,7 @@ namespace server {
     {
         for (int i = 0; i < m_maxConnections; i++) {
             if (m_clientStatuses[i] == ClientStatus::Connected) {
-                auto &player = m_entities[i];
+                auto &player = *m_clientSessions[i].p_entity;
                 auto input = m_clientSessions[i].keyState;
                 auto isPressed = [input](PlayerInput key) {
                     return (input & key) == key;
@@ -99,30 +93,14 @@ namespace server {
         }
     }
 
-    void Server::sendPackets()
-    {
-        sf::Packet statePacket;
-        statePacket << CommandToClient::WorldState
-                    << static_cast<u16>(m_entities.size());
-        for (u16 entityId = 0; entityId < m_entities.size(); entityId++) {
-            if (m_entities[entityId].alive) {
-                auto &transform = m_entities[entityId].transform;
-                statePacket << entityId << transform.position.x
-                            << transform.position.y << transform.position.z
-                            << transform.rotation.x << transform.rotation.y;
-            }
-        }
-        sendToAllClients(statePacket);
-    }
-
     void Server::handleKeyInput(sf::Packet &packet)
     {
         ClientId client;
 
         packet >> client;
         packet >> m_clientSessions[client].keyState;
-        packet >> m_entities[client].transform.rotation.x;
-        packet >> m_entities[client].transform.rotation.y;
+        packet >> m_clientSessions[client].p_entity->rotation.x;
+        packet >> m_clientSessions[client].p_entity->rotation.y;
     }
 
     bool Server::sendToClient(ClientId id, sf::Packet &packet)
@@ -188,8 +166,8 @@ namespace server {
             m_clientStatuses[slot] = ClientStatus::Connected;
             m_clientSessions[slot].address = clientAddress;
             m_clientSessions[slot].port = clientPort;
-            m_entities[slot].transform.position = {10, 0, 10};
-            m_entities[slot].alive = true;
+            m_clientSessions[slot].p_entity->position = {10, 0, 10};
+            m_clientSessions[slot].p_entity->isAlive = true;
 
             m_aliveEntities++;
             m_socket.send(responsePacket, clientAddress, clientPort);
@@ -213,7 +191,7 @@ namespace server {
         ClientId client;
         packet >> client;
         m_clientStatuses[client] = ClientStatus::Disconnected;
-        m_entities[client].alive = false;
+        m_clientSessions[client].p_entity->isAlive = false;
         m_connections--;
         m_aliveEntities--;
         std::cout << "Client Disonnected slot: " << (int)client << '\n';

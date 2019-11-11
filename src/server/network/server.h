@@ -16,7 +16,7 @@
 namespace server {
     class Server final {
       public:
-        Server(int maxConnections, Port port);
+        Server(int maxConnections, Port port, EntityArray &entities);
 
         void recievePackets();
         void sendPackets();
@@ -25,6 +25,9 @@ namespace server {
 
         int connectedPlayes() const;
         int maxConnections() const;
+
+        bool sendToClient(ClientId id, sf::Packet &packet);
+        void sendToAllClients(sf::Packet &packet);
 
       private:
         struct PackagedCommand {
@@ -38,8 +41,6 @@ namespace server {
 
         void update(float dt);
 
-        bool sendToClient(ClientId id, sf::Packet &packet);
-        void sendToAllClients(sf::Packet &packet);
         bool getFromClient(PackagedCommand &package);
 
         void handleIncomingConnection(const sf::IpAddress &address, Port port);
@@ -54,9 +55,7 @@ namespace server {
         std::vector<ClientSession> m_clientSessions;
         std::vector<ClientStatus> m_clientStatuses;
 
-        std::atomic<bool> m_isRunning = false;
-
-        EntityArray m_entities;
+        // EntityArray m_entities;
 
         // std::queue<ClientEndpoint> m_pendingConnections;
 
