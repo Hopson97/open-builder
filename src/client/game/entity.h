@@ -5,7 +5,7 @@
 #include <common/types.h>
 #include <common/util/maths.h>
 
-#include "../renderer/textured_model.h"
+#include "../renderer/model/textured_model.h"
 
 namespace client {
 

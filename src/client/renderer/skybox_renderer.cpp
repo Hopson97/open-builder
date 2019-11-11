@@ -3,7 +3,7 @@
 #include "../geometry/geometry_factory.h"
 #include "camera.h"
 #include "gl/gl_errors.h"
-#include "mesh.h"
+#include "model/mesh.h"
 #include <iostream>
 
 namespace client {

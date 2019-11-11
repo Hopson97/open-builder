@@ -1,6 +1,7 @@
 #include "texture2d.h"
 
-#include "gl_errors.h"
+#include "../gl/gl_errors.h"
+
 namespace client {
     Texture2D::Texture2D(const std::string &texName)
     {

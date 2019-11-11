@@ -1,7 +1,7 @@
 #include "textured_model.h"
 
-#include "../geometry/geometry_factory.h"
-#include "../util/model_loader.h"
+#include "../../geometry/geometry_factory.h"
+#include "../../util/model_loader.h"
 
 namespace client {
     TexturedModel::TexturedModel()

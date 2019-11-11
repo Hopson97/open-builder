@@ -1,7 +1,8 @@
 #pragma once
 
-#include "gl/texture2d.h"
-#include "gl/vertex_array.h"
+#include "../texture/texture2d.h"
+#include "../model/vertex_array.h"
+
 #include <string>
 
 namespace client {

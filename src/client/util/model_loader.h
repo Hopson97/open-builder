@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../renderer/mesh.h"
+#include "../renderer/model/mesh.h"
 #include <string>
 
 namespace client {

@@ -6,9 +6,7 @@
 #include "../../geometry/geometry_factory.h"
 #include "../../input/keyboard.h"
 #include "../../renderer/camera.h"
-#include "../../renderer/mesh.h"
 #include "../../renderer/renderer.h"
-#include "../../util/model_loader.h"
 #include "state_handler.h"
 
 #include <SFML/Window/Mouse.hpp>

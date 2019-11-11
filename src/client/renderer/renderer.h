@@ -2,10 +2,9 @@
 
 #include <common/util/maths.h>
 
-#include "colour.h"
 #include "gl/shader.h"
 #include "skybox_renderer.h"
-#include "textured_model.h"
+#include "model/textured_model.h"
 
 #include <unordered_map>
 

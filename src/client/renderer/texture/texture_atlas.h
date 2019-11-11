@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gl/texture2d.h"
+#include "texture2d.h"
 
 #include <SFML/System/Vector2.hpp>
 #include <array>

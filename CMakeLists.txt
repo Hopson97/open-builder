@@ -22,13 +22,13 @@ add_executable(${PROJECT_NAME}
     src/client/engine.cpp
     src/client/network/client.cpp
     src/client/renderer/gl/shader.cpp
-    src/client/renderer/gl/vertex_array.cpp
-    src/client/renderer/gl/texture2d.cpp
     src/client/renderer/gl/gl_errors.cpp
-    src/client/renderer/gl/cube_texture.cpp
-    src/client/renderer/textured_model.cpp
+    src/client/renderer/model/textured_model.cpp
+    src/client/renderer/model/vertex_array.cpp
     src/client/renderer/camera.cpp
-    src/client/renderer/texture_atlas.cpp
+    src/client/renderer/texture/texture2d.cpp
+    src/client/renderer/texture/cube_texture.cpp
+    src/client/renderer/texture/texture_atlas.cpp
     src/client/renderer/skybox_renderer.cpp
     src/client/renderer/renderer.cpp
     src/common/common/util/file_io.cpp
