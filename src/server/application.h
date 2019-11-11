@@ -1,6 +1,6 @@
 #pragma once
 
-#include <common/network/constants.h>
+#include <common/constants.h>
 
 #include "network/server.h"
 #include "world/entity.h"

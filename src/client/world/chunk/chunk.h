@@ -2,18 +2,16 @@
 
 #include "../block/block.h"
 #include <array>
+#include <common/constants.h>
 
 namespace client {
     class Chunk {
-      public:
-        constexpr static int SIZE = 32;
-
       public:
         Chunk();
 
         Block getBlock(const LocalBlockPosition &position) const;
 
       private:
-        std::array<Block, SIZE * SIZE * SIZE> m_blocks;
+        std::array<Block, CHUNK_VOLUME> m_blocks;
     };
 } // namespace client

@@ -1,7 +1,7 @@
 #include "client.h"
 
 #include <common/network/commands.h>
-#include <common/network/constants.h>
+#include <common/constants.h>
 #include <iostream>
 #include <thread>
 

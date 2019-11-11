@@ -97,9 +97,9 @@ namespace client {
     {
         ChunkMesh chunkMesh;
         sf::Clock timer;
-        for (int y = 0; y < Chunk::SIZE; ++y) {
-            for (int z = 0; z < Chunk::SIZE; ++z) {
-                for (int x = 0; x < Chunk::SIZE; ++x) {
+        for (int y = 0; y < CHUNK_SIZE; ++y) {
+            for (int z = 0; z < CHUNK_SIZE; ++z) {
+                for (int x = 0; x < CHUNK_SIZE; ++x) {
                     Block block = mp_chunk.getBlock({x, y, z});
 
                     // Eventually, this will be used to determine the mesh type
