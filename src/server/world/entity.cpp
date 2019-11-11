@@ -29,16 +29,15 @@ namespace server {
 
     void Entity::tick()
     {
-        //std::cout << glm::distance(position, target) << std::endl;
         if (glm::distance(position, target) > 2.0f) {
-            float dx = target.x - position.x;
-            float dz = target.z - position.z;
-            rotation.y = glm::degrees(std::atan2(dz, dx));
             moveRight();
         }
         else {
             target.x = rand() % 32;
             target.z = rand() % 32;
+            float dx = target.x - position.x;
+            float dz = target.z - position.z;
+            rotation.y = glm::degrees(std::atan2(dz, dx));
         }
     }
 } // namespace server
