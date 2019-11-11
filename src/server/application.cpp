@@ -11,8 +11,10 @@ namespace server {
         : m_server(config.serverOptions.maxConnections, port, m_entities)
     {
         std::cout << "Server started on port " << port << "." << std::endl;
-
-        m_entities[m_server.maxConnections() + 1].isAlive = true;
+        
+        for (unsigned i = m_server.maxConnections(); i < m_entities.size(); i++) {
+            m_entities[i].isAlive = true;
+        }
     }
 
     void Application::run(sf::Time timeout)
@@ -48,9 +50,11 @@ namespace server {
                 entity.position += entity.velocity * deltaTime.asSeconds();
                 entity.velocity.x *= 0.8f;
                 entity.velocity.z *= 0.8f;
+                if (id >= m_server.maxConnections()) {
+                    entity.tick();
+                }
             }
-            if (id >= m_server.maxConnections()) {
-            }
+            id++;
         }
     }
 

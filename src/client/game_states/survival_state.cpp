@@ -30,7 +30,7 @@ namespace client {
             m_entities[i].model = &m_defaultModel;
         }
 
-        auto& c = m_chunks.emplace_back();
+        auto &c = m_chunks.emplace_back();
         ChunkMeshBuilder builder(c);
         m_chunkMeshes.push_back(builder.createMesh());
     }
