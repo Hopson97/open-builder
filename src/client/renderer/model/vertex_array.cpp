@@ -18,13 +18,21 @@ namespace client {
     VertexArray::VertexArray(VertexArray &&other)
     {
         m_handle = other.m_handle;
+        m_vertexBuffers = std::move(other.m_vertexBuffers);
+        m_indicesCount = other.m_indicesCount;
+
         other.m_handle = 0;
+        other.m_indicesCount = 0;
     }
 
     VertexArray &VertexArray::operator=(VertexArray &&other)
     {
         m_handle = other.m_handle;
+        m_vertexBuffers = std::move(other.m_vertexBuffers);
+        m_indicesCount = other.m_indicesCount;
+
         other.m_handle = 0;
+        other.m_indicesCount = 0;
         return *this;
     }
 

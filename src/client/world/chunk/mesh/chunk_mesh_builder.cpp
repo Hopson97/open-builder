@@ -6,50 +6,67 @@
 
 namespace {
     // clang-format off
-    using FaceVertices = const std::array<GLfloat, 12>;
-
-    FaceVertices frontFace {
+    const client::BlockFace frontFace {{
         0, 0, 1,
         1, 0, 1,
         1, 1, 1,
         0, 1, 1,
-    };
+    },
+    {
+        0, 0, 1,
+    }};
 
-    FaceVertices backFace {
+    const client::BlockFace backFace {{
         1, 0, 0,
         0, 0, 0,
         0, 1, 0,
         1, 1, 0,
-    };
+    },
+    {
+        0, 0, -1
+    }};
 
-    FaceVertices leftFace {
+    const client::BlockFace leftFace {{
         0, 0, 0,
         0, 0, 1,
         0, 1, 1,
         0, 1, 0,
-    };
+    },
+    {
+        -1, 0, 0
+    }};
 
-    FaceVertices rightFace {
+    const client::BlockFace rightFace {{
         1, 0, 1,
         1, 0, 0,
         1, 1, 0,
         1, 1, 1,
-    };
+    },
+    {
+        1, 0, 0
+    }};
 
-    FaceVertices topFace {
+    const client::BlockFace topFace {{
         0, 1, 1,
         1, 1, 1,
         1, 1, 0,
         0, 1, 0,
-    };
+    },
+    {
+        0, 1, 0
+    }};
 
-    FaceVertices bottomFace {
+    const client::BlockFace bottomFace {{
         0, 0, 0,
         1, 0, 0,
         1, 0, 1,
         0, 0, 1
-    };
+    },
+    {
+        0, -1, 0
+    }};
 
+/*
     FaceVertices xFace1 {
         0, 0, 0,
         1, 0, 1,
@@ -63,6 +80,7 @@ namespace {
         1, 1, 0,
         0, 1, 1,
     };
+*/
     // clang-format on
 } // namespace
 
@@ -76,12 +94,15 @@ namespace client {
     ChunkMesh ChunkMeshBuilder::createMesh()
     {
         ChunkMesh chunkMesh;
-        Mesh mesh;
 
         for (int y = 0; y < Chunk::SIZE; ++y) {
             for (int z = 0; z < Chunk::SIZE; ++z) {
                 for (int x = 0; x < Chunk::SIZE; ++x) {
                     Block block = mp_chunk.getBlock({x, y, z});
+                    
+                    //Eventually, this will be used to determine the mesh type and texture
+                    //For now, it is not needed
+                    (void)block;
 
                     Block left = mp_chunk.getBlock({x - 1, y, z});
                     Block right = mp_chunk.getBlock({x + 1, y, z});
@@ -93,21 +114,56 @@ namespace client {
                     Block back = mp_chunk.getBlock({x, y, z - 1});
 
                     if (left.type == BlockType::Air) {
-
+                        addFace(leftFace, {x, y, z});
                     }
-                    
-
-                    (void)block;
-                    (void)left;
-                    (void)right;
-                    (void)up;
-                    (void)down;
-                    (void)forwards;
-                    (void)back;
+                    if (right.type == BlockType::Air) {
+                        addFace(rightFace, {x, y, z});
+                    }
+                    if (up.type == BlockType::Air) {
+                        addFace(topFace, {x, y, z});
+                    }
+                    if (down.type == BlockType::Air) {
+                        addFace(bottomFace, {x, y, z});
+                    }
+                    if (forwards.type == BlockType::Air) {
+                        addFace(frontFace, {x, y, z});
+                    }
+                    if (back.type == BlockType::Air) {
+                        addFace(backFace, {x, y, z});
+                    }
                 }
             }
         }
 
+        chunkMesh.array.create(m_mesh);
+
+        std::cout << "Indices: " << chunkMesh.array.getIndicesCount() << std::endl;
+
         return chunkMesh;
+    }
+
+    void ChunkMeshBuilder::addFace(const BlockFace &face,
+                                   const LocalBlockPosition &position)
+    {
+        int index = 0;
+        for (int i = 0; i < 4; i++) {
+            m_mesh.vertices.push_back(face.vertices[index++] + position.x);
+            m_mesh.vertices.push_back(face.vertices[index++] + position.y);
+            m_mesh.vertices.push_back(face.vertices[index++] + position.z);
+
+            m_mesh.normals.push_back(face.normal[0]);
+            m_mesh.normals.push_back(face.normal[1]);
+            m_mesh.normals.push_back(face.normal[2]);
+        }
+
+        m_mesh.textureCoords.insert(
+            m_mesh.textureCoords.end(),
+            {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f});
+
+        m_mesh.indices.insert(m_mesh.indices.end(),
+                              {m_meshMaxIndex, m_meshMaxIndex + 1,
+                               m_meshMaxIndex + 2, m_meshMaxIndex + 2,
+                               m_meshMaxIndex + 3, m_meshMaxIndex});
+        m_meshMaxIndex += 4;
     }
 } // namespace client

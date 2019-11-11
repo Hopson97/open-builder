@@ -1,7 +1,7 @@
 #include "renderer.h"
 
 #include "camera.h"
-
+#include <iostream>
 #include "gl/gl_errors.h"
 
 #include "../geometry/geometry_factory.h"
@@ -32,8 +32,8 @@ namespace client {
             m_entityShader.getUniformLocation("lightPosition");
 
         glCheck(glEnable(GL_DEPTH_TEST));
-        glCheck(glEnable(GL_CULL_FACE));
-        glCheck(glCullFace(GL_BACK));
+        // glCheck(glEnable(GL_CULL_FACE));
+        // glCheck(glCullFace(GL_BACK));
 
         Chunk chunk;
         ChunkMeshBuilder builder(chunk);
@@ -73,8 +73,11 @@ namespace client {
         }
         m_entityBatches.clear();
 
+        auto mat = makeModelMatrix({{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}});
+        m_entityShader.loadMatrix4(m_locationModelMatrix, mat);
         m_chunkMesh.array.bind();
         drawElements(m_chunkMesh.array.getIndicesCount());
+        //std::cout << m_chunkMesh.array.getIndicesCount() << std::endl;
 
         m_skyboxRenderer.render(camera);
     }
