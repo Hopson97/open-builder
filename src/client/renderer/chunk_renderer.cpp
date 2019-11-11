@@ -5,11 +5,8 @@
 
 namespace client {
     ChunkRenderer::ChunkRenderer()
+        : m_solidBlockShader("chunk")
     {
-        m_solidBlockShader.program.load("chunk", "chunk");
-        m_solidBlockShader.locationCameraMatrix =
-            m_solidBlockShader.program.getUniformLocation(
-                "projectionViewMatrix");
     }
 
     void ChunkRenderer::process(const ChunkMesh &mesh)
@@ -19,6 +16,27 @@ namespace client {
 
     void ChunkRenderer::render(const Camera &camera)
     {
-        
+        // Solid blocks first
+        m_solidBlockShader.prepare(camera);
+        for (auto& chunk : m_solidChunkRenders)
+        {
+            chunk.bindAndDraw();
+        }
+
+        m_solidChunkRenders.clear();
+    }
+
+    ChunkRenderer::ChunkShader::ChunkShader(const char *programName)
+        : program(programName, programName)
+    {
+        locationCameraMatrix =
+            program.getUniformLocation("projectionViewMatrix");
+    }
+
+    void ChunkRenderer::ChunkShader::prepare(const Camera &camera)
+    {
+        program.use();
+        program.loadMatrix4(locationCameraMatrix,
+                            camera.getProjectionViewMatrix());
     }
 } // namespace client

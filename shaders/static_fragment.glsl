@@ -3,7 +3,6 @@
 in vec3 passNormal;
 in vec3 passFragPosition;
 in vec2 passTexCoord;
-in vec4 passWorldPosition;
 
 out vec4 outColour;
 

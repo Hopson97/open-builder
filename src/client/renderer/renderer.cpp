@@ -32,12 +32,8 @@ namespace client {
             m_entityShader.getUniformLocation("lightPosition");
 
         glCheck(glEnable(GL_DEPTH_TEST));
-        // glCheck(glEnable(GL_CULL_FACE));
-        // glCheck(glCullFace(GL_BACK));
-
-        Chunk chunk;
-        ChunkMeshBuilder builder(chunk);
-        m_chunkMesh = builder.createMesh();
+        glCheck(glEnable(GL_CULL_FACE));
+        glCheck(glCullFace(GL_BACK));
     }
 
     void Renderer::process(const Entity &entity)

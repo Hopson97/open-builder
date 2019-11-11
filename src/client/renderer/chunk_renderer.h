@@ -17,9 +17,15 @@ namespace client {
       private:
         std::vector<RenderInformation> m_solidChunkRenders;
 
-        struct {
+        struct ChunkShader {
+            ChunkShader(const char *programName);
+
+            void prepare(const Camera &camera);
+
             Shader program;
             GLuint locationCameraMatrix;
-        } m_solidBlockShader;
+        };
+
+        ChunkShader m_solidBlockShader;
     };
 } // namespace client
