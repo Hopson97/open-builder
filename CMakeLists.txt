@@ -33,6 +33,7 @@ add_executable(${PROJECT_NAME}
     src/client/renderer/texture/cube_texture.cpp
     src/client/renderer/texture/texture_atlas.cpp
     src/client/renderer/skybox_renderer.cpp
+    src/client/renderer/chunk_renderer.cpp
     src/client/renderer/renderer.cpp
     src/common/common/util/file_io.cpp
     src/common/common/debug.cpp
