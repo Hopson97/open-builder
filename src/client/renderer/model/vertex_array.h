@@ -6,18 +6,16 @@
 namespace client {
     class Mesh;
 
-    class RenderInformation
-    {
+    class RenderInformation {
       public:
         RenderInformation(GLuint handle, GLsizei indicesCount);
 
         void bindAndDraw();
-      
+
       private:
         const GLuint m_handle;
         const GLsizei m_indicesCount;
     };
-    
 
     class VertexArray final {
       public:
@@ -44,7 +42,6 @@ namespace client {
         void addVertexBuffer(int magnitude, const std::vector<GLfloat> &data);
         void addIndexBuffer(const std::vector<GLuint> &indices);
 
-        
         GLuint m_handle;
         GLsizei m_indicesCount;
 

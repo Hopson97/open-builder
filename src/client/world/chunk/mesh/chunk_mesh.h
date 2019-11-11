@@ -8,7 +8,7 @@ namespace client {
      */
     struct ChunkMesh final {
         VertexArray solidBlocks;
-        //VertexArray liquid;
-        //VertexArray floral;
+        // VertexArray liquid;
+        // VertexArray floral;
     };
 } // namespace client

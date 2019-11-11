@@ -1,8 +1,8 @@
 #include "renderer.h"
 
 #include "camera.h"
-#include <iostream>
 #include "gl/gl_errors.h"
+#include <iostream>
 
 #include "../geometry/geometry_factory.h"
 #include "../util/maths.h"

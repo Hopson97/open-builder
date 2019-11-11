@@ -99,9 +99,9 @@ namespace client {
             for (int z = 0; z < Chunk::SIZE; ++z) {
                 for (int x = 0; x < Chunk::SIZE; ++x) {
                     Block block = mp_chunk.getBlock({x, y, z});
-                    
-                    //Eventually, this will be used to determine the mesh type and texture
-                    //For now, it is not needed
+
+                    // Eventually, this will be used to determine the mesh type
+                    // and texture For now, it is not needed
                     (void)block;
 
                     Block left = mp_chunk.getBlock({x - 1, y, z});
