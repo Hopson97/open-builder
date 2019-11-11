@@ -1,5 +1,5 @@
-#include <common/launch_config.h>
 #include <common/constants.h>
+#include <common/launch_config.h>
 #include <fstream>
 #include <iostream>
 #include <thread>

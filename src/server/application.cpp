@@ -11,8 +11,9 @@ namespace server {
         : m_server(config.serverOptions.maxConnections, port, m_entities)
     {
         std::cout << "Server started on port " << port << "." << std::endl;
-        
-        for (unsigned i = m_server.maxConnections(); i < m_entities.size(); i++) {
+
+        for (unsigned i = m_server.maxConnections(); i < m_entities.size();
+             i++) {
             m_entities[i].isAlive = true;
         }
     }

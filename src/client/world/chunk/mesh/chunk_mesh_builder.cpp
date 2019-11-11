@@ -139,7 +139,9 @@ namespace client {
 
         chunkMesh.solidBlocks.create(m_mesh);
         chunkMesh.solidBlocks.addVertexBuffer(1, m_chunkBasicLight, GL_FLOAT);
-        std::cout << "Chunk creation time: " << timer.getElapsedTime().asSeconds() * 1000 << " milliseconds" << std::endl;
+        std::cout << "Chunk creation time: "
+                  << timer.getElapsedTime().asSeconds() * 1000
+                  << " milliseconds" << std::endl;
         return chunkMesh;
     }
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/System/Vector3.hpp>
 #include <cstdint>
 
 // Integral types
@@ -16,3 +17,4 @@ using Command = u8;
 using Input = u8;
 
 // Game types
+using BlockPosition = sf::Vector3i;
