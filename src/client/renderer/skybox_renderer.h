@@ -1,8 +1,8 @@
 #pragma once
 
-#include "texture/cube_texture.h"
 #include "gl/shader.h"
 #include "model/vertex_array.h"
+#include "texture/cube_texture.h"
 
 namespace client {
     class Camera;

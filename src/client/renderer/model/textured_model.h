@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../texture/texture2d.h"
 #include "../model/vertex_array.h"
+#include "../texture/texture2d.h"
 
 #include <string>
 

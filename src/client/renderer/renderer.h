@@ -3,8 +3,8 @@
 #include <common/util/maths.h>
 
 #include "gl/shader.h"
-#include "skybox_renderer.h"
 #include "model/textured_model.h"
+#include "skybox_renderer.h"
 
 #include <unordered_map>
 

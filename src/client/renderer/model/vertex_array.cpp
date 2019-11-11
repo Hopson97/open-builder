@@ -1,7 +1,7 @@
 #include "vertex_array.h"
 
-#include "mesh.h"
 #include "../gl/gl_errors.h"
+#include "mesh.h"
 
 namespace client {
     VertexArray::VertexArray()
