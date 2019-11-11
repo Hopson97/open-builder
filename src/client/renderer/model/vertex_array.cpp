@@ -1,6 +1,5 @@
 #include "vertex_array.h"
 
-#include "../gl/gl_errors.h"
 #include "mesh.h"
 
 namespace client {
@@ -59,29 +58,17 @@ namespace client {
     void VertexArray::create(const Mesh &mesh)
     {
         bind();
-        addVertexBuffer(3, mesh.vertices);
-        addVertexBuffer(2, mesh.textureCoords);
-        addVertexBuffer(3, mesh.normals);
+        if (!mesh.vertices.empty()) {
+            addVertexBuffer(3, mesh.vertices, GL_FLOAT);
+        }
+        if (!mesh.textureCoords.empty()) {
+            addVertexBuffer(2, mesh.textureCoords, GL_FLOAT);
+        }
+        if (!mesh.normals.empty()) {
+            addVertexBuffer(3, mesh.normals, GL_FLOAT);
+        }
 
         addIndexBuffer(mesh.indices);
-    }
-
-    void VertexArray::addVertexBuffer(int magnitude,
-                                      const std::vector<GLfloat> &data)
-    {
-        GLuint vbo;
-        glCheck(glGenBuffers(1, &vbo));
-        glCheck(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-
-        glCheck(glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(GLfloat),
-                             data.data(), GL_STATIC_DRAW));
-
-        glCheck(glVertexAttribPointer(m_vertexBuffers.size(), magnitude,
-                                      GL_FLOAT, GL_FALSE, 0, (GLvoid *)0));
-
-        glCheck(glEnableVertexAttribArray(m_vertexBuffers.size()));
-
-        m_vertexBuffers.push_back(vbo);
     }
 
     void VertexArray::addIndexBuffer(const std::vector<GLuint> &indices)
