@@ -146,7 +146,7 @@ namespace client {
     }
 
     void ChunkMeshBuilder::addFace(const BlockFace &face,
-                                   const LocalBlockPosition &position)
+                                   const BlockPosition &position)
     {
         int index = 0;
         for (int i = 0; i < 4; i++) {

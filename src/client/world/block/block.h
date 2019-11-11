@@ -21,6 +21,4 @@ namespace client {
 
         BlockType type = BlockType::Grass;
     };
-
-    using LocalBlockPosition = sf::Vector3i;
 } // namespace client
