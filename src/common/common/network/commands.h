@@ -41,6 +41,13 @@ enum class CommandToClient : Command {
     /// u8 rotation]
     WorldState,
 
+    /// A chunk of block
+    /// u32 chunk x position
+    /// u32 chunk y position
+    /// u32 chunk z position
+    /// "CHUNK_VOLUME" u8 for block types
+    ChunkData,
+
     /// Saying a player has joined
     /// u16 clientId
     PlayerJoin,
