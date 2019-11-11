@@ -3,6 +3,8 @@
 #include "../world/chunk/mesh/chunk_mesh.h"
 #include "camera.h"
 
+#include <iostream>
+
 namespace client {
     ChunkRenderer::ChunkRenderer()
         : m_solidBlockShader("chunk")
@@ -18,8 +20,7 @@ namespace client {
     {
         // Solid blocks first
         m_solidBlockShader.prepare(camera);
-        for (auto& chunk : m_solidChunkRenders)
-        {
+        for (auto &chunk : m_solidChunkRenders) {
             chunk.bindAndDraw();
         }
 

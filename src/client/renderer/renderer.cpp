@@ -36,7 +36,7 @@ namespace client {
         glCheck(glCullFace(GL_BACK));
     }
 
-    void Renderer::process(const ChunkMesh& mesh)
+    void Renderer::process(const ChunkMesh &mesh)
     {
         m_chunkRenderer.process(mesh);
     }
@@ -73,12 +73,7 @@ namespace client {
             }
         }
         m_entityBatches.clear();
-
-        auto mat = makeModelMatrix({{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}});
-        m_entityShader.loadMatrix4(m_locationModelMatrix, mat);
-
-        auto info = m_chunkMesh.solidBlocks.getRenderInfo();
-        info.bindAndDraw();
+        m_chunkRenderer.render(camera);
 
         m_skyboxRenderer.render(camera);
     }

@@ -15,7 +15,7 @@ namespace server {
         void moveBackwards();
 
         glm::vec3 velocity{0.0f};
-        glm::vec3 position{0.0f};
+        glm::vec3 position{10.0f, 32.0f, 10.0f};
         glm::vec2 rotation{0.0f};
 
         float speed = 0.5;

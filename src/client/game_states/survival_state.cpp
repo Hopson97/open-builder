@@ -29,6 +29,10 @@ namespace client {
         for (int i = 0; i < (int)m_client.getMaxPlayers(); i++) {
             m_entities[i].model = &m_defaultModel;
         }
+
+        auto& c = m_chunks.emplace_back();
+        ChunkMeshBuilder builder(c);
+        m_chunkMeshes.push_back(builder.createMesh());
     }
 
     void SurvivalState::handleKeyUp(sf::Keyboard::Key key)
@@ -99,6 +103,10 @@ namespace client {
             if (e.alive && i++ != m_client.getClientId()) {
                 renderer.process(e);
             }
+        }
+
+        for (auto &chunk : m_chunkMeshes) {
+            renderer.process(chunk);
         }
     }
 

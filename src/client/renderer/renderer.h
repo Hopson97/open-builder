@@ -2,10 +2,10 @@
 
 #include <common/util/maths.h>
 
+#include "chunk_renderer.h"
 #include "gl/shader.h"
 #include "model/textured_model.h"
 #include "skybox_renderer.h"
-#include "chunk_renderer.h"
 
 #include "../world/chunk/mesh/chunk_mesh.h"
 
@@ -29,7 +29,7 @@ namespace client {
         Renderer &operator=(const Renderer &) = delete;
 
         void process(const Entity &entity);
-        void process(const ChunkMesh& mesh);
+        void process(const ChunkMesh &mesh);
 
         void render(const Camera &camera);
 
