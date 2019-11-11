@@ -9,6 +9,7 @@ namespace client {
     ChunkRenderer::ChunkRenderer()
         : m_solidBlockShader("chunk")
     {
+        m_texture.create("grass.png");
     }
 
     void ChunkRenderer::process(const ChunkMesh &mesh)
@@ -18,6 +19,7 @@ namespace client {
 
     void ChunkRenderer::render(const Camera &camera)
     {
+        m_texture.bind();
         // Solid blocks first
         m_solidBlockShader.prepare(camera);
         for (auto &chunk : m_solidChunkRenders) {

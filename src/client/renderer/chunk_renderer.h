@@ -3,6 +3,8 @@
 #include "gl/shader.h"
 #include "model/vertex_array.h"
 
+#include "texture/texture2d.h"
+
 namespace client {
     class Camera;
     class ChunkMesh;
@@ -27,5 +29,7 @@ namespace client {
         };
 
         ChunkShader m_solidBlockShader;
+
+        Texture2D m_texture;
     };
 } // namespace client
