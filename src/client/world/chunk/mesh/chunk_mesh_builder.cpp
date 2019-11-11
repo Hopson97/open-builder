@@ -84,6 +84,8 @@ namespace {
     // clang-format on
 } // namespace
 
+#include <SFML/System/Clock.hpp>
+
 namespace client {
 
     ChunkMeshBuilder::ChunkMeshBuilder(const Chunk &chunk)
@@ -94,7 +96,7 @@ namespace client {
     ChunkMesh ChunkMeshBuilder::createMesh()
     {
         ChunkMesh chunkMesh;
-
+        sf::Clock timer;
         for (int y = 0; y < Chunk::SIZE; ++y) {
             for (int z = 0; z < Chunk::SIZE; ++z) {
                 for (int x = 0; x < Chunk::SIZE; ++x) {
@@ -137,6 +139,7 @@ namespace client {
 
         chunkMesh.solidBlocks.create(m_mesh);
         chunkMesh.solidBlocks.addVertexBuffer(1, m_chunkBasicLight, GL_FLOAT);
+        std::cout << "Chunk creation time: " << timer.getElapsedTime().asSeconds() * 1000 << " milliseconds" << std::endl;
         return chunkMesh;
     }
 
