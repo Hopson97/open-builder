@@ -18,7 +18,8 @@ add_executable(${PROJECT_NAME}
     src/client/util/fps_counter.cpp
     src/client/input/keyboard.cpp
     src/client/world/chunk/chunk.cpp
-    src/client/world/chunk/chunk_mesh.cpp
+    src/client/world/chunk/mesh/chunk_mesh.cpp
+    src/client/world/chunk/mesh/chunk_mesh_builder.cpp
     src/client/geometry/geometry_factory_primatives.cpp
     src/client/geometry/geometry_factory_models.cpp
     src/client/engine.cpp
