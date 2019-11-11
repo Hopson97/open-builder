@@ -12,7 +12,7 @@ out vec3 passNormal;
 out vec3 passFragPosition;
 
 void main() {
-    gl_Position = projectionViewMatrix * modelMatrix * vec4(inVertexCoord, 1.0);;
+    gl_Position = projectionViewMatrix * modelMatrix * vec4(inVertexCoord, 1.0);
     
     passTexCoord = inTextureCoord;
     passNormal = inNormalCoord;

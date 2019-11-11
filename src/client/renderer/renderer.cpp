@@ -36,6 +36,11 @@ namespace client {
         glCheck(glCullFace(GL_BACK));
     }
 
+    void Renderer::process(const ChunkMesh& mesh)
+    {
+        m_chunkRenderer.process(mesh);
+    }
+
     void Renderer::process(const Entity &entity)
     {
         if (m_entityBatches.find(entity.model) != m_entityBatches.cend()) {
