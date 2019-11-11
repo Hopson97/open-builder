@@ -9,7 +9,7 @@ namespace client {
       public:
         Chunk();
 
-        Block getBlock(const LocalBlockPosition &position) const;
+        Block getBlock(const BlockPosition &position) const;
 
       private:
         std::array<Block, CHUNK_VOLUME> m_blocks;
