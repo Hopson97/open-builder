@@ -30,9 +30,9 @@ namespace client {
             m_entities[i].model = &m_defaultModel;
         }
 
-        auto &c = m_chunks.emplace_back();
-        ChunkMeshBuilder builder(c);
-        m_chunkMeshes.push_back(builder.createMesh());
+        const auto& chunk = m_chunks.emplace(ChunkPosition(0, 0, 0), Chunk{}).first->second;
+        ChunkMeshBuilder builder(chunk);
+        m_chunkMeshes.emplace(ChunkPosition(0, 0, 0), builder.createMesh());
     }
 
     void SurvivalState::handleKeyUp(sf::Keyboard::Key key)
@@ -106,7 +106,7 @@ namespace client {
         }
 
         for (auto &chunk : m_chunkMeshes) {
-            renderer.process(chunk);
+            renderer.process(chunk.second);
         }
     }
 

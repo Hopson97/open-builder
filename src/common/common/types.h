@@ -2,6 +2,7 @@
 
 #include <SFML/System/Vector3.hpp>
 #include <cstdint>
+#include <unordered_map>
 
 // Integral types
 using u8 = uint8_t;
@@ -24,14 +25,14 @@ using Input = u8;
 using BlockPosition = sf::Vector3<i32>;
 using ChunkPosition = sf::Vector3<i32>;
 
-struct ChunkPositionHash
-{
-    //http://www.beosil.com/download/CollisionDetectionHashing_VMV03.pdf
-    std::size_t operator()(const ChunkPosition& position) const
+struct ChunkPositionHash {
+    // http://www.beosil.com/download/CollisionDetectionHashing_VMV03.pdf
+    std::size_t operator()(const ChunkPosition &position) const
     {
-        return
-            (position.x * 130199) ^
-            (position.y * 146437) ^
-            (position.z * 178571);
-    } 
+        return (position.x * 130199) ^ (position.y * 146437) ^
+               (position.z * 178571);
+    }
 };
+
+template<typename T>
+using ChunkPositionMap = std::unordered_map<ChunkPosition, T, ChunkPositionHash>;

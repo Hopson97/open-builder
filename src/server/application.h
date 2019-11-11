@@ -1,8 +1,10 @@
 #pragma once
 
 #include <common/constants.h>
+#include <vector>
 
 #include "network/server.h"
+#include "world/chunk/chunk.h"
 #include "world/entity.h"
 
 class LaunchConfig;
@@ -22,5 +24,7 @@ namespace server {
         Server m_server;
 
         bool m_isRunning = true;
+
+        std::vector<Chunk> m_chunks;
     };
 } // namespace server

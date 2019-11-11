@@ -6,6 +6,7 @@
 #include <common/types.h>
 
 #include <vector>
+#include <unordered_map>
 
 #include "../world/chunk/chunk.h"
 #include "../world/chunk/mesh/chunk_mesh_builder.h"
@@ -42,8 +43,8 @@ namespace client {
         TexturedModel m_defaultModel;
         TexturedModel m_playerModel;
 
-        std::vector<Chunk> m_chunks;
-        std::vector<ChunkMesh> m_chunkMeshes;
+        ChunkPositionMap<Chunk> m_chunks;
+        ChunkPositionMap<ChunkMesh> m_chunkMeshes;
 
         bool m_isMouseLocked = false;
     };

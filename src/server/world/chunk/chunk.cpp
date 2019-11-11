@@ -5,29 +5,34 @@
 #include <common/coordinate_convertion.h>
 
 namespace server {
-    Chunk::Chunk()
+    Chunk::Chunk(int x, int y, int z)
+        : position({x, y, z})
+    {
+    }
+    Chunk::Chunk(const ChunkPosition &chunkPosition)
+        : position(chunkPosition)
     {
     }
 
-    Block Chunk::getBlock(const BlockPosition &position) const
+    Block Chunk::getBlock(const BlockPosition &BlockPosition) const
     {
-        if (positionOutOfChunkBounds(position)) {
+        if (positionOutOfChunkBounds(BlockPosition)) {
             return BlockType::Air;
         }
         else {
-            return m_blocks[toChunkBlockIndex(position)];
+            return m_blocks[toChunkBlockIndex(BlockPosition)];
         }
     }
 
-    void Chunk::setBlock(const BlockPosition &position, Block block)
+    void Chunk::setBlock(const BlockPosition &BlockPosition, Block block)
     {
-        if (!positionOutOfChunkBounds(position)) {
-            m_blocks[toChunkBlockIndex(position)] = block;
+        if (!positionOutOfChunkBounds(BlockPosition)) {
+            m_blocks[toChunkBlockIndex(BlockPosition)] = block;
         }
     }
 
-    void Chunk::quickSetBlock(const BlockPosition &position, Block block)
+    void Chunk::quickSetBlock(const BlockPosition &BlockPosition, Block block)
     {
-        m_blocks[toChunkBlockIndex(position)] = block;
+        m_blocks[toChunkBlockIndex(BlockPosition)] = block;
     }
-} // namespace client
+} // namespace server

@@ -21,4 +21,4 @@ namespace server {
 
         BlockType type = BlockType::Grass;
     };
-} // namespace client
+} // namespace server
