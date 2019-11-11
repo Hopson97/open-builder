@@ -15,7 +15,7 @@ namespace client {
      */
     struct BlockFace {
         const std::array<GLfloat, 12> vertices;
-        const std::array<GLfloat, 3> normal;
+        const float basicLight;
     };
 
     /**
@@ -33,6 +33,8 @@ namespace client {
 
         const Chunk &mp_chunk;
         Mesh m_mesh;
+        std::vector<GLfloat> m_chunkBasicLight;
+
         unsigned m_meshMaxIndex = 0;
     };
 } // namespace client

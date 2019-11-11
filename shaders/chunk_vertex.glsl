@@ -2,19 +2,19 @@
 
 layout (location = 0) in vec3 inVertexCoord;
 layout (location = 1) in vec2 inTextureCoord;
-layout (location = 2) in vec3 inNormalCoord;
+layout (location = 2) in float inBasicLight;
 
 uniform mat4 projectionViewMatrix;
 
 out vec2 passTexCoord;
-out vec3 passNormal;
+out float passBasicLight;
 out vec3 passFragPosition;
 
 void main() {
     gl_Position = projectionViewMatrix * vec4(inVertexCoord, 1.0);
     
     passTexCoord = inTextureCoord;
-    passNormal = inNormalCoord;
+    passBasicLight = inBasicLight;
     
     passFragPosition = vec3(vec4(inVertexCoord, 1.0).xyz);
 }

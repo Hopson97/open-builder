@@ -13,7 +13,7 @@ namespace {
         0, 1, 1,
     },
     {
-        0, 0, 1,
+        0.8f
     }};
 
     const client::BlockFace backFace {{
@@ -23,7 +23,7 @@ namespace {
         1, 1, 0,
     },
     {
-        0, 0, -1
+        0.8f
     }};
 
     const client::BlockFace leftFace {{
@@ -33,7 +33,7 @@ namespace {
         0, 1, 0,
     },
     {
-        -1, 0, 0
+        0.6f
     }};
 
     const client::BlockFace rightFace {{
@@ -43,7 +43,7 @@ namespace {
         1, 1, 1,
     },
     {
-        1, 0, 0
+        0.6f
     }};
 
     const client::BlockFace topFace {{
@@ -53,7 +53,7 @@ namespace {
         0, 1, 0,
     },
     {
-        0, 1, 0
+        1.0f
     }};
 
     const client::BlockFace bottomFace {{
@@ -63,7 +63,7 @@ namespace {
         0, 0, 1
     },
     {
-        0, -1, 0
+        0.4f
     }};
 
 /*
@@ -136,6 +136,7 @@ namespace client {
         }
 
         chunkMesh.solidBlocks.create(m_mesh);
+        chunkMesh.solidBlocks.addVertexBuffer(1, m_chunkBasicLight, GL_FLOAT);
         return chunkMesh;
     }
 
@@ -148,9 +149,7 @@ namespace client {
             m_mesh.vertices.push_back(face.vertices[index++] + position.y);
             m_mesh.vertices.push_back(face.vertices[index++] + position.z);
 
-            m_mesh.normals.push_back(face.normal[0]);
-            m_mesh.normals.push_back(face.normal[1]);
-            m_mesh.normals.push_back(face.normal[2]);
+            m_chunkBasicLight.push_back(face.basicLight);
         }
 
         m_mesh.textureCoords.insert(
