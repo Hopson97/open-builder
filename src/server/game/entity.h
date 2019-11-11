@@ -18,6 +18,8 @@ namespace server {
         glm::vec3 position{0.0f};
         glm::vec2 rotation{0.0f};
 
+        float speed = 0.5;
+
         // This might cause padding issues, interfering with cache, but is fine
         // for now
         bool isAlive = false;

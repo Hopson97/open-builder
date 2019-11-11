@@ -42,12 +42,15 @@ namespace server {
         // update here
         m_server.updatePlayers();
 
+        int id = 0;
         for (auto &entity : m_entities) {
             if (entity.isAlive) {
                 entity.position += entity.velocity * deltaTime.asSeconds();
-                entity.velocity.x *= 0.95f;
-                entity.velocity.z *= 0.95f;
+                entity.velocity.x *= 0.9f;
+                entity.velocity.z *= 0.9f;
             }
+            if (id >= m_server.maxConnections()) {
+            } 
         }
     }
 

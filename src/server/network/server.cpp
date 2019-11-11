@@ -36,7 +36,7 @@ namespace server {
         return m_maxConnections;
     }
 
-    int Server::findEmptySlot()
+    int Server::findEmptySlot() const
     {
         for (int i = 0; i < m_maxConnections; i++) {
             if (m_clientStatuses[i] == ClientStatus::Disconnected) {
@@ -73,7 +73,8 @@ namespace server {
             if (m_clientStatuses[i] == ClientStatus::Connected) {
                 auto &player = *m_clientSessions[i].p_entity;
                 auto input = m_clientSessions[i].keyState;
-                auto isPressed = [input](PlayerInput key) {
+
+                auto isPressed = [input](auto key) {
                     return (input & key) == key;
                 };
 
