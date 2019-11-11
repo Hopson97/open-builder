@@ -8,7 +8,6 @@ namespace client {
     {
         m_projectionMatrix = glm::perspective(glm::radians(90.0f),
                                               1280.0f / 720.0f, 0.01f, 1024.0f);
-
         updateMatrices();
     }
 
@@ -22,7 +21,7 @@ namespace client {
     void Camera::reset(const maths::Transform &transform)
     {
         m_transform = transform;
-        m_transform.position.y += 5.7;
+        m_transform.position.y += 1.5;
         updateMatrices();
     }
 

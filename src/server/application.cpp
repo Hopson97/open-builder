@@ -20,7 +20,7 @@ namespace server {
         sf::Clock timeoutClock;
         sf::Clock deltaClock;
         while (m_isRunning) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(25));
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
             m_server.recievePackets();
             update(deltaClock.restart());
@@ -30,9 +30,9 @@ namespace server {
                 if (timeoutClock.getElapsedTime() > timeout) {
                     m_isRunning = false;
                 }
-                else {
-                    timeoutClock.restart();
-                }
+            }
+            else {
+                timeoutClock.restart();
             }
         }
     }
@@ -46,11 +46,11 @@ namespace server {
         for (auto &entity : m_entities) {
             if (entity.isAlive) {
                 entity.position += entity.velocity * deltaTime.asSeconds();
-                entity.velocity.x *= 0.9f;
-                entity.velocity.z *= 0.9f;
+                entity.velocity.x *= 0.8f;
+                entity.velocity.z *= 0.8f;
             }
             if (id >= m_server.maxConnections()) {
-            } 
+            }
         }
     }
 
