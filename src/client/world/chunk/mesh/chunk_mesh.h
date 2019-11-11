@@ -5,15 +5,10 @@
 namespace client {
     /**
      * @brief Drawable representation of a chunk
-     *
      */
-    class ChunkMesh final {
-      public:
-        ChunkMesh();
-
-        void render();
-
-        // private:
-        VertexArray array;
+    struct ChunkMesh final {
+        VertexArray solidBlocks;
+        //VertexArray liquid;
+        //VertexArray floral;
     };
 } // namespace client

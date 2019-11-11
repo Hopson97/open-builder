@@ -135,10 +135,7 @@ namespace client {
             }
         }
 
-        chunkMesh.array.create(m_mesh);
-
-        std::cout << "Indices: " << chunkMesh.array.getIndicesCount() << std::endl;
-
+        chunkMesh.solidBlocks.create(m_mesh);
         return chunkMesh;
     }
 

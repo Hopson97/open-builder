@@ -75,9 +75,9 @@ namespace client {
 
         auto mat = makeModelMatrix({{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}});
         m_entityShader.loadMatrix4(m_locationModelMatrix, mat);
-        m_chunkMesh.array.bind();
-        drawElements(m_chunkMesh.array.getIndicesCount());
-        //std::cout << m_chunkMesh.array.getIndicesCount() << std::endl;
+
+        auto info = m_chunkMesh.solidBlocks.getRenderInfo();
+        info.bindAndDraw();
 
         m_skyboxRenderer.render(camera);
     }

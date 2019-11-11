@@ -4,6 +4,17 @@
 #include "mesh.h"
 
 namespace client {
+    RenderInformation::RenderInformation(GLuint handle, GLsizei indicesCount)
+    :   m_handle        (handle)
+    ,   m_indicesCount  (indicesCount)
+    {}
+
+    void RenderInformation::bindAndDraw()
+    {
+        glCheck(glBindVertexArray(m_handle));
+        glCheck(glDrawElements(GL_TRIANGLES, m_indicesCount, GL_UNSIGNED_INT, nullptr));
+    }
+
     VertexArray::VertexArray()
     {
         create();
@@ -92,6 +103,13 @@ namespace client {
     GLsizei VertexArray::getIndicesCount() const
     {
         return m_indicesCount;
+    }
+
+    RenderInformation VertexArray::getRenderInfo() const
+    {
+        return {
+            m_handle, m_indicesCount
+        };
     }
 
     void VertexArray::create()
