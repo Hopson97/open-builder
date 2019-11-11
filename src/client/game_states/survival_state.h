@@ -13,6 +13,8 @@
 
 #include "../network/client.h"
 
+#include "../world/world.h"
+
 namespace client {
     class StateHandler;
     class Keyboard;
@@ -36,15 +38,13 @@ namespace client {
       private:
         Entity &getPlayerEntity();
 
-        EntityArray m_entities;
         Client m_client;
         Input m_inputState = 0;
 
         TexturedModel m_defaultModel;
         TexturedModel m_playerModel;
 
-        ChunkPositionMap<Chunk> m_chunks;
-        ChunkPositionMap<ChunkMesh> m_chunkMeshes;
+        World m_world;
 
         bool m_isMouseLocked = false;
     };

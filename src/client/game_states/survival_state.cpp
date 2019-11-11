@@ -15,24 +15,20 @@
 namespace client {
     SurvivalState::SurvivalState(StateHandler &stateHandler)
         : GameState(stateHandler)
-        , m_client(m_entities)
+        , m_client(m_world)
     {
         if (!m_client.connect(sf::IpAddress::LocalHost)) {
             mp_stateHandler->popState();
         }
 
-        for (auto &entity : m_entities) {
+        for (auto &entity : m_world.entities) {
             entity.alive = false;
             entity.model = &m_defaultModel;
         }
 
         for (int i = 0; i < (int)m_client.getMaxPlayers(); i++) {
-            m_entities[i].model = &m_defaultModel;
+            m_world.entities[i].model = &m_defaultModel;
         }
-
-        const auto& chunk = m_chunks.emplace(ChunkPosition(0, 0, 0), Chunk{}).first->second;
-        ChunkMeshBuilder builder(chunk);
-        m_chunkMeshes.emplace(ChunkPosition(0, 0, 0), builder.createMesh());
     }
 
     void SurvivalState::handleKeyUp(sf::Keyboard::Key key)
@@ -94,18 +90,20 @@ namespace client {
     {
         m_client.update();
         camera.reset(getPlayerEntity().transform);
+
+        m_world.update();
     }
 
     void SurvivalState::render(Renderer &renderer)
     {
         unsigned i = 0;
-        for (const auto &e : m_entities) {
+        for (const auto &e : m_world.entities) {
             if (e.alive && i++ != m_client.getClientId()) {
                 renderer.process(e);
             }
         }
 
-        for (auto &chunk : m_chunkMeshes) {
+        for (auto &chunk : m_world.chunkMeshes) {
             renderer.process(chunk.second);
         }
     }
@@ -119,6 +117,6 @@ namespace client {
 
     Entity &SurvivalState::getPlayerEntity()
     {
-        return m_entities[m_client.getClientId()];
+        return m_world.entities[m_client.getClientId()];
     }
 } // namespace client
