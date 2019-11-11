@@ -6,6 +6,8 @@ project(open-builder
 )
 
 add_executable(${PROJECT_NAME} 
+    src/server/application.cpp
+    src/server/game/entity.cpp
     src/server/network/server.cpp
     src/main.cpp
     src/client/util/maths.cpp

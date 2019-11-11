@@ -8,6 +8,14 @@
 namespace server {
     /// Per-Instance information about the entities of the world
     struct Entity {
+      public:
+        Entity();
+        
+        void moveForwards();
+        void moveLeft();
+        void moveRight();
+        void moveBackwards();
+
         maths::Transform transform;
         Entity *p_target = nullptr;
         glm::vec3 targetPoint;

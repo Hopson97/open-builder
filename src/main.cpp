@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "client/engine.h"
-#include "server/network/server.h"
+#include "server/application.h"
 
 namespace {
     void loadFromConfigFile(LaunchConfig &config)
@@ -104,7 +104,7 @@ namespace {
                      sf::Time timeout = sf::seconds(8))
     {
         std::cout << "Launching server.\n";
-        server::Server server(config.serverOptions.maxConnections);
+        server::Application server(config, PORT);
         server.run(timeout);
         return EXIT_SUCCESS;
     }

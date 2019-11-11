@@ -16,11 +16,15 @@
 namespace server {
     class Server final {
       public:
-        Server(int maxConnections);
+        Server(int maxConnections, Port port);
 
-        void run(sf::Time timeout = sf::seconds(7.5));
+        void recievePackets();
+        void sendPackets();
 
-        bool isRunning() const;
+        void updatePlayers();
+
+        int connectedPlayes() const;
+        int maxConnections() const;
 
       private:
         struct PackagedCommand {
@@ -32,9 +36,7 @@ namespace server {
 
         int findEmptySlot();
 
-        void recievePackets();
         void update(float dt);
-        void sendPackets();
 
         bool sendToClient(ClientId id, sf::Packet &packet);
         void sendToAllClients(sf::Packet &packet);

@@ -13,7 +13,8 @@ namespace client {
 
     void Client::sendInput(Input input, const glm::vec3 &rotation)
     {
-        auto inputStatePacket = createCommandPacket(CommandToServer::PlayerInput);
+        auto inputStatePacket =
+            createCommandPacket(CommandToServer::PlayerInput);
         inputStatePacket << m_clientId << input << rotation.x << rotation.y;
         sendToServer(inputStatePacket);
     }

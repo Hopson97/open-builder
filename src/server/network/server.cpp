@@ -11,7 +11,7 @@
 #include <thread>
 
 namespace server {
-    Server::Server(int maxConnections)
+    Server::Server(int maxConnections, Port port)
         : m_clientSessions(maxConnections)
         , m_clientStatuses(maxConnections)
     {
@@ -19,7 +19,7 @@ namespace server {
                   ClientStatus::Disconnected);
 
         m_socket.setBlocking(false);
-        m_socket.bind(PORT);
+        m_socket.bind(port);
 
         std::cout << "\n\nServer has started!" << std::endl;
         std::cout << "Listening for connections...\n" << std::endl;
@@ -32,30 +32,14 @@ namespace server {
         m_isRunning = true;
     }
 
-    void Server::run(sf::Time timeout)
+    int Server::connectedPlayes() const
     {
-        sf::Clock dtClock;
-        while (m_isRunning) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(33));
-
-            recievePackets();
-            update(dtClock.restart().asSeconds());
-            sendPackets();
-
-            if (m_connections == 0) {
-                if (m_exitClock.getElapsedTime() > timeout) {
-                    m_isRunning = false;
-                }
-            }
-            else {
-                m_exitClock.restart();
-            }
-        }
+        return m_connections;
     }
 
-    bool Server::isRunning() const
+    int Server::maxConnections() const
     {
-        return m_isRunning;
+        return m_maxConnections;
     }
 
     int Server::findEmptySlot()
@@ -89,48 +73,30 @@ namespace server {
         }
     }
 
-    void Server::update(float dt)
+    void Server::updatePlayers()
     {
-        // Handle key input
         for (int i = 0; i < m_maxConnections; i++) {
-            auto &input = m_clientSessions[i].keyState;
-            auto &entity = m_entities[i];
-            auto &position = entity.transform.position;
-            auto &velocity = entity.velocity;
-            auto &rotation = entity.transform.rotation;
+            if (m_clientStatuses[i] == ClientStatus::Connected) {
+                auto &player = m_entities[i];
+                auto input = m_clientSessions[i].keyState;
+                auto isPressed = [input](PlayerInput key) {
+                    return (input & key) == key;
+                };
 
-            auto isPressed = [input](PlayerInput key) {
-                return (input & key) == key;
-            };
-
-            float speed = 0.8f;
-            float s = speed;
-            if (isPressed(PlayerInput::Forwards)) {
-                velocity.x += -glm::cos(glm::radians(rotation.y + 90)) * s;
-                velocity.z += -glm::sin(glm::radians(rotation.y + 90)) * s;
+                if (isPressed(PlayerInput::Forwards)) {
+                    player.moveForwards();
+                }
+                else if (isPressed(PlayerInput::Back)) {
+                    player.moveBackwards();
+                }
+                if (isPressed(PlayerInput::Left)) {
+                    player.moveLeft();
+                }
+                else if (isPressed(PlayerInput::Right)) {
+                    player.moveRight();
+                }
             }
-            else if (isPressed(PlayerInput::Back)) {
-                velocity.x += glm::cos(glm::radians(rotation.y + 90)) * speed;
-                velocity.z += glm::sin(glm::radians(rotation.y + 90)) * speed;
-            }
-            if (isPressed(PlayerInput::Left)) {
-                velocity.x += -glm::cos(glm::radians(rotation.y)) * speed;
-                velocity.z += -glm::sin(glm::radians(rotation.y)) * speed;
-            }
-            else if (isPressed(PlayerInput::Right)) {
-                velocity.x += glm::cos(glm::radians(rotation.y)) * speed;
-                velocity.z += glm::sin(glm::radians(rotation.y)) * speed;
-            }
-            position += velocity * dt;
-            velocity *= 0.85f;
-            // entity.transform.rotation.y += 1;
         }
-
-/*
-        for (u16 i = m_maxConnections; i < m_entities.size(); i++) {
-          
-        }
-*/
     }
 
     void Server::sendPackets()
