@@ -6,6 +6,8 @@
 #include "model/textured_model.h"
 #include "skybox_renderer.h"
 
+#include "../world/chunk/mesh/chunk_mesh.h"
+
 #include <unordered_map>
 
 namespace client {
@@ -42,5 +44,7 @@ namespace client {
         GLuint m_locationModelMatrix;
         GLuint m_locationColour;
         GLuint m_locationLightPosition;
+
+        ChunkMesh m_chunkMesh;
     };
 } // namespace client

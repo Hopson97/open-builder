@@ -9,6 +9,9 @@
 
 #include "../world/entity.h"
 
+#include "../world/chunk/chunk.h"
+#include "../world/chunk/mesh/chunk_mesh_builder.h"
+
 namespace client {
     void drawElements(GLsizei count)
     {
@@ -31,6 +34,10 @@ namespace client {
         glCheck(glEnable(GL_DEPTH_TEST));
         glCheck(glEnable(GL_CULL_FACE));
         glCheck(glCullFace(GL_BACK));
+
+        Chunk chunk;
+        ChunkMeshBuilder builder(chunk);
+        m_chunkMesh = builder.createMesh();
     }
 
     void Renderer::process(const Entity &entity)
@@ -65,6 +72,9 @@ namespace client {
             }
         }
         m_entityBatches.clear();
+
+        m_chunkMesh.array.bind();
+        drawElements(m_chunkMesh.array.getIndicesCount());
 
         m_skyboxRenderer.render(camera);
     }

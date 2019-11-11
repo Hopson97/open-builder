@@ -1,19 +1,19 @@
 #pragma once
 
-#include "../../renderer/model/vertex_array.h"
+#include "../../../renderer/model/vertex_array.h"
 
 namespace client {
     /**
      * @brief Drawable representation of a chunk
-     * 
+     *
      */
     class ChunkMesh final {
-        public:
-            ChunkMesh();
+      public:
+        ChunkMesh();
 
-            void render();
+        void render();
 
-        private:
-            VertexArray array;
+        // private:
+        VertexArray array;
     };
 } // namespace client

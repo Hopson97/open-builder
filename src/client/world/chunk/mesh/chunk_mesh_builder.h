@@ -2,20 +2,19 @@
 
 #include "chunk_mesh.h"
 
-namespace client
-{
+namespace client {
     class Chunk;
     /**
      * @brief Looks at the blocks of the chunk and builds it accordingly
      * Designed to used once and then destroyed per chunk
      */
     class ChunkMeshBuilder {
-        public:
-            ChunkMeshBuilder(const Chunk& chunk);
+      public:
+        ChunkMeshBuilder(const Chunk &chunk);
 
-            ChunkMesh createMesh();
+        ChunkMesh createMesh();
 
-        private:
-            const Chunk& mp_chunk;
+      private:
+        const Chunk &mp_chunk;
     };
-} // namespace clinet
+} // namespace client

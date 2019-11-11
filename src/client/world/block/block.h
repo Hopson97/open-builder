@@ -6,7 +6,10 @@
 namespace client {
     using BlockId = u8;
 
-    enum class BlockType : BlockId { Grass };
+    enum class BlockType : BlockId {
+        Air,
+        Grass,
+    };
 
     struct Block {
         Block() = default;

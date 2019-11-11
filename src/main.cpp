@@ -126,7 +126,7 @@ namespace {
 
     int launchBoth(const LaunchConfig &config)
     {
-        std::thread serverThread(launchServer, config, sf::milliseconds(5000));
+        std::thread serverThread(launchServer, config, sf::milliseconds(256));
         int exit = launchClient(config);
 
         std::cout << "Awaiting server shutdown.\n";
