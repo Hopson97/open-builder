@@ -2,9 +2,12 @@
 
 #include <common/util/maths.h>
 
+#include "chunk_renderer.h"
 #include "gl/shader.h"
 #include "model/textured_model.h"
 #include "skybox_renderer.h"
+
+#include "../world/chunk/mesh/chunk_mesh.h"
 
 #include <unordered_map>
 
@@ -26,6 +29,7 @@ namespace client {
         Renderer &operator=(const Renderer &) = delete;
 
         void process(const Entity &entity);
+        void process(const ChunkMesh &mesh);
 
         void render(const Camera &camera);
 
@@ -36,11 +40,14 @@ namespace client {
             m_entityBatches;
 
         SkyboxRenderer m_skyboxRenderer;
+        ChunkRenderer m_chunkRenderer;
 
         Shader m_entityShader;
         GLuint m_locationProjectionViewMatrix;
         GLuint m_locationModelMatrix;
         GLuint m_locationColour;
         GLuint m_locationLightPosition;
+
+        ChunkMesh m_chunkMesh;
     };
 } // namespace client

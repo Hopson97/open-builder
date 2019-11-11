@@ -1,13 +1,16 @@
 #include "renderer.h"
 
 #include "camera.h"
-
 #include "gl/gl_errors.h"
+#include <iostream>
 
 #include "../geometry/geometry_factory.h"
 #include "../util/maths.h"
 
 #include "../world/entity.h"
+
+#include "../world/chunk/chunk.h"
+#include "../world/chunk/mesh/chunk_mesh_builder.h"
 
 namespace client {
     void drawElements(GLsizei count)
@@ -31,6 +34,11 @@ namespace client {
         glCheck(glEnable(GL_DEPTH_TEST));
         glCheck(glEnable(GL_CULL_FACE));
         glCheck(glCullFace(GL_BACK));
+    }
+
+    void Renderer::process(const ChunkMesh &mesh)
+    {
+        m_chunkRenderer.process(mesh);
     }
 
     void Renderer::process(const Entity &entity)
@@ -65,6 +73,7 @@ namespace client {
             }
         }
         m_entityBatches.clear();
+        m_chunkRenderer.render(camera);
 
         m_skyboxRenderer.render(camera);
     }

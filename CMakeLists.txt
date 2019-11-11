@@ -6,8 +6,8 @@ project(open-builder
 )
 
 add_executable(${PROJECT_NAME} 
-    src/server/application.cpp
     src/server/world/entity.cpp
+    src/server/application.cpp
     src/server/network/server.cpp
     src/main.cpp
     src/client/game_states/survival_state.cpp
@@ -17,6 +17,9 @@ add_executable(${PROJECT_NAME}
     src/client/util/model_loader.cpp
     src/client/util/fps_counter.cpp
     src/client/input/keyboard.cpp
+    src/client/world/chunk/chunk.cpp
+    src/client/world/chunk/mesh/chunk_mesh.cpp
+    src/client/world/chunk/mesh/chunk_mesh_builder.cpp
     src/client/geometry/geometry_factory_primatives.cpp
     src/client/geometry/geometry_factory_models.cpp
     src/client/engine.cpp
@@ -30,6 +33,7 @@ add_executable(${PROJECT_NAME}
     src/client/renderer/texture/cube_texture.cpp
     src/client/renderer/texture/texture_atlas.cpp
     src/client/renderer/skybox_renderer.cpp
+    src/client/renderer/chunk_renderer.cpp
     src/client/renderer/renderer.cpp
     src/common/common/util/file_io.cpp
     src/common/common/debug.cpp

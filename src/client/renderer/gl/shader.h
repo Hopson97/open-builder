@@ -13,6 +13,7 @@ namespace client {
 
     class Shader {
       public:
+        Shader() = default;
         Shader(const std::string &vertexFile, const std::string &fragmentFile);
 
         Shader(Shader &&other);

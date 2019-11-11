@@ -10,15 +10,12 @@ uniform mat4 projectionViewMatrix;
 out vec2 passTexCoord;
 out vec3 passNormal;
 out vec3 passFragPosition;
-out vec4 passWorldPosition;
 
 void main() {
-    vec4 worldPosition = modelMatrix * vec4(inVertexCoord, 1.0);
-    gl_Position = projectionViewMatrix * worldPosition;
+    gl_Position = projectionViewMatrix * modelMatrix * vec4(inVertexCoord, 1.0);
     
     passTexCoord = inTextureCoord;
     passNormal = inNormalCoord;
-    passWorldPosition = worldPosition;
     
     passFragPosition = vec3(modelMatrix * vec4(inVertexCoord, 1.0));
 }

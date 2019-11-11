@@ -167,7 +167,7 @@ namespace server {
             m_clientStatuses[slot] = ClientStatus::Connected;
             m_clientSessions[slot].address = clientAddress;
             m_clientSessions[slot].port = clientPort;
-            m_clientSessions[slot].p_entity->position = {10, 0, 10};
+            m_clientSessions[slot].p_entity->position.y = 32.0f;
             m_clientSessions[slot].p_entity->isAlive = true;
 
             m_aliveEntities++;

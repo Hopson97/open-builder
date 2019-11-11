@@ -3,7 +3,6 @@
 in vec3 passNormal;
 in vec3 passFragPosition;
 in vec2 passTexCoord;
-in vec4 passWorldPosition;
 
 out vec4 outColour;
 
@@ -22,6 +21,6 @@ void main() {
     //outColour = attenuation * difference * vec4(colour, 1.0) * texture(tex, passTexCoord);
     outColour = vec4(colour, 1.0) * texture(tex, passTexCoord);
     if (outColour.a == 0.0) {
-        discard;
+    //    discard;
     }
 }

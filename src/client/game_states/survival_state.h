@@ -5,6 +5,11 @@
 #include <common/network/input_state.h>
 #include <common/types.h>
 
+#include <vector>
+
+#include "../world/chunk/chunk.h"
+#include "../world/chunk/mesh/chunk_mesh_builder.h"
+
 #include "../network/client.h"
 
 namespace client {
@@ -36,6 +41,9 @@ namespace client {
 
         TexturedModel m_defaultModel;
         TexturedModel m_playerModel;
+
+        std::vector<Chunk> m_chunks;
+        std::vector<ChunkMesh> m_chunkMeshes;
 
         bool m_isMouseLocked = false;
     };
