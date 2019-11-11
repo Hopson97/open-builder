@@ -24,6 +24,6 @@ namespace client {
         void bind() const;
 
       private:
-        GLuint m_textureId;
+        GLuint m_textureId = 0;
     };
 } // namespace client

@@ -62,8 +62,8 @@ namespace client {
 
         void addIndexBuffer(const std::vector<GLuint> &indices);
 
-        GLuint m_handle;
-        GLsizei m_indicesCount;
+        GLuint m_handle = 0;
+        GLsizei m_indicesCount = 0;
 
         std::vector<GLuint> m_vertexBuffers;
     };
