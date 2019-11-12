@@ -40,6 +40,7 @@ add_executable(${PROJECT_NAME}
     src/common/common/util/file_io.cpp
     src/common/common/debug.cpp
     src/common/common/coordinate_converion.cpp
+    src/common/common/network/packet.cpp
 )
 
 #Set C++17

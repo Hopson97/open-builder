@@ -82,11 +82,3 @@ sf::Packet &operator<<(sf::Packet &packet, CommandType command)
     packet << static_cast<command_t>(command);
     return packet;
 }
-
-template <typename CommandType>
-sf::Packet createCommandPacket(CommandType command)
-{
-    sf::Packet packet;
-    packet << command;
-    return packet;
-}

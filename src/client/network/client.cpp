@@ -17,8 +17,9 @@ namespace client {
     {
         auto inputStatePacket =
             createCommandPacket(CommandToServer::PlayerInput);
-        inputStatePacket << m_clientId << input << rotation.x << rotation.y;
-        sendToServer(inputStatePacket);
+        inputStatePacket.payload << m_clientId << input << rotation.x
+                                 << rotation.y;
+        sendToServer(inputStatePacket.payload);
     }
 
     void Client::update()
@@ -26,14 +27,10 @@ namespace client {
         PackagedCommand package;
         while (getFromServer(package)) {
             auto &packet = package.packet;
-            u8 reliable = 0;
-            packet >> reliable;
-            if (reliable) {
-                auto p = createCommandPacket(CommandToServer::Acknowledgment);
-                u32 seq = 0;
-                packet >> seq;
-                p << seq;
-                sendToServer(p);
+            if (package.flags == (u8)Packet::Flag::Reliable) {
+                auto ack = createCommandPacket(CommandToServer::Acknowledgment);
+                ack.payload << package.seq << m_clientId;
+                sendToServer(ack.payload);
             }
             switch (package.command) {
                 case CommandToClient::WorldState:
@@ -77,7 +74,7 @@ namespace client {
     {
         m_server.address = address;
         auto connectRequest = createCommandPacket(CommandToServer::Connect);
-        if (sendToServer(connectRequest)) {
+        if (sendToServer(connectRequest.payload)) {
             PackagedCommand response;
             if (getFromServer(response)) {
                 ConnectionResult result;
@@ -113,8 +110,8 @@ namespace client {
     {
         auto disconnectRequest =
             createCommandPacket(CommandToServer::Disconnect);
-        disconnectRequest << m_clientId;
-        if (sendToServer(disconnectRequest)) {
+        disconnectRequest.payload << m_clientId;
+        if (sendToServer(disconnectRequest.payload)) {
             m_isConnected = false;
         }
     }
@@ -131,7 +128,10 @@ namespace client {
         port_t port;
         if (m_socket.receive(package.packet, address, port) ==
             sf::Socket::Done) {
-            package.packet >> package.command;
+            package.packet >> package.command >> package.flags;
+            if (package.flags == (u8)Packet::Flag::Reliable) {
+                package.packet >> package.seq;
+            }
             return true;
         }
         return false;

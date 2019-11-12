@@ -5,6 +5,7 @@
 
 #include <common/network/commands.h>
 #include <common/network/input_state.h>
+#include <common/network/packet.h>
 
 #include "../world/entity.h"
 
@@ -28,6 +29,9 @@ namespace client {
         struct PackagedCommand {
             sf::Packet packet;
             CommandToClient command;
+
+            u8 flags;
+            u32 seq;
         };
 
         bool sendToServer(sf::Packet &packet);

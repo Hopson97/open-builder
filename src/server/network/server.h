@@ -7,18 +7,20 @@
 #include <SFML/Network/UdpSocket.hpp>
 #include <SFML/System/Clock.hpp>
 #include <common/network/commands.h>
-#include <list>
+#include <common/network/packet.h>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace server {
-    struct Packet {
-        sf::Packet payload;
-        u32 seq;
-        bool isReliable;
-        int triesLeft = 5;
-        bool sendToAll = false;
-    };
-
     class Server final {
+        struct QueuedPacket {
+            QueuedPacket(Packet &&pkt)
+                : packet(std::move(pkt)){};
+
+            Packet packet;
+            std::unordered_set<client_id_t> clients;
+        };
+
       public:
         Server(int maxConnections, port_t port, EntityArray &entities);
 
@@ -42,6 +44,9 @@ namespace server {
             sf::IpAddress address;
             CommandToServer command;
             port_t port;
+
+            u8 flags;
+            u32 seq;
         };
 
         bool getFromClient(PackagedCommand &package);
@@ -54,7 +59,7 @@ namespace server {
 
         sf::UdpSocket m_socket;
 
-        std::list<Packet> m_reliablePacketQueue;
+        std::unordered_map<u32, QueuedPacket> m_reliablePacketQueue;
 
         std::vector<ClientSession> m_clientSessions;
         std::vector<ClientStatus> m_clientStatuses;

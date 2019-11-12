@@ -76,10 +76,11 @@ namespace server {
     void Server::resendPackets()
     {
         if (!m_reliablePacketQueue.empty()) {
-            auto p = m_reliablePacketQueue.front();
-            m_reliablePacketQueue.pop_front();
-            if (p.sendToAll) {
-                sendToAllClients(p);
+            auto &packet = m_reliablePacketQueue.begin()->second;
+            if (!packet.clients.empty()) {
+                auto itr = packet.clients.begin();
+                sendToClient(*packet.clients.begin(), packet.packet);
+                packet.clients.erase(itr);
             }
         }
     }
@@ -117,13 +118,25 @@ namespace server {
             bool result =
                 m_socket.send(packet.payload, m_clientSessions[id].address,
                               m_clientSessions[id].port) == sf::Socket::Done;
-            if (packet.isReliable && packet.triesLeft > 0) {
-                packet.triesLeft--;
-                m_reliablePacketQueue.push_back(std::move(packet));
+            // if (packet.isReliable && packet.triesLeft > 0) {
+            //    packet.triesLeft--;
+            //    m_reliablePacketQueue.push_back(std::move(packet));
+            //}
+            // else if (packet.triesLeft == 0) {
+            //    //..todo...
+            //}
+            if (packet.hasFlag(Packet::Flag::Reliable)) {
+                auto pack = m_reliablePacketQueue.find(packet.sequenceNumber);
+                if (pack == m_reliablePacketQueue.end()) {
+                    auto queuedPacket = m_reliablePacketQueue.emplace(
+                        packet.sequenceNumber, std::move(packet));
+                    queuedPacket.first->second.clients.insert(id);
+                }
+                else {
+                    pack->second.clients.insert(id);
+                }
             }
-            else if (packet.triesLeft == 0) {
-                //..todo...
-            }
+
             return result;
         }
         return false;
@@ -131,7 +144,6 @@ namespace server {
 
     void Server::sendToAllClients(Packet &packet)
     {
-        packet.sendToAll = true;
         for (int i = 0; i < m_maxConnections; i++) {
             sendToClient(i, packet);
         }
@@ -139,26 +151,23 @@ namespace server {
 
     Packet Server::createPacket(CommandToClient command, bool reliable)
     {
-        Packet packet;
-        packet.payload << command;
         if (reliable) {
-            packet.seq = m_currSequenceNumber++;
-            packet.payload << static_cast<u8>(1);
-            packet.payload << packet.seq;
-            packet.isReliable = true;
+            return createCommandPacket(command, Packet::Flag::Reliable,
+                                       ++m_currSequenceNumber);
         }
         else {
-            packet.payload << static_cast<u8>(0);
-            packet.isReliable = false;
+            return createCommandPacket(command);
         }
-        return packet;
     }
 
     bool Server::getFromClient(PackagedCommand &package)
     {
         if (m_socket.receive(package.packet, package.address, package.port) ==
             sf::Socket::Done) {
-            package.packet >> package.command;
+            package.packet >> package.command >> package.flags;
+            if (package.flags == (u8)Packet::Flag::Reliable) {
+                package.packet >> package.seq;
+            }
             return true;
         }
         return false;
@@ -173,8 +182,8 @@ namespace server {
                                     const sf::IpAddress &address, port_t port) {
             auto rejectPacket =
                 createCommandPacket(CommandToClient::ConnectRequestResult);
-            rejectPacket << result;
-            m_socket.send(rejectPacket, address, port);
+            rejectPacket.payload << result;
+            m_socket.send(rejectPacket.payload, address, port);
         };
 
         // This makes sure there are not any duplicated connections
@@ -194,9 +203,9 @@ namespace server {
             // Connection can be made
             auto responsePacket =
                 createCommandPacket(CommandToClient::ConnectRequestResult);
-            responsePacket << ConnectionResult::Success
-                           << static_cast<client_id_t>(slot)
-                           << static_cast<u8>(m_maxConnections);
+            responsePacket.payload << ConnectionResult::Success
+                                   << static_cast<client_id_t>(slot)
+                                   << static_cast<u8>(m_maxConnections);
 
             m_clientStatuses[slot] = ClientStatus::Connected;
             m_clientSessions[slot].address = clientAddress;
@@ -206,7 +215,7 @@ namespace server {
             m_clientSessions[slot].p_entity->speed = 16.0f;
 
             m_aliveEntities++;
-            m_socket.send(responsePacket, clientAddress, clientPort);
+            m_socket.send(responsePacket.payload, clientAddress, clientPort);
 
             m_connections++;
             std::cout << "Client Connected slot: " << (int)slot << '\n';
@@ -251,14 +260,17 @@ namespace server {
     void Server::handleAckPacket(sf::Packet &packet)
     {
         u32 sequence;
-        packet >> sequence;
-        for (auto itr = m_reliablePacketQueue.begin();
-             itr != m_reliablePacketQueue.end();) {
-            if (itr->seq == sequence) {
-                itr = m_reliablePacketQueue.erase(itr);
+        client_id_t id;
+        packet >> sequence >> id;
+        auto itr = m_reliablePacketQueue.find(sequence);
+        if (itr != m_reliablePacketQueue.end()) {
+            auto &clients = itr->second.clients;
+            auto client = clients.find(id);
+            if (client != clients.end()) {
+                clients.erase(client);
             }
-            else {
-                itr++;
+            if (clients.empty()) {
+                m_reliablePacketQueue.erase(itr);
             }
         }
     }
