@@ -11,11 +11,11 @@
 
 namespace server {
     struct Packet {
-      sf::Packet payload;
-      u32 seq;
-      bool isReliable;
-      int triesLeft = 5;
-      bool sendToAll = false;
+        sf::Packet payload;
+        u32 seq;
+        bool isReliable;
+        int triesLeft = 5;
+        bool sendToAll = false;
     };
 
     class Server final {
@@ -46,8 +46,9 @@ namespace server {
 
         bool getFromClient(PackagedCommand &package);
 
-        void handleAckPacket(sf::Packet& packet);
-        void handleIncomingConnection(const sf::IpAddress &address, port_t port);
+        void handleAckPacket(sf::Packet &packet);
+        void handleIncomingConnection(const sf::IpAddress &address,
+                                      port_t port);
         void handleDisconnect(sf::Packet &packet);
         void handleKeyInput(sf::Packet &packet);
 

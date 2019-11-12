@@ -111,7 +111,8 @@ namespace client {
         static sf::Clock clock;
         if (clock.getElapsedTime().asSeconds() > 1) {
             clock.restart();
-            std::cout << "Client chunks: " << m_world.chunks.size() << std::endl;
+            std::cout << "Client chunks: " << m_world.chunks.size()
+                      << std::endl;
         }
     }
 

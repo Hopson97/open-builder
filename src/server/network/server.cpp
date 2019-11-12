@@ -73,10 +73,9 @@ namespace server {
         }
     }
 
-    void Server::resendPackets() 
+    void Server::resendPackets()
     {
-        if (!m_reliablePacketQueue.empty())
-        {
+        if (!m_reliablePacketQueue.empty()) {
             auto p = m_reliablePacketQueue.front();
             m_reliablePacketQueue.pop_front();
             if (p.sendToAll) {
@@ -115,8 +114,9 @@ namespace server {
     bool Server::sendToClient(client_id_t id, Packet &packet)
     {
         if (m_clientStatuses[id] == ClientStatus::Connected) {
-            bool result = m_socket.send(packet.payload, m_clientSessions[id].address,
-                                 m_clientSessions[id].port) == sf::Socket::Done;
+            bool result =
+                m_socket.send(packet.payload, m_clientSessions[id].address,
+                              m_clientSessions[id].port) == sf::Socket::Done;
             if (packet.isReliable && packet.triesLeft > 0) {
                 packet.triesLeft--;
                 m_reliablePacketQueue.push_back(std::move(packet));
@@ -192,7 +192,8 @@ namespace server {
                               clientPort);
             }
             // Connection can be made
-            auto responsePacket = createCommandPacket(CommandToClient::ConnectRequestResult);
+            auto responsePacket =
+                createCommandPacket(CommandToClient::ConnectRequestResult);
             responsePacket << ConnectionResult::Success
                            << static_cast<client_id_t>(slot)
                            << static_cast<u8>(m_maxConnections);
@@ -247,18 +248,16 @@ namespace server {
         packet >> m_clientSessions[client].p_entity->rotation.y;
     }
 
-    void Server::handleAckPacket(sf::Packet& packet)
+    void Server::handleAckPacket(sf::Packet &packet)
     {
         u32 sequence;
         packet >> sequence;
-        for (auto itr = m_reliablePacketQueue.begin(); itr != m_reliablePacketQueue.end();)
-        {
-            if (itr->seq == sequence)
-            {
+        for (auto itr = m_reliablePacketQueue.begin();
+             itr != m_reliablePacketQueue.end();) {
+            if (itr->seq == sequence) {
                 itr = m_reliablePacketQueue.erase(itr);
             }
-            else 
-            {
+            else {
                 itr++;
             }
         }
