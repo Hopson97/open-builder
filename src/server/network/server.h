@@ -11,7 +11,7 @@
 namespace server {
     class Server final {
       public:
-        Server(int maxConnections, Port port, EntityArray &entities);
+        Server(int maxConnections, port_t port, EntityArray &entities);
 
         void recievePackets();
         void sendPackets();
@@ -21,7 +21,7 @@ namespace server {
         int maxConnections() const;
         int findEmptySlot() const;
 
-        bool sendToClient(ClientId id, sf::Packet &packet);
+        bool sendToClient(client_id_t id, sf::Packet &packet);
         void sendToAllClients(sf::Packet &packet);
 
       private:
@@ -29,12 +29,12 @@ namespace server {
             sf::Packet packet;
             sf::IpAddress address;
             CommandToServer command;
-            Port port;
+            port_t port;
         };
 
         bool getFromClient(PackagedCommand &package);
 
-        void handleIncomingConnection(const sf::IpAddress &address, Port port);
+        void handleIncomingConnection(const sf::IpAddress &address, port_t port);
         void handleDisconnect(sf::Packet &packet);
         void handleKeyInput(sf::Packet &packet);
 

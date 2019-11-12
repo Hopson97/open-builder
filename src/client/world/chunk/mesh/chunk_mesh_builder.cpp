@@ -139,9 +139,11 @@ namespace client {
 
         chunkMesh.solidBlocks.create(m_mesh);
         chunkMesh.solidBlocks.addVertexBuffer(1, m_chunkBasicLight, GL_FLOAT);
+        /*
         std::cout << "Chunk creation time: "
                   << timer.getElapsedTime().asSeconds() * 1000
                   << " milliseconds" << std::endl;
+        */
         return chunkMesh;
     }
 
@@ -150,9 +152,12 @@ namespace client {
     {
         int index = 0;
         for (int i = 0; i < 4; i++) {
-            m_mesh.vertices.push_back(face.vertices[index++] + position.x);
-            m_mesh.vertices.push_back(face.vertices[index++] + position.y);
-            m_mesh.vertices.push_back(face.vertices[index++] + position.z);
+            m_mesh.vertices.push_back(face.vertices[index++] + position.x +
+                                      (mp_chunk.position.x * CHUNK_SIZE));
+            m_mesh.vertices.push_back(face.vertices[index++] + position.y +
+                                      (mp_chunk.position.y * CHUNK_SIZE));
+            m_mesh.vertices.push_back(face.vertices[index++] + position.z +
+                                      (mp_chunk.position.z * CHUNK_SIZE));
 
             m_chunkBasicLight.push_back(face.basicLight);
         }

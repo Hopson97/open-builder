@@ -39,7 +39,7 @@ namespace client {
         Entity &getPlayerEntity();
 
         Client m_client;
-        Input m_inputState = 0;
+        input_t m_inputState = 0;
 
         TexturedModel m_defaultModel;
         TexturedModel m_playerModel;

@@ -15,11 +15,11 @@ using i16 = int16_t;
 using i32 = int32_t;
 
 // Network types
-using Port = u16;
-using ClientId = u8;
-using EntityId = u16;
-using Command = u8;
-using Input = u8;
+using port_t = u16;
+using client_id_t = u8;
+using entityid_t = u16;
+using command_t = u8;
+using input_t = u8;
 
 // Game types
 using BlockPosition = sf::Vector3<i32>;

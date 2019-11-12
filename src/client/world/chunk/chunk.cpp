@@ -27,7 +27,6 @@ namespace client {
 
     sf::Packet &operator>>(sf::Packet &packet, Chunk &chunk)
     {
-        std::cout << "Data recieved\n";
         for (auto &block : chunk.m_blocks) {
             u8 blockId;
             packet >> blockId;

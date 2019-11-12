@@ -7,8 +7,8 @@
 namespace server {
     struct ClientSession {
         sf::IpAddress address;
-        Port port = 0;
-        Input keyState = 0;
+        port_t port = 0;
+        input_t keyState = 0;
         Entity *p_entity = nullptr;
     };
 

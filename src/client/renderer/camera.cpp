@@ -2,12 +2,13 @@
 
 #include "../util/maths.h"
 #include <common/launch_config.h>
+#include <iostream>
 
 namespace client {
     Camera::Camera()
     {
-        m_projectionMatrix = glm::perspective(glm::radians(90.0f),
-                                              1280.0f / 720.0f, 0.01f, 1024.0f);
+        m_projectionMatrix = glm::perspective(glm::radians(120.0f),
+                                              1280.0f / 720.0f, 0.1f, 2048.0f);
         updateMatrices();
     }
 

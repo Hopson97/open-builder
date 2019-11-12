@@ -7,7 +7,7 @@
 #include <thread>
 
 namespace server {
-    Application::Application(const LaunchConfig &config, Port port)
+    Application::Application(const LaunchConfig &config, port_t port)
         : m_server(config.serverOptions.maxConnections, port, m_entities)
     {
         std::cout << "Server started on port " << port << "." << std::endl;
@@ -28,12 +28,26 @@ namespace server {
     {
         sf::Clock timeoutClock;
         sf::Clock deltaClock;
+        bool sent = false;
         while (m_isRunning) {
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
             m_server.recievePackets();
             update(deltaClock.restart());
             sendState();
+
+            if (m_server.connectedPlayes() != 0 && !sent) {
+                int i = 0;
+                for (auto &chunk : m_chunks) {
+                    auto p = createCommandPacket(CommandToClient::ChunkData);
+                    p << chunk;
+                    m_server.sendToAllClients(p);
+                    i++;
+                }
+                std::cout << "Server sent: " << i << "chunks\n";
+                
+                sent = true;
+            }
 
             if (m_server.connectedPlayes() == 0) {
                 if (timeoutClock.getElapsedTime() > timeout) {
@@ -69,7 +83,7 @@ namespace server {
     {
         auto statePacket = createCommandPacket(CommandToClient::WorldState);
         statePacket << static_cast<u16>(m_entities.size());
-        for (u16 i = 0; i < m_entities.size(); i++) {
+        for (entityid_t i = 0; i < m_entities.size(); i++) {
             if (m_entities[i].isAlive) {
                 Entity &entity = m_entities[i];
 

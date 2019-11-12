@@ -13,7 +13,7 @@
 #include <thread>
 
 namespace server {
-    Server::Server(int maxConnections, Port port, EntityArray &entities)
+    Server::Server(int maxConnections, port_t port, EntityArray &entities)
         : m_clientSessions(maxConnections)
         , m_clientStatuses(maxConnections)
     {
@@ -98,7 +98,7 @@ namespace server {
 
     void Server::handleKeyInput(sf::Packet &packet)
     {
-        ClientId client;
+        client_id_t client;
 
         packet >> client;
         packet >> m_clientSessions[client].keyState;
@@ -106,7 +106,7 @@ namespace server {
         packet >> m_clientSessions[client].p_entity->rotation.y;
     }
 
-    bool Server::sendToClient(ClientId id, sf::Packet &packet)
+    bool Server::sendToClient(client_id_t id, sf::Packet &packet)
     {
         if (m_clientStatuses[id] == ClientStatus::Connected) {
             return m_socket.send(packet, m_clientSessions[id].address,
@@ -133,12 +133,12 @@ namespace server {
     }
 
     void Server::handleIncomingConnection(const sf::IpAddress &clientAddress,
-                                          Port clientPort)
+                                          port_t clientPort)
     {
         std::cout << "Connection request got\n";
 
         auto sendRejection = [this](ConnectionResult result,
-                                    const sf::IpAddress &address, Port port) {
+                                    const sf::IpAddress &address, port_t port) {
             auto rejectPacket =
                 createCommandPacket(CommandToClient::ConnectRequestResult);
             rejectPacket << result;
@@ -160,17 +160,17 @@ namespace server {
                               clientPort);
             }
             // Connection can be made
-            sf::Packet responsePacket;
-            responsePacket << CommandToClient::ConnectRequestResult
-                           << ConnectionResult::Success
-                           << static_cast<ClientId>(slot)
+            auto responsePacket = createCommandPacket(CommandToClient::ConnectRequestResult);
+            responsePacket << ConnectionResult::Success
+                           << static_cast<client_id_t>(slot)
                            << static_cast<u8>(m_maxConnections);
 
             m_clientStatuses[slot] = ClientStatus::Connected;
             m_clientSessions[slot].address = clientAddress;
             m_clientSessions[slot].port = clientPort;
-            m_clientSessions[slot].p_entity->position.y = 32.0f;
+            m_clientSessions[slot].p_entity->position.y = 50.0f;
             m_clientSessions[slot].p_entity->isAlive = true;
+            m_clientSessions[slot].p_entity->speed = 5.0f;
 
             m_aliveEntities++;
             m_socket.send(responsePacket, clientAddress, clientPort);
@@ -179,14 +179,8 @@ namespace server {
             std::cout << "Client Connected slot: " << (int)slot << '\n';
 
             auto joinPack = createCommandPacket(CommandToClient::PlayerJoin);
-            joinPack << static_cast<ClientId>(slot);
+            joinPack << static_cast<client_id_t>(slot);
             sendToAllClients(joinPack);
-
-            ChunkPosition position(0, 0, 0);
-            Chunk chunk(position);
-            auto p = createCommandPacket(CommandToClient::ChunkData);
-            p << chunk;
-            m_socket.send(p, clientAddress, clientPort);
         }
         else {
             sendRejection(ConnectionResult::GameFull, clientAddress,
@@ -197,7 +191,7 @@ namespace server {
 
     void Server::handleDisconnect(sf::Packet &packet)
     {
-        ClientId client;
+        client_id_t client;
         packet >> client;
         m_clientStatuses[client] = ClientStatus::Disconnected;
         m_clientSessions[client].p_entity->isAlive = false;

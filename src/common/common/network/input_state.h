@@ -2,7 +2,7 @@
 
 #include "../types.h"
 
-enum PlayerInput : Input {
+enum PlayerInput : input_t {
     Forwards = 1,
     Back = 2,
     Left = 4,

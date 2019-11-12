@@ -5,7 +5,6 @@
 namespace client {
     World::World()
     {
-
     }
 
     void World::update()
@@ -15,6 +14,7 @@ namespace client {
                 ChunkMeshBuilder builder(chunk);
                 chunkMeshes[position] = builder.createMesh();
                 chunk.flag = Chunk::Flag::None;
+                return;
             }
         }
     }

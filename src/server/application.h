@@ -12,7 +12,7 @@ class LaunchConfig;
 namespace server {
     class Application {
       public:
-        Application(const LaunchConfig &config, Port port);
+        Application(const LaunchConfig &config, port_t port);
 
         void run(sf::Time timeout);
 

@@ -16,12 +16,12 @@ namespace client {
         bool connect(const sf::IpAddress &address);
         void disconnect();
 
-        void sendInput(Input input, const glm::vec3 &rotation);
+        void sendInput(input_t input, const glm::vec3 &rotation);
         void update();
 
         bool isConnected() const;
 
-        ClientId getClientId() const;
+        client_id_t getClientId() const;
         u8 getMaxPlayers() const;
 
       private:
@@ -40,12 +40,12 @@ namespace client {
 
         struct {
             sf::IpAddress address;
-            Port port;
+            port_t port;
         } m_server;
 
         sf::UdpSocket m_socket;
-        ClientId m_clientId;
-        Input m_inputState = 0;
+        client_id_t m_clientId;
+        input_t m_inputState = 0;
         bool m_isConnected = false;
 
         World &mp_world;

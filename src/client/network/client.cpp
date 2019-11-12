@@ -13,7 +13,7 @@ namespace client {
     {
     }
 
-    void Client::sendInput(Input input, const glm::vec3 &rotation)
+    void Client::sendInput(input_t input, const glm::vec3 &rotation)
     {
         auto inputStatePacket =
             createCommandPacket(CommandToServer::PlayerInput);
@@ -54,7 +54,7 @@ namespace client {
         return m_isConnected;
     }
 
-    ClientId Client::getClientId() const
+    client_id_t Client::getClientId() const
     {
         return m_clientId;
     }
@@ -119,7 +119,7 @@ namespace client {
     bool Client::getFromServer(PackagedCommand &package)
     {
         sf::IpAddress address;
-        Port port;
+        port_t port;
         if (m_socket.receive(package.packet, address, port) ==
             sf::Socket::Done) {
             package.packet >> package.command;
@@ -133,7 +133,7 @@ namespace client {
         u16 count;
         packet >> count;
         for (unsigned i = 0; i < count; i++) {
-            EntityId id;
+            entityid_t id;
             packet >> id;
             auto &entity = mp_world.entities[id];
             auto &transform = entity.transform;
@@ -166,7 +166,7 @@ namespace client {
 
     void Client::handlePlayerJoin(sf::Packet &packet)
     {
-        ClientId id;
+        client_id_t id;
         packet >> id;
         mp_world.entities[id].alive = true;
 
@@ -175,7 +175,7 @@ namespace client {
 
     void Client::handlePlayerLeave(sf::Packet &packet)
     {
-        ClientId id;
+        client_id_t id;
         packet >> id;
         mp_world.entities[id].alive = false;
 

@@ -3,8 +3,8 @@
 #include "../types.h"
 #include <SFML/Network/Packet.hpp>
 
-/// Command from the client to the server
-enum class CommandToServer : Command {
+/// command_t from the client to the server
+enum class CommandToServer : command_t {
 
     /// Connection request
     /// Command_t: CommandToServer
@@ -12,29 +12,29 @@ enum class CommandToServer : Command {
 
     /// Disconnect request
     /// Command_t: CommandToServer
-    /// ClientId: id
+    /// client_id_t: id
     Disconnect,
 
     /// Keyboard input state
     /// Command_t: CommandToServer
-    /// ClientId: id
-    /// Input: input
+    /// client_id_t: id
+    /// input_t: input
     /// float: players x look direction
     /// float: players y look direction
     PlayerInput,
 
 };
 
-/// Command from the server to the client
-enum class CommandToClient : Command {
+/// command_t from the server to the client
+enum class CommandToClient : command_t {
     /// Result of a connetion request
     /// u8: 0 = fail, 1 = success
-    /// ClientId: id [aka slot]
+    /// client_id_t: id [aka slot]
     ConnectRequestResult,
 
     /// The current state the world entities are in
     /// u16 count
-    /// [EntityID
+    /// [entityid_t
     /// u16 x,
     /// u16 y,
     /// u16 z,
@@ -57,7 +57,7 @@ enum class CommandToClient : Command {
     PlayerLeave
 };
 
-enum class ConnectionResult : Command {
+enum class ConnectionResult : command_t {
     Success = 0,
     GameFull = 1,
     DuplicateId = 2,
@@ -66,7 +66,7 @@ enum class ConnectionResult : Command {
 template <typename CommandType>
 sf::Packet &operator>>(sf::Packet &packet, CommandType &command)
 {
-    Command commandId;
+    command_t commandId;
     packet >> commandId;
     command = static_cast<CommandType>(commandId);
     return packet;
@@ -75,7 +75,7 @@ sf::Packet &operator>>(sf::Packet &packet, CommandType &command)
 template <typename CommandType>
 sf::Packet &operator<<(sf::Packet &packet, CommandType command)
 {
-    packet << static_cast<Command>(command);
+    packet << static_cast<command_t>(command);
     return packet;
 }
 
