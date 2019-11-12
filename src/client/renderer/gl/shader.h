@@ -35,6 +35,6 @@ namespace client {
         void use() const;
 
       private:
-        GLuint m_program;
+        GLuint m_program = 0;
     };
 } // namespace client

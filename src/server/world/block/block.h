@@ -3,7 +3,7 @@
 #include <SFML/System/Vector3.hpp>
 #include <common/types.h>
 
-namespace client {
+namespace server {
     using BlockId = u8;
 
     enum class BlockType : BlockId {
@@ -21,4 +21,4 @@ namespace client {
 
         BlockType type = BlockType::Grass;
     };
-} // namespace client
+} // namespace server

@@ -5,12 +5,15 @@
 #include <common/network/input_state.h>
 #include <common/types.h>
 
+#include <unordered_map>
 #include <vector>
 
 #include "../world/chunk/chunk.h"
 #include "../world/chunk/mesh/chunk_mesh_builder.h"
 
 #include "../network/client.h"
+
+#include "../world/world.h"
 
 namespace client {
     class StateHandler;
@@ -35,15 +38,13 @@ namespace client {
       private:
         Entity &getPlayerEntity();
 
-        EntityArray m_entities;
         Client m_client;
         Input m_inputState = 0;
 
         TexturedModel m_defaultModel;
         TexturedModel m_playerModel;
 
-        std::vector<Chunk> m_chunks;
-        std::vector<ChunkMesh> m_chunkMeshes;
+        World m_world;
 
         bool m_isMouseLocked = false;
     };

@@ -100,11 +100,11 @@ namespace client {
         for (int y = 0; y < CHUNK_SIZE; ++y) {
             for (int z = 0; z < CHUNK_SIZE; ++z) {
                 for (int x = 0; x < CHUNK_SIZE; ++x) {
-                    Block block = mp_chunk.getBlock({x, y, z});
 
                     // Eventually, this will be used to determine the mesh type
                     // and texture For now, it is not needed
-                    (void)block;
+
+                    /*Block block = mp_chunk.getBlock({x, y, z});*/
 
                     Block left = mp_chunk.getBlock({x - 1, y, z});
                     Block right = mp_chunk.getBlock({x + 1, y, z});
@@ -146,7 +146,7 @@ namespace client {
     }
 
     void ChunkMeshBuilder::addFace(const BlockFace &face,
-                                   const LocalBlockPosition &position)
+                                   const BlockPosition &position)
     {
         int index = 0;
         for (int i = 0; i < 4; i++) {

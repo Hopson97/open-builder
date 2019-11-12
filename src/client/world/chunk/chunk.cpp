@@ -5,19 +5,34 @@
 #include <common/coordinate_convertion.h>
 
 namespace client {
-    Chunk::Chunk()
+    Chunk::Chunk(int x, int y, int z)
+        : position({x, y, z})
     {
     }
 
-    Block Chunk::getBlock(const LocalBlockPosition &position) const
+    Chunk::Chunk(const ChunkPosition &chunkPosition)
+        : position(chunkPosition)
     {
-        if (position.x < 0 || position.x >= CHUNK_SIZE || position.y < 0 ||
-            position.y >= CHUNK_SIZE || position.z < 0 ||
-            position.z >= CHUNK_SIZE) {
+    }
+
+    Block Chunk::getBlock(const BlockPosition &blockPosition) const
+    {
+        if (positionOutOfChunkBounds(blockPosition)) {
             return BlockType::Air;
         }
         else {
-            return m_blocks[toChunkBlockIndex(position)];
+            return m_blocks[toChunkBlockIndex(blockPosition)];
         }
+    }
+
+    sf::Packet &operator>>(sf::Packet &packet, Chunk &chunk)
+    {
+        std::cout << "Data recieved\n";
+        for (auto &block : chunk.m_blocks) {
+            u8 blockId;
+            packet >> blockId;
+            block = static_cast<BlockType>(blockId);
+        }
+        return packet;
     }
 } // namespace client

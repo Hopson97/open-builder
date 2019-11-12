@@ -5,9 +5,11 @@
 #include <iostream>
 #include <thread>
 
+#include "../world/world.h"
+
 namespace client {
-    Client::Client(EntityArray &entites)
-        : mp_entities(entites)
+    Client::Client(World &world)
+        : mp_world(world)
     {
     }
 
@@ -27,6 +29,10 @@ namespace client {
             switch (package.command) {
                 case CommandToClient::WorldState:
                     handleWorldState(packet);
+                    break;
+
+                case CommandToClient::ChunkData:
+                    handleChunkData(packet);
                     break;
 
                 case CommandToClient::PlayerJoin:
@@ -60,7 +66,7 @@ namespace client {
 
     bool Client::connect(const sf::IpAddress &address)
     {
-        m_serverIpAddress = address;
+        m_server.address = address;
         auto connectRequest = createCommandPacket(CommandToServer::Connect);
         if (sendToServer(connectRequest)) {
             PackagedCommand response;
@@ -106,7 +112,7 @@ namespace client {
 
     bool Client::sendToServer(sf::Packet &packet)
     {
-        return m_socket.send(packet, m_serverIpAddress, PORT) ==
+        return m_socket.send(packet, m_server.address, PORT) ==
                sf::Socket::Done;
     }
 
@@ -129,7 +135,7 @@ namespace client {
         for (unsigned i = 0; i < count; i++) {
             EntityId id;
             packet >> id;
-            auto &entity = mp_entities[id];
+            auto &entity = mp_world.entities[id];
             auto &transform = entity.transform;
 
             entity.alive = true;
@@ -147,11 +153,22 @@ namespace client {
         }
     }
 
+    void Client::handleChunkData(sf::Packet &packet)
+    {
+        ChunkPosition position;
+        packet >> position.x >> position.y >> position.z;
+        Chunk chunk(position);
+        packet >> chunk;
+        chunk.flag = Chunk::Flag::NeedsNewMesh;
+
+        mp_world.chunks.insert(std::make_pair(position, chunk));
+    }
+
     void Client::handlePlayerJoin(sf::Packet &packet)
     {
         ClientId id;
         packet >> id;
-        mp_entities[id].alive = true;
+        mp_world.entities[id].alive = true;
 
         std::cout << "Player has joined: " << (int)id << std::endl;
     }
@@ -160,7 +177,7 @@ namespace client {
     {
         ClientId id;
         packet >> id;
-        mp_entities[id].alive = false;
+        mp_world.entities[id].alive = false;
 
         std::cout << "Player has left: " << (int)id << std::endl;
     }

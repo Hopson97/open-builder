@@ -16,6 +16,12 @@ namespace server {
              i++) {
             m_entities[i].isAlive = true;
         }
+
+        for (int z = 0; z < 16; ++z) {
+            for (int x = 0; x < 16; ++x) {
+                m_chunks.emplace_back(x, 0, z);
+            }
+        }
     }
 
     void Application::run(sf::Time timeout)

@@ -29,7 +29,7 @@ namespace client {
         ChunkMesh createMesh();
 
       private:
-        void addFace(const BlockFace &face, const LocalBlockPosition &position);
+        void addFace(const BlockFace &face, const BlockPosition &position);
 
         const Chunk &mp_chunk;
         Mesh m_mesh;
