@@ -5,11 +5,7 @@
 namespace client {
     World::World()
     {
-        ChunkPosition position(0, 0, 0);
-        Chunk chunk(position);
-        chunk.flag = Chunk::Flag::NeedsNewMesh;
 
-        chunks.insert(std::make_pair(position, chunk));
     }
 
     void World::update()

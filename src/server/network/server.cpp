@@ -5,6 +5,8 @@
 #include <common/network/commands.h>
 #include <common/network/input_state.h>
 
+#include "../world/chunk/chunk.h"
+
 #include <ctime>
 #include <iostream>
 #include <random>
@@ -179,6 +181,12 @@ namespace server {
             auto joinPack = createCommandPacket(CommandToClient::PlayerJoin);
             joinPack << static_cast<ClientId>(slot);
             sendToAllClients(joinPack);
+
+            ChunkPosition position(0, 0, 0);
+            Chunk chunk(position);
+            auto p = createCommandPacket(CommandToClient::ChunkData);
+            p << chunk;
+            m_socket.send(p, clientAddress, clientPort);
         }
         else {
             sendRejection(ConnectionResult::GameFull, clientAddress,
