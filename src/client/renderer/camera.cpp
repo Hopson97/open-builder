@@ -8,7 +8,7 @@ namespace client {
     Camera::Camera()
     {
         m_projectionMatrix = glm::perspective(glm::radians(80.0f),
-                                              1280.0f / 720.0f, 0.1f, 1000000.0f);
+                                              1280.0f / 720.0f, 0.1f, 2048.0f);
         updateMatrices();
     }
 
