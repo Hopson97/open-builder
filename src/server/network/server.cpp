@@ -58,6 +58,10 @@ namespace server {
                     handleKeyInput(packet);
                     break;
 
+                case CommandToServer::Acknowledgment:
+                    handleAckPacket(packet);
+                    break;
+
                 case CommandToServer::Connect:
                     handleIncomingConnection(package.address, package.port);
                     break;
@@ -65,6 +69,18 @@ namespace server {
                 case CommandToServer::Disconnect:
                     handleDisconnect(packet);
                     break;
+            }
+        }
+    }
+
+    void Server::resendPackets() 
+    {
+        if (!m_reliablePacketQueue.empty())
+        {
+            auto p = m_reliablePacketQueue.front();
+            m_reliablePacketQueue.pop_front();
+            if (p.sendToAll) {
+                sendToAllClients(p);
             }
         }
     }
@@ -96,30 +112,46 @@ namespace server {
         }
     }
 
-    void Server::handleKeyInput(sf::Packet &packet)
-    {
-        client_id_t client;
-
-        packet >> client;
-        packet >> m_clientSessions[client].keyState;
-        packet >> m_clientSessions[client].p_entity->rotation.x;
-        packet >> m_clientSessions[client].p_entity->rotation.y;
-    }
-
-    bool Server::sendToClient(client_id_t id, sf::Packet &packet)
+    bool Server::sendToClient(client_id_t id, Packet &packet)
     {
         if (m_clientStatuses[id] == ClientStatus::Connected) {
-            return m_socket.send(packet, m_clientSessions[id].address,
+            bool result = m_socket.send(packet.payload, m_clientSessions[id].address,
                                  m_clientSessions[id].port) == sf::Socket::Done;
+            if (packet.isReliable && packet.triesLeft > 0) {
+                packet.triesLeft--;
+                m_reliablePacketQueue.push_back(std::move(packet));
+            }
+            else if (packet.triesLeft == 0) {
+                //..todo...
+            }
+            return result;
         }
         return false;
     }
 
-    void Server::sendToAllClients(sf::Packet &packet)
+    void Server::sendToAllClients(Packet &packet)
     {
+        packet.sendToAll = true;
         for (int i = 0; i < m_maxConnections; i++) {
             sendToClient(i, packet);
         }
+    }
+
+    Packet Server::createPacket(CommandToClient command, bool reliable)
+    {
+        Packet packet;
+        packet.payload << command;
+        if (reliable) {
+            packet.seq = m_currSequenceNumber++;
+            packet.payload << static_cast<u8>(1);
+            packet.payload << packet.seq;
+            packet.isReliable = true;
+        }
+        else {
+            packet.payload << static_cast<u8>(0);
+            packet.isReliable = false;
+        }
+        return packet;
     }
 
     bool Server::getFromClient(PackagedCommand &package)
@@ -178,8 +210,8 @@ namespace server {
             m_connections++;
             std::cout << "Client Connected slot: " << (int)slot << '\n';
 
-            auto joinPack = createCommandPacket(CommandToClient::PlayerJoin);
-            joinPack << static_cast<client_id_t>(slot);
+            auto joinPack = createPacket(CommandToClient::PlayerJoin, false);
+            joinPack.payload << static_cast<client_id_t>(slot);
             sendToAllClients(joinPack);
         }
         else {
@@ -200,9 +232,36 @@ namespace server {
         std::cout << "Client Disonnected slot: " << (int)client << '\n';
         std::cout << std::endl;
 
-        auto joinPack = createCommandPacket(CommandToClient::PlayerLeave);
-        joinPack << client;
+        auto joinPack = createPacket(CommandToClient::PlayerLeave, false);
+        joinPack.payload << client;
         sendToAllClients(joinPack);
+    }
+
+    void Server::handleKeyInput(sf::Packet &packet)
+    {
+        client_id_t client;
+
+        packet >> client;
+        packet >> m_clientSessions[client].keyState;
+        packet >> m_clientSessions[client].p_entity->rotation.x;
+        packet >> m_clientSessions[client].p_entity->rotation.y;
+    }
+
+    void Server::handleAckPacket(sf::Packet& packet)
+    {
+        u32 sequence;
+        packet >> sequence;
+        for (auto itr = m_reliablePacketQueue.begin(); itr != m_reliablePacketQueue.end();)
+        {
+            if (itr->seq == sequence)
+            {
+                itr = m_reliablePacketQueue.erase(itr);
+            }
+            else 
+            {
+                itr++;
+            }
+        }
     }
 
 } // namespace server

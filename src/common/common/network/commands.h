@@ -23,6 +23,10 @@ enum class CommandToServer : command_t {
     /// float: players y look direction
     PlayerInput,
 
+    /// To tell server that we have recieved a packet
+    /// command_t: Acknowledgment
+    /// u32: sequenceNumber
+    Acknowledgment,
 };
 
 /// command_t from the server to the client

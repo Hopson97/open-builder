@@ -26,6 +26,15 @@ namespace client {
         PackagedCommand package;
         while (getFromServer(package)) {
             auto &packet = package.packet;
+            u8 reliable = 0;
+            packet >> reliable;
+            if (reliable) {
+                auto p = createCommandPacket(CommandToServer::Acknowledgment);
+                u32 seq = 0;
+                packet >> seq;
+                p << seq;
+                sendToServer(p);
+            }
             switch (package.command) {
                 case CommandToClient::WorldState:
                     handleWorldState(packet);
