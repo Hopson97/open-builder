@@ -8,8 +8,8 @@
 #include "../world/world.h"
 
 namespace client {
-    Client::Client(World& world)
-    :   mp_world    (world)
+    Client::Client(World &world)
+        : mp_world(world)
     {
     }
 

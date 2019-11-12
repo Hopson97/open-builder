@@ -1,8 +1,8 @@
 #pragma once
 
+#include <SFML/Network/Packet.hpp>
 #include <array>
 #include <common/constants.h>
-#include <SFML/Network/Packet.hpp>
 
 #include "../block/block.h"
 
@@ -16,7 +16,7 @@ namespace server {
         void setBlock(const BlockPosition &BlockPosition, Block block);
         void quickSetBlock(const BlockPosition &BlockPosition, Block block);
 
-        friend sf::Packet& operator<<(sf::Packet& packet, const Chunk& chunk);
+        friend sf::Packet &operator<<(sf::Packet &packet, const Chunk &chunk);
 
       private:
         std::array<Block, CHUNK_VOLUME> m_blocks;
@@ -27,5 +27,4 @@ namespace server {
       private:
     };
 
-    
 } // namespace server

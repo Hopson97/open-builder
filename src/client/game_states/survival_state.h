@@ -5,8 +5,8 @@
 #include <common/network/input_state.h>
 #include <common/types.h>
 
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 #include "../world/chunk/chunk.h"
 #include "../world/chunk/mesh/chunk_mesh_builder.h"

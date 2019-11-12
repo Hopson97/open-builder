@@ -2,8 +2,7 @@
 
 #include "chunk/mesh/chunk_mesh_builder.h"
 
-namespace client
-{
+namespace client {
     World::World()
     {
         ChunkPosition position(0, 0, 0);
@@ -13,10 +12,9 @@ namespace client
         chunks.insert(std::make_pair(position, chunk));
     }
 
-    void World::update() 
+    void World::update()
     {
-        for (auto& [position, chunk] : chunks)
-        {
+        for (auto &[position, chunk] : chunks) {
             if (chunk.flag == Chunk::Flag::NeedsNewMesh) {
                 ChunkMeshBuilder builder(chunk);
                 chunkMeshes[position] = builder.createMesh();

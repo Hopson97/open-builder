@@ -100,7 +100,7 @@ namespace client {
         for (int y = 0; y < CHUNK_SIZE; ++y) {
             for (int z = 0; z < CHUNK_SIZE; ++z) {
                 for (int x = 0; x < CHUNK_SIZE; ++x) {
-                   
+
                     // Eventually, this will be used to determine the mesh type
                     // and texture For now, it is not needed
 

@@ -34,5 +34,6 @@ struct ChunkPositionHash {
     }
 };
 
-template<typename T>
-using ChunkPositionMap = std::unordered_map<ChunkPosition, T, ChunkPositionHash>;
+template <typename T>
+using ChunkPositionMap =
+    std::unordered_map<ChunkPosition, T, ChunkPositionHash>;

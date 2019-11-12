@@ -12,7 +12,7 @@ namespace client {
     class World;
     class Client final {
       public:
-        Client(World& world);
+        Client(World &world);
         bool connect(const sf::IpAddress &address);
         void disconnect();
 
@@ -39,8 +39,8 @@ namespace client {
         void handlePlayerLeave(sf::Packet &packet);
 
         struct {
-          sf::IpAddress address;
-          Port port;
+            sf::IpAddress address;
+            Port port;
         } m_server;
 
         sf::UdpSocket m_socket;
@@ -48,7 +48,7 @@ namespace client {
         Input m_inputState = 0;
         bool m_isConnected = false;
 
-        World& mp_world;
+        World &mp_world;
 
         u8 m_serverMaxPlayers = 0;
     };
