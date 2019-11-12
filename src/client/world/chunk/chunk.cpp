@@ -15,16 +15,13 @@ namespace client {
     {
     }
 
-    Block Chunk::getBlock(const BlockPosition &bposition) const
+    Block Chunk::getBlock(const BlockPosition &blockPosition) const
     {
-        if (bposition.x < 0 || bposition.x >= CHUNK_SIZE || bposition.y < 0 ||
-            bposition.y >= CHUNK_SIZE || bposition.z < 0 ||
-            bposition.z >= CHUNK_SIZE) {
+        if (positionOutOfChunkBounds(blockPosition)) {
             return BlockType::Air;
         }
         else {
-            return m_blocks[(bposition.y * (CHUNK_SIZE * CHUNK_SIZE) +
-                             bposition.z * CHUNK_SIZE + bposition.x)];
+            return m_blocks[toChunkBlockIndex(blockPosition)];
         }
     }
 

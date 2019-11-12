@@ -1,28 +1,27 @@
 #include "coordinate_convertion.h"
 
-int toChunkBlockIndex(const BlockPosition &position)
+int toChunkBlockIndex(const BlockPosition &blockPosition)
 {
-    return position.y * (CHUNK_SIZE * CHUNK_SIZE) + position.z * CHUNK_SIZE +
-           position.x;
+    return (blockPosition.y * (CHUNK_SIZE * CHUNK_SIZE) +
+            blockPosition.z * CHUNK_SIZE + blockPosition.x);
 }
 
-bool positionOutOfChunkBounds(const BlockPosition &position)
+bool positionOutOfChunkBounds(const BlockPosition &blockPosition)
 {
-    return position.x < 0 || position.x >= CHUNK_SIZE || position.y < 0 ||
-           position.y >= CHUNK_SIZE || position.z < 0 ||
-           position.z >= CHUNK_SIZE;
+    return blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
+           blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE ||
+           blockPosition.z < 0 || blockPosition.z >= CHUNK_SIZE;
 }
 
 /*
-    Block Chunk::getBlock(const BlockPosition &bposition) const
+    Block Chunk::getBlock(const BlockPosition &blockPosition) const
     {
-        if (bposition.x < 0 || bposition.x >= CHUNK_SIZE || bposition.y < 0 ||
-            bposition.y >= CHUNK_SIZE || bposition.z < 0 ||
-            bposition.z >= CHUNK_SIZE) {
-            return BlockType::Air;
+        if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
+   blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE || blockPosition.z < 0
+   || blockPosition.z >= CHUNK_SIZE) { return BlockType::Air;
         }
         else {
-            return m_blocks[(bposition.y * (CHUNK_SIZE * CHUNK_SIZE) +
-                             bposition.z * CHUNK_SIZE + bposition.x)];
+            return m_blocks[(blockPosition.y * (CHUNK_SIZE * CHUNK_SIZE) +
+                             blockPosition.z * CHUNK_SIZE + blockPosition.x)];
         }
     }*/
