@@ -32,6 +32,7 @@ namespace client {
     ChunkRenderer::ChunkShader::ChunkShader(const char *programName)
         : program(programName, programName)
     {
+        program.use();
         locationCameraMatrix =
             program.getUniformLocation("projectionViewMatrix");
     }

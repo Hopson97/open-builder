@@ -42,7 +42,7 @@ namespace client {
                        config.graphicOptions.windowHeight;
         float fov = glm::radians(static_cast<float>(config.graphicOptions.fov));
 
-        return glm::perspective(fov, aspect, 0.01f, 256.0f);
+        return glm::perspective(fov, aspect, 0.01f, 2048.0f);
     }
 } // namespace client
 // clang-format on

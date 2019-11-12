@@ -8,13 +8,10 @@ uniform mat4 projectionViewMatrix;
 
 out vec2 passTexCoord;
 out float passBasicLight;
-out vec3 passFragPosition;
 
 void main() {
     gl_Position = projectionViewMatrix * vec4(inVertexCoord, 1.0);
     
     passTexCoord = inTextureCoord;
     passBasicLight = inBasicLight;
-    
-    passFragPosition = vec3(vec4(inVertexCoord, 1.0).xyz);
 }

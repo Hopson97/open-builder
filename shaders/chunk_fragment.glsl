@@ -1,7 +1,6 @@
 #version 330
 
 in float passBasicLight;
-in vec3 passFragPosition;
 in vec2 passTexCoord;
 
 out vec4 outColour;

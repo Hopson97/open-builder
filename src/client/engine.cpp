@@ -11,6 +11,7 @@
 
 namespace client {
     Engine::Engine(const LaunchConfig &config)
+    :   m_camera(config)
     {
         sf::ContextSettings settings;
         settings.depthBits = 24;

@@ -55,6 +55,10 @@ namespace client {
 
     void Renderer::render(const Camera &camera)
     {
+        //Skybox is drawn without depth testing
+        //So it must be rendered before anything else
+        m_skyboxRenderer.render(camera);
+
         m_entityShader.use();
         m_entityShader.loadVector3(m_locationColour, {1, 1, 1});
         m_entityShader.loadMatrix4(m_locationProjectionViewMatrix,
@@ -75,6 +79,6 @@ namespace client {
         m_entityBatches.clear();
         m_chunkRenderer.render(camera);
 
-        m_skyboxRenderer.render(camera);
+        
     }
 } // namespace client

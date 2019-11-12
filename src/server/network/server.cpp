@@ -168,9 +168,9 @@ namespace server {
             m_clientStatuses[slot] = ClientStatus::Connected;
             m_clientSessions[slot].address = clientAddress;
             m_clientSessions[slot].port = clientPort;
-            m_clientSessions[slot].p_entity->position.y = 50.0f;
+            m_clientSessions[slot].p_entity->position.y = 70.0f;
             m_clientSessions[slot].p_entity->isAlive = true;
-            m_clientSessions[slot].p_entity->speed = 5.0f;
+            m_clientSessions[slot].p_entity->speed = 16.0f;
 
             m_aliveEntities++;
             m_socket.send(responsePacket, clientAddress, clientPort);
