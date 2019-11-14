@@ -95,6 +95,8 @@ namespace client {
 
     ChunkMesh ChunkMeshBuilder::createMesh()
     {
+        static float total = 0;
+        static int count = 0;
         ChunkMesh chunkMesh;
         sf::Clock timer;
         for (int y = 0; y < CHUNK_SIZE; ++y) {
@@ -139,11 +141,14 @@ namespace client {
 
         chunkMesh.solidBlocks.create(m_mesh);
         chunkMesh.solidBlocks.addVertexBuffer(1, m_chunkBasicLight, GL_FLOAT);
-        /*
-        std::cout << "Chunk creation time: "
-                  << timer.getElapsedTime().asSeconds() * 1000
-                  << " milliseconds" << std::endl;
-        */
+
+        float time = timer.getElapsedTime().asSeconds();
+        std::cout << "Chunk creation time: " << time * 1000 << " milliseconds"
+                  << std::endl;
+        total += time;
+        count += 1;
+        std::cout << "Average: " << (total / count) * 1000 << " milli\n";
+
         return chunkMesh;
     }
 

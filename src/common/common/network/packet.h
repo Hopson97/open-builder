@@ -17,7 +17,6 @@ struct Packet {
     sf::Packet payload;
     u32 sequenceNumber;
     command_t command;
-    client_id_t client;
     u8 flags;
 };
 
