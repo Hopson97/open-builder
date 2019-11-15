@@ -16,12 +16,13 @@ namespace server {
     Server::Server(int maxConnections, port_t port, EntityArray &entities)
         : m_clientSessions(maxConnections)
         , m_clientStatuses(maxConnections)
+        , m_networkNode(maxConnections, port)
     {
         std::fill(m_clientStatuses.begin(), m_clientStatuses.end(),
                   ClientStatus::Disconnected);
 
-        m_socket.setBlocking(false);
-        m_socket.bind(port);
+        m_networkNode.setBlocking(false);
+        m_networkNode.setNodeId(0);
 
         for (int i = 0; i < m_maxConnections; i++) {
             m_clientSessions[i].p_entity = &entities[i];
@@ -50,20 +51,20 @@ namespace server {
 
     void Server::recievePackets()
     {
-        PackagedCommand package;
-        while (getFromClient(package)) {
-            auto &packet = package.packet;
+        Packet packet;
+        Endpoint endpoint;
+        while (m_networkNode.recieve(packet, endpoint)) {
             switch (static_cast<CommandToServer>(packet.command)) {
                 case CommandToServer::PlayerInput:
                     handleKeyInput(packet.payload);
                     break;
 
                 case CommandToServer::Acknowledgment:
-                    handleAckPacket(packet.payload);
+                    m_networkNode.handleAckPacket(packet.payload);
                     break;
 
                 case CommandToServer::Connect:
-                    handleIncomingConnection(package.endpoint);
+                    handleIncomingConnection(endpoint);
                     break;
 
                 case CommandToServer::Disconnect:
@@ -75,14 +76,7 @@ namespace server {
 
     void Server::resendPackets()
     {
-        if (!m_packetBuffer.isEmpty()) {
-            auto &packet = m_packetBuffer.begin();
-            if (!packet.clients.empty()) {
-                auto itr = packet.clients.begin();
-                sendToClient(*packet.clients.begin(), packet.packet);
-                packet.clients.erase(itr);
-            }
-        }
+        m_networkNode.resendPackets();
     }
 
     void Server::updatePlayers()
@@ -115,14 +109,7 @@ namespace server {
     bool Server::sendToClient(peer_id_t id, Packet &packet)
     {
         if (m_clientStatuses[id] == ClientStatus::Connected) {
-            bool result =
-                m_socket.send(packet.payload, m_clientSessions[id].endpoint.address,
-                              m_clientSessions[id].endpoint.port) == sf::Socket::Done;
-
-            if (packet.hasFlag(Packet::Flag::Reliable)) {
-                m_packetBuffer.append(std::move(packet), id);
-            }
-
+            bool result = m_networkNode.send(packet, m_networkNode.connections[id]);
             return result;
         }
         return false;
@@ -135,25 +122,8 @@ namespace server {
         }
     }
 
-    Packet Server::createPacket(CommandToClient command, bool reliable)
+    Packet Server::createPacket(CommandToClient command, Packet::Flag flag)
     {
-        if (reliable) {
-            return createCommandPacket(command, Packet::Flag::Reliable,
-                                       ++m_currSequenceNumber);
-        }
-        else {
-            return createCommandPacket(command);
-        }
-    }
-
-    bool Server::getFromClient(PackagedCommand &package)
-    {
-        sf::Packet packet;
-        if (m_socket.receive(packet, package.endpoint.address, package.endpoint.port) ==
-            sf::Socket::Done) {
-            package.packet.initFromPacket(packet);
-            return true;
-        }
-        return false;
+        return m_networkNode.createPacket(command, flag);
     }
 } // namespace server

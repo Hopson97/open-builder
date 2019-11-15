@@ -3,17 +3,18 @@
 #include "packet.h"
 #include <SFML/Network/UdpSocket.hpp>
 #include "packet_buffer.h"
-
-struct CommandPackage {
-    Packet packet;
-    sf::IpAddress address;
-    port_t port;
-};
+#include "endpoint.h"
 
 template <typename CommandType> class NetworkNode {
   public:
-    NetworkNode() = default;
-    NetworkNode(port_t port)
+    NetworkNode(int connectionCount)
+    :   connections (connectionCount)
+    {
+
+    }
+    
+    NetworkNode(int connectionCount, port_t port)
+    :   connections (connectionCount)
     {
         m_socket.bind(port);
     }
@@ -28,23 +29,12 @@ template <typename CommandType> class NetworkNode {
         m_socket.setBlocking(block);
     }
 
-    CommandPackage createPacket(CommandType command,
+    Packet createPacket(CommandType command,
                                 Packet::Flag flag = Packet::Flag::None)
     {
         return createCommandPacket(
             command, flag,
             flag == Packet::Flag::Reliable ? m_sequenceNumber++ : 0);
-    }
-
-    bool send(CommandPackage &package)
-    {
-        auto &packet = package.packet;
-        bool result = m_socket.send(packet.payload, package.address,
-                                    package.port) == sf::Socket::Done;
-        if (packet.hasFlag(Packet::Flag::Reliable)) {
-            // m_packetBuffer.append(std::move(packet), );
-        }
-        return result;
     }
 
     void handleAckPacket(sf::Packet &packet)
@@ -55,20 +45,27 @@ template <typename CommandType> class NetworkNode {
         m_packetBuffer.tryRemove(sequence, id);
     }
 
-    bool recieve(CommandPackage &package)
+    bool send(Packet &packet, const Endpoint& endpoint)
     {
-        auto &packet = package.packet;
+        bool result = m_socket.send(packet.payload, endpoint.address,
+                                    endpoint.port) == sf::Socket::Done;
+        if (packet.hasFlag(Packet::Flag::Reliable)) {
+            m_packetBuffer.append(std::move(packet), endpoint.id);
+        }
+        return result;
+    }
+
+    bool recieve(Packet &packet, Endpoint& endpoint)
+    {
         sf::Packet rawPacket;
-        if (m_socket.receive(rawPacket, package.address, package.port) ==
+        if (m_socket.receive(rawPacket, endpoint.address, endpoint.port) ==
             sf::Socket::Done) {
             packet.initFromPacket(rawPacket);
             if (packet.hasFlag(Packet::Flag::Reliable)) {
                 auto ack = createPacket(CommandType::Acknowledgment,
                                         Packet::Flag::Reliable);
-                ack.packet.payload << packet.sequenceNumber << m_nodeId;
-                ack.address = package.address;
-                ack.packet = package.port;
-                send(ack);
+                ack.payload << packet.sequenceNumber << m_nodeId;
+                send(ack, endpoint);
             }
             return true;
         }
@@ -81,11 +78,13 @@ template <typename CommandType> class NetworkNode {
             auto &packet = m_packetBuffer.begin();
             if (!packet.clients.empty()) {
                 auto itr = packet.clients.begin();
-                send(*packet.clients.begin(), packet.packet);
+                send(packet.packet, connections[*itr]);
                 packet.clients.erase(itr);
             }
         }
     }
+
+    std::vector<Endpoint> connections;
 
   private:
     sf::UdpSocket m_socket;
@@ -93,6 +92,9 @@ template <typename CommandType> class NetworkNode {
     peer_id_t m_nodeId;
     u32 m_sequenceNumber = 0;
 };
+
+
+
 
 /*
         if (!m_packetBuffer.isEmpty()) {

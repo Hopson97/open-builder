@@ -7,7 +7,6 @@ namespace server {
     struct Entity;
 
     struct ClientSession {
-        Endpoint endpoint;
         input_t keyState = 0;
         Entity *p_entity = nullptr;
     };

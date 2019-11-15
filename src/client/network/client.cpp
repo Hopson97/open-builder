@@ -36,6 +36,10 @@ namespace client {
                 case CommandToClient::WorldState:
                     handleWorldState(packet.payload);
                     break;
+                
+                case CommandToClient::Acknowledgment:
+                    //m_networkNode.handleAckPacket(packet.payload);
+                    break;
 
                 case CommandToClient::ChunkData:
                     handleChunkData(packet.payload);

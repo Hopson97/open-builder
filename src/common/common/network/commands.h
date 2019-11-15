@@ -58,7 +58,12 @@ enum class CommandToClient : command_t {
 
     /// Saying a player has left
     /// u16
-    PlayerLeave
+    PlayerLeave,
+
+    /// To tell server that we have recieved a packet
+    /// command_t: Acknowledgment
+    /// u32: sequenceNumber
+    Acknowledgment,
 };
 
 enum class ConnectionResult : command_t {
