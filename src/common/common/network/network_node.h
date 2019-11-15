@@ -2,6 +2,7 @@
 
 #include "packet.h"
 #include <SFML/Network/UdpSocket.hpp>
+#include "packet_buffer.h"
 
 struct CommandPackage {
     Packet packet;

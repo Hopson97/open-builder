@@ -20,7 +20,7 @@ class PacketBuffer final {
   public:
     bool isEmpty() const;
     bool hasPacket(u32 sequenceNumber) const;
-    
+
     void append(Packet &&packet, peer_id_t id);
     void tryRemove(u32 packetNumber, peer_id_t peerId);
 
