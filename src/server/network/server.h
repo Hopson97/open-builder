@@ -7,10 +7,10 @@
 #include <SFML/Network/UdpSocket.hpp>
 #include <SFML/System/Clock.hpp>
 #include <common/network/commands.h>
+#include <common/network/endpoint.h>
 #include <common/network/network_node.h>
 #include <common/network/packet.h>
 #include <common/network/packet_buffer.h>
-#include <common/network/endpoint.h>
 
 namespace server {
     class Server final {
@@ -29,21 +29,40 @@ namespace server {
         bool sendToClient(peer_id_t id, Packet &packet);
         void sendToAllClients(Packet &packet);
 
-        Packet createPacket(CommandToClient command, Packet::Flag flag);
+        Packet createPacket(CommandToClient command, Packet::Flag flag = Packet::Flag::None);
 
       private:
+        bool send(Packet &packet, const Endpoint &endpoint)
+        {
+            bool result = m_socket.send(packet.payload, endpoint.address,
+                                        endpoint.port) == sf::Socket::Done;
+            if (packet.hasFlag(Packet::Flag::Reliable)) {
+                m_packetBuffer.append(std::move(packet), endpoint.id);
+            }
+            return result;
+        }
 
-        void handleIncomingConnection(const Endpoint& endpoint);
+        bool recieve(Packet &packet, Endpoint &endpoint);
+
+        void handleIncomingConnection(const Endpoint &endpoint);
         void handleDisconnect(sf::Packet &packet);
         void handleKeyInput(sf::Packet &packet);
+        void handleAckPacket(sf::Packet &packet);
 
         std::vector<ClientSession> m_clientSessions;
         std::vector<ClientStatus> m_clientStatuses;
+        std::vector<Endpoint> m_endpoints;
 
         int m_maxConnections = 4;
         int m_connections = 0;
         int m_aliveEntities = 0;
 
-        NetworkNode<CommandToClient> m_networkNode;
+        sf::UdpSocket m_socket;
+
+        PacketBuffer m_packetBuffer;
+
+        peer_id_t m_nodeId;
+
+        u32 m_sequenceNumber = 0;
     };
 } // namespace server

@@ -2,7 +2,6 @@
 
 #include <common/network/endpoint.h>
 
-
 namespace server {
     struct Entity;
 
