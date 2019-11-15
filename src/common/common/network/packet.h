@@ -7,9 +7,9 @@
 #include <unordered_set>
 
 /**
- * @brief Basis of all packet sent. 
+ * @brief Basis of all packet sent.
  * All have this structure
- * 
+ *
  * |16 bit |8 bit |32 bit  | The rest|
  * |Command|Flags |Sequence|
  */
@@ -39,6 +39,24 @@ struct PacketBuffer {
         Packet packet;
         std::unordered_set<client_id_t> clients;
     };
+
+    bool hasPacket(u32 sequenceNumber) const
+    {
+        return reliablePacketBuffer.find(sequenceNumber) !=
+               reliablePacketBuffer.cend();
+    }
+
+    void append(Packet&& packet, client_id_t id)
+    {
+        auto itr = reliablePacketBuffer.find(packet.sequenceNumber);
+        if (itr == reliablePacketBuffer.cend()) {
+            auto queuedPacket = reliablePacketBuffer.emplace(packet.sequenceNumber, std::move(packet));
+            queuedPacket.first->second.clients.insert(id);
+        }
+        else {
+            itr->second.clients.insert(id);
+        }
+    }
 
     std::unordered_map<u32, QueuedPacket> reliablePacketBuffer;
 };

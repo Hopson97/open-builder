@@ -9,7 +9,7 @@ namespace client {
     {
     }
 
-    void World::update([[maybe_unused]]Entity &player)
+    void World::update([[maybe_unused]] Entity &player)
     {
         /*
         static int distance = 1;
@@ -33,13 +33,13 @@ namespace client {
                 }
             }
         }();
-        
+
         std::cout << distance << std::endl;
         if (!meshMade) {
             distance++;
         }
         */
-        
+
         for (auto &[position, chunk] : chunks) {
             if (chunk.flag == Chunk::Flag::NeedsNewMesh) {
                 ChunkMeshBuilder builder(chunk);
