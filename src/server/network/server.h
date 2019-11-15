@@ -8,6 +8,7 @@
 #include <SFML/System/Clock.hpp>
 #include <common/network/commands.h>
 #include <common/network/packet.h>
+#include <common/network/packet_buffer.h>
 
 namespace server {
     class Server final {

@@ -75,8 +75,8 @@ namespace server {
 
     void Server::resendPackets()
     {
-        if (!m_packetBuffer.reliablePacketBuffer.empty()) {
-            auto &packet = m_packetBuffer.reliablePacketBuffer.begin()->second;
+        if (!m_packetBuffer.isEmpty()) {
+            auto &packet = m_packetBuffer.begin();
             if (!packet.clients.empty()) {
                 auto itr = packet.clients.begin();
                 sendToClient(*packet.clients.begin(), packet.packet);
@@ -120,17 +120,7 @@ namespace server {
                               m_clientSessions[id].port) == sf::Socket::Done;
 
             if (packet.hasFlag(Packet::Flag::Reliable)) {
-                auto pack = m_packetBuffer.reliablePacketBuffer.find(
-                    packet.sequenceNumber);
-                if (pack == m_packetBuffer.reliablePacketBuffer.end()) {
-                    auto queuedPacket =
-                        m_packetBuffer.reliablePacketBuffer.emplace(
-                            packet.sequenceNumber, std::move(packet));
-                    queuedPacket.first->second.clients.insert(id);
-                }
-                else {
-                    pack->second.clients.insert(id);
-                }
+                m_packetBuffer.append(std::move(packet), id);
             }
 
             return result;
@@ -256,17 +246,7 @@ namespace server {
         u32 sequence;
         peer_id_t id;
         packet >> sequence >> id;
-        auto itr = m_packetBuffer.reliablePacketBuffer.find(sequence);
-        if (itr != m_packetBuffer.reliablePacketBuffer.end()) {
-            auto &clients = itr->second.clients;
-            auto client = clients.find(id);
-            if (client != clients.end()) {
-                clients.erase(client);
-            }
-            if (clients.empty()) {
-                m_packetBuffer.reliablePacketBuffer.erase(itr);
-            }
-        }
+        m_packetBuffer.tryRemove(sequence, id);
     }
 
 } // namespace server
