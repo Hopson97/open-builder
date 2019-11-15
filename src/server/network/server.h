@@ -13,14 +13,6 @@
 
 namespace server {
     class Server final {
-        struct QueuedPacket {
-            QueuedPacket(Packet &&pkt)
-                : packet(std::move(pkt)){};
-
-            Packet packet;
-            std::unordered_set<client_id_t> clients;
-        };
-
       public:
         Server(int maxConnections, port_t port, EntityArray &entities);
 
@@ -59,7 +51,7 @@ namespace server {
 
         sf::UdpSocket m_socket;
 
-        std::unordered_map<u32, QueuedPacket> m_reliablePacketQueue;
+        PacketBuffer m_packetBuffer;
 
         std::vector<ClientSession> m_clientSessions;
         std::vector<ClientStatus> m_clientStatuses;

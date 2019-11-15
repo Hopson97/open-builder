@@ -75,8 +75,8 @@ namespace server {
 
     void Server::resendPackets()
     {
-        if (!m_reliablePacketQueue.empty()) {
-            auto &packet = m_reliablePacketQueue.begin()->second;
+        if (!m_packetBuffer.reliablePacketBuffer.empty()) {
+            auto &packet = m_packetBuffer.reliablePacketBuffer.begin()->second;
             if (!packet.clients.empty()) {
                 auto itr = packet.clients.begin();
                 sendToClient(*packet.clients.begin(), packet.packet);
@@ -118,17 +118,11 @@ namespace server {
             bool result =
                 m_socket.send(packet.payload, m_clientSessions[id].address,
                               m_clientSessions[id].port) == sf::Socket::Done;
-            // if (packet.isReliable && packet.triesLeft > 0) {
-            //    packet.triesLeft--;
-            //    m_reliablePacketQueue.push_back(std::move(packet));
-            //}
-            // else if (packet.triesLeft == 0) {
-            //    //..todo...
-            //}
+
             if (packet.hasFlag(Packet::Flag::Reliable)) {
-                auto pack = m_reliablePacketQueue.find(packet.sequenceNumber);
-                if (pack == m_reliablePacketQueue.end()) {
-                    auto queuedPacket = m_reliablePacketQueue.emplace(
+                auto pack = m_packetBuffer.reliablePacketBuffer.find(packet.sequenceNumber);
+                if (pack == m_packetBuffer.reliablePacketBuffer.end()) {
+                    auto queuedPacket = m_packetBuffer.reliablePacketBuffer.emplace(
                         packet.sequenceNumber, std::move(packet));
                     queuedPacket.first->second.clients.insert(id);
                 }

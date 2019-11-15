@@ -11,13 +11,27 @@ struct Packet {
     };
 
     Packet(command_t commandToSend, Flag flag = Flag::None, u32 seqNumber = 0);
+    Packet(sf::Packet &packet);
 
     bool hasFlag(Flag flag);
 
     sf::Packet payload;
-    u32 sequenceNumber;
-    command_t command;
-    u8 flags;
+
+    const u32 sequenceNumber;
+    const command_t command;
+    const u8 flags;
+};
+
+struct PacketBuffer {
+    struct QueuedPacket {
+        QueuedPacket(Packet &&pkt)
+            : packet(std::move(pkt)){};
+
+        Packet packet;
+        std::unordered_set<client_id_t> clients;
+    };
+
+    std::unordered_map<u32, QueuedPacket> reliablePacketBuffer;
 };
 
 template <typename CommandType>
