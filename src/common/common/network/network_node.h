@@ -41,7 +41,7 @@ template <typename CommandType> class NetworkNode {
         bool result = m_socket.send(packet.payload, package.address,
                                     package.port) == sf::Socket::Done;
         if (packet.hasFlag(Packet::Flag::Reliable)) {
-            m_packetBuffer.append(std::move(packet), );
+            // m_packetBuffer.append(std::move(packet), );
         }
         return result;
     }
@@ -51,17 +51,7 @@ template <typename CommandType> class NetworkNode {
         u32 sequence;
         peer_id_t id;
         packet >> sequence >> id;
-        auto itr = m_packetBuffer.reliablePacketBuffer.find(sequence);
-        if (itr != m_packetBuffer.reliablePacketBuffer.end()) {
-            auto &clients = itr->second.clients;
-            auto client = clients.find(id);
-            if (client != clients.end()) {
-                clients.erase(client);
-            }
-            if (clients.empty()) {
-                m_packetBuffer.reliablePacketBuffer.erase(itr);
-            }
-        }
+        m_packetBuffer.tryRemove(sequence, id);
     }
 
     bool recieve(CommandPackage &package)
@@ -86,8 +76,8 @@ template <typename CommandType> class NetworkNode {
 
     void resendPackets()
     {
-        if (!m_packetBuffer.reliablePacketBuffer.empty()) {
-            auto &packet = m_packetBuffer.reliablePacketBuffer.begin()->second;
+        if (!m_packetBuffer.isEmpty()) {
+            auto &packet = m_packetBuffer.begin();
             if (!packet.clients.empty()) {
                 auto itr = packet.clients.begin();
                 send(*packet.clients.begin(), packet.packet);
@@ -102,3 +92,14 @@ template <typename CommandType> class NetworkNode {
     peer_id_t m_nodeId;
     u32 m_sequenceNumber = 0;
 };
+
+/*
+        if (!m_packetBuffer.isEmpty()) {
+            auto &packet = m_packetBuffer.begin();
+            if (!packet.clients.empty()) {
+                auto itr = packet.clients.begin();
+                sendToClient(*packet.clients.begin(), packet.packet);
+                packet.clients.erase(itr);
+            }
+        }
+        */

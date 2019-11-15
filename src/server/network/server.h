@@ -7,6 +7,7 @@
 #include <SFML/Network/UdpSocket.hpp>
 #include <SFML/System/Clock.hpp>
 #include <common/network/commands.h>
+#include <common/network/network_node.h>
 #include <common/network/packet.h>
 #include <common/network/packet_buffer.h>
 
@@ -56,5 +57,7 @@ namespace server {
         int m_aliveEntities = 0;
 
         u32 m_currSequenceNumber = 0;
+
+        NetworkNode<CommandToClient> m_networkNode;
     };
 } // namespace server
