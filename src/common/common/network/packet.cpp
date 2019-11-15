@@ -8,7 +8,8 @@ Packet::Packet(command_t commandToSend, Flag flag, u32 seqNumber)
     payload << commandToSend << flags << seqNumber;
 }
 
-void Packet::initFromPacket(sf::Packet& packet) {
+void Packet::initFromPacket(sf::Packet &packet)
+{
     packet >> command >> flags >> sequenceNumber;
     payload = std::move(packet);
 }

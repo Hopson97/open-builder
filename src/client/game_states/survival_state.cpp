@@ -92,7 +92,7 @@ namespace client {
         m_client.update();
         camera.reset(getPlayerEntity().transform);
 
-        m_world.update();
+        m_world.update(getPlayerEntity());
     }
 
     void SurvivalState::render(Renderer &renderer)

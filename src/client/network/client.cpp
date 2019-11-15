@@ -26,10 +26,12 @@ namespace client {
     {
         Packet packet;
         while (getFromServer(packet)) {
-            //auto &packet = packet.payload;
+            // auto &packet = packet.payload;
             if (packet.hasFlag(Packet::Flag::Reliable)) {
-                auto acknowledgePacket = createCommandPacket(CommandToServer::Acknowledgment);
-                acknowledgePacket.payload << packet.sequenceNumber << m_clientId;
+                auto acknowledgePacket =
+                    createCommandPacket(CommandToServer::Acknowledgment);
+                acknowledgePacket.payload << packet.sequenceNumber
+                                          << m_clientId;
                 sendToServer(acknowledgePacket.payload);
             }
             switch (static_cast<CommandToClient>(packet.command)) {
@@ -127,8 +129,7 @@ namespace client {
         sf::Packet packet;
         sf::IpAddress address;
         port_t port;
-        if (m_socket.receive(packet, address, port) ==
-            sf::Socket::Done) {
+        if (m_socket.receive(packet, address, port) == sf::Socket::Done) {
             package.initFromPacket(packet);
             return true;
         }

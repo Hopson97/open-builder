@@ -8,7 +8,7 @@ namespace client {
     struct World {
       public:
         World();
-        void update();
+        void update(Entity &player);
 
         EntityArray entities;
         ChunkPositionMap<Chunk> chunks;

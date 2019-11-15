@@ -120,10 +120,12 @@ namespace server {
                               m_clientSessions[id].port) == sf::Socket::Done;
 
             if (packet.hasFlag(Packet::Flag::Reliable)) {
-                auto pack = m_packetBuffer.reliablePacketBuffer.find(packet.sequenceNumber);
+                auto pack = m_packetBuffer.reliablePacketBuffer.find(
+                    packet.sequenceNumber);
                 if (pack == m_packetBuffer.reliablePacketBuffer.end()) {
-                    auto queuedPacket = m_packetBuffer.reliablePacketBuffer.emplace(
-                        packet.sequenceNumber, std::move(packet));
+                    auto queuedPacket =
+                        m_packetBuffer.reliablePacketBuffer.emplace(
+                            packet.sequenceNumber, std::move(packet));
                     queuedPacket.first->second.clients.insert(id);
                 }
                 else {
