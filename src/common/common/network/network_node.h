@@ -9,8 +9,6 @@ struct CommandPackage {
     port_t port;
 };
 
-
-
 template <typename CommandType> class NetworkNode {
   public:
     NetworkNode() = default;

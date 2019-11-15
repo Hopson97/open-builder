@@ -41,6 +41,7 @@ add_executable(${PROJECT_NAME}
     src/common/common/debug.cpp
     src/common/common/coordinate_converion.cpp
     src/common/common/network/packet.cpp
+    src/common/common/network/packet_buffer.cpp
 )
 
 #Set C++17

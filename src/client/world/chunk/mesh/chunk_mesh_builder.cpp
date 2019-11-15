@@ -110,13 +110,14 @@ namespace client {
 
                     Block up = mp_chunk.getBlock({x, y + 1, z});
                     Block down = mp_chunk.getBlock({x, y - 1, z});
-/*
-                    Block left = mp_chunk.getBlock({x - 1, y, z});
-                    Block right = mp_chunk.getBlock({x + 1, y, z});
+                    /*
+                                        Block left = mp_chunk.getBlock({x - 1,
+                       y, z}); Block right = mp_chunk.getBlock({x + 1, y, z});
 
-                    Block forwards = mp_chunk.getBlock({x, y, z + 1});
-                    Block back = mp_chunk.getBlock({x, y, z - 1});
-*/
+                                        Block forwards = mp_chunk.getBlock({x,
+                       y, z + 1}); Block back = mp_chunk.getBlock({x, y, z -
+                       1});
+                    */
                     if (up.type == BlockType::Air) {
                         addFace(topFace, {x, y, z});
                     }
