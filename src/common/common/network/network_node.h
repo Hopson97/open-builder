@@ -9,6 +9,8 @@ struct CommandPackage {
     port_t port;
 };
 
+
+
 template <typename CommandType> class NetworkNode {
   public:
     NetworkNode() = default;
@@ -17,17 +19,18 @@ template <typename CommandType> class NetworkNode {
         m_socket.bind(port);
     }
 
-    void setNodeId(client_id_t id)
+    void setNodeId(peer_id_t id)
     {
         m_nodeId = id;
     }
 
     void setBlocking(bool block)
     {
-        m_socket(block);
+        m_socket.setBlocking(block);
     }
 
-    CommandPackage createPacket(CommandType command, Packet::Flag flag)
+    CommandPackage createPacket(CommandType command,
+                                Packet::Flag flag = Packet::Flag::None)
     {
         return createCommandPacket(
             command, flag,
@@ -37,21 +40,42 @@ template <typename CommandType> class NetworkNode {
     bool send(CommandPackage &package)
     {
         auto &packet = package.packet;
-        bool result =
-            m_socket.send(packet.payload, package.address, package.port);
+        bool result = m_socket.send(packet.payload, package.address,
+                                    package.port) == sf::Socket::Done;
         if (packet.hasFlag(Packet::Flag::Reliable)) {
-            m_packetBuffer.append(packet);
+            m_packetBuffer.append(std::move(packet), );
+        }
+        return result;
+    }
+
+    void handleAckPacket(sf::Packet &packet)
+    {
+        u32 sequence;
+        peer_id_t id;
+        packet >> sequence >> id;
+        auto itr = m_packetBuffer.reliablePacketBuffer.find(sequence);
+        if (itr != m_packetBuffer.reliablePacketBuffer.end()) {
+            auto &clients = itr->second.clients;
+            auto client = clients.find(id);
+            if (client != clients.end()) {
+                clients.erase(client);
+            }
+            if (clients.empty()) {
+                m_packetBuffer.reliablePacketBuffer.erase(itr);
+            }
         }
     }
 
     bool recieve(CommandPackage &package)
     {
-        auto& packet = package.packet;
+        auto &packet = package.packet;
         sf::Packet rawPacket;
-        if (m_socket.receive(rawPacket, package.address, package.port)) {
+        if (m_socket.receive(rawPacket, package.address, package.port) ==
+            sf::Socket::Done) {
             packet.initFromPacket(rawPacket);
             if (packet.hasFlag(Packet::Flag::Reliable)) {
-                auto ack = createPacket(CommandType::Acknowledgment, Packet::Flag::Reliable);
+                auto ack = createPacket(CommandType::Acknowledgment,
+                                        Packet::Flag::Reliable);
                 ack.packet.payload << packet.sequenceNumber << m_nodeId;
                 ack.address = package.address;
                 ack.packet = package.port;
@@ -62,9 +86,21 @@ template <typename CommandType> class NetworkNode {
         return false;
     }
 
+    void resendPackets()
+    {
+        if (!m_packetBuffer.reliablePacketBuffer.empty()) {
+            auto &packet = m_packetBuffer.reliablePacketBuffer.begin()->second;
+            if (!packet.clients.empty()) {
+                auto itr = packet.clients.begin();
+                send(*packet.clients.begin(), packet.packet);
+                packet.clients.erase(itr);
+            }
+        }
+    }
+
   private:
     sf::UdpSocket m_socket;
     PacketBuffer m_packetBuffer;
-    client_id_t m_nodeId;
+    peer_id_t m_nodeId;
     u32 m_sequenceNumber = 0;
 };

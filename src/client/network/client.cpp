@@ -62,7 +62,7 @@ namespace client {
         return m_isConnected;
     }
 
-    client_id_t Client::getClientId() const
+    peer_id_t Client::getClientId() const
     {
         return m_clientId;
     }
@@ -174,7 +174,7 @@ namespace client {
 
     void Client::handlePlayerJoin(sf::Packet &packet)
     {
-        client_id_t id;
+        peer_id_t id;
         packet >> id;
         mp_world.entities[id].alive = true;
 
@@ -183,7 +183,7 @@ namespace client {
 
     void Client::handlePlayerLeave(sf::Packet &packet)
     {
-        client_id_t id;
+        peer_id_t id;
         packet >> id;
         mp_world.entities[id].alive = false;
 

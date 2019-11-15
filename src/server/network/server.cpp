@@ -112,7 +112,7 @@ namespace server {
         }
     }
 
-    bool Server::sendToClient(client_id_t id, Packet &packet)
+    bool Server::sendToClient(peer_id_t id, Packet &packet)
     {
         if (m_clientStatuses[id] == ClientStatus::Connected) {
             bool result =
@@ -198,7 +198,7 @@ namespace server {
             auto responsePacket =
                 createCommandPacket(CommandToClient::ConnectRequestResult);
             responsePacket.payload << ConnectionResult::Success
-                                   << static_cast<client_id_t>(slot)
+                                   << static_cast<peer_id_t>(slot)
                                    << static_cast<u8>(m_maxConnections);
 
             m_clientStatuses[slot] = ClientStatus::Connected;
@@ -215,7 +215,7 @@ namespace server {
             std::cout << "Client Connected slot: " << (int)slot << '\n';
 
             auto joinPack = createPacket(CommandToClient::PlayerJoin, false);
-            joinPack.payload << static_cast<client_id_t>(slot);
+            joinPack.payload << static_cast<peer_id_t>(slot);
             sendToAllClients(joinPack);
         }
         else {
@@ -227,7 +227,7 @@ namespace server {
 
     void Server::handleDisconnect(sf::Packet &packet)
     {
-        client_id_t client;
+        peer_id_t client;
         packet >> client;
         m_clientStatuses[client] = ClientStatus::Disconnected;
         m_clientSessions[client].p_entity->isAlive = false;
@@ -243,7 +243,7 @@ namespace server {
 
     void Server::handleKeyInput(sf::Packet &packet)
     {
-        client_id_t client;
+        peer_id_t client;
 
         packet >> client;
         packet >> m_clientSessions[client].keyState;
@@ -254,7 +254,7 @@ namespace server {
     void Server::handleAckPacket(sf::Packet &packet)
     {
         u32 sequence;
-        client_id_t id;
+        peer_id_t id;
         packet >> sequence >> id;
         auto itr = m_packetBuffer.reliablePacketBuffer.find(sequence);
         if (itr != m_packetBuffer.reliablePacketBuffer.end()) {

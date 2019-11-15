@@ -37,7 +37,7 @@ struct PacketBuffer {
             : packet(std::move(pkt)){};
 
         Packet packet;
-        std::unordered_set<client_id_t> clients;
+        std::unordered_set<peer_id_t> clients;
     };
 
     bool hasPacket(u32 sequenceNumber) const
@@ -46,11 +46,12 @@ struct PacketBuffer {
                reliablePacketBuffer.cend();
     }
 
-    void append(Packet&& packet, client_id_t id)
+    void append(Packet &&packet, peer_id_t id)
     {
         auto itr = reliablePacketBuffer.find(packet.sequenceNumber);
         if (itr == reliablePacketBuffer.cend()) {
-            auto queuedPacket = reliablePacketBuffer.emplace(packet.sequenceNumber, std::move(packet));
+            auto queuedPacket = reliablePacketBuffer.emplace(
+                packet.sequenceNumber, std::move(packet));
             queuedPacket.first->second.clients.insert(id);
         }
         else {

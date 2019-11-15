@@ -16,7 +16,7 @@ using i32 = int32_t;
 
 // Network types
 using port_t = u16;
-using client_id_t = u8;
+using peer_id_t = u8;
 using entityid_t = u16;
 using command_t = u8;
 using input_t = u8;

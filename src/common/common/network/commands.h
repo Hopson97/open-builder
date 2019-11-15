@@ -12,12 +12,12 @@ enum class CommandToServer : command_t {
 
     /// Disconnect request
     /// Command_t: CommandToServer
-    /// client_id_t: id
+    /// peer_id_t: id
     Disconnect,
 
     /// Keyboard input state
     /// Command_t: CommandToServer
-    /// client_id_t: id
+    /// peer_id_t: id
     /// input_t: input
     /// float: players x look direction
     /// float: players y look direction
@@ -33,7 +33,7 @@ enum class CommandToServer : command_t {
 enum class CommandToClient : command_t {
     /// Result of a connetion request
     /// u8: 0 = fail, 1 = success
-    /// client_id_t: id [aka slot]
+    /// peer_id_t: id [aka slot]
     ConnectRequestResult,
 
     /// The current state the world entities are in

@@ -23,7 +23,7 @@ namespace server {
         int maxConnections() const;
         int findEmptySlot() const;
 
-        bool sendToClient(client_id_t id, Packet &packet);
+        bool sendToClient(peer_id_t id, Packet &packet);
         void sendToAllClients(Packet &packet);
 
         Packet createPacket(CommandToClient command, bool reliable);

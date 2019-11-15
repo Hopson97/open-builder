@@ -22,7 +22,7 @@ namespace client {
 
         bool isConnected() const;
 
-        client_id_t getClientId() const;
+        peer_id_t getClientId() const;
         u8 getMaxPlayers() const;
 
       private:
@@ -40,7 +40,7 @@ namespace client {
         } m_server;
 
         sf::UdpSocket m_socket;
-        client_id_t m_clientId;
+        peer_id_t m_clientId;
         input_t m_inputState = 0;
         bool m_isConnected = false;
 
