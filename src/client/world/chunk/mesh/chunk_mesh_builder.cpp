@@ -147,7 +147,7 @@ namespace client {
         float time = timer.getElapsedTime().asSeconds();
         total += time;
         count++;
-        std::cout << time * 1000 << " " << (total / count) * 1000 << '\n';
+        //std::cout << time * 1000 << " " << (total / count) * 1000 << '\n';
 
         return chunkMesh;
     }
