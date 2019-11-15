@@ -6,6 +6,13 @@
 #include <unordered_map>
 #include <unordered_set>
 
+/**
+ * @brief Basis of all packet sent. 
+ * All have this structure
+ * 
+ * |16 bit |8 bit |32 bit  | The rest|
+ * |Command|Flags |Sequence|
+ */
 struct Packet {
     enum class Flag : u8 {
         None,

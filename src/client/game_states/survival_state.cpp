@@ -107,13 +107,6 @@ namespace client {
         for (auto &chunk : m_world.chunkMeshes) {
             renderer.process(chunk.second);
         }
-
-        static sf::Clock clock;
-        if (clock.getElapsedTime().asSeconds() > 1) {
-            clock.restart();
-            std::cout << "Client chunks: " << m_world.chunks.size()
-                      << std::endl;
-        }
     }
 
     void SurvivalState::onExit()

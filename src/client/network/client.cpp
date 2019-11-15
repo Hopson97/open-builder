@@ -169,7 +169,7 @@ namespace client {
         packet >> chunk;
         chunk.flag = Chunk::Flag::NeedsNewMesh;
 
-        mp_world.chunks.insert(std::make_pair(position, chunk));
+        mp_world.chunks.try_emplace(position, std::move(chunk));
     }
 
     void Client::handlePlayerJoin(sf::Packet &packet)
