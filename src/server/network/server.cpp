@@ -53,13 +53,13 @@ namespace server {
         PackagedCommand package;
         while (getFromClient(package)) {
             auto &packet = package.packet;
-            switch (package.command) {
+            switch (static_cast<CommandToServer>(packet.command)) {
                 case CommandToServer::PlayerInput:
-                    handleKeyInput(packet);
+                    handleKeyInput(packet.payload);
                     break;
 
                 case CommandToServer::Acknowledgment:
-                    handleAckPacket(packet);
+                    handleAckPacket(packet.payload);
                     break;
 
                 case CommandToServer::Connect:
@@ -67,7 +67,7 @@ namespace server {
                     break;
 
                 case CommandToServer::Disconnect:
-                    handleDisconnect(packet);
+                    handleDisconnect(packet.payload);
                     break;
             }
         }
@@ -156,12 +156,10 @@ namespace server {
 
     bool Server::getFromClient(PackagedCommand &package)
     {
-        if (m_socket.receive(package.packet, package.address, package.port) ==
+        sf::Packet packet;
+        if (m_socket.receive(packet, package.address, package.port) ==
             sf::Socket::Done) {
-            package.packet >> package.command >> package.flags;
-            if (package.flags == (u8)Packet::Flag::Reliable) {
-                package.packet >> package.seq;
-            }
+            package.packet.initFromPacket(packet);
             return true;
         }
         return false;
@@ -256,15 +254,15 @@ namespace server {
         u32 sequence;
         client_id_t id;
         packet >> sequence >> id;
-        auto itr = m_reliablePacketQueue.find(sequence);
-        if (itr != m_reliablePacketQueue.end()) {
+        auto itr = m_packetBuffer.reliablePacketBuffer.find(sequence);
+        if (itr != m_packetBuffer.reliablePacketBuffer.end()) {
             auto &clients = itr->second.clients;
             auto client = clients.find(id);
             if (client != clients.end()) {
                 clients.erase(client);
             }
             if (clients.empty()) {
-                m_reliablePacketQueue.erase(itr);
+                m_packetBuffer.reliablePacketBuffer.erase(itr);
             }
         }
     }

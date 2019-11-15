@@ -3,23 +3,25 @@
 #include "../types.h"
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Packet.hpp>
+#include <unordered_map>
+#include <unordered_set>
 
 struct Packet {
     enum class Flag : u8 {
         None,
         Reliable,
     };
-
+    Packet() = default;
     Packet(command_t commandToSend, Flag flag = Flag::None, u32 seqNumber = 0);
-    Packet(sf::Packet &packet);
+
+    void initFromPacket(sf::Packet &packet);
 
     bool hasFlag(Flag flag);
 
     sf::Packet payload;
-
-    const u32 sequenceNumber;
-    const command_t command;
-    const u8 flags;
+    u32 sequenceNumber;
+    command_t command;
+    u8 flags;
 };
 
 struct PacketBuffer {

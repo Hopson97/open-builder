@@ -8,8 +8,6 @@
 #include <SFML/System/Clock.hpp>
 #include <common/network/commands.h>
 #include <common/network/packet.h>
-#include <unordered_map>
-#include <unordered_set>
 
 namespace server {
     class Server final {
@@ -32,13 +30,9 @@ namespace server {
 
       private:
         struct PackagedCommand {
-            sf::Packet packet;
+            Packet packet;
             sf::IpAddress address;
-            CommandToServer command;
             port_t port;
-
-            u8 flags;
-            u32 seq;
         };
 
         bool getFromClient(PackagedCommand &package);
@@ -55,7 +49,6 @@ namespace server {
 
         std::vector<ClientSession> m_clientSessions;
         std::vector<ClientStatus> m_clientStatuses;
-        // std::queue<ClientEndpoint> m_pendingConnections;
 
         int m_maxConnections = 4;
         int m_connections = 0;

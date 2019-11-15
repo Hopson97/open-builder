@@ -26,16 +26,8 @@ namespace client {
         u8 getMaxPlayers() const;
 
       private:
-        struct PackagedCommand {
-            sf::Packet packet;
-            CommandToClient command;
-
-            u8 flags;
-            u32 seq;
-        };
-
         bool sendToServer(sf::Packet &packet);
-        bool getFromServer(PackagedCommand &package);
+        bool getFromServer(Packet &package);
 
         void handleWorldState(sf::Packet &packet);
         void handleChunkData(sf::Packet &packet);

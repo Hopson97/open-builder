@@ -24,29 +24,29 @@ namespace client {
 
     void Client::update()
     {
-        PackagedCommand package;
-        while (getFromServer(package)) {
-            auto &packet = package.packet;
-            if (package.flags == (u8)Packet::Flag::Reliable) {
-                auto ack = createCommandPacket(CommandToServer::Acknowledgment);
-                ack.payload << package.seq << m_clientId;
-                sendToServer(ack.payload);
+        Packet packet;
+        while (getFromServer(packet)) {
+            //auto &packet = packet.payload;
+            if (packet.hasFlag(Packet::Flag::Reliable)) {
+                auto acknowledgePacket = createCommandPacket(CommandToServer::Acknowledgment);
+                acknowledgePacket.payload << packet.sequenceNumber << m_clientId;
+                sendToServer(acknowledgePacket.payload);
             }
-            switch (package.command) {
+            switch (static_cast<CommandToClient>(packet.command)) {
                 case CommandToClient::WorldState:
-                    handleWorldState(packet);
+                    handleWorldState(packet.payload);
                     break;
 
                 case CommandToClient::ChunkData:
-                    handleChunkData(packet);
+                    handleChunkData(packet.payload);
                     break;
 
                 case CommandToClient::PlayerJoin:
-                    handlePlayerJoin(packet);
+                    handlePlayerJoin(packet.payload);
                     break;
 
                 case CommandToClient::PlayerLeave:
-                    handlePlayerLeave(packet);
+                    handlePlayerLeave(packet.payload);
                     break;
 
                 case CommandToClient::ConnectRequestResult:
@@ -75,18 +75,18 @@ namespace client {
         m_server.address = address;
         auto connectRequest = createCommandPacket(CommandToServer::Connect);
         if (sendToServer(connectRequest.payload)) {
-            PackagedCommand response;
+            Packet response;
             if (getFromServer(response)) {
                 ConnectionResult result;
-                response.packet >> result;
+                response.payload >> result;
                 switch (result) {
                     case ConnectionResult::Success:
-                        response.packet >> m_clientId;
+                        response.payload >> m_clientId;
                         std::cout << "Connected, ID: " << (int)m_clientId
                                   << std::endl;
                         m_isConnected = true;
                         m_socket.setBlocking(false);
-                        response.packet >> m_serverMaxPlayers;
+                        response.payload >> m_serverMaxPlayers;
                         return true;
 
                     case ConnectionResult::GameFull:
@@ -122,16 +122,14 @@ namespace client {
                sf::Socket::Done;
     }
 
-    bool Client::getFromServer(PackagedCommand &package)
+    bool Client::getFromServer(Packet &package)
     {
+        sf::Packet packet;
         sf::IpAddress address;
         port_t port;
-        if (m_socket.receive(package.packet, address, port) ==
+        if (m_socket.receive(packet, address, port) ==
             sf::Socket::Done) {
-            package.packet >> package.command >> package.flags;
-            if (package.flags == (u8)Packet::Flag::Reliable) {
-                package.packet >> package.seq;
-            }
+            package.initFromPacket(packet);
             return true;
         }
         return false;

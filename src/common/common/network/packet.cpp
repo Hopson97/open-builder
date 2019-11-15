@@ -5,10 +5,12 @@ Packet::Packet(command_t commandToSend, Flag flag, u32 seqNumber)
     , command(commandToSend)
     , flags(static_cast<u8>(flag))
 {
-    payload << commandToSend << flags;
-    if (seqNumber > 0) {
-        payload << seqNumber;
-    }
+    payload << commandToSend << flags << seqNumber;
+}
+
+void Packet::initFromPacket(sf::Packet& packet) {
+    packet >> command >> flags >> sequenceNumber;
+    payload = std::move(packet);
 }
 
 bool Packet::hasFlag(Flag flag)
