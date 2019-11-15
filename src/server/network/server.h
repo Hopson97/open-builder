@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../world/entity.h"
-#include "endpoint.h"
+#include "session.h"
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/UdpSocket.hpp>
@@ -10,6 +10,7 @@
 #include <common/network/network_node.h>
 #include <common/network/packet.h>
 #include <common/network/packet_buffer.h>
+#include <common/network/endpoint.h>
 
 namespace server {
     class Server final {
@@ -33,15 +34,13 @@ namespace server {
       private:
         struct PackagedCommand {
             Packet packet;
-            sf::IpAddress address;
-            port_t port;
+            Endpoint endpoint;
         };
 
         bool getFromClient(PackagedCommand &package);
 
         void handleAckPacket(sf::Packet &packet);
-        void handleIncomingConnection(const sf::IpAddress &address,
-                                      port_t port);
+        void handleIncomingConnection(const Endpoint& endpoint);
         void handleDisconnect(sf::Packet &packet);
         void handleKeyInput(sf::Packet &packet);
 

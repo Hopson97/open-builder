@@ -3,23 +3,20 @@
 #include <iostream>
 
 namespace server {
-    void Server::handleIncomingConnection(const sf::IpAddress &clientAddress,
-                                          port_t clientPort)
+    void Server::handleIncomingConnection(const Endpoint& endpoint)
     {
         std::cout << "Connection request got\n";
 
-        auto sendRejection = [this](ConnectionResult result,
-                                    const sf::IpAddress &address, port_t port) {
+        auto sendRejection = [this, &endpoint](ConnectionResult result) {
             auto rejectPacket =
                 createCommandPacket(CommandToClient::ConnectRequestResult);
             rejectPacket.payload << result;
-            m_socket.send(rejectPacket.payload, address, port);
+            m_socket.send(rejectPacket.payload, endpoint.address, endpoint.port);
         };
 
         // This makes sure there are not any duplicated connections
-        for (const auto &endpoint : m_clientSessions) {
-            if (clientAddress.toInteger() == endpoint.address.toInteger() &&
-                clientPort == endpoint.port) {
+        for (const auto &session : m_clientSessions) {
+            if (endpoint == session.endpoint) {
                 return;
             }
         }
@@ -27,8 +24,7 @@ namespace server {
         if (m_connections < m_maxConnections) {
             auto slot = findEmptySlot();
             if (slot < 0) {
-                sendRejection(ConnectionResult::GameFull, clientAddress,
-                              clientPort);
+                sendRejection(ConnectionResult::GameFull);
             }
             // Connection can be made
             auto responsePacket =
@@ -38,14 +34,13 @@ namespace server {
                                    << static_cast<u8>(m_maxConnections);
 
             m_clientStatuses[slot] = ClientStatus::Connected;
-            m_clientSessions[slot].address = clientAddress;
-            m_clientSessions[slot].port = clientPort;
+            m_clientSessions[slot].endpoint = endpoint;
             m_clientSessions[slot].p_entity->position.y = 70.0f;
             m_clientSessions[slot].p_entity->isAlive = true;
             m_clientSessions[slot].p_entity->speed = 16.0f;
 
             m_aliveEntities++;
-            m_socket.send(responsePacket.payload, clientAddress, clientPort);
+            m_socket.send(responsePacket.payload, endpoint.address, endpoint.port);
 
             m_connections++;
             std::cout << "Client Connected slot: " << (int)slot << '\n';
@@ -55,8 +50,7 @@ namespace server {
             sendToAllClients(joinPack);
         }
         else {
-            sendRejection(ConnectionResult::GameFull, clientAddress,
-                          clientPort);
+            sendRejection(ConnectionResult::GameFull);
         }
         std::cout << std::endl;
     }

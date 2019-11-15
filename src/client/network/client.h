@@ -6,6 +6,8 @@
 #include <common/network/commands.h>
 #include <common/network/input_state.h>
 #include <common/network/packet.h>
+#include <common/network/network_node.h>
+#include <common/network/endpoint.h>
 
 #include "../world/entity.h"
 
@@ -34,10 +36,7 @@ namespace client {
         void handlePlayerJoin(sf::Packet &packet);
         void handlePlayerLeave(sf::Packet &packet);
 
-        struct {
-            sf::IpAddress address;
-            port_t port;
-        } m_server;
+        Endpoint m_server;
 
         sf::UdpSocket m_socket;
         peer_id_t m_clientId;

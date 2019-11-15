@@ -63,7 +63,7 @@ namespace server {
                     break;
 
                 case CommandToServer::Connect:
-                    handleIncomingConnection(package.address, package.port);
+                    handleIncomingConnection(package.endpoint);
                     break;
 
                 case CommandToServer::Disconnect:
@@ -116,8 +116,8 @@ namespace server {
     {
         if (m_clientStatuses[id] == ClientStatus::Connected) {
             bool result =
-                m_socket.send(packet.payload, m_clientSessions[id].address,
-                              m_clientSessions[id].port) == sf::Socket::Done;
+                m_socket.send(packet.payload, m_clientSessions[id].endpoint.address,
+                              m_clientSessions[id].endpoint.port) == sf::Socket::Done;
 
             if (packet.hasFlag(Packet::Flag::Reliable)) {
                 m_packetBuffer.append(std::move(packet), id);
@@ -149,7 +149,7 @@ namespace server {
     bool Server::getFromClient(PackagedCommand &package)
     {
         sf::Packet packet;
-        if (m_socket.receive(packet, package.address, package.port) ==
+        if (m_socket.receive(packet, package.endpoint.address, package.endpoint.port) ==
             sf::Socket::Done) {
             package.packet.initFromPacket(packet);
             return true;

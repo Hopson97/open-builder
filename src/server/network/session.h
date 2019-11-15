@@ -1,13 +1,13 @@
 #pragma once
 
-#include <SFML/Network/IpAddress.hpp>
-#include <common/constants.h>
-#include <common/types.h>
+#include <common/network/endpoint.h>
+
 
 namespace server {
+    struct Entity;
+
     struct ClientSession {
-        sf::IpAddress address;
-        port_t port = 0;
+        Endpoint endpoint;
         input_t keyState = 0;
         Entity *p_entity = nullptr;
     };
