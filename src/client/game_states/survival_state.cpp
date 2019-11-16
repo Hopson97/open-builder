@@ -92,7 +92,7 @@ namespace client {
         m_client.update();
         camera.reset(getPlayerEntity().transform);
 
-        m_world.update();
+        m_world.update(getPlayerEntity());
     }
 
     void SurvivalState::render(Renderer &renderer)
@@ -106,12 +106,6 @@ namespace client {
 
         for (auto &chunk : m_world.chunkMeshes) {
             renderer.process(chunk.second);
-        }
-
-        static sf::Clock clock;
-        if (clock.getElapsedTime().asSeconds() > 1) {
-            clock.restart();
-            std::cout << "Client chunks: " << m_world.chunks.size() << std::endl;
         }
     }
 

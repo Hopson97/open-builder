@@ -39,13 +39,14 @@ namespace server {
             if (m_server.connectedPlayes() != 0 && !sent) {
                 int i = 0;
                 for (auto &chunk : m_chunks) {
-                    auto p = createCommandPacket(CommandToClient::ChunkData);
-                    p << chunk;
+                    auto p = m_server.createPacket(CommandToClient::ChunkData,
+                                                   Packet::Flag::Reliable);
+                    p.payload << chunk;
                     m_server.sendToAllClients(p);
                     i++;
                 }
                 std::cout << "Server sent: " << i << "chunks\n";
-                
+
                 sent = true;
             }
 
@@ -77,20 +78,24 @@ namespace server {
             }
             id++;
         }
+
+        m_server.resendPackets();
     }
 
     void Application::sendState()
     {
-        auto statePacket = createCommandPacket(CommandToClient::WorldState);
-        statePacket << static_cast<u16>(m_entities.size());
+        auto statePacket = m_server.createPacket(CommandToClient::WorldState,
+                                                 Packet::Flag::None);
+        auto &payload = statePacket.payload;
+        payload << static_cast<u16>(m_entities.size());
         for (entityid_t i = 0; i < m_entities.size(); i++) {
             if (m_entities[i].isAlive) {
                 Entity &entity = m_entities[i];
 
-                statePacket << i;
-                statePacket << entity.position.x << entity.position.y
-                            << entity.position.z;
-                statePacket << entity.rotation.x << entity.rotation.y;
+                payload << i;
+                payload << entity.position.x << entity.position.y
+                        << entity.position.z;
+                payload << entity.rotation.x << entity.rotation.y;
             }
         }
         m_server.sendToAllClients(statePacket);

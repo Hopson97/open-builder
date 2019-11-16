@@ -12,24 +12,28 @@ enum class CommandToServer : command_t {
 
     /// Disconnect request
     /// Command_t: CommandToServer
-    /// client_id_t: id
+    /// peer_id_t: id
     Disconnect,
 
     /// Keyboard input state
     /// Command_t: CommandToServer
-    /// client_id_t: id
+    /// peer_id_t: id
     /// input_t: input
     /// float: players x look direction
     /// float: players y look direction
     PlayerInput,
 
+    /// To tell server that we have recieved a packet
+    /// command_t: Acknowledgment
+    /// u32: sequenceNumber
+    Acknowledgment,
 };
 
 /// command_t from the server to the client
 enum class CommandToClient : command_t {
     /// Result of a connetion request
     /// u8: 0 = fail, 1 = success
-    /// client_id_t: id [aka slot]
+    /// peer_id_t: id [aka slot]
     ConnectRequestResult,
 
     /// The current state the world entities are in
@@ -54,7 +58,12 @@ enum class CommandToClient : command_t {
 
     /// Saying a player has left
     /// u16
-    PlayerLeave
+    PlayerLeave,
+
+    /// To tell server that we have recieved a packet
+    /// command_t: Acknowledgment
+    /// u32: sequenceNumber
+    Acknowledgment,
 };
 
 enum class ConnectionResult : command_t {
@@ -76,13 +85,5 @@ template <typename CommandType>
 sf::Packet &operator<<(sf::Packet &packet, CommandType command)
 {
     packet << static_cast<command_t>(command);
-    return packet;
-}
-
-template <typename CommandType>
-sf::Packet createCommandPacket(CommandType command)
-{
-    sf::Packet packet;
-    packet << command;
     return packet;
 }

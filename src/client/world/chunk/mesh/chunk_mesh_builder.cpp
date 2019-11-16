@@ -95,6 +95,8 @@ namespace client {
 
     ChunkMesh ChunkMeshBuilder::createMesh()
     {
+        static float total = 0;
+        static int count = 0;
         ChunkMesh chunkMesh;
         sf::Clock timer;
         for (int y = 0; y < CHUNK_SIZE; ++y) {
@@ -106,44 +108,47 @@ namespace client {
 
                     /*Block block = mp_chunk.getBlock({x, y, z});*/
 
-                    Block left = mp_chunk.getBlock({x - 1, y, z});
-                    Block right = mp_chunk.getBlock({x + 1, y, z});
-
                     Block up = mp_chunk.getBlock({x, y + 1, z});
                     Block down = mp_chunk.getBlock({x, y - 1, z});
+                    /*
+                                        Block left = mp_chunk.getBlock({x - 1,
+                       y, z}); Block right = mp_chunk.getBlock({x + 1, y, z});
 
-                    Block forwards = mp_chunk.getBlock({x, y, z + 1});
-                    Block back = mp_chunk.getBlock({x, y, z - 1});
-
-                    if (left.type == BlockType::Air) {
-                        addFace(leftFace, {x, y, z});
-                    }
-                    if (right.type == BlockType::Air) {
-                        addFace(rightFace, {x, y, z});
-                    }
+                                        Block forwards = mp_chunk.getBlock({x,
+                       y, z + 1}); Block back = mp_chunk.getBlock({x, y, z -
+                       1});
+                    */
                     if (up.type == BlockType::Air) {
                         addFace(topFace, {x, y, z});
                     }
                     if (down.type == BlockType::Air) {
                         addFace(bottomFace, {x, y, z});
                     }
+                    /*
+                    if (left.type == BlockType::Air) {
+                        addFace(leftFace, {x, y, z});
+                    }
+                    if (right.type == BlockType::Air) {
+                        addFace(rightFace, {x, y, z});
+                    }
                     if (forwards.type == BlockType::Air) {
                         addFace(frontFace, {x, y, z});
                     }
                     if (back.type == BlockType::Air) {
                         addFace(backFace, {x, y, z});
-                    }
+                    }*/
                 }
             }
         }
 
         chunkMesh.solidBlocks.create(m_mesh);
         chunkMesh.solidBlocks.addVertexBuffer(1, m_chunkBasicLight, GL_FLOAT);
-        /*
-        std::cout << "Chunk creation time: "
-                  << timer.getElapsedTime().asSeconds() * 1000
-                  << " milliseconds" << std::endl;
-        */
+
+        float time = timer.getElapsedTime().asSeconds();
+        total += time;
+        count++;
+        // std::cout << time * 1000 << " " << (total / count) * 1000 << '\n';
+
         return chunkMesh;
     }
 

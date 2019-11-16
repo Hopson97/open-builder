@@ -32,8 +32,8 @@ namespace client {
             m_entityShader.getUniformLocation("lightPosition");
 
         glCheck(glEnable(GL_DEPTH_TEST));
-        //  glCheck(glEnable(GL_CULL_FACE));
-        //   glCheck(glCullFace(GL_BACK));
+        glCheck(glEnable(GL_CULL_FACE));
+        glCheck(glCullFace(GL_BACK));
     }
 
     void Renderer::process(const ChunkMesh &mesh)
@@ -55,8 +55,8 @@ namespace client {
 
     void Renderer::render(const Camera &camera)
     {
-        //Skybox is drawn without depth testing
-        //So it must be rendered before anything else
+        // Skybox is drawn without depth testing
+        // So it must be rendered before anything else
         m_skyboxRenderer.render(camera);
 
         m_entityShader.use();
@@ -78,7 +78,5 @@ namespace client {
         }
         m_entityBatches.clear();
         m_chunkRenderer.render(camera);
-
-        
     }
 } // namespace client

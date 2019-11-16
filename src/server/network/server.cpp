@@ -16,6 +16,7 @@ namespace server {
     Server::Server(int maxConnections, port_t port, EntityArray &entities)
         : m_clientSessions(maxConnections)
         , m_clientStatuses(maxConnections)
+        , m_endpoints(maxConnections)
     {
         std::fill(m_clientStatuses.begin(), m_clientStatuses.end(),
                   ClientStatus::Disconnected);
@@ -50,21 +51,37 @@ namespace server {
 
     void Server::recievePackets()
     {
-        PackagedCommand package;
-        while (getFromClient(package)) {
-            auto &packet = package.packet;
-            switch (package.command) {
+        Packet packet;
+        Endpoint endpoint;
+        while (recieve(packet, endpoint)) {
+            switch (static_cast<CommandToServer>(packet.command)) {
                 case CommandToServer::PlayerInput:
-                    handleKeyInput(packet);
+                    handleKeyInput(packet.payload);
+                    break;
+
+                case CommandToServer::Acknowledgment:
+                    handleAckPacket(packet.payload);
                     break;
 
                 case CommandToServer::Connect:
-                    handleIncomingConnection(package.address, package.port);
+                    handleIncomingConnection(endpoint);
                     break;
 
                 case CommandToServer::Disconnect:
-                    handleDisconnect(packet);
+                    handleDisconnect(packet.payload);
                     break;
+            }
+        }
+    }
+
+    void Server::resendPackets()
+    {
+        if (!m_packetBuffer.isEmpty()) {
+            auto &packet = m_packetBuffer.begin();
+            if (!packet.clients.empty()) {
+                auto itr = packet.clients.begin();
+                sendToClient(*itr, packet.packet);
+                packet.clients.erase(itr);
             }
         }
     }
@@ -96,113 +113,42 @@ namespace server {
         }
     }
 
-    void Server::handleKeyInput(sf::Packet &packet)
-    {
-        client_id_t client;
-
-        packet >> client;
-        packet >> m_clientSessions[client].keyState;
-        packet >> m_clientSessions[client].p_entity->rotation.x;
-        packet >> m_clientSessions[client].p_entity->rotation.y;
-    }
-
-    bool Server::sendToClient(client_id_t id, sf::Packet &packet)
+    bool Server::sendToClient(peer_id_t id, Packet &packet)
     {
         if (m_clientStatuses[id] == ClientStatus::Connected) {
-            return m_socket.send(packet, m_clientSessions[id].address,
-                                 m_clientSessions[id].port) == sf::Socket::Done;
+            auto &endpoint = m_endpoints[id];
+            bool result = m_socket.send(packet.payload, endpoint.address,
+                                        endpoint.port) == sf::Socket::Done;
+            if (packet.hasFlag(Packet::Flag::Reliable)) {
+                m_packetBuffer.append(std::move(packet), endpoint.id);
+            }
+            return result;
         }
         return false;
     }
 
-    void Server::sendToAllClients(sf::Packet &packet)
+    void Server::sendToAllClients(Packet &packet)
     {
         for (int i = 0; i < m_maxConnections; i++) {
             sendToClient(i, packet);
         }
     }
 
-    bool Server::getFromClient(PackagedCommand &package)
+    Packet Server::createPacket(CommandToClient command, Packet::Flag flag)
     {
-        if (m_socket.receive(package.packet, package.address, package.port) ==
+        return createCommandPacket(
+            command, flag,
+            flag == Packet::Flag::Reliable ? m_sequenceNumber++ : 0);
+    }
+
+    bool Server::recieve(Packet &packet, Endpoint &endpoint)
+    {
+        sf::Packet rawPacket;
+        if (m_socket.receive(rawPacket, endpoint.address, endpoint.port) ==
             sf::Socket::Done) {
-            package.packet >> package.command;
+            packet.initFromPacket(rawPacket);
             return true;
         }
         return false;
     }
-
-    void Server::handleIncomingConnection(const sf::IpAddress &clientAddress,
-                                          port_t clientPort)
-    {
-        std::cout << "Connection request got\n";
-
-        auto sendRejection = [this](ConnectionResult result,
-                                    const sf::IpAddress &address, port_t port) {
-            auto rejectPacket =
-                createCommandPacket(CommandToClient::ConnectRequestResult);
-            rejectPacket << result;
-            m_socket.send(rejectPacket, address, port);
-        };
-
-        // This makes sure there are not any duplicated connections
-        for (const auto &endpoint : m_clientSessions) {
-            if (clientAddress.toInteger() == endpoint.address.toInteger() &&
-                clientPort == endpoint.port) {
-                return;
-            }
-        }
-
-        if (m_connections < m_maxConnections) {
-            auto slot = findEmptySlot();
-            if (slot < 0) {
-                sendRejection(ConnectionResult::GameFull, clientAddress,
-                              clientPort);
-            }
-            // Connection can be made
-            auto responsePacket = createCommandPacket(CommandToClient::ConnectRequestResult);
-            responsePacket << ConnectionResult::Success
-                           << static_cast<client_id_t>(slot)
-                           << static_cast<u8>(m_maxConnections);
-
-            m_clientStatuses[slot] = ClientStatus::Connected;
-            m_clientSessions[slot].address = clientAddress;
-            m_clientSessions[slot].port = clientPort;
-            m_clientSessions[slot].p_entity->position.y = 70.0f;
-            m_clientSessions[slot].p_entity->isAlive = true;
-            m_clientSessions[slot].p_entity->speed = 16.0f;
-
-            m_aliveEntities++;
-            m_socket.send(responsePacket, clientAddress, clientPort);
-
-            m_connections++;
-            std::cout << "Client Connected slot: " << (int)slot << '\n';
-
-            auto joinPack = createCommandPacket(CommandToClient::PlayerJoin);
-            joinPack << static_cast<client_id_t>(slot);
-            sendToAllClients(joinPack);
-        }
-        else {
-            sendRejection(ConnectionResult::GameFull, clientAddress,
-                          clientPort);
-        }
-        std::cout << std::endl;
-    }
-
-    void Server::handleDisconnect(sf::Packet &packet)
-    {
-        client_id_t client;
-        packet >> client;
-        m_clientStatuses[client] = ClientStatus::Disconnected;
-        m_clientSessions[client].p_entity->isAlive = false;
-        m_connections--;
-        m_aliveEntities--;
-        std::cout << "Client Disonnected slot: " << (int)client << '\n';
-        std::cout << std::endl;
-
-        auto joinPack = createCommandPacket(CommandToClient::PlayerLeave);
-        joinPack << client;
-        sendToAllClients(joinPack);
-    }
-
 } // namespace server

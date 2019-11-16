@@ -4,7 +4,10 @@
 #include <SFML/Network/UdpSocket.hpp>
 
 #include <common/network/commands.h>
+#include <common/network/endpoint.h>
 #include <common/network/input_state.h>
+#include <common/network/network_node.h>
+#include <common/network/packet.h>
 
 #include "../world/entity.h"
 
@@ -21,30 +24,22 @@ namespace client {
 
         bool isConnected() const;
 
-        client_id_t getClientId() const;
+        peer_id_t getClientId() const;
         u8 getMaxPlayers() const;
 
       private:
-        struct PackagedCommand {
-            sf::Packet packet;
-            CommandToClient command;
-        };
-
         bool sendToServer(sf::Packet &packet);
-        bool getFromServer(PackagedCommand &package);
+        bool getFromServer(Packet &package);
 
         void handleWorldState(sf::Packet &packet);
         void handleChunkData(sf::Packet &packet);
         void handlePlayerJoin(sf::Packet &packet);
         void handlePlayerLeave(sf::Packet &packet);
 
-        struct {
-            sf::IpAddress address;
-            port_t port;
-        } m_server;
+        Endpoint m_server;
 
         sf::UdpSocket m_socket;
-        client_id_t m_clientId;
+        peer_id_t m_clientId;
         input_t m_inputState = 0;
         bool m_isConnected = false;
 

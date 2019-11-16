@@ -5,8 +5,6 @@
 #include <iostream>
 #include <thread>
 
-#include "../world/world.h"
-
 namespace client {
     Client::Client(World &world)
         : mp_world(world)
@@ -17,30 +15,42 @@ namespace client {
     {
         auto inputStatePacket =
             createCommandPacket(CommandToServer::PlayerInput);
-        inputStatePacket << m_clientId << input << rotation.x << rotation.y;
-        sendToServer(inputStatePacket);
+        inputStatePacket.payload << m_clientId << input << rotation.x
+                                 << rotation.y;
+        sendToServer(inputStatePacket.payload);
     }
 
     void Client::update()
     {
-        PackagedCommand package;
-        while (getFromServer(package)) {
-            auto &packet = package.packet;
-            switch (package.command) {
+        Packet packet;
+        while (getFromServer(packet)) {
+            // auto &packet = packet.payload;
+            if (packet.hasFlag(Packet::Flag::Reliable)) {
+                auto acknowledgePacket =
+                    createCommandPacket(CommandToServer::Acknowledgment);
+                acknowledgePacket.payload << packet.sequenceNumber
+                                          << m_clientId;
+                sendToServer(acknowledgePacket.payload);
+            }
+            switch (static_cast<CommandToClient>(packet.command)) {
                 case CommandToClient::WorldState:
-                    handleWorldState(packet);
+                    handleWorldState(packet.payload);
+                    break;
+
+                case CommandToClient::Acknowledgment:
+                    // m_networkNode.handleAckPacket(packet.payload);
                     break;
 
                 case CommandToClient::ChunkData:
-                    handleChunkData(packet);
+                    handleChunkData(packet.payload);
                     break;
 
                 case CommandToClient::PlayerJoin:
-                    handlePlayerJoin(packet);
+                    handlePlayerJoin(packet.payload);
                     break;
 
                 case CommandToClient::PlayerLeave:
-                    handlePlayerLeave(packet);
+                    handlePlayerLeave(packet.payload);
                     break;
 
                 case CommandToClient::ConnectRequestResult:
@@ -54,7 +64,7 @@ namespace client {
         return m_isConnected;
     }
 
-    client_id_t Client::getClientId() const
+    peer_id_t Client::getClientId() const
     {
         return m_clientId;
     }
@@ -68,19 +78,19 @@ namespace client {
     {
         m_server.address = address;
         auto connectRequest = createCommandPacket(CommandToServer::Connect);
-        if (sendToServer(connectRequest)) {
-            PackagedCommand response;
+        if (sendToServer(connectRequest.payload)) {
+            Packet response;
             if (getFromServer(response)) {
                 ConnectionResult result;
-                response.packet >> result;
+                response.payload >> result;
                 switch (result) {
                     case ConnectionResult::Success:
-                        response.packet >> m_clientId;
+                        response.payload >> m_clientId;
                         std::cout << "Connected, ID: " << (int)m_clientId
                                   << std::endl;
                         m_isConnected = true;
                         m_socket.setBlocking(false);
-                        response.packet >> m_serverMaxPlayers;
+                        response.payload >> m_serverMaxPlayers;
                         return true;
 
                     case ConnectionResult::GameFull:
@@ -104,8 +114,8 @@ namespace client {
     {
         auto disconnectRequest =
             createCommandPacket(CommandToServer::Disconnect);
-        disconnectRequest << m_clientId;
-        if (sendToServer(disconnectRequest)) {
+        disconnectRequest.payload << m_clientId;
+        if (sendToServer(disconnectRequest.payload)) {
             m_isConnected = false;
         }
     }
@@ -116,69 +126,15 @@ namespace client {
                sf::Socket::Done;
     }
 
-    bool Client::getFromServer(PackagedCommand &package)
+    bool Client::getFromServer(Packet &package)
     {
+        sf::Packet packet;
         sf::IpAddress address;
         port_t port;
-        if (m_socket.receive(package.packet, address, port) ==
-            sf::Socket::Done) {
-            package.packet >> package.command;
+        if (m_socket.receive(packet, address, port) == sf::Socket::Done) {
+            package.initFromPacket(packet);
             return true;
         }
         return false;
-    }
-
-    void Client::handleWorldState(sf::Packet &packet)
-    {
-        u16 count;
-        packet >> count;
-        for (unsigned i = 0; i < count; i++) {
-            entityid_t id;
-            packet >> id;
-            auto &entity = mp_world.entities[id];
-            auto &transform = entity.transform;
-
-            entity.alive = true;
-            packet >> transform.position.x;
-            packet >> transform.position.y;
-            packet >> transform.position.z;
-            float rotx, roty;
-            packet >> rotx;
-            packet >> roty;
-
-            if (id != m_clientId) {
-                transform.rotation.x = rotx;
-                transform.rotation.y = roty;
-            }
-        }
-    }
-
-    void Client::handleChunkData(sf::Packet &packet)
-    {
-        ChunkPosition position;
-        packet >> position.x >> position.y >> position.z;
-        Chunk chunk(position);
-        packet >> chunk;
-        chunk.flag = Chunk::Flag::NeedsNewMesh;
-
-        mp_world.chunks.insert(std::make_pair(position, chunk));
-    }
-
-    void Client::handlePlayerJoin(sf::Packet &packet)
-    {
-        client_id_t id;
-        packet >> id;
-        mp_world.entities[id].alive = true;
-
-        std::cout << "Player has joined: " << (int)id << std::endl;
-    }
-
-    void Client::handlePlayerLeave(sf::Packet &packet)
-    {
-        client_id_t id;
-        packet >> id;
-        mp_world.entities[id].alive = false;
-
-        std::cout << "Player has left: " << (int)id << std::endl;
     }
 } // namespace client
