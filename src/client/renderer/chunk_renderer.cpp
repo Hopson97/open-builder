@@ -12,7 +12,7 @@ namespace client {
         m_texture.create("grass.png");
     }
 
-    void ChunkRenderer::process(const ChunkDrawable &mesh)
+    void ChunkRenderer::process(const ChunkMesh &mesh)
     {
         m_solidChunkRenders.push_back(mesh.solidBlocks.getRenderInfo());
     }

@@ -7,13 +7,13 @@
 
 namespace client {
     class Camera;
-    class ChunkDrawable;
+    class ChunkMesh;
 
     class ChunkRenderer {
       public:
         ChunkRenderer();
 
-        void process(const ChunkDrawable &mesh);
+        void process(const ChunkMesh &mesh);
         void render(const Camera &camera);
 
       private:

@@ -93,6 +93,7 @@ namespace client {
     {
         static float total = 0;
         static int count = 0;
+        ChunkMesh chunkMesh;
         sf::Clock timer;
         for (int y = 0; y < CHUNK_SIZE; ++y) {
             for (int z = 0; z < CHUNK_SIZE; ++z) {
@@ -136,38 +137,40 @@ namespace client {
             }
         }
 
+        chunkMesh.solidBlocks.create(m_mesh);
+        chunkMesh.solidBlocks.addVertexBuffer(1, m_chunkBasicLight, GL_FLOAT);
+
         float time = timer.getElapsedTime().asSeconds();
         total += time;
         count++;
         std::cout << time * 1000 << " " << (total / count) * 1000 << '\n';
 
-        return m_mesh;
+        return chunkMesh;
     }
 
     void ChunkMeshBuilder::addFace(const BlockFace &face,
                                    const BlockPosition &position)
     {
-        auto &activeMesh = m_mesh.solidBlockMesh.mesh;
         int index = 0;
         for (int i = 0; i < 4; i++) {
-            activeMesh.vertices.push_back(face.vertices[index++] + position.x +
-                                          (mp_chunk.position.x * CHUNK_SIZE));
-            activeMesh.vertices.push_back(face.vertices[index++] + position.y +
-                                          (mp_chunk.position.y * CHUNK_SIZE));
-            activeMesh.vertices.push_back(face.vertices[index++] + position.z +
-                                          (mp_chunk.position.z * CHUNK_SIZE));
+            m_mesh.vertices.push_back(face.vertices[index++] + position.x +
+                                      (mp_chunk.position.x * CHUNK_SIZE));
+            m_mesh.vertices.push_back(face.vertices[index++] + position.y +
+                                      (mp_chunk.position.y * CHUNK_SIZE));
+            m_mesh.vertices.push_back(face.vertices[index++] + position.z +
+                                      (mp_chunk.position.z * CHUNK_SIZE));
 
-            m_mesh.solidBlockMesh.basicLight.push_back(face.basicLight);
+            m_chunkBasicLight.push_back(face.basicLight);
         }
 
-        activeMesh.textureCoords.insert(
-            activeMesh.textureCoords.end(),
+        m_mesh.textureCoords.insert(
+            m_mesh.textureCoords.end(),
             {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f});
 
-        activeMesh.indices.insert(activeMesh.indices.end(),
-                                  {m_meshMaxIndex, m_meshMaxIndex + 1,
-                                   m_meshMaxIndex + 2, m_meshMaxIndex + 2,
-                                   m_meshMaxIndex + 3, m_meshMaxIndex});
+        m_mesh.indices.insert(m_mesh.indices.end(),
+                              {m_meshMaxIndex, m_meshMaxIndex + 1,
+                               m_meshMaxIndex + 2, m_meshMaxIndex + 2,
+                               m_meshMaxIndex + 3, m_meshMaxIndex});
         m_meshMaxIndex += 4;
     }
 } // namespace client

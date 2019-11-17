@@ -29,7 +29,7 @@ namespace client {
         Renderer &operator=(const Renderer &) = delete;
 
         void process(const Entity &entity);
-        void process(const ChunkDrawable &mesh);
+        void process(const ChunkMesh &mesh);
 
         void render(const Camera &camera);
 

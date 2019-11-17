@@ -33,7 +33,7 @@ namespace client {
         glCheck(glCullFace(GL_BACK));
     }
 
-    void Renderer::process(const ChunkDrawable &mesh)
+    void Renderer::process(const ChunkMesh &mesh)
     {
         m_chunkRenderer.process(mesh);
     }
