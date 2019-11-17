@@ -44,6 +44,7 @@ add_executable(${PROJECT_NAME}
     src/common/common/network/packet_buffer.cpp
     src/common/common/debug.cpp
     src/common/common/util/file_io.cpp
+    src/common/common/world/chunk.cpp    
 )
 
 #Set C++17

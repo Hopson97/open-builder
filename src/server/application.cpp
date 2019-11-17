@@ -19,7 +19,7 @@ namespace server {
 
         for (int z = 0; z < 16; ++z) {
             for (int x = 0; x < 16; ++x) {
-                m_chunks.emplace_back(x, 0, z);
+                m_chunks.emplace_back(ChunkPosition{x, 0, z});
             }
         }
     }

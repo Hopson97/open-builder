@@ -25,6 +25,6 @@ namespace server {
 
         bool m_isRunning = true;
 
-        std::vector<Chunk> m_chunks;
+        std::vector<ServerChunk> m_chunks;
     };
 } // namespace server
