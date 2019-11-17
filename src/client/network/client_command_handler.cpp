@@ -32,9 +32,9 @@ namespace client {
     {
         ChunkPosition position;
         packet >> position.x >> position.y >> position.z;
-        Chunk chunk(position);
+        ClientChunk chunk(position);
         packet >> chunk;
-        chunk.flag = Chunk::Flag::NeedsNewMesh;
+        chunk.flag = ClientChunk::Flag::NeedsNewMesh;
 
         mp_world.chunks.try_emplace(position, std::move(chunk));
     }
