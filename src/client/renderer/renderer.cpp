@@ -9,9 +9,6 @@
 
 #include "../world/entity.h"
 
-#include "../world/chunk/chunk.h"
-#include "../world/chunk/mesh/chunk_mesh_builder.h"
-
 namespace client {
     void drawElements(GLsizei count)
     {

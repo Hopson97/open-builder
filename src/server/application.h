@@ -1,11 +1,10 @@
 #pragma once
 
-#include <common/constants.h>
-#include <vector>
-
 #include "network/server.h"
-#include "world/chunk/chunk.h"
 #include "world/entity.h"
+#include <common/constants.h>
+#include <common/world/chunk.h>
+#include <vector>
 
 class LaunchConfig;
 

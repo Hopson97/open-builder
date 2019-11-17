@@ -1,8 +1,10 @@
 #pragma once
 
-#include "chunk/chunk.h"
-#include "chunk/mesh/chunk_mesh.h"
+#include "chunk/chunk_mesh.h"
+#include "chunk/chunk_state.h"
 #include "entity.h"
+
+#include <common/world/chunk.h>
 
 namespace client {
     struct World {
@@ -12,6 +14,7 @@ namespace client {
 
         EntityArray entities;
         ChunkPositionMap<Chunk> chunks;
+        ChunkPositionMap<ChunkState> chunkStates;
         ChunkPositionMap<ChunkMesh> chunkMeshes;
     };
 } // namespace client
