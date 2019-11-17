@@ -1,6 +1,6 @@
 #include "chunk_mesh_builder.h"
-#include "../../renderer/model/mesh.h"
-#include "chunk.h"
+#include "../../../renderer/model/mesh.h"
+#include "../chunk.h"
 
 #include <iostream>
 
@@ -83,7 +83,7 @@ namespace {
 
 namespace client {
 
-    ChunkMeshBuilder::ChunkMeshBuilder(const ClientChunk &chunk)
+    ChunkMeshBuilder::ChunkMeshBuilder(const Chunk &chunk)
         : mp_chunk(chunk)
     {
     }

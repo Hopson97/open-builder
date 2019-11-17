@@ -1,6 +1,6 @@
 #include "chunk_renderer.h"
 
-#include "../world/chunk/chunk_mesh.h"
+#include "../world/chunk/mesh/chunk_mesh.h"
 #include "camera.h"
 
 #include <iostream>

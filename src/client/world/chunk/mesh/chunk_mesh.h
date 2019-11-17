@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../renderer/model/vertex_array.h"
+#include "../../../renderer/model/vertex_array.h"
 
 namespace client {
     /**

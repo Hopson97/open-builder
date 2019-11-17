@@ -1,7 +1,7 @@
 #pragma once
 
 #include "chunk/chunk.h"
-#include "chunk/chunk_mesh.h"
+#include "chunk/mesh/chunk_mesh.h"
 #include "entity.h"
 
 namespace client {
@@ -11,7 +11,7 @@ namespace client {
         void update(Entity &player);
 
         EntityArray entities;
-        ChunkPositionMap<ClientChunk> chunks;
+        ChunkPositionMap<Chunk> chunks;
         ChunkPositionMap<ChunkMesh> chunkMeshes;
     };
 } // namespace client
