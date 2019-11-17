@@ -11,16 +11,16 @@ class Chunk {
     Chunk(int x, int y, int z);
     Chunk(const ChunkPosition &chunkPosition);
 
-    Block getBlock(const BlockPosition &BlockPosition) const;
-    void setBlock(const BlockPosition &BlockPosition, Block block);
-    void quickSetBlock(const BlockPosition &BlockPosition, Block block);
+    Block getBlock(const BlockPosition &blockPosition) const;
+    void setBlock(const BlockPosition &blockPosition, Block block);
+    void quickSetBlock(const BlockPosition &blockPosition, Block block);
 
     friend sf::Packet &operator<<(sf::Packet &packet, const Chunk &chunk);
     friend sf::Packet &operator>>(sf::Packet &packet, Chunk &chunk);
 
-  protected:
-    std::array<Block, CHUNK_VOLUME> m_blocks;
-    const ChunkPosition position;
-
   private:
+    std::array<Block, CHUNK_VOLUME> m_blocks;
+
+  public:
+    const ChunkPosition position;
 };

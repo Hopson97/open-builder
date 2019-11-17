@@ -36,7 +36,8 @@ namespace client {
         packet >> chunk;
 
         mp_world.chunks.try_emplace(position, std::move(chunk));
-        mp_world.chunkStates.try_emplace(position, ChunkState::Flag::NeedsNewMesh);
+        mp_world.chunkStates.try_emplace(position,
+                                         ChunkState::Flag::NeedsNewMesh);
     }
 
     void Client::handlePlayerJoin(sf::Packet &packet)

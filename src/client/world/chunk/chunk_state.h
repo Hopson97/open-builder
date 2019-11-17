@@ -13,6 +13,12 @@ namespace client {
             NeedsNewMesh = 1,
         };
 
+        ChunkState(Flag initialFlag)
+            : flags(static_cast<u8>(initialFlag))
+        {
+        }
+
+        
         u8 flags;
     };
 } // namespace client

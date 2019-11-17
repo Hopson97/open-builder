@@ -1,6 +1,6 @@
 #include "world.h"
 
-#include "chunk/mesh/chunk_mesh_builder.h"
+#include "chunk/chunk_mesh_builder.h"
 
 #include <iostream>
 
@@ -40,11 +40,11 @@ namespace client {
         }
         */
 
-        for (auto &[position, chunk] : chunks) {
-            if (chunk.flag == Chunk::Flag::NeedsNewMesh) {
-                ChunkMeshBuilder builder(chunk);
+        for (auto &[position, chunk] : chunkStates) {
+            if (chunk.flags == (u8)ChunkState::Flag::NeedsNewMesh) {
+                ChunkMeshBuilder builder(chunks.at(position));
                 chunkMeshes[position] = builder.createMesh();
-                chunk.flag = Chunk::Flag::None;
+                chunk.flags = (u8)ChunkState::Flag::None;
                 return;
             }
         }

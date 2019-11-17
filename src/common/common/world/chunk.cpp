@@ -13,26 +13,26 @@ Chunk::Chunk(const ChunkPosition &chunkPosition)
 {
 }
 
-Block Chunk::getBlock(const BlockPosition &BlockPosition) const
+Block Chunk::getBlock(const BlockPosition &blockPosition) const
 {
-    if (positionOutOfChunkBounds(BlockPosition)) {
+    if (positionOutOfChunkBounds(blockPosition)) {
         return BlockType::Air;
     }
     else {
-        return m_blocks[toChunkBlockIndex(BlockPosition)];
+        return m_blocks[toChunkBlockIndex(blockPosition)];
     }
 }
 
-void Chunk::setBlock(const BlockPosition &BlockPosition, Block block)
+void Chunk::setBlock(const BlockPosition &blockPosition, Block block)
 {
-    if (!positionOutOfChunkBounds(BlockPosition)) {
-        m_blocks[toChunkBlockIndex(BlockPosition)] = block;
+    if (!positionOutOfChunkBounds(blockPosition)) {
+        m_blocks[toChunkBlockIndex(blockPosition)] = block;
     }
 }
 
-void Chunk::quickSetBlock(const BlockPosition &BlockPosition, Block block)
+void Chunk::quickSetBlock(const BlockPosition &blockPosition, Block block)
 {
-    m_blocks[toChunkBlockIndex(BlockPosition)] = block;
+    m_blocks[toChunkBlockIndex(blockPosition)] = block;
 }
 
 sf::Packet &operator<<(sf::Packet &packet, const Chunk &chunk)
