@@ -7,12 +7,14 @@
 namespace client {
     World::World()
     {
+        for (int i = 0; i < 4; i++) {
+        }
     }
 
     void World::addChunk(const ChunkPosition &position, Chunk &&chunk)
     {
         m_chunks.emplace(position, std::move(chunk));
-        m_chunkStates.emplace(position, ChunkState::Flag::NeedsNewMesh);
+        m_chunkStates.emplace(position, ChunkState{});
     }
 
     void World::removeChunk(const ChunkPosition &position)
@@ -22,9 +24,9 @@ namespace client {
         m_chunkMeshes.erase(position);
     }
 
-    const ChunkPositionMap<ChunkMesh>& World::getChunkMeshes() const
+    const ChunkPositionMap<ChunkDrawable> &World::getChunkDrawables() const
     {
-        return m_chunkMeshes;
+        return m_drawableChunks;
     }
 
     void World::update([[maybe_unused]] Entity &player)
@@ -59,10 +61,16 @@ namespace client {
         */
 
         for (auto &[position, chunk] : m_chunkStates) {
-            if (chunk.flags == (u8)ChunkState::Flag::NeedsNewMesh) {
+            if (!chunk.hasMesh) {
                 ChunkMeshBuilder builder(m_chunks.at(position));
-                m_chunkMeshes[position] = builder.createMesh();
-                chunk.flags = (u8)ChunkState::Flag::None;
+                auto mesh = builder.createMesh();
+                ChunkDrawable drawable;
+                drawable.solidBlocks.create(mesh.solidBlockMesh.mesh);
+                drawable.solidBlocks.addVertexBuffer(
+                    1, mesh.solidBlockMesh.basicLight, GL_FLOAT);
+
+                m_drawableChunks[position] = std::move(drawable);
+                chunk.hasMesh = true;
                 return;
             }
         }

@@ -34,8 +34,7 @@ namespace client {
         void addFace(const BlockFace &face, const BlockPosition &position);
 
         const Chunk &mp_chunk;
-        Mesh m_mesh;
-        std::vector<GLfloat> m_chunkBasicLight;
+        ChunkMesh m_mesh;
 
         unsigned m_meshMaxIndex = 0;
     };

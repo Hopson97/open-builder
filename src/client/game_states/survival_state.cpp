@@ -104,7 +104,7 @@ namespace client {
             }
         }
 
-        for (auto &chunk : m_world.getChunkMeshes()) {
+        for (auto &chunk : m_world.getChunkDrawables()) {
             renderer.process(chunk.second);
         }
     }

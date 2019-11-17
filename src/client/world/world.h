@@ -6,6 +6,9 @@
 
 #include <common/world/chunk.h>
 
+#include <mutex>
+#include <thread>
+
 namespace client {
     struct World {
       public:
@@ -15,7 +18,7 @@ namespace client {
         void addChunk(const ChunkPosition &position, Chunk &&chunk);
         void removeChunk(const ChunkPosition &position);
 
-        const ChunkPositionMap<ChunkMesh>& getChunkMeshes() const;
+        const ChunkPositionMap<ChunkDrawable> &getChunkDrawables() const;
 
         EntityArray entities;
 
@@ -23,5 +26,9 @@ namespace client {
         ChunkPositionMap<Chunk> m_chunks;
         ChunkPositionMap<ChunkState> m_chunkStates;
         ChunkPositionMap<ChunkMesh> m_chunkMeshes;
+        ChunkPositionMap<ChunkDrawable> m_drawableChunks;
+
+        std::vector<std::thread> m_workers;
+        std::mutex m_chunkMeshBuilderMutex;
     };
 } // namespace client

@@ -8,16 +8,8 @@
 
 namespace client {
     struct ChunkState {
-        enum class Flag : u8 {
-            None = 0,
-            NeedsNewMesh = 1,
-        };
-
-        ChunkState(Flag initialFlag)
-            : flags(static_cast<u8>(initialFlag))
-        {
-        }
-
-        u8 flags;
+        bool isReady = false;
+        bool hasMesh = false;
+        bool hasBuffer = false;
     };
 } // namespace client
