@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../types.h"
 #include "../constants.h"
+#include "../types.h"
 #include "block.h"
 
 class Chunk {

@@ -19,7 +19,6 @@ namespace client {
 
         friend sf::Packet &operator>>(sf::Packet &packet, ClientChunk &chunk);
 
-
       public:
         Flag flag = Flag::None;
     };
