@@ -6,7 +6,7 @@
 
 namespace server {
     ServerChunk::ServerChunk(const ChunkPosition &chunkPosition)
-        : ChunkTEMP(chunkPosition)
+        : Chunk(chunkPosition)
     {
     }
 

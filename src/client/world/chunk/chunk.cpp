@@ -6,7 +6,7 @@
 
 namespace client {
     ClientChunk::ClientChunk(const ChunkPosition &chunkPosition)
-        : ChunkTEMP(chunkPosition)
+        : Chunk(chunkPosition)
     {
     }
 

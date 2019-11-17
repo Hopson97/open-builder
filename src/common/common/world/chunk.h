@@ -4,10 +4,10 @@
 #include "../constants.h"
 #include "block.h"
 
-class ChunkTEMP {
+class Chunk {
   public:
-    ChunkTEMP(const ChunkPosition &chunkPosition);
-    virtual ~ChunkTEMP() = default;
+    Chunk(const ChunkPosition &chunkPosition);
+    virtual ~Chunk() = default;
 
     Block getBlock(const BlockPosition &blockPosition) const;
 

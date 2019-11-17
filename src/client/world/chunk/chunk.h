@@ -8,7 +8,7 @@
 #include <common/world/chunk.h>
 
 namespace client {
-    class ClientChunk : public ChunkTEMP {
+    class ClientChunk : public Chunk {
       public:
         enum class Flag : u8 {
             None = 0,

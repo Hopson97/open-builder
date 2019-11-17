@@ -7,7 +7,7 @@
 #include <common/world/chunk.h>
 
 namespace server {
-    class ServerChunk : public ChunkTEMP {
+    class ServerChunk : public Chunk {
       public:
         ServerChunk(const ChunkPosition &chunkPosition);
         friend sf::Packet &operator<<(sf::Packet &packet,
