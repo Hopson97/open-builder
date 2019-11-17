@@ -5,16 +5,16 @@
 #include <common/coordinate_convertion.h>
 
 namespace server {
-    Chunk::Chunk(int x, int y, int z)
+    ChunkSection::ChunkSection(int x, int y, int z)
         : position({x, y, z})
     {
     }
-    Chunk::Chunk(const ChunkPosition &chunkPosition)
+    ChunkSection::ChunkSection(const ChunkPosition &chunkPosition)
         : position(chunkPosition)
     {
     }
 
-    Block Chunk::getBlock(const BlockPosition &BlockPosition) const
+    Block ChunkSection::getBlock(const BlockPosition &BlockPosition) const
     {
         if (positionOutOfChunkBounds(BlockPosition)) {
             return BlockType::Air;
@@ -24,19 +24,19 @@ namespace server {
         }
     }
 
-    void Chunk::setBlock(const BlockPosition &BlockPosition, Block block)
+    void ChunkSection::setBlock(const BlockPosition &BlockPosition, Block block)
     {
         if (!positionOutOfChunkBounds(BlockPosition)) {
             m_blocks[toChunkBlockIndex(BlockPosition)] = block;
         }
     }
 
-    void Chunk::quickSetBlock(const BlockPosition &BlockPosition, Block block)
+    void ChunkSection::quickSetBlock(const BlockPosition &BlockPosition, Block block)
     {
         m_blocks[toChunkBlockIndex(BlockPosition)] = block;
     }
 
-    sf::Packet &operator<<(sf::Packet &packet, const Chunk &chunk)
+    sf::Packet &operator<<(sf::Packet &packet, const ChunkSection &chunk)
     {
         packet << chunk.position.x << chunk.position.y << chunk.position.z;
         for (auto block : chunk.m_blocks) {

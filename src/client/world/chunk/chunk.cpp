@@ -5,17 +5,17 @@
 #include <common/coordinate_convertion.h>
 
 namespace client {
-    Chunk::Chunk(int x, int y, int z)
+    ChunkSection::ChunkSection(int x, int y, int z)
         : position({x, y, z})
     {
     }
 
-    Chunk::Chunk(const ChunkPosition &chunkPosition)
+    ChunkSection::ChunkSection(const ChunkPosition &chunkPosition)
         : position(chunkPosition)
     {
     }
 
-    Block Chunk::getBlock(const BlockPosition &blockPosition) const
+    Block ChunkSection::getBlock(const BlockPosition &blockPosition) const
     {
         if (positionOutOfChunkBounds(blockPosition)) {
             return BlockType::Air;
@@ -25,7 +25,7 @@ namespace client {
         }
     }
 
-    sf::Packet &operator>>(sf::Packet &packet, Chunk &chunk)
+    sf::Packet &operator>>(sf::Packet &packet, ChunkSection &chunk)
     {
         for (auto &block : chunk.m_blocks) {
             u8 blockId;

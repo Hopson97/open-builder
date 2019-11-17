@@ -7,7 +7,7 @@
 #include "chunk_mesh.h"
 
 namespace client {
-    class Chunk;
+    class ChunkSection;
 
     /**
      * @brief Defines a block face: The 4 vertex positions + the normal
@@ -24,14 +24,14 @@ namespace client {
      */
     class ChunkMeshBuilder {
       public:
-        ChunkMeshBuilder(const Chunk &chunk);
+        ChunkMeshBuilder(const ChunkSection &chunk);
 
         ChunkMesh createMesh();
 
       private:
         void addFace(const BlockFace &face, const BlockPosition &position);
 
-        const Chunk &mp_chunk;
+        const ChunkSection &mp_chunk;
         Mesh m_mesh;
         std::vector<GLfloat> m_chunkBasicLight;
 

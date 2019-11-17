@@ -83,7 +83,7 @@ namespace {
 
 namespace client {
 
-    ChunkMeshBuilder::ChunkMeshBuilder(const Chunk &chunk)
+    ChunkMeshBuilder::ChunkMeshBuilder(const ChunkSection &chunk)
         : mp_chunk(chunk)
     {
     }

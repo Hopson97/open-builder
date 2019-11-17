@@ -7,19 +7,19 @@
 #include <iostream>
 
 namespace client {
-    class Chunk {
+    class ChunkSection {
       public:
         enum class Flag : u8 {
             None = 0,
             NeedsNewMesh = 1,
         };
 
-        Chunk(int x, int y, int z);
-        Chunk(const ChunkPosition &chunkPosition);
+        ChunkSection(int x, int y, int z);
+        ChunkSection(const ChunkPosition &chunkPosition);
 
         Block getBlock(const BlockPosition &blockPosition) const;
 
-        friend sf::Packet &operator>>(sf::Packet &packet, Chunk &chunk);
+        friend sf::Packet &operator>>(sf::Packet &packet, ChunkSection &chunk);
 
       private:
         std::array<Block, CHUNK_VOLUME> m_blocks;
