@@ -13,7 +13,7 @@ namespace client {
     sf::Packet &operator>>(sf::Packet &packet, ClientChunk &chunk)
     {
         for (auto &block : chunk.m_blocks) {
-            u8 blockId;
+            BlockId blockId;
             packet >> blockId;
             block = static_cast<BlockType>(blockId);
         }

@@ -14,7 +14,7 @@ namespace server {
     {
         packet << chunk.position.x << chunk.position.y << chunk.position.z;
         for (auto block : chunk.m_blocks) {
-            packet << static_cast<u8>(block.type);
+            packet << static_cast<BlockId>(block.type);
         }
         return packet;
     }
