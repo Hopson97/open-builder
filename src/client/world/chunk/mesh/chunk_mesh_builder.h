@@ -2,12 +2,12 @@
 
 #include <array>
 
-#include "../../renderer/model/mesh.h"
+#include "../../../renderer/model/mesh.h"
+#include "../../block/block.h"
 #include "chunk_mesh.h"
-#include <common/types.h>
 
 namespace client {
-    class ClientChunk;
+    class Chunk;
 
     /**
      * @brief Defines a block face: The 4 vertex positions + the normal
@@ -24,14 +24,14 @@ namespace client {
      */
     class ChunkMeshBuilder {
       public:
-        ChunkMeshBuilder(const ClientChunk &chunk);
+        ChunkMeshBuilder(const Chunk &chunk);
 
         ChunkMesh createMesh();
 
       private:
         void addFace(const BlockFace &face, const BlockPosition &position);
 
-        const ClientChunk &mp_chunk;
+        const Chunk &mp_chunk;
         Mesh m_mesh;
         std::vector<GLfloat> m_chunkBasicLight;
 
