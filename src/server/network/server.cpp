@@ -1,8 +1,12 @@
 #include "server.h"
 
 #include <SFML/Network/Packet.hpp>
+
 #include <common/network/commands.h>
 #include <common/network/input_state.h>
+
+#include "../world/chunk/chunk.h"
+
 #include <ctime>
 #include <iostream>
 #include <random>

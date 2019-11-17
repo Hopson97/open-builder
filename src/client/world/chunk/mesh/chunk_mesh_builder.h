@@ -2,14 +2,12 @@
 
 #include <array>
 
-#include "../../renderer/model/mesh.h"
+#include "../../../renderer/model/mesh.h"
+#include "../../block/block.h"
 #include "chunk_mesh.h"
 
-#include <common/types.h>
-
-class Chunk;
-
 namespace client {
+    class Chunk;
 
     /**
      * @brief Defines a block face: The 4 vertex positions + the normal

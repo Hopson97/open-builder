@@ -1,7 +1,6 @@
 #include "chunk_mesh_builder.h"
-#include "../../renderer/model/mesh.h"
-
-#include <common/world/chunk.h>
+#include "../../../renderer/model/mesh.h"
+#include "../chunk.h"
 
 #include <iostream>
 

@@ -1,12 +1,19 @@
 #pragma once
 
-#include "../network/client.h"
-#include "../world/world.h"
 #include "game_state.h"
+
 #include <common/network/input_state.h>
 #include <common/types.h>
+
 #include <unordered_map>
 #include <vector>
+
+#include "../world/chunk/chunk.h"
+#include "../world/chunk/mesh/chunk_mesh_builder.h"
+
+#include "../network/client.h"
+
+#include "../world/world.h"
 
 namespace client {
     class StateHandler;
