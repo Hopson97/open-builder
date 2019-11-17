@@ -1,12 +1,30 @@
 #include "world.h"
 
-#include "chunk/mesh/chunk_mesh_builder.h"
+#include "chunk/chunk_mesh_builder.h"
 
 #include <iostream>
 
 namespace client {
     World::World()
     {
+    }
+
+    void World::addChunk(const ChunkPosition &position, Chunk &&chunk)
+    {
+        m_chunks.emplace(position, std::move(chunk));
+        m_chunkStates.emplace(position, ChunkState::Flag::NeedsNewMesh);
+    }
+
+    void World::removeChunk(const ChunkPosition &position)
+    {
+        m_chunks.erase(position);
+        m_chunkStates.erase(position);
+        m_chunkMeshes.erase(position);
+    }
+
+    const ChunkPositionMap<ChunkMesh>& World::getChunkMeshes() const
+    {
+        return m_chunkMeshes;
     }
 
     void World::update([[maybe_unused]] Entity &player)
@@ -40,11 +58,11 @@ namespace client {
         }
         */
 
-        for (auto &[position, chunk] : chunks) {
-            if (chunk.flag == Chunk::Flag::NeedsNewMesh) {
-                ChunkMeshBuilder builder(chunk);
-                chunkMeshes[position] = builder.createMesh();
-                chunk.flag = Chunk::Flag::None;
+        for (auto &[position, chunk] : m_chunkStates) {
+            if (chunk.flags == (u8)ChunkState::Flag::NeedsNewMesh) {
+                ChunkMeshBuilder builder(m_chunks.at(position));
+                m_chunkMeshes[position] = builder.createMesh();
+                chunk.flags = (u8)ChunkState::Flag::None;
                 return;
             }
         }
