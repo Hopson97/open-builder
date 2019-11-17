@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "network/server.h"
-#include "world/chunk/chunk.h"
+#include "world/chunk/chunk_section.h"
 #include "world/entity.h"
 
 class LaunchConfig;
