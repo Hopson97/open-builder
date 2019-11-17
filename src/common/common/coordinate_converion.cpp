@@ -13,15 +13,12 @@ bool positionOutOfChunkBounds(const BlockPosition &blockPosition)
            blockPosition.z < 0 || blockPosition.z >= CHUNK_SIZE;
 }
 
-/*
-    Block Chunk::getBlock(const BlockPosition &blockPosition) const
+BlockPosition localBlockToWorldBlockPostion(const BlockPosition& block, const ChunkPosition& chunk)
+{
+    return
     {
-        if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
-   blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE || blockPosition.z < 0
-   || blockPosition.z >= CHUNK_SIZE) { return BlockType::Air;
-        }
-        else {
-            return m_blocks[(blockPosition.y * (CHUNK_SIZE * CHUNK_SIZE) +
-                             blockPosition.z * CHUNK_SIZE + blockPosition.x)];
-        }
-    }*/
+        chunk.x * CHUNK_SIZE + block.x,
+        chunk.y * CHUNK_SIZE + block.y,
+        chunk.z * CHUNK_SIZE + block.z
+    };
+}

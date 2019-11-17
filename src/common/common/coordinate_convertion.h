@@ -10,6 +10,8 @@
  */
 int toChunkBlockIndex(const BlockPosition &position);
 
+BlockPosition localBlockToWorldBlockPostion(const BlockPosition& block, const ChunkPosition& chunk);
+
 /**
  * @brief Determines if a position is out bounds of the chunk eg x >= CHUNK_SIZE
  *
