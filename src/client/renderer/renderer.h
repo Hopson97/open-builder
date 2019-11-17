@@ -7,7 +7,7 @@
 #include "model/textured_model.h"
 #include "skybox_renderer.h"
 
-#include "../world/chunk/mesh/chunk_mesh.h"
+#include "../world/chunk/chunk_mesh.h"
 
 #include <unordered_map>
 

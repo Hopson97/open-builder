@@ -2,9 +2,9 @@
 
 #include <array>
 
-#include "../../../renderer/model/mesh.h"
-#include "../../block/block.h"
+#include "../../renderer/model/mesh.h"
 #include "chunk_mesh.h"
+#include <common/types.h>
 
 namespace client {
     class Chunk;

@@ -23,8 +23,8 @@ add_executable(${PROJECT_NAME}
     src/client/network/client_command_handler.cpp
     src/client/world/world.cpp
     src/client/world/chunk/chunk.cpp
-    src/client/world/chunk/mesh/chunk_mesh.cpp
-    src/client/world/chunk/mesh/chunk_mesh_builder.cpp
+    src/client/world/chunk/chunk_mesh.cpp
+    src/client/world/chunk/chunk_mesh_builder.cpp
     src/client/util/fps_counter.cpp
     src/client/util/maths.cpp
     src/client/util/model_loader.cpp
