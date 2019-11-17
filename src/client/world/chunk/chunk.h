@@ -1,31 +1,26 @@
 #pragma once
 
-#include "../block/block.h"
 #include <SFML/Network/Packet.hpp>
 #include <array>
 #include <common/constants.h>
 #include <iostream>
 
+#include <common/world/chunk.h>
+
 namespace client {
-    class Chunk {
+    class ClientChunk : public ChunkTEMP {
       public:
         enum class Flag : u8 {
             None = 0,
             NeedsNewMesh = 1,
         };
 
-        Chunk(int x, int y, int z);
-        Chunk(const ChunkPosition &chunkPosition);
+        ClientChunk(const ChunkPosition &chunkPosition);
 
-        Block getBlock(const BlockPosition &blockPosition) const;
+        friend sf::Packet &operator>>(sf::Packet &packet, ClientChunk &chunk);
 
-        friend sf::Packet &operator>>(sf::Packet &packet, Chunk &chunk);
-
-      private:
-        std::array<Block, CHUNK_VOLUME> m_blocks;
 
       public:
-        const ChunkPosition position;
         Flag flag = Flag::None;
     };
 } // namespace client

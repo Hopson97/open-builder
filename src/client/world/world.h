@@ -11,7 +11,7 @@ namespace client {
         void update(Entity &player);
 
         EntityArray entities;
-        ChunkPositionMap<Chunk> chunks;
+        ChunkPositionMap<ClientChunk> chunks;
         ChunkPositionMap<ChunkMesh> chunkMeshes;
     };
 } // namespace client
