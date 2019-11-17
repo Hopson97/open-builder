@@ -12,9 +12,16 @@ namespace client {
         World();
         void update(Entity &player);
 
+        void addChunk(const ChunkPosition &position, Chunk &&chunk);
+        void removeChunk(const ChunkPosition &position);
+
+        const ChunkPositionMap<ChunkMesh>& getChunkMeshes() const;
+
         EntityArray entities;
-        ChunkPositionMap<Chunk> chunks;
-        ChunkPositionMap<ChunkState> chunkStates;
-        ChunkPositionMap<ChunkMesh> chunkMeshes;
+
+      private:
+        ChunkPositionMap<Chunk> m_chunks;
+        ChunkPositionMap<ChunkState> m_chunkStates;
+        ChunkPositionMap<ChunkMesh> m_chunkMeshes;
     };
 } // namespace client

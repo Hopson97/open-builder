@@ -18,7 +18,6 @@ namespace client {
         {
         }
 
-        
         u8 flags;
     };
 } // namespace client
