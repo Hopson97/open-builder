@@ -29,7 +29,8 @@ namespace server {
         bool sendToClient(peer_id_t id, Packet &packet);
         void sendToAllClients(Packet &packet);
 
-        Packet createPacket(CommandToClient command, Packet::Flag flag = Packet::Flag::None);
+        Packet createPacket(CommandToClient command,
+                            Packet::Flag flag = Packet::Flag::None);
 
       private:
         bool send(Packet &packet, const Endpoint &endpoint)

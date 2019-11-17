@@ -45,8 +45,7 @@ namespace server {
             m_connections++;
             std::cout << "Client Connected slot: " << (int)slot << '\n';
 
-            auto joinPack =
-                createPacket(CommandToClient::PlayerJoin);
+            auto joinPack = createPacket(CommandToClient::PlayerJoin);
             joinPack.payload << static_cast<peer_id_t>(slot);
             sendToAllClients(joinPack);
         }
@@ -67,8 +66,7 @@ namespace server {
         std::cout << "Client Disonnected slot: " << (int)client << '\n';
         std::cout << std::endl;
 
-        auto joinPack =
-            createPacket(CommandToClient::PlayerLeave);
+        auto joinPack = createPacket(CommandToClient::PlayerLeave);
         joinPack.payload << client;
         sendToAllClients(joinPack);
     }

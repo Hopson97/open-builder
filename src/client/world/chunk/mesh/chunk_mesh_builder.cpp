@@ -12,9 +12,8 @@ namespace {
         1, 1, 1,
         0, 1, 1,
     },
-    {
         0.8f
-    }};
+    };
 
     const client::BlockFace backFace {{
         1, 0, 0,
@@ -22,9 +21,8 @@ namespace {
         0, 1, 0,
         1, 1, 0,
     },
-    {
         0.8f
-    }};
+    };
 
     const client::BlockFace leftFace {{
         0, 0, 0,
@@ -32,9 +30,9 @@ namespace {
         0, 1, 1,
         0, 1, 0,
     },
-    {
+    
         0.6f
-    }};
+    };
 
     const client::BlockFace rightFace {{
         1, 0, 1,
@@ -42,9 +40,8 @@ namespace {
         1, 1, 0,
         1, 1, 1,
     },
-    {
         0.6f
-    }};
+    };
 
     const client::BlockFace topFace {{
         0, 1, 1,
@@ -52,9 +49,8 @@ namespace {
         1, 1, 0,
         0, 1, 0,
     },
-    {
         1.0f
-    }};
+    };
 
     const client::BlockFace bottomFace {{
         0, 0, 0,
@@ -62,9 +58,8 @@ namespace {
         1, 0, 1,
         0, 0, 1
     },
-    {
         0.4f
-    }};
+    };
 
 /*
     FaceVertices xFace1 {
@@ -147,7 +142,7 @@ namespace client {
         float time = timer.getElapsedTime().asSeconds();
         total += time;
         count++;
-        // std::cout << time * 1000 << " " << (total / count) * 1000 << '\n';
+        std::cout << time * 1000 << " " << (total / count) * 1000 << '\n';
 
         return chunkMesh;
     }
