@@ -17,9 +17,9 @@ namespace server {
             m_entities[i].isAlive = true;
         }
 
-        for (int z = 0; z < 16; ++z) {
-            for (int x = 0; x < 16; ++x) {
-                m_chunks.emplace_back(x, 0, z);
+        for (int z = 0; z < WORLD_SIZE; ++z) {
+            for (int x = 0; x < WORLD_SIZE; ++x) {
+                m_chunks.emplace_back(x, z);
             }
         }
     }
@@ -28,27 +28,12 @@ namespace server {
     {
         sf::Clock timeoutClock;
         sf::Clock deltaClock;
-        bool sent = false;
         while (m_isRunning) {
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
             m_server.recievePackets();
             update(deltaClock.restart());
             sendState();
-
-            if (m_server.connectedPlayes() != 0 && !sent) {
-                int i = 0;
-                for (auto &chunk : m_chunks) {
-                    auto p = m_server.createPacket(CommandToClient::ChunkData,
-                                                   Packet::Flag::Reliable);
-                    p.payload << chunk;
-                    m_server.sendToAllClients(p);
-                    i++;
-                }
-                std::cout << "Server sent: " << i << "chunks\n";
-
-                sent = true;
-            }
 
             if (m_server.connectedPlayes() == 0) {
                 if (timeoutClock.getElapsedTime() > timeout) {
