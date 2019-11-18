@@ -19,7 +19,8 @@ namespace server {
 
         for (int z = 0; z < WORLD_SIZE; ++z) {
             for (int x = 0; x < WORLD_SIZE; ++x) {
-                m_chunks.emplace_back(x, z);
+                auto &c = m_chunks.emplace_back(x, z);
+                c.generateTerrain();
             }
         }
     }
@@ -28,12 +29,24 @@ namespace server {
     {
         sf::Clock timeoutClock;
         sf::Clock deltaClock;
+        bool sent;
         while (m_isRunning) {
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
             m_server.recievePackets();
             update(deltaClock.restart());
             sendState();
+
+            if (m_server.connectedPlayes() != 0 && !sent) {
+                int i = 0;
+                for (auto &chunk : m_chunks) {
+                    chunk.sendChunks(m_server);
+                    i++;
+                }
+                std::cout << "Server sent: " << i << "chunks\n";
+
+                sent = true;
+            }
 
             if (m_server.connectedPlayes() == 0) {
                 if (timeoutClock.getElapsedTime() > timeout) {

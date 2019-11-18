@@ -1,7 +1,9 @@
 #include "chunk.h"
 
-#include "mesh/chunk_mesh_builder.h"
 #include "../../renderer/renderer.h"
+#include "mesh/chunk_mesh_builder.h"
+
+#include <iostream>
 
 namespace client {
     Chunk::Chunk(int x, int z)
@@ -9,15 +11,15 @@ namespace client {
     {
     }
 
-    void Chunk::addSection(ChunkSection&& section)
+    void Chunk::addSection(ChunkSection section)
     {
         if (section.position.y >= 0) {
-            while (static_cast<unsigned>(section.position.y) > m_sections.size() - 1) {
+            while (section.position.y > (int)m_sections.size() - 1) {
                 m_sections.emplace_back(m_position.x, m_sections.size(),
                                         m_position.y);
                 m_chunkMeshes.emplace_back();
             }
-            m_sections[section.position.y] = std::move(section);
+            m_sections[section.position.y] = section;
         }
     }
 
@@ -37,10 +39,9 @@ namespace client {
         return m_sections[sectionIndex].getBlock({x, blockY, z});
     }
 
-    void Chunk::render(Renderer& renderer)
+    void Chunk::render(Renderer &renderer)
     {
-        for (auto& mesh : m_chunkMeshes)
-        {
+        for (auto &mesh : m_chunkMeshes) {
             renderer.process(mesh);
         }
     }

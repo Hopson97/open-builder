@@ -10,10 +10,10 @@ namespace client {
       public:
         Chunk(int x, int z);
 
-        void addSection(ChunkSection&& section);
+        void addSection(ChunkSection section);
         Block getBlock(int x, int y, int z);
 
-        void render(Renderer& renderer);
+        void render(Renderer &renderer);
         bool createMesh();
 
       private:

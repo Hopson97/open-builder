@@ -32,8 +32,8 @@ namespace client {
             m_entityShader.getUniformLocation("lightPosition");
 
         glCheck(glEnable(GL_DEPTH_TEST));
-        glCheck(glEnable(GL_CULL_FACE));
-        glCheck(glCullFace(GL_BACK));
+        //glCheck(glEnable(GL_CULL_FACE));
+        //glCheck(glCullFace(GL_BACK));
     }
 
     void Renderer::process(const ChunkMesh &mesh)

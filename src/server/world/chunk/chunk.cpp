@@ -2,6 +2,8 @@
 
 #include "../../network/server.h"
 
+#include <iostream>
+
 namespace server {
     Chunk::Chunk(int x, int z)
         : m_position(x, z)
@@ -11,9 +13,11 @@ namespace server {
     void Chunk::addSection(int chunkY)
     {
         if (chunkY >= 0) {
-            while (static_cast<unsigned>(chunkY) > m_sections.size() - 1) {
+            int numChunks = m_sections.size();
+            while (chunkY > numChunks - 1) {
                 m_sections.emplace_back(m_position.x, m_sections.size(),
                                         m_position.y);
+                numChunks = m_sections.size();
             }
         }
     }
@@ -30,7 +34,6 @@ namespace server {
         if (sectionIndex >= m_sections.size()) {
             addSection(sectionIndex);
         }
-
         m_sections[sectionIndex].quickSetBlock({x, blockY, z}, block);
     }
 
@@ -52,7 +55,7 @@ namespace server {
 
     void Chunk::generateTerrain()
     {
-        for (int y = 0; y < CHUNK_SIZE + 1; y++) {
+        for (int y = 0; y < 5; y++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
                 for (int x = 0; x < CHUNK_SIZE; x++) {
                     setBlock(x, y, z, BlockType::Grass);
@@ -66,13 +69,13 @@ namespace server {
         return m_sections.size() > 0;
     }
 
-    void Chunk::sendChunks(Server& server) const
+    void Chunk::sendChunks(Server &server) const
     {
-        for (auto& chunk : m_sections)
-        {
-            auto packet = server.createPacket(CommandToClient::ChunkData, Packet::Flag::Reliable);
+        for (auto &chunk : m_sections) {
+            auto packet = server.createPacket(CommandToClient::ChunkData,
+                                              Packet::Flag::Reliable);
             packet.payload << chunk;
-            server.sendToAllClients(packet); 
+            server.sendToAllClients(packet);
         }
     }
 } // namespace server

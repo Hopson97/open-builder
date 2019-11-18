@@ -36,8 +36,7 @@ namespace client {
         packet >> chunk;
         chunk.flag = ChunkSection::Flag::NeedsNewMesh;
 
-        mp_world.addChunk(std::move(chunk));
-        
+        mp_world.addChunk(chunk);
     }
 
     void Client::handlePlayerJoin(sf::Packet &packet)

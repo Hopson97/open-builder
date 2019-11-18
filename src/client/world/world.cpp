@@ -14,21 +14,22 @@ namespace client {
         }
     }
 
-    void World::addChunk(ChunkSection&& section)
+    void World::addChunk(ChunkSection section)
     {
-        m_chunks.at(section.position.z * WORLD_SIZE + section.position.x).addSection(std::move(section));
+        m_chunks.at(section.position.z * WORLD_SIZE + section.position.x)
+            .addSection(std::move(section));
     }
 
-    void World::render(Renderer& renderer)
+    void World::render(Renderer &renderer)
     {
-        for (auto& chunk : m_chunks) {
+        for (auto &chunk : m_chunks) {
             chunk.render(renderer);
         }
     }
 
     void World::update([[maybe_unused]] Entity &player)
     {
-        for (auto& chunk : m_chunks) {
+        for (auto &chunk : m_chunks) {
             if (chunk.createMesh()) {
                 break;
             }

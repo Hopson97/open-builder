@@ -12,8 +12,8 @@ namespace client {
 
         EntityArray entities;
 
-        void addChunk(ChunkSection&& section);
-        void render(Renderer& renderer);
+        void addChunk(ChunkSection section);
+        void render(Renderer &renderer);
 
       private:
         std::vector<Chunk> m_chunks;

@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace server {
-  class Server;
+    class Server;
 
     class Chunk final {
       public:
@@ -20,7 +20,7 @@ namespace server {
         void generateTerrain();
         bool readyForSend() const;
 
-        void sendChunks(Server& server) const;
+        void sendChunks(Server &server) const;
 
       private:
         sf::Vector2i m_position;

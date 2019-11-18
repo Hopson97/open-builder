@@ -21,7 +21,7 @@ namespace client {
 
     class VertexArray final {
       public:
-        VertexArray();
+        VertexArray() = default;
         VertexArray(const Mesh &mesh);
 
         VertexArray(VertexArray &&other);

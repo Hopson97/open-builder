@@ -103,6 +103,8 @@ namespace client {
                 renderer.process(e);
             }
         }
+
+        m_world.render(renderer);
     }
 
     void SurvivalState::onExit()

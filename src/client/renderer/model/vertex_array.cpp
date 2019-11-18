@@ -16,11 +16,6 @@ namespace client {
                                nullptr));
     }
 
-    VertexArray::VertexArray()
-    {
-        create();
-    }
-
     VertexArray::VertexArray(const Mesh &mesh)
     {
         create();
@@ -57,6 +52,7 @@ namespace client {
 
     void VertexArray::create(const Mesh &mesh)
     {
+        create();
         bind();
         if (!mesh.vertices.empty()) {
             addVertexBuffer(3, mesh.vertices, GL_FLOAT);
