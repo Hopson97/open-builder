@@ -103,10 +103,6 @@ namespace client {
                 renderer.process(e);
             }
         }
-
-        for (auto &chunk : m_world.chunkMeshes) {
-            renderer.process(chunk.second);
-        }
     }
 
     void SurvivalState::onExit()

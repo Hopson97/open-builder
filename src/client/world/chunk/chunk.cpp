@@ -2,7 +2,7 @@
 
 namespace client {
     Chunk::Chunk(int x, int z)
-    :   m_position(x, z)
+        : m_position(x, z)
     {
     }
 
@@ -25,8 +25,7 @@ namespace client {
         int blockY = y % CHUNK_SIZE;
         unsigned sectionIndex = y / CHUNK_SIZE;
 
-        if (sectionIndex >= m_sections.size())
-        {
+        if (sectionIndex >= m_sections.size()) {
             return BlockType::Air;
         }
 

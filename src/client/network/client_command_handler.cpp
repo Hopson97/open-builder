@@ -30,6 +30,8 @@ namespace client {
 
     void Client::handleChunkData(sf::Packet &packet)
     {
+        (void)packet;
+        /*
         ChunkPosition position;
         packet >> position.x >> position.y >> position.z;
         ChunkSection chunk(position);
@@ -37,6 +39,7 @@ namespace client {
         chunk.flag = ChunkSection::Flag::NeedsNewMesh;
 
         mp_world.chunks.try_emplace(position, std::move(chunk));
+        */
     }
 
     void Client::handlePlayerJoin(sf::Packet &packet)
