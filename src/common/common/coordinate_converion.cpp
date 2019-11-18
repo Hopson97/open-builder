@@ -6,7 +6,6 @@ int toChunkBlockIndex(const BlockPosition &blockPosition)
             blockPosition.z * CHUNK_SIZE + blockPosition.x);
 }
 
-
 BlockPosition localBlockToWorldBlockPostion(const BlockPosition &block,
                                             const ChunkSectionPosition &chunk)
 {
@@ -14,23 +13,14 @@ BlockPosition localBlockToWorldBlockPostion(const BlockPosition &block,
             chunk.z * CHUNK_SIZE + block.z};
 }
 
-BlockPosition worldBlockToChunkBlockPosition(const BlockPosition& position)
+BlockPosition worldBlockToChunkBlockPosition(const BlockPosition &position)
 {
-    return
-    {
-        position.x % CHUNK_SIZE,
-        position.y,
-        position.z % CHUNK_SIZE
-    };
+    return {position.x % CHUNK_SIZE, position.y, position.z % CHUNK_SIZE};
 }
 
-ChunkPosition worldBlockToChunkPosition(const BlockPosition& position)
+ChunkPosition worldBlockToChunkPosition(const BlockPosition &position)
 {
-    return
-    {
-        position.x / CHUNK_SIZE,
-        position.z / CHUNK_SIZE
-    };
+    return {position.x / CHUNK_SIZE, position.z / CHUNK_SIZE};
 }
 
 bool positionOutOfChunkBounds(const BlockPosition &blockPosition)
