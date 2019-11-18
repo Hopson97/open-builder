@@ -7,10 +7,10 @@ namespace client {
     class Renderer;
     class Chunk final {
       public:
-        Chunk(const ChunkPosition& chunkPosition, World &world);
+        Chunk(const ChunkPosition &chunkPosition, World &world);
 
         void addSection(ChunkSection section);
-        Block getBlock(int x, int y, int z);
+        Block getBlock(const BlockPosition &blockPosition);
 
         void render(Renderer &renderer);
         bool createMesh();

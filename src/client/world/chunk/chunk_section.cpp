@@ -1,8 +1,10 @@
 #include "chunk_section.h"
 
-#include <iostream>
 #include "../world.h"
 #include <common/coordinate_convertion.h>
+#include <iostream>
+
+#include <common/debug.h>
 
 namespace client {
     ChunkSection::ChunkSection(int x, int y, int z, World &world)
@@ -14,8 +16,10 @@ namespace client {
     Block ChunkSection::getBlock(const BlockPosition &blockPosition) const
     {
         if (positionOutOfChunkBounds(blockPosition)) {
+
             auto location =
                 localBlockToWorldBlockPostion(blockPosition, m_position);
+
             return mp_world->getBlock(location);
         }
         else {

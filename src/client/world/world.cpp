@@ -2,6 +2,8 @@
 
 #include "chunk/mesh/chunk_mesh_builder.h"
 
+#include <common/coordinate_convertion.h>
+#include <common/debug.h>
 #include <iostream>
 
 namespace client {
@@ -16,8 +18,7 @@ namespace client {
 
     void World::addChunk(ChunkSection section)
     {
-        m_chunks
-            .at(section.getPosition().z * WORLD_SIZE + section.getPosition().x)
+        getChunk({section.getPosition().x, section.getPosition().z})
             .addSection(std::move(section));
     }
 
@@ -28,10 +29,31 @@ namespace client {
         }
     }
 
-    Block World::getBlock(const BlockPosition &blockPosition) const
+    Block World::getBlock(const BlockPosition &blockPosition)
     {
-        (void)blockPosition;
-        return BlockType::Air;
+        auto chunkPosition = worldBlockToChunkPosition(blockPosition);
+        if (blockPosition.x < 0 ||
+            blockPosition.x >= (WORLD_SIZE * CHUNK_SIZE) ||
+            blockPosition.z < 0 ||
+            blockPosition.z >= (WORLD_SIZE * CHUNK_SIZE) ||
+            blockPosition.y < 0 || chunkPosition.x < 0 ||
+            chunkPosition.x > WORLD_SIZE || chunkPosition.z < 0 ||
+            chunkPosition.z >= WORLD_SIZE) {
+            return BlockType::Air;
+        }
+
+        return getChunk(chunkPosition)
+            .getBlock(worldBlockToChunkBlockPosition(blockPosition));
+    }
+
+    const Chunk &World::getChunk(const ChunkPosition &position) const
+    {
+        return m_chunks.at(position.z * WORLD_SIZE + position.x);
+    }
+
+    Chunk &World::getChunk(const ChunkPosition &position)
+    {
+        return m_chunks[(position.z * WORLD_SIZE + position.x)];
     }
 
     void World::update([[maybe_unused]] Entity &player)

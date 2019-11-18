@@ -1,13 +1,13 @@
 #include "chunk.h"
 
 #include "../../renderer/renderer.h"
-#include "mesh/chunk_mesh_builder.h"
 #include "../world.h"
+#include "mesh/chunk_mesh_builder.h"
 
 #include <iostream>
 
 namespace client {
-    Chunk::Chunk(const ChunkPosition& chunkPosition, World &world)
+    Chunk::Chunk(const ChunkPosition &chunkPosition, World &world)
         : m_position(chunkPosition)
         , mp_world(world)
     {
@@ -25,20 +25,21 @@ namespace client {
         }
     }
 
-    Block Chunk::getBlock(int x, int y, int z)
+    Block Chunk::getBlock(const BlockPosition &blockPosition)
     {
-        if (y < 0) {
+        if (blockPosition.y < 0) {
             return BlockType::Air;
         }
 
-        int blockY = y % CHUNK_SIZE;
-        unsigned sectionIndex = y / CHUNK_SIZE;
+        int blockY = blockPosition.y % CHUNK_SIZE;
+        unsigned sectionIndex = blockPosition.y / CHUNK_SIZE;
 
         if (sectionIndex >= m_sections.size()) {
             return BlockType::Air;
         }
 
-        return m_sections[sectionIndex].getBlock({x, blockY, z});
+        return m_sections[sectionIndex].getBlock(
+            {blockPosition.x, blockY, blockPosition.z});
     }
 
     void Chunk::render(Renderer &renderer)
