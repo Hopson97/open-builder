@@ -16,20 +16,22 @@ namespace server {
              i++) {
             m_entities[i].isAlive = true;
         }
-
+        
+        std::cout << "Generating world\n";
         for (int z = 0; z < WORLD_SIZE; ++z) {
             for (int x = 0; x < WORLD_SIZE; ++x) {
                 auto &c = m_chunks.emplace_back(x, z);
                 c.generateTerrain();
             }
         }
+        std::cout << "World has been created.\n" << std::endl;
     }
 
     void Application::run(sf::Time timeout)
     {
         sf::Clock timeoutClock;
         sf::Clock deltaClock;
-        bool sent;
+        bool sent = false;
         while (m_isRunning) {
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
@@ -38,6 +40,7 @@ namespace server {
             sendState();
 
             if (m_server.connectedPlayes() != 0 && !sent) {
+                std::cout << "Sending chunks\n";
                 int i = 0;
                 for (auto &chunk : m_chunks) {
                     chunk.sendChunks(m_server);

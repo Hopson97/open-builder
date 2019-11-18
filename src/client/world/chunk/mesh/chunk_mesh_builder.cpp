@@ -101,37 +101,39 @@ namespace client {
                     // Eventually, this will be used to determine the mesh type
                     // and texture For now, it is not needed
 
-                    /*Block block = mp_chunk.getBlock({x, y, z});*/
+                    Block block = mp_chunk.getBlock({x, y, z});
 
-                    Block up = mp_chunk.getBlock({x, y + 1, z});
-                    Block down = mp_chunk.getBlock({x, y - 1, z});
-                    /*
-                                        Block left = mp_chunk.getBlock({x - 1,
-                       y, z}); Block right = mp_chunk.getBlock({x + 1, y, z});
+                    if (block.type == BlockType::Grass) {
 
-                                        Block forwards = mp_chunk.getBlock({x,
-                       y, z + 1}); Block back = mp_chunk.getBlock({x, y, z -
-                       1});
-                    */
-                    if (up.type == BlockType::Air) {
-                        addFace(topFace, {x, y, z});
+                        Block up = mp_chunk.getBlock({x, y + 1, z});
+                        Block down = mp_chunk.getBlock({x, y - 1, z});
+
+                        Block left = mp_chunk.getBlock({x - 1, y, z});
+                        Block right = mp_chunk.getBlock({x + 1, y, z});
+
+                        Block forwards = mp_chunk.getBlock({x, y, z + 1});
+                        Block back = mp_chunk.getBlock({x, y, z - 1});
+
+                        if (up.type == BlockType::Air) {
+                            addFace(topFace, {x, y, z});
+                        }
+                        if (down.type == BlockType::Air) {
+                            addFace(bottomFace, {x, y, z});
+                        }
+
+                        if (left.type == BlockType::Air) {
+                            addFace(leftFace, {x, y, z});
+                        }
+                        if (right.type == BlockType::Air) {
+                            addFace(rightFace, {x, y, z});
+                        }
+                        if (forwards.type == BlockType::Air) {
+                            addFace(frontFace, {x, y, z});
+                        }
+                        if (back.type == BlockType::Air) {
+                            addFace(backFace, {x, y, z});
+                        }
                     }
-                    if (down.type == BlockType::Air) {
-                        addFace(bottomFace, {x, y, z});
-                    }
-                    /*
-                    if (left.type == BlockType::Air) {
-                        addFace(leftFace, {x, y, z});
-                    }
-                    if (right.type == BlockType::Air) {
-                        addFace(rightFace, {x, y, z});
-                    }
-                    if (forwards.type == BlockType::Air) {
-                        addFace(frontFace, {x, y, z});
-                    }
-                    if (back.type == BlockType::Air) {
-                        addFace(backFace, {x, y, z});
-                    }*/
                 }
             }
         }
