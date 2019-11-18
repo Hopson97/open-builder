@@ -22,9 +22,10 @@ add_executable(${PROJECT_NAME}
     src/client/network/client.cpp
     src/client/network/client_command_handler.cpp
     src/client/world/world.cpp
-    src/client/world/chunk/chunk_section.cpp
     src/client/world/chunk/mesh/chunk_mesh.cpp
     src/client/world/chunk/mesh/chunk_mesh_builder.cpp
+    src/client/world/chunk/chunk_section.cpp
+    src/client/world/chunk/chunk.cpp
     src/client/util/fps_counter.cpp
     src/client/util/maths.cpp
     src/client/util/model_loader.cpp
@@ -36,6 +37,7 @@ add_executable(${PROJECT_NAME}
     src/server/network/server.cpp
     src/server/network/server_command_handler.cpp
     src/server/application.cpp
+    src/server/world/chunk/chunk.cpp
     src/server/world/chunk/chunk_section.cpp
     src/server/world/entity.cpp
     src/main.cpp

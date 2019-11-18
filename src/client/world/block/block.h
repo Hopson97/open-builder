@@ -19,6 +19,6 @@ namespace client {
         {
         }
 
-        BlockType type = BlockType::Grass;
+        BlockType type = BlockType::Air;
     };
 } // namespace client

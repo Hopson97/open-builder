@@ -7,7 +7,7 @@
 #include "../block/block.h"
 
 namespace server {
-    class ChunkSection {
+    class ChunkSection final {
       public:
         ChunkSection(int x, int y, int z);
         ChunkSection(const ChunkPosition &chunkPosition);
@@ -16,7 +16,8 @@ namespace server {
         void setBlock(const BlockPosition &BlockPosition, Block block);
         void quickSetBlock(const BlockPosition &BlockPosition, Block block);
 
-        friend sf::Packet &operator<<(sf::Packet &packet, const ChunkSection &chunk);
+        friend sf::Packet &operator<<(sf::Packet &packet,
+                                      const ChunkSection &chunk);
 
       private:
         std::array<Block, CHUNK_VOLUME> m_blocks;

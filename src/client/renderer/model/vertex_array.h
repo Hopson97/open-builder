@@ -21,7 +21,7 @@ namespace client {
 
     class VertexArray final {
       public:
-        VertexArray();
+        VertexArray() = default;
         VertexArray(const Mesh &mesh);
 
         VertexArray(VertexArray &&other);
@@ -34,6 +34,8 @@ namespace client {
 
         void create(const Mesh &mesh);
         void bind() const;
+
+        bool isCreated() const;
 
         GLsizei getIndicesCount() const;
         RenderInformation getRenderInfo() const;

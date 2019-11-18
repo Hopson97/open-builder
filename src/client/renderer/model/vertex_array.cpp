@@ -16,11 +16,6 @@ namespace client {
                                nullptr));
     }
 
-    VertexArray::VertexArray()
-    {
-        create();
-    }
-
     VertexArray::VertexArray(const Mesh &mesh)
     {
         create();
@@ -57,6 +52,7 @@ namespace client {
 
     void VertexArray::create(const Mesh &mesh)
     {
+        create();
         bind();
         if (!mesh.vertices.empty()) {
             addVertexBuffer(3, mesh.vertices, GL_FLOAT);
@@ -87,6 +83,11 @@ namespace client {
     void VertexArray::bind() const
     {
         glCheck(glBindVertexArray(m_handle));
+    }
+
+    bool VertexArray::isCreated() const
+    {
+        return m_handle != 0;
     }
 
     GLsizei VertexArray::getIndicesCount() const

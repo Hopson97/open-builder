@@ -13,12 +13,9 @@ bool positionOutOfChunkBounds(const BlockPosition &blockPosition)
            blockPosition.z < 0 || blockPosition.z >= CHUNK_SIZE;
 }
 
-BlockPosition localBlockToWorldBlockPostion(const BlockPosition& block, const ChunkPosition& chunk)
+BlockPosition localBlockToWorldBlockPostion(const BlockPosition &block,
+                                            const ChunkPosition &chunk)
 {
-    return
-    {
-        chunk.x * CHUNK_SIZE + block.x,
-        chunk.y * CHUNK_SIZE + block.y,
-        chunk.z * CHUNK_SIZE + block.z
-    };
+    return {chunk.x * CHUNK_SIZE + block.x, chunk.y * CHUNK_SIZE + block.y,
+            chunk.z * CHUNK_SIZE + block.z};
 }

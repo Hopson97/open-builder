@@ -25,7 +25,7 @@ namespace client {
         std::array<Block, CHUNK_VOLUME> m_blocks;
 
       public:
-        const ChunkPosition position;
+        ChunkPosition position;
         Flag flag = Flag::None;
     };
 } // namespace client

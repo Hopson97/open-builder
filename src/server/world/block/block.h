@@ -19,6 +19,6 @@ namespace server {
         {
         }
 
-        BlockType type = BlockType::Grass;
+        BlockType type = BlockType::Air;
     };
 } // namespace server
