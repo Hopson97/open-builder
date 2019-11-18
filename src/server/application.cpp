@@ -20,7 +20,7 @@ namespace server {
         std::cout << "Generating world\n";
         for (int z = 0; z < WORLD_SIZE; ++z) {
             for (int x = 0; x < WORLD_SIZE; ++x) {
-                auto &c = m_chunks.emplace_back(x, z);
+                auto &c = m_chunks.emplace_back(ChunkPosition(x, z));
                 c.generateTerrain();
             }
         }
