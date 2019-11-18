@@ -36,7 +36,7 @@ namespace client {
         packet >> chunk;
         chunk.flag = ChunkSection::Flag::NeedsNewMesh;
 
-        mp_world.m_chunks.at(position.z * WORLD_SIZE + position.x).addSection(std::move(chunk));
+        mp_world.addChunk(std::move(chunk));
         
     }
 
