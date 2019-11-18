@@ -10,6 +10,13 @@
  */
 int toChunkBlockIndex(const BlockPosition &position);
 
+/**
+ * @brief Converts a block position local to a chunk to world block position    
+ * 
+ * @param block The local chunk block position
+ * @param chunk The chunk position
+ * @return BlockPosition The new, converted, block position
+ */
 BlockPosition localBlockToWorldBlockPostion(const BlockPosition& block, const ChunkPosition& chunk);
 
 /**

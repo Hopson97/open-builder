@@ -22,10 +22,10 @@ namespace client {
                     auto itr = chunks.find({chunkX, 0, chunkZ});
                     if (itr != chunks.cend()) {
                         auto &chunk = itr->second;
-                        if (chunk.flag == Chunk::Flag::NeedsNewMesh) {
+                        if (chunk.flag == ChunkSection::Flag::NeedsNewMesh) {
                             ChunkMeshBuilder builder(chunk);
                             chunkMeshes[itr->first] = builder.createMesh();
-                            chunk.flag = Chunk::Flag::None;
+                            chunk.flag = ChunkSection::Flag::None;
                             meshMade = true;
                             return;
                         }
@@ -41,10 +41,10 @@ namespace client {
         */
 
         for (auto &[position, chunk] : chunks) {
-            if (chunk.flag == Chunk::Flag::NeedsNewMesh) {
+            if (chunk.flag == ChunkSection::Flag::NeedsNewMesh) {
                 ChunkMeshBuilder builder(chunk);
                 chunkMeshes[position] = builder.createMesh();
-                chunk.flag = Chunk::Flag::None;
+                chunk.flag = ChunkSection::Flag::None;
                 return;
             }
         }

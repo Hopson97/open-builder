@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "network/server.h"
-#include "world/chunk/chunk.h"
+#include "world/chunk/chunk_section.h"
 #include "world/entity.h"
 
 class LaunchConfig;
@@ -25,6 +25,6 @@ namespace server {
 
         bool m_isRunning = true;
 
-        std::vector<Chunk> m_chunks;
+        std::vector<ChunkSection> m_chunks;
     };
 } // namespace server
