@@ -1,5 +1,7 @@
 #include "chunk.h"
 
+#include "../../network/server.h"
+
 namespace server {
     Chunk::Chunk(int x, int z)
         : m_position(x, z)
@@ -64,10 +66,13 @@ namespace server {
         return m_sections.size() > 0;
     }
 
-    std::vector<Packet> Chunk::createPackets() const
+    void Chunk::sendChunks(Server& server) const
     {
-        std::vector<Packet> packets;
-
-        return packets;
+        for (auto& chunk : m_sections)
+        {
+            auto packet = server.createPacket(CommandToClient::ChunkData, Packet::Flag::Reliable);
+            packet.payload << chunk;
+            server.sendToAllClients(packet); 
+        }
     }
 } // namespace server

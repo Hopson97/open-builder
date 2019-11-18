@@ -9,7 +9,7 @@ namespace client {
       public:
         Chunk(int x, int z);
 
-        void addSection(int chunkY);
+        void addSection(ChunkSection&& section);
         Block getBlock(int x, int y, int z);
 
       private:

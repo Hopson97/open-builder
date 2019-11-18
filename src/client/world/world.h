@@ -12,7 +12,7 @@ namespace client {
 
         EntityArray entities;
 
-      private:
+      //private:
         std::vector<Chunk> m_chunks;
     };
 } // namespace client
