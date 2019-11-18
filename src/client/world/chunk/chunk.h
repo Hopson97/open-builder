@@ -15,6 +15,9 @@ namespace client {
         void render(Renderer &renderer);
         bool createMesh();
 
+        int countSections() const;
+        const ChunkPosition& getPosition() const;
+
       private:
         ChunkPosition m_position;
         std::vector<ChunkSection> m_sections;
