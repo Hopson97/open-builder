@@ -5,12 +5,8 @@
 #include <common/coordinate_convertion.h>
 
 namespace server {
-    ChunkSection::ChunkSection(int x, int y, int z)
-        : position({x, y, z})
-    {
-    }
     ChunkSection::ChunkSection(const ChunkSectionPosition &chunkPosition)
-        : position(chunkPosition)
+        : m_position(chunkPosition)
     {
     }
 
@@ -37,9 +33,14 @@ namespace server {
         m_blocks[toChunkBlockIndex(BlockPosition)] = block;
     }
 
+    const ChunkSectionPosition& ChunkSection::getPosition() const
+    {
+        return m_position;
+    }
+
     sf::Packet &operator<<(sf::Packet &packet, const ChunkSection &chunk)
     {
-        packet << chunk.position.x << chunk.position.y << chunk.position.z;
+        packet << chunk.getPosition().x << chunk.getPosition().y << chunk.getPosition().z;
         for (auto block : chunk.m_blocks) {
             packet << static_cast<u8>(block.type);
         }
