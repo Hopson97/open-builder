@@ -2,16 +2,16 @@
 
 namespace server {
     Chunk::Chunk(int x, int z)
-    :   m_position(x, z)
+        : m_position(x, z)
     {
     }
 
     void Chunk::addSection(int chunkY)
     {
         if (chunkY >= 0) {
-            while (static_cast<unsigned>(chunkY) > m_sections.size() - 1) 
-            {
-                m_sections.emplace_back(m_position.x, m_sections.size(), m_position.y);
+            while (static_cast<unsigned>(chunkY) > m_sections.size() - 1) {
+                m_sections.emplace_back(m_position.x, m_sections.size(),
+                                        m_position.y);
             }
         }
     }
@@ -24,9 +24,8 @@ namespace server {
 
         int blockY = y % CHUNK_SIZE;
         unsigned sectionIndex = y / CHUNK_SIZE;
-        
-        if (sectionIndex >=  m_sections.size())
-        {
+
+        if (sectionIndex >= m_sections.size()) {
             addSection(sectionIndex);
         }
 
@@ -42,28 +41,26 @@ namespace server {
         int blockY = y % CHUNK_SIZE;
         unsigned sectionIndex = y / CHUNK_SIZE;
 
-        if (sectionIndex >=  m_sections.size())
-        {
+        if (sectionIndex >= m_sections.size()) {
             addSection(sectionIndex);
         }
 
         return m_sections[sectionIndex].getBlock({x, blockY, z});
     }
 
-        void Chunk::generateTerrain()
-        {
+    void Chunk::generateTerrain()
+    {
+    }
 
-        }
+    bool Chunk::readyForSend() const
+    {
+        return m_sections.size() > 0;
+    }
 
-        bool Chunk::readyForSend() const
-        {
-            return m_sections.size() > 0;
-        }
+    std::vector<Packet> Chunk::createPackets() const
+    {
+        std::vector<Packet> packets;
 
-        std::vector<Packet> Chunk::createPackets() const
-        {
-            std::vector<Packet> packets;
-
-            return packets;
-        }
+        return packets;
+    }
 } // namespace server

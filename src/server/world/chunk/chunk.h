@@ -1,9 +1,9 @@
 #pragma once
 
 #include "chunk_section.h"
-#include <vector>
 #include <SFML/System/Vector2.hpp>
 #include <common/network/packet.h>
+#include <vector>
 
 namespace server {
 
