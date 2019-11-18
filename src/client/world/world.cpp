@@ -9,14 +9,14 @@ namespace client {
     {
         for (int z = 0; z < WORLD_SIZE; ++z) {
             for (int x = 0; x < WORLD_SIZE; ++x) {
-                m_chunks.emplace_back(x, z);
+                m_chunks.emplace_back(x, z, *this);
             }
         }
     }
 
     void World::addChunk(ChunkSection section)
     {
-        m_chunks.at(section.position.z * WORLD_SIZE + section.position.x)
+        m_chunks.at(section.getPosition().z * WORLD_SIZE + section.getPosition().x)
             .addSection(std::move(section));
     }
 

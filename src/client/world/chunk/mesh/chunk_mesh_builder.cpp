@@ -152,14 +152,15 @@ namespace client {
     void ChunkMeshBuilder::addFace(const BlockFace &face,
                                    const BlockPosition &position)
     {
+        const auto& chunkPosition = mp_chunk.getPosition();
         int index = 0;
         for (int i = 0; i < 4; i++) {
             m_mesh.vertices.push_back(face.vertices[index++] + position.x +
-                                      (mp_chunk.position.x * CHUNK_SIZE));
+                                      (chunkPosition.x * CHUNK_SIZE));
             m_mesh.vertices.push_back(face.vertices[index++] + position.y +
-                                      (mp_chunk.position.y * CHUNK_SIZE));
+                                      (chunkPosition.y * CHUNK_SIZE));
             m_mesh.vertices.push_back(face.vertices[index++] + position.z +
-                                      (mp_chunk.position.z * CHUNK_SIZE));
+                                      (chunkPosition.z * CHUNK_SIZE));
 
             m_chunkBasicLight.push_back(face.basicLight);
         }

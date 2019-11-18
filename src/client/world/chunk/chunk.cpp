@@ -6,20 +6,21 @@
 #include <iostream>
 
 namespace client {
-    Chunk::Chunk(int x, int z)
+    Chunk::Chunk(int x, int z, World& world)
         : m_position(x, z)
+        , mp_world(world)
     {
     }
 
     void Chunk::addSection(ChunkSection section)
     {
-        if (section.position.y >= 0) {
-            while (section.position.y > (int)m_sections.size() - 1) {
+        if (section.getPosition().y >= 0) {
+            while (section.getPosition().y > (int)m_sections.size() - 1) {
                 m_sections.emplace_back(m_position.x, m_sections.size(),
-                                        m_position.y);
+                                        m_position.y, mp_world);
                 m_chunkMeshes.emplace_back();
             }
-            m_sections[section.position.y] = section;
+            m_sections[section.getPosition().y] = section;
         }
     }
 

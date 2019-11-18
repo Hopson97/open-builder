@@ -8,7 +8,7 @@ namespace client {
     class Renderer;
     class Chunk final {
       public:
-        Chunk(int x, int z);
+        Chunk(int x, int z, World& world);
 
         void addSection(ChunkSection section);
         Block getBlock(int x, int y, int z);
@@ -20,5 +20,7 @@ namespace client {
         sf::Vector2i m_position;
         std::vector<ChunkSection> m_sections;
         std::vector<ChunkMesh> m_chunkMeshes;
+
+        World& mp_world;
     };
 } // namespace client
