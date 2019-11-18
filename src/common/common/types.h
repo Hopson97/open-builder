@@ -25,6 +25,17 @@ using input_t = u8;
 using BlockPosition = sf::Vector3<i32>;
 using ChunkSectionPosition = sf::Vector3<i32>;
 
+struct ChunkPosition
+{
+    ChunkPosition() = default;
+    ChunkPosition(int xp, int zp)
+    :   x(xp)
+    ,   z(zp){}
+    
+    int x = 0;
+    int z = 0;
+};
+
 struct ChunkPositionHash {
     // http://www.beosil.com/download/CollisionDetectionHashing_VMV03.pdf
     std::size_t operator()(const ChunkSectionPosition &position) const
