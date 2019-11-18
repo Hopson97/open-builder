@@ -35,6 +35,8 @@ namespace client {
         void create(const Mesh &mesh);
         void bind() const;
 
+        bool isCreated() const;
+
         GLsizei getIndicesCount() const;
         RenderInformation getRenderInfo() const;
 

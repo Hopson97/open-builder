@@ -89,6 +89,11 @@ namespace client {
         glCheck(glBindVertexArray(m_handle));
     }
 
+    bool VertexArray::isCreated() const
+    {
+        return m_handle != 0;
+    }
+
     GLsizei VertexArray::getIndicesCount() const
     {
         return m_indicesCount;
