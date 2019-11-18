@@ -25,13 +25,14 @@ using input_t = u8;
 using BlockPosition = sf::Vector3<i32>;
 using ChunkSectionPosition = sf::Vector3<i32>;
 
-struct ChunkPosition
-{
+struct ChunkPosition {
     ChunkPosition() = default;
     ChunkPosition(int xp, int zp)
-    :   x(xp)
-    ,   z(zp){}
-    
+        : x(xp)
+        , z(zp)
+    {
+    }
+
     int x = 0;
     int z = 0;
 };

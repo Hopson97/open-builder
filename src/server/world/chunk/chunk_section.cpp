@@ -33,14 +33,15 @@ namespace server {
         m_blocks[toChunkBlockIndex(BlockPosition)] = block;
     }
 
-    const ChunkSectionPosition& ChunkSection::getPosition() const
+    const ChunkSectionPosition &ChunkSection::getPosition() const
     {
         return m_position;
     }
 
     sf::Packet &operator<<(sf::Packet &packet, const ChunkSection &chunk)
     {
-        packet << chunk.getPosition().x << chunk.getPosition().y << chunk.getPosition().z;
+        packet << chunk.getPosition().x << chunk.getPosition().y
+               << chunk.getPosition().z;
         for (auto block : chunk.m_blocks) {
             packet << static_cast<u8>(block.type);
         }

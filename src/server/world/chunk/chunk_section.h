@@ -15,7 +15,7 @@ namespace server {
         void setBlock(const BlockPosition &BlockPosition, Block block);
         void quickSetBlock(const BlockPosition &BlockPosition, Block block);
 
-        const ChunkSectionPosition& getPosition() const;
+        const ChunkSectionPosition &getPosition() const;
 
         friend sf::Packet &operator<<(sf::Packet &packet,
                                       const ChunkSection &chunk);

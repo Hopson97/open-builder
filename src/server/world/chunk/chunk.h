@@ -9,7 +9,7 @@ namespace server {
 
     class Chunk final {
       public:
-        Chunk(const ChunkPosition& position);
+        Chunk(const ChunkPosition &position);
 
         void addSection(int chunkY);
 
