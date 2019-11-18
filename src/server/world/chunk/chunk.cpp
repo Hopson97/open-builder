@@ -50,6 +50,13 @@ namespace server {
 
     void Chunk::generateTerrain()
     {
+        for (int y = 0; y < CHUNK_SIZE + 1; y++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                for (int x = 0; x < CHUNK_SIZE; x++) {
+                    setBlock(x, y, z, BlockType::Grass);
+                }
+            }
+        }
     }
 
     bool Chunk::readyForSend() const
