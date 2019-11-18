@@ -59,6 +59,33 @@ namespace client {
     void World::update([[maybe_unused]] Entity &player)
     {
         for (auto &chunk : m_chunks) {
+            auto p = chunk.getPosition();
+            ChunkPosition n1(p.x, p.z - 1);
+            ChunkPosition n2(p.x, p.z + 1);
+            ChunkPosition n3(p.x - 1, p.z);
+            ChunkPosition n4(p.x + 1, p.z);
+
+            if (n1.x >= 0 || n1.x < WORLD_SIZE) {
+                if (getChunk(n1).countSections() == 0) {
+                    continue;
+                }
+            }
+            if (n2.x >= 0 || n2.x < WORLD_SIZE) {
+                if (getChunk(n2).countSections() == 0) {
+                    continue;
+                }
+            }           
+            if (n3.x >= 0 || n3.x < WORLD_SIZE) {
+                if (getChunk(n3).countSections() == 0) {
+                    continue;
+                }
+            }            
+            if (n4.x >= 0 || n4.x < WORLD_SIZE) {
+                if (getChunk(n4).countSections() == 0) {
+                    continue;
+                }
+            }
+
             if (chunk.createMesh()) {
                 break;
             }
