@@ -31,7 +31,8 @@ namespace server {
         }
     }
 
-    void ChunkSection::quickSetBlock(const BlockPosition &BlockPosition, Block block)
+    void ChunkSection::quickSetBlock(const BlockPosition &BlockPosition,
+                                     Block block)
     {
         m_blocks[toChunkBlockIndex(BlockPosition)] = block;
     }
