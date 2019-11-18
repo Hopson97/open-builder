@@ -5,7 +5,7 @@
 
 namespace client {
 
-    class Chunk {
+    class Chunk final {
       public:
         Chunk(int x, int z);
 

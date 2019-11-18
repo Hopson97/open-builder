@@ -7,7 +7,7 @@
 #include "../block/block.h"
 
 namespace server {
-    class ChunkSection {
+    class ChunkSection final {
       public:
         ChunkSection(int x, int y, int z);
         ChunkSection(const ChunkPosition &chunkPosition);

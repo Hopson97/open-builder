@@ -10,7 +10,7 @@
 class LaunchConfig;
 
 namespace server {
-    class Application {
+    class Application final {
       public:
         Application(const LaunchConfig &config, port_t port);
 
