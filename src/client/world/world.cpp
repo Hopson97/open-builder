@@ -2,6 +2,8 @@
 
 #include "chunk/mesh/chunk_mesh_builder.h"
 
+#include <common/coordinate_convertion.h>
+#include <common/debug.h>
 #include <iostream>
 
 namespace client {
@@ -9,14 +11,14 @@ namespace client {
     {
         for (int z = 0; z < WORLD_SIZE; ++z) {
             for (int x = 0; x < WORLD_SIZE; ++x) {
-                m_chunks.emplace_back(x, z);
+                m_chunks.emplace_back(ChunkPosition(x, z), *this);
             }
         }
     }
 
     void World::addChunk(ChunkSection section)
     {
-        m_chunks.at(section.position.z * WORLD_SIZE + section.position.x)
+        getChunk({section.getPosition().x, section.getPosition().z})
             .addSection(std::move(section));
     }
 
@@ -27,23 +29,67 @@ namespace client {
         }
     }
 
+    Block World::getBlock(const BlockPosition &blockPosition)
+    {
+        auto chunkPosition = worldBlockToChunkPosition(blockPosition);
+        if (blockPosition.x < 0 ||
+            blockPosition.x >= (WORLD_SIZE * CHUNK_SIZE) ||
+            blockPosition.z < 0 ||
+            blockPosition.z >= (WORLD_SIZE * CHUNK_SIZE) ||
+            blockPosition.y < 0 || chunkPosition.x < 0 ||
+            chunkPosition.x > WORLD_SIZE || chunkPosition.z < 0 ||
+            chunkPosition.z >= WORLD_SIZE) {
+            return BlockType::Air;
+        }
+
+        return getChunk(chunkPosition)
+            .getBlock(worldBlockToChunkBlockPosition(blockPosition));
+    }
+
+    const Chunk &World::getChunk(const ChunkPosition &position) const
+    {
+        return m_chunks.at(position.z * WORLD_SIZE + position.x);
+    }
+
+    Chunk &World::getChunk(const ChunkPosition &position)
+    {
+        return m_chunks[(position.z * WORLD_SIZE + position.x)];
+    }
+
     void World::update([[maybe_unused]] Entity &player)
     {
         for (auto &chunk : m_chunks) {
+            auto p = chunk.getPosition();
+            ChunkPosition n1(p.x, p.z - 1);
+            ChunkPosition n2(p.x, p.z + 1);
+            ChunkPosition n3(p.x - 1, p.z);
+            ChunkPosition n4(p.x + 1, p.z);
+
+            if (n1.x >= 0 || n1.x < WORLD_SIZE) {
+                if (getChunk(n1).countSections() == 0) {
+                    continue;
+                }
+            }
+            if (n2.x >= 0 || n2.x < WORLD_SIZE) {
+                if (getChunk(n2).countSections() == 0) {
+                    continue;
+                }
+            }           
+            if (n3.x >= 0 || n3.x < WORLD_SIZE) {
+                if (getChunk(n3).countSections() == 0) {
+                    continue;
+                }
+            }            
+            if (n4.x >= 0 || n4.x < WORLD_SIZE) {
+                if (getChunk(n4).countSections() == 0) {
+                    continue;
+                }
+            }
+
             if (chunk.createMesh()) {
                 break;
             }
         }
-        /*
-                for (auto &[position, chunk] : chunks) {
-                    if (chunk.flag == ChunkSection::Flag::NeedsNewMesh) {
-                        ChunkMeshBuilder builder(chunk);
-                        chunkMeshes[position] = builder.createMesh();
-                        chunk.flag = ChunkSection::Flag::None;
-                        return;
-                    }
-                }
-        */
     }
 } // namespace client
 

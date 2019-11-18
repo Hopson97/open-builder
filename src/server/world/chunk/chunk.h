@@ -1,7 +1,6 @@
 #pragma once
 
 #include "chunk_section.h"
-#include <SFML/System/Vector2.hpp>
 #include <common/network/packet.h>
 #include <vector>
 
@@ -10,7 +9,7 @@ namespace server {
 
     class Chunk final {
       public:
-        Chunk(int x, int z);
+        Chunk(const ChunkPosition &position);
 
         void addSection(int chunkY);
 
@@ -23,7 +22,7 @@ namespace server {
         void sendChunks(Server &server) const;
 
       private:
-        sf::Vector2i m_position;
+        ChunkPosition m_position;
         std::vector<ChunkSection> m_sections;
     };
 

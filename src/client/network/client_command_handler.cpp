@@ -30,12 +30,10 @@ namespace client {
 
     void Client::handleChunkData(sf::Packet &packet)
     {
-        ChunkPosition position;
-        packet >> position.x >> position.y >> position.z;
-        ChunkSection chunk(position);
+        int chunkX, chunkY, chunkZ;
+        packet >> chunkX >> chunkY >> chunkZ;
+        ChunkSection chunk(chunkX, chunkY, chunkZ, mp_world);
         packet >> chunk;
-        chunk.flag = ChunkSection::Flag::NeedsNewMesh;
-
         mp_world.addChunk(chunk);
     }
 

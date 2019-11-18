@@ -18,7 +18,23 @@ int toChunkBlockIndex(const BlockPosition &position);
  * @return BlockPosition The new, converted, block position
  */
 BlockPosition localBlockToWorldBlockPostion(const BlockPosition &block,
-                                            const ChunkPosition &chunk);
+                                            const ChunkSectionPosition &chunk);
+
+/**
+ * @brief Converts a world block position to a chunk block position
+ *
+ * @param position The world block position to convert
+ * @return BlockPosition The converted chunk block position
+ */
+BlockPosition worldBlockToChunkBlockPosition(const BlockPosition &position);
+
+/**
+ * @brief Converts a block position in the world to a chunk position (XZ plane)
+ *
+ * @param position The block position to convert
+ * @return ChunkPosition The converted chunk position
+ */
+ChunkPosition worldBlockToChunkPosition(const BlockPosition &position);
 
 /**
  * @brief Determines if a position is out bounds of the chunk eg x >= CHUNK_SIZE

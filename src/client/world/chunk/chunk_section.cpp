@@ -1,28 +1,35 @@
 #include "chunk_section.h"
 
+#include "../world.h"
+#include <common/coordinate_convertion.h>
 #include <iostream>
 
-#include <common/coordinate_convertion.h>
+#include <common/debug.h>
 
 namespace client {
-    ChunkSection::ChunkSection(int x, int y, int z)
-        : position({x, y, z})
-    {
-    }
-
-    ChunkSection::ChunkSection(const ChunkPosition &chunkPosition)
-        : position(chunkPosition)
+    ChunkSection::ChunkSection(int x, int y, int z, World &world)
+        : mp_world(&world)
+        , m_position(x, y, z)
     {
     }
 
     Block ChunkSection::getBlock(const BlockPosition &blockPosition) const
     {
         if (positionOutOfChunkBounds(blockPosition)) {
-            return BlockType::Air;
+
+            auto location =
+                localBlockToWorldBlockPostion(blockPosition, m_position);
+
+            return mp_world->getBlock(location);
         }
         else {
             return m_blocks[toChunkBlockIndex(blockPosition)];
         }
+    }
+
+    const ChunkSectionPosition &ChunkSection::getPosition() const
+    {
+        return m_position;
     }
 
     sf::Packet &operator>>(sf::Packet &packet, ChunkSection &chunk)

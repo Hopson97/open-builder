@@ -1,9 +1,10 @@
 #pragma once
 
+#include "types.h"
+#include <SFML/System/Vector3.hpp>
+#include <glm/glm.hpp>
 #include <ostream>
 #include <vector>
-
-#include <glm/glm.hpp>
 
 template <typename T>
 std::ostream &operator<<(std::ostream &stream, const std::vector<T> &data)
@@ -16,3 +17,6 @@ std::ostream &operator<<(std::ostream &stream, const std::vector<T> &data)
 
 std::ostream &operator<<(std::ostream &stream, const glm::vec3 &vec);
 std::ostream &operator<<(std::ostream &stream, const glm::vec2 &vec);
+
+std::ostream &operator<<(std::ostream &stream, const sf::Vector3i &vec);
+std::ostream &operator<<(std::ostream &stream, const ChunkPosition &vec);

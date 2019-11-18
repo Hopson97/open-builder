@@ -5,8 +5,8 @@
 #include <iostream>
 
 namespace server {
-    Chunk::Chunk(int x, int z)
-        : m_position(x, z)
+    Chunk::Chunk(const ChunkPosition &position)
+        : m_position(position)
     {
     }
 
@@ -15,8 +15,8 @@ namespace server {
         if (chunkY >= 0) {
             int numChunks = m_sections.size();
             while (chunkY > numChunks - 1) {
-                m_sections.emplace_back(m_position.x, m_sections.size(),
-                                        m_position.y);
+                m_sections.emplace_back(ChunkSectionPosition(
+                    m_position.x, m_sections.size(), m_position.z));
                 numChunks = m_sections.size();
             }
         }
