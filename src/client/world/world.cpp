@@ -16,7 +16,8 @@ namespace client {
 
     void World::addChunk(ChunkSection section)
     {
-        m_chunks.at(section.getPosition().z * WORLD_SIZE + section.getPosition().x)
+        m_chunks
+            .at(section.getPosition().z * WORLD_SIZE + section.getPosition().x)
             .addSection(std::move(section));
     }
 
@@ -27,6 +28,10 @@ namespace client {
         }
     }
 
+    Block World::getBlock(const BlockPosition &blockPosition) const
+    {
+    }
+
     void World::update([[maybe_unused]] Entity &player)
     {
         for (auto &chunk : m_chunks) {
@@ -34,16 +39,6 @@ namespace client {
                 break;
             }
         }
-        /*
-                for (auto &[position, chunk] : chunks) {
-                    if (chunk.flag == ChunkSection::Flag::NeedsNewMesh) {
-                        ChunkMeshBuilder builder(chunk);
-                        chunkMeshes[position] = builder.createMesh();
-                        chunk.flag = ChunkSection::Flag::None;
-                        return;
-                    }
-                }
-        */
     }
 } // namespace client
 

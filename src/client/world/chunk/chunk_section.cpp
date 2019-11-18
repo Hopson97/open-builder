@@ -5,7 +5,7 @@
 #include <common/coordinate_convertion.h>
 
 namespace client {
-    ChunkSection::ChunkSection(int x, int y, int z, World& world)
+    ChunkSection::ChunkSection(int x, int y, int z, World &world)
         : mp_world(&world)
         , m_position(x, y, z)
     {
@@ -14,14 +14,15 @@ namespace client {
     Block ChunkSection::getBlock(const BlockPosition &blockPosition) const
     {
         if (positionOutOfChunkBounds(blockPosition)) {
-            return BlockType::Air;
+            auto location =
+                localBlockToWorldBlockPostion(blockPosition, m_position);
         }
         else {
             return m_blocks[toChunkBlockIndex(blockPosition)];
         }
     }
 
-    const ChunkPosition& ChunkSection::getPosition() const
+    const ChunkSectionPosition &ChunkSection::getPosition() const
     {
         return m_position;
     }

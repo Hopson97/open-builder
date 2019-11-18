@@ -6,7 +6,7 @@
 #include <iostream>
 
 namespace client {
-    Chunk::Chunk(int x, int z, World& world)
+    Chunk::Chunk(int x, int z, World &world)
         : m_position(x, z)
         , mp_world(world)
     {

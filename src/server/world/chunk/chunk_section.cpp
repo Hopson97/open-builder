@@ -9,7 +9,7 @@ namespace server {
         : position({x, y, z})
     {
     }
-    ChunkSection::ChunkSection(const ChunkPosition &chunkPosition)
+    ChunkSection::ChunkSection(const ChunkSectionPosition &chunkPosition)
         : position(chunkPosition)
     {
     }

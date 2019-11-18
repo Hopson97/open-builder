@@ -16,7 +16,7 @@ namespace server {
              i++) {
             m_entities[i].isAlive = true;
         }
-        
+
         std::cout << "Generating world\n";
         for (int z = 0; z < WORLD_SIZE; ++z) {
             for (int x = 0; x < WORLD_SIZE; ++x) {

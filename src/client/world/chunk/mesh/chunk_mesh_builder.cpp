@@ -152,7 +152,7 @@ namespace client {
     void ChunkMeshBuilder::addFace(const BlockFace &face,
                                    const BlockPosition &position)
     {
-        const auto& chunkPosition = mp_chunk.getPosition();
+        const auto &chunkPosition = mp_chunk.getPosition();
         int index = 0;
         for (int i = 0; i < 4; i++) {
             m_mesh.vertices.push_back(face.vertices[index++] + position.x +

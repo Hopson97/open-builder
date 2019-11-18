@@ -7,21 +7,20 @@
 #include <iostream>
 
 namespace client {
-  class World;
+    class World;
     class ChunkSection {
       public:
-        ChunkSection(int x, int y, int z, World& world);
+        ChunkSection(int x, int y, int z, World &world);
 
         Block getBlock(const BlockPosition &blockPosition) const;
 
-        const ChunkPosition& getPosition() const;
+        const ChunkSectionPosition &getPosition() const;
 
         friend sf::Packet &operator>>(sf::Packet &packet, ChunkSection &chunk);
 
       private:
         std::array<Block, CHUNK_VOLUME> m_blocks;
-        World* mp_world;
-        ChunkPosition m_position;
-
+        World *mp_world;
+        ChunkSectionPosition m_position;
     };
 } // namespace client

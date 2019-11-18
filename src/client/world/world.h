@@ -15,6 +15,8 @@ namespace client {
         void addChunk(ChunkSection section);
         void render(Renderer &renderer);
 
+        Block getBlock(const BlockPosition &blockPosition) const;
+
       private:
         std::vector<Chunk> m_chunks;
     };

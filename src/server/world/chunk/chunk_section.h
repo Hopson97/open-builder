@@ -10,7 +10,7 @@ namespace server {
     class ChunkSection final {
       public:
         ChunkSection(int x, int y, int z);
-        ChunkSection(const ChunkPosition &chunkPosition);
+        ChunkSection(const ChunkSectionPosition &chunkPosition);
 
         Block getBlock(const BlockPosition &BlockPosition) const;
         void setBlock(const BlockPosition &BlockPosition, Block block);
@@ -23,7 +23,7 @@ namespace server {
         std::array<Block, CHUNK_VOLUME> m_blocks;
 
       public:
-        const ChunkPosition position;
+        const ChunkSectionPosition position;
 
       private:
     };
