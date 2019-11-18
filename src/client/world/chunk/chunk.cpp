@@ -2,12 +2,13 @@
 
 #include "../../renderer/renderer.h"
 #include "mesh/chunk_mesh_builder.h"
+#include "../world.h"
 
 #include <iostream>
 
 namespace client {
-    Chunk::Chunk(int x, int z, World &world)
-        : m_position(x, z)
+    Chunk::Chunk(const ChunkPosition& chunkPosition, World &world)
+        : m_position(chunkPosition)
         , mp_world(world)
     {
     }
@@ -17,7 +18,7 @@ namespace client {
         if (section.getPosition().y >= 0) {
             while (section.getPosition().y > (int)m_sections.size() - 1) {
                 m_sections.emplace_back(m_position.x, m_sections.size(),
-                                        m_position.y, mp_world);
+                                        m_position.z, mp_world);
                 m_chunkMeshes.emplace_back();
             }
             m_sections[section.getPosition().y] = section;

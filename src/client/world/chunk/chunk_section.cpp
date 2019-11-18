@@ -1,7 +1,7 @@
 #include "chunk_section.h"
 
 #include <iostream>
-
+#include "../world.h"
 #include <common/coordinate_convertion.h>
 
 namespace client {
@@ -16,6 +16,7 @@ namespace client {
         if (positionOutOfChunkBounds(blockPosition)) {
             auto location =
                 localBlockToWorldBlockPostion(blockPosition, m_position);
+            return mp_world->getBlock(location);
         }
         else {
             return m_blocks[toChunkBlockIndex(blockPosition)];

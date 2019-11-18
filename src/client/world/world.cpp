@@ -9,7 +9,7 @@ namespace client {
     {
         for (int z = 0; z < WORLD_SIZE; ++z) {
             for (int x = 0; x < WORLD_SIZE; ++x) {
-                m_chunks.emplace_back(x, z, *this);
+                m_chunks.emplace_back(ChunkPosition(x, z), *this);
             }
         }
     }
@@ -30,6 +30,8 @@ namespace client {
 
     Block World::getBlock(const BlockPosition &blockPosition) const
     {
+        (void)blockPosition;
+        return BlockType::Air;
     }
 
     void World::update([[maybe_unused]] Entity &player)
