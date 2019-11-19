@@ -19,7 +19,6 @@ namespace server {
 
         void recievePackets();
         void resendPackets();
-        void sendPackets();
         void updatePlayers();
 
         int connectedPlayes() const;
@@ -33,15 +32,7 @@ namespace server {
                             Packet::Flag flag = Packet::Flag::None);
 
       private:
-        bool send(Packet &packet, const Endpoint &endpoint)
-        {
-            bool result = m_socket.send(packet.payload, endpoint.address,
-                                        endpoint.port) == sf::Socket::Done;
-            if (packet.hasFlag(Packet::Flag::Reliable)) {
-                m_packetBuffer.append(std::move(packet), endpoint.id);
-            }
-            return result;
-        }
+        bool send(Packet &packet, const Endpoint &endpoint);
 
         bool recieve(Packet &packet, Endpoint &endpoint);
 

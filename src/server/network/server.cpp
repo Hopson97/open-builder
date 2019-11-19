@@ -113,16 +113,21 @@ namespace server {
         }
     }
 
+    bool Server::send(Packet &packet, const Endpoint &endpoint)
+    {
+        bool result = m_socket.send(packet.payload, endpoint.address,
+                                    endpoint.port) == sf::Socket::Done;
+        if (packet.hasFlag(Packet::Flag::Reliable)) {
+            m_packetBuffer.append(std::move(packet), endpoint.id);
+        }
+        return result;
+    }
+
     bool Server::sendToClient(peer_id_t id, Packet &packet)
     {
         if (m_clientStatuses[id] == ClientStatus::Connected) {
             auto &endpoint = m_endpoints[id];
-            bool result = m_socket.send(packet.payload, endpoint.address,
-                                        endpoint.port) == sf::Socket::Done;
-            if (packet.hasFlag(Packet::Flag::Reliable)) {
-                m_packetBuffer.append(std::move(packet), endpoint.id);
-            }
-            return result;
+            return send(packet, endpoint);
         }
         return false;
     }
