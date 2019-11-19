@@ -11,7 +11,6 @@ function (set_flags target)
         PUBLIC 
         cxx_std_17
     )
-
     set_target_properties(${target} 
         PROPERTIES 
         CXX_EXTENSIONS OFF
@@ -37,6 +36,14 @@ function (set_flags target)
     endif()
 endfunction(set_flags)
 
+function (include_dirs target)
+    target_include_directories(${target} 
+        PRIVATE 
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/common/
+    )
+endfunction(include_dirs)
+
 #Set module path
 set(
     CMAKE_MODULE_PATH 
@@ -48,7 +55,6 @@ set(
 find_package(Threads)
 find_package(SFML REQUIRED audio network graphics window system)
 find_package(glm REQUIRED)
-find_package(OpenGL REQUIRED)
 
 # Add local libraries
 add_subdirectory(deps)
@@ -63,32 +69,15 @@ add_executable(${PROJECT_NAME}
 
 set_flags(${PROJECT_NAME})
 
-target_include_directories(${PROJECT_NAME} 
-    PRIVATE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/deps/
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/common/
-)
-
-target_include_directories(ob-client
-    PRIVATE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/deps/
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/common/
-)
-
-target_include_directories(ob-server
-    PRIVATE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/deps/
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/common/
-)
+include_dirs(${PROJECT_NAME})
+include_dirs(ob-client)
+include_dirs(ob-server)
 
 # Link executable to the libraries
 target_link_libraries(${PROJECT_NAME} 
-    glad
     ob-common
     ob-client
     ob-server
-    Threads::Threads 
-    ${SFML_LIBRARIES} 
-    ${SFML_DEPENDENCIES}
+    glad
     ${CMAKE_DL_LIBS}
 )
