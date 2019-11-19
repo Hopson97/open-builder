@@ -2,6 +2,9 @@
 
 #include "chunk.h"
 #include <array>
+#include <iostream>
+
+#include <SFML/System/Clock.hpp>
 
 namespace {
     /**
@@ -119,6 +122,10 @@ namespace {
 namespace client {
     ChunkMeshGroup createChunkMesh(const ChunkSection &section)
     {
+        static float total = 0;
+        static int count = 0;
+        sf::Clock timer;
+
         ChunkMeshGroup group;
         for (int y = 0; y < CHUNK_SIZE; ++y) {
             for (int z = 0; z < CHUNK_SIZE; ++z) {
@@ -164,6 +171,12 @@ namespace client {
                 }
             }
         }
+
+        float time = timer.getElapsedTime().asSeconds();
+        total += time;
+        count++;
+        std::cout << time * 1000 << " " << (total / count) * 1000 << '\n';
+
         return group;
     }
 
