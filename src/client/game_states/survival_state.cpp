@@ -89,7 +89,7 @@ namespace client {
 
     void SurvivalState::update(Camera &camera)
     {
-        m_client.update();
+        m_client.receivePackets();
         camera.reset(getPlayerEntity().transform);
 
         m_world.update(getPlayerEntity());

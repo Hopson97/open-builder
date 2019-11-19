@@ -20,7 +20,7 @@ namespace client {
         void disconnect();
 
         void sendInput(input_t input, const glm::vec3 &rotation);
-        void update();
+        void receivePackets();
 
         bool isConnected() const;
 

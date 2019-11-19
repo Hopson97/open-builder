@@ -20,7 +20,7 @@ namespace client {
         sendToServer(inputStatePacket.payload);
     }
 
-    void Client::update()
+    void Client::receivePackets()
     {
         Packet packet;
         Endpoint endpoint;
