@@ -2,8 +2,8 @@
 
 #include <array>
 
-#include "../../../renderer/model/mesh.h"
-#include "../../block/block.h"
+#include "../../renderer/model/mesh.h"
+#include "../block/block.h"
 #include "chunk_mesh.h"
 
 namespace client {

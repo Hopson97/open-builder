@@ -1,10 +1,30 @@
 #pragma once
 
-#include "chunk_section.h"
-#include "mesh/chunk_mesh.h"
+#include <common/constants.h>
+#include <SFML/Network/Packet.hpp>
+#include "chunk_mesh.h"
+#include "../block/block.h"
 
 namespace client {
     class Renderer;
+    class World;
+
+    class ChunkSection {
+      public:
+        ChunkSection(int x, int y, int z, World &world);
+
+        Block getBlock(const BlockPosition &blockPosition) const;
+
+        const ChunkSectionPosition &getPosition() const;
+
+        friend sf::Packet &operator>>(sf::Packet &packet, ChunkSection &chunk);
+
+      private:
+        std::array<Block, CHUNK_VOLUME> m_blocks;
+        World *mp_world;
+        ChunkSectionPosition m_position;
+    };
+
     class Chunk final {
       public:
         Chunk(const ChunkPosition &chunkPosition, World &world);

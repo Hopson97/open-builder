@@ -1,7 +1,7 @@
 #include "client.h"
 
 #include "../world/world.h"
-
+#include <iostream>
 namespace client {
     void Client::handleWorldState(sf::Packet &packet)
     {

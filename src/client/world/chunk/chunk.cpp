@@ -2,7 +2,7 @@
 
 #include "../../renderer/renderer.h"
 #include "../world.h"
-#include "mesh/chunk_mesh_builder.h"
+#include "chunk_mesh_builder.h"
 
 #include <iostream>
 

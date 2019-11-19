@@ -1,4 +1,4 @@
-#include "chunk_section.h"
+#include "chunk.h"
 
 #include "../world.h"
 #include <common/coordinate_convertion.h>

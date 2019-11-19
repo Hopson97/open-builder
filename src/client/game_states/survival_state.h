@@ -8,11 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../world/chunk/chunk_section.h"
-#include "../world/chunk/mesh/chunk_mesh_builder.h"
-
 #include "../network/client.h"
-
 #include "../world/world.h"
 
 namespace client {
