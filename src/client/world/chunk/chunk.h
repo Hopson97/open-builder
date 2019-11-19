@@ -1,9 +1,9 @@
 #pragma once
 
-#include <common/constants.h>
-#include <SFML/Network/Packet.hpp>
-#include "chunk_mesh.h"
 #include "../block/block.h"
+#include "chunk_mesh.h"
+#include <SFML/Network/Packet.hpp>
+#include <common/constants.h>
 
 namespace client {
     class Renderer;
@@ -41,7 +41,7 @@ namespace client {
       private:
         ChunkPosition m_position;
         std::vector<ChunkSection> m_sections;
-        std::vector<ChunkMesh> m_chunkMeshes;
+        std::vector<ChunkMeshObjects> m_chunkMeshes;
 
         World &mp_world;
     };

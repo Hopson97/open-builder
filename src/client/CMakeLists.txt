@@ -17,7 +17,6 @@ add_library(ob-client
     network/client_command_handler.cpp
     world/world.cpp
     world/chunk/chunk_mesh.cpp
-    world/chunk/chunk_mesh_builder.cpp
     world/chunk/chunk_section.cpp
     world/chunk/chunk.cpp
     util/fps_counter.cpp

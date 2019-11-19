@@ -1,7 +1,5 @@
 #include "world.h"
 
-#include "chunk/chunk_mesh_builder.h"
-
 #include <common/coordinate_convertion.h>
 #include <common/debug.h>
 #include <iostream>

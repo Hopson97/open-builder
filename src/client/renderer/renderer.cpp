@@ -10,7 +10,6 @@
 #include "../world/entity.h"
 
 #include "../world/chunk/chunk.h"
-#include "../world/chunk/chunk_mesh_builder.h"
 
 namespace client {
     void drawElements(GLsizei count)
@@ -36,7 +35,7 @@ namespace client {
         glCheck(glCullFace(GL_BACK));
     }
 
-    void Renderer::process(const ChunkMesh &mesh)
+    void Renderer::process(const ChunkMeshObjects &mesh)
     {
         m_chunkRenderer.process(mesh);
     }

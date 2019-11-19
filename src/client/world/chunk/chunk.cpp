@@ -2,7 +2,6 @@
 
 #include "../../renderer/renderer.h"
 #include "../world.h"
-#include "chunk_mesh_builder.h"
 
 #include <iostream>
 
@@ -52,10 +51,9 @@ namespace client {
     bool Chunk::createMesh()
     {
         for (unsigned i = 0; i < m_sections.size(); i++) {
-            if (!m_chunkMeshes[i].solidBlocks.isCreated()) {
-                ChunkMeshBuilder builder(m_sections[i]);
-                auto mesh = builder.createMesh();
-                m_chunkMeshes[i] = std::move(mesh);
+            if (!m_chunkMeshes[i].solid.isCreated()) {
+                auto meshGroup = createChunkMesh(m_sections[i]);
+                m_chunkMeshes[i] = bufferChunkMeshGroup(meshGroup);
                 return true;
             }
         }
