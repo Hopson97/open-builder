@@ -1,13 +1,14 @@
 #include "application.h"
 
+#include "network/server.h"
+#include "world/chunk/chunk.h"
+#include "world/entity.h"
 #include <common/launch_config.h>
 #include <iostream>
 #include <thread>
-#include "network/server.h"
-#include "world/entity.h"
-#include "world/chunk/chunk.h"
 
 namespace server {
+
     void runServerApp(const LaunchConfig &config, port_t port, sf::Time timeout)
     {
         // Initilize the objects
@@ -16,10 +17,8 @@ namespace server {
         Server server(maxConnections, port, entities);
         std::vector<Chunk> chunks;
         chunks.reserve(WORLD_SIZE * WORLD_SIZE);
-        std::cout << "Server started on port " << port << "." << std::endl;
 
         // Initilize the world
-        std::cout << "Generating world\n";
         for (unsigned i = maxConnections; i < entities.size(); i++) {
             entities[i].isAlive = true;
         }
@@ -29,9 +28,6 @@ namespace server {
                 c.generateTerrain();
             }
         }
-        std::cout << "World has been created.\n" << std::endl;
-
-        bool temp = false;
 
         // Start the main loop
         sf::Clock timeoutClock;
@@ -59,21 +55,23 @@ namespace server {
 
             auto statePacket = server.createPacket(CommandToClient::WorldState,
                                                    Packet::Flag::None);
-            auto &payload = statePacket.payload;
-            payload << static_cast<u16>(entities.size());
+            statePacket.payload << static_cast<u16>(entities.size());
             for (entityid_t i = 0; i < entities.size(); i++) {
                 if (entities[i].isAlive) {
                     Entity &entity = entities[i];
 
-                    payload << i;
-                    payload << entity.position.x << entity.position.y
-                            << entity.position.z;
-                    payload << entity.rotation.x << entity.rotation.y;
+                    statePacket.payload << i;
+                    statePacket.payload << entity.position.x
+                                        << entity.position.y
+                                        << entity.position.z;
+                    statePacket.payload << entity.rotation.x
+                                        << entity.rotation.y;
                 }
             }
             server.sendToAllClients(statePacket);
 
             //@TODO Move this and work out how to "do it correcty"
+            static bool temp = false;
             if (server.connectedPlayes() != 0 && !temp) {
                 std::cout << "Sending chunks\n";
                 int i = 0;

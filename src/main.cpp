@@ -113,13 +113,13 @@ namespace {
     int launchClient(const LaunchConfig &config)
     {
         std::cout << "Launching client.\n";
-        client::Engine app(config);
-        switch (app.runClient()) {
-            case client::Engine::Status::Exit:
-            case client::Engine::Status::Ok:
+        // client::Engine app(config);
+        switch (client::runClientEngine(config)) {
+            case client::EngineStatus::Exit:
+            case client::EngineStatus::Ok:
                 return exitSuccess();
 
-            case client::Engine::Status::GLInitError:
+            case client::EngineStatus::GLInitError:
                 return exitFailure("OpenGL failed to initilise correctly");
         }
         return exitFailure("Unknown error");
