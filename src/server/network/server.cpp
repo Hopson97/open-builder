@@ -49,11 +49,11 @@ namespace server {
         return -1;
     }
 
-    void Server::recievePackets()
+    void Server::receivePackets()
     {
         Packet packet;
         Endpoint endpoint;
-        while (recieve(packet, endpoint)) {
+        while (receivePacket(m_socket, packet, endpoint)) {
             switch (static_cast<CommandToServer>(packet.command)) {
                 case CommandToServer::PlayerInput:
                     handleKeyInput(packet.payload);
@@ -144,16 +144,5 @@ namespace server {
         return createCommandPacket(
             command, flag,
             flag == Packet::Flag::Reliable ? m_sequenceNumber++ : 0);
-    }
-
-    bool Server::recieve(Packet &packet, Endpoint &endpoint)
-    {
-        sf::Packet rawPacket;
-        if (m_socket.receive(rawPacket, endpoint.address, endpoint.port) ==
-            sf::Socket::Done) {
-            packet.initFromPacket(rawPacket);
-            return true;
-        }
-        return false;
     }
 } // namespace server

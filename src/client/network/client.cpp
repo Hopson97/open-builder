@@ -23,7 +23,8 @@ namespace client {
     void Client::update()
     {
         Packet packet;
-        while (getFromServer(packet)) {
+        Endpoint endpoint;
+        while (receivePacket(m_socket, packet, endpoint)) {
             // auto &packet = packet.payload;
             if (packet.hasFlag(Packet::Flag::Reliable)) {
                 auto acknowledgePacket =
@@ -76,11 +77,12 @@ namespace client {
 
     bool Client::connect(const sf::IpAddress &address)
     {
+        Endpoint endpoint;
         m_server.address = address;
         auto connectRequest = createCommandPacket(CommandToServer::Connect);
         if (sendToServer(connectRequest.payload)) {
             Packet response;
-            if (getFromServer(response)) {
+            if (receivePacket(m_socket, response, endpoint)) {
                 ConnectionResult result;
                 response.payload >> result;
                 switch (result) {
@@ -124,17 +126,5 @@ namespace client {
     {
         return m_socket.send(packet, m_server.address, PORT) ==
                sf::Socket::Done;
-    }
-
-    bool Client::getFromServer(Packet &package)
-    {
-        sf::Packet packet;
-        sf::IpAddress address;
-        port_t port;
-        if (m_socket.receive(packet, address, port) == sf::Socket::Done) {
-            package.initFromPacket(packet);
-            return true;
-        }
-        return false;
     }
 } // namespace client

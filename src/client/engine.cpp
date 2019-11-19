@@ -103,14 +103,14 @@ namespace client {
         while (status == EngineStatus::Ok) {
             p_currentState = &stateHandler.peekState();
 
-            //Input
+            // Input
             status = handleWindowEvents(window, keyboard, *p_currentState);
             p_currentState->handleInput(keyboard, window);
 
-            //Update
+            // Update
             p_currentState->update(camera);
 
-            //Render
+            // Render
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             p_currentState->render(renderer);
             renderer.render(camera);
@@ -119,7 +119,7 @@ namespace client {
             fps.update();
             if (fpsTimer.getElapsedTime() > sf::seconds(4.0f)) {
                 printFps(fps);
-                fpsTimer.restart
+                fpsTimer.restart();
             }
 
             stateHandler.update();

@@ -37,7 +37,7 @@ namespace server {
 
             // Update
             auto deltaTime = deltaClock.restart();
-            server.recievePackets();
+            server.receivePackets();
             server.resendPackets();
             server.updatePlayers();
             int id = 0;

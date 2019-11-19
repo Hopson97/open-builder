@@ -17,7 +17,7 @@ namespace server {
       public:
         Server(int maxConnections, port_t port, EntityArray &entities);
 
-        void recievePackets();
+        void receivePackets();
         void resendPackets();
         void updatePlayers();
 
@@ -33,8 +33,6 @@ namespace server {
 
       private:
         bool send(Packet &packet, const Endpoint &endpoint);
-
-        bool recieve(Packet &packet, Endpoint &endpoint);
 
         void handleIncomingConnection(const Endpoint &endpoint);
         void handleDisconnect(sf::Packet &packet);

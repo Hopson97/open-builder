@@ -29,7 +29,6 @@ namespace client {
 
       private:
         bool sendToServer(sf::Packet &packet);
-        bool getFromServer(Packet &package);
 
         void handleWorldState(sf::Packet &packet);
         void handleChunkData(sf::Packet &packet);
