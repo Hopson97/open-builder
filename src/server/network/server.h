@@ -8,7 +8,6 @@
 #include <SFML/System/Clock.hpp>
 #include <common/network/commands.h>
 #include <common/network/endpoint.h>
-#include <common/network/network_node.h>
 #include <common/network/packet.h>
 #include <common/network/packet_buffer.h>
 
