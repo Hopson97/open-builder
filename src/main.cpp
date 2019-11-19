@@ -104,8 +104,9 @@ namespace {
                      sf::Time timeout = sf::seconds(8))
     {
         std::cout << "Launching server.\n";
-        server::Application server(config, PORT);
-        server.run(timeout);
+        server::runServerApp(config, PORT, timeout);
+        // server::Application server(config, PORT);
+        // server.run(timeout);
         return EXIT_SUCCESS;
     }
 

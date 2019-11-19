@@ -62,16 +62,14 @@ namespace client {
         return false;
     }
 
-
     int Chunk::countSections() const
     {
         return m_sections.size();
     }
 
-    const ChunkPosition& Chunk::getPosition() const
+    const ChunkPosition &Chunk::getPosition() const
     {
         return m_position;
     }
-
 
 } // namespace client

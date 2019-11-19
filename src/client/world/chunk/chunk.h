@@ -16,7 +16,7 @@ namespace client {
         bool createMesh();
 
         int countSections() const;
-        const ChunkPosition& getPosition() const;
+        const ChunkPosition &getPosition() const;
 
       private:
         ChunkPosition m_position;

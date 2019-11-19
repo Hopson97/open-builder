@@ -74,12 +74,12 @@ namespace client {
                 if (getChunk(n2).countSections() == 0) {
                     continue;
                 }
-            }           
+            }
             if (n3.x >= 0 || n3.x < WORLD_SIZE) {
                 if (getChunk(n3).countSections() == 0) {
                     continue;
                 }
-            }            
+            }
             if (n4.x >= 0 || n4.x < WORLD_SIZE) {
                 if (getChunk(n4).countSections() == 0) {
                     continue;
