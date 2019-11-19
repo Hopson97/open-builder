@@ -1,10 +1,11 @@
 #include "application.h"
 
-#include <SFML/System/Clock.hpp>
 #include <common/launch_config.h>
-#include <common/network/commands.h>
 #include <iostream>
 #include <thread>
+#include "network/server.h"
+#include "world/entity.h"
+#include "world/chunk/chunk.h"
 
 namespace server {
     void runServerApp(const LaunchConfig &config, port_t port, sf::Time timeout)
