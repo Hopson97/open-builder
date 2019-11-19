@@ -22,7 +22,7 @@ namespace client {
         ChunkMesh solidMesh;
     };
 
-    ChunkMeshObjects bufferChunkMeshGroup(ChunkMeshGroup& group);
+    ChunkMeshObjects bufferChunkMeshGroup(ChunkMeshGroup &group);
 
     ChunkMeshGroup createChunkMesh(const ChunkSection &section);
 } // namespace client

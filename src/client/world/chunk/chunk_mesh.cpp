@@ -1,10 +1,10 @@
 #include "chunk_mesh.h"
 
-#include <array>
 #include "chunk.h"
+#include <array>
 
 namespace {
-        /**
+    /**
      * @brief Defines a block face: The 4 vertex positions + the normal
      * direction
      */
@@ -85,19 +85,21 @@ namespace {
 */
 
     // clang-format on
-    void addFace(const ChunkSectionPosition& chunkPosition,
-                 const BlockPosition &blockPosition,
-                 const BlockFace &face,
-                 client::ChunkMesh& mesh)
+    void addFace(const ChunkSectionPosition &chunkPosition,
+                 const BlockPosition &blockPosition, const BlockFace &face,
+                 client::ChunkMesh &mesh)
     {
         int index = 0;
         for (int i = 0; i < 4; i++) {
-            mesh.basicInfo.vertices.push_back(face.vertices[index++] + blockPosition.x +
-                                      (chunkPosition.x * CHUNK_SIZE));
-            mesh.basicInfo.vertices.push_back(face.vertices[index++] + blockPosition.y +
-                                      (chunkPosition.y * CHUNK_SIZE));
-            mesh.basicInfo.vertices.push_back(face.vertices[index++] + blockPosition.z +
-                                      (chunkPosition.z * CHUNK_SIZE));
+            mesh.basicInfo.vertices.push_back(face.vertices[index++] +
+                                              blockPosition.x +
+                                              (chunkPosition.x * CHUNK_SIZE));
+            mesh.basicInfo.vertices.push_back(face.vertices[index++] +
+                                              blockPosition.y +
+                                              (chunkPosition.y * CHUNK_SIZE));
+            mesh.basicInfo.vertices.push_back(face.vertices[index++] +
+                                              blockPosition.z +
+                                              (chunkPosition.z * CHUNK_SIZE));
 
             mesh.basicLight.push_back(face.basicLight);
         }
@@ -107,9 +109,9 @@ namespace {
             {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f});
 
         mesh.basicInfo.indices.insert(mesh.basicInfo.indices.end(),
-                              {mesh.maxIndex, mesh.maxIndex + 1,
-                               mesh.maxIndex + 2, mesh.maxIndex + 2,
-                               mesh.maxIndex + 3, mesh.maxIndex});
+                                      {mesh.maxIndex, mesh.maxIndex + 1,
+                                       mesh.maxIndex + 2, mesh.maxIndex + 2,
+                                       mesh.maxIndex + 3, mesh.maxIndex});
         mesh.maxIndex += 4;
     }
 } // namespace
@@ -134,33 +136,38 @@ namespace client {
                         Block back = section.getBlock({x, y, z - 1});
 
                         if (up.type == BlockType::Air) {
-                            addFace(section.getPosition(), {x, y, z}, topFace, group.solidMesh);
+                            addFace(section.getPosition(), {x, y, z}, topFace,
+                                    group.solidMesh);
                         }
                         if (down.type == BlockType::Air) {
-                            addFace(section.getPosition(), {x, y, z}, bottomFace, group.solidMesh);
+                            addFace(section.getPosition(), {x, y, z},
+                                    bottomFace, group.solidMesh);
                         }
 
                         if (left.type == BlockType::Air) {
-                            addFace(section.getPosition(), {x, y, z}, leftFace, group.solidMesh);
+                            addFace(section.getPosition(), {x, y, z}, leftFace,
+                                    group.solidMesh);
                         }
                         if (right.type == BlockType::Air) {
-                            addFace(section.getPosition(), {x, y, z}, rightFace, group.solidMesh);
+                            addFace(section.getPosition(), {x, y, z}, rightFace,
+                                    group.solidMesh);
                         }
                         if (forwards.type == BlockType::Air) {
-                            addFace(section.getPosition(), {x, y, z}, frontFace, group.solidMesh);
+                            addFace(section.getPosition(), {x, y, z}, frontFace,
+                                    group.solidMesh);
                         }
                         if (back.type == BlockType::Air) {
-                            addFace(section.getPosition(), {x, y, z}, backFace, group.solidMesh);
+                            addFace(section.getPosition(), {x, y, z}, backFace,
+                                    group.solidMesh);
                         }
                     }
-
                 }
             }
         }
         return group;
     }
 
-    ChunkMeshObjects bufferChunkMeshGroup(ChunkMeshGroup& group)
+    ChunkMeshObjects bufferChunkMeshGroup(ChunkMeshGroup &group)
     {
         ChunkMeshObjects objects;
         objects.solid.create(group.solidMesh.basicInfo);

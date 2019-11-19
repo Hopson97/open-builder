@@ -57,11 +57,13 @@ namespace client {
     void World::update([[maybe_unused]] Entity &player)
     {
         for (auto &chunk : m_chunks) {
+            /*
             auto p = chunk.getPosition();
             ChunkPosition n1(p.x, p.z - 1);
             ChunkPosition n2(p.x, p.z + 1);
             ChunkPosition n3(p.x - 1, p.z);
             ChunkPosition n4(p.x + 1, p.z);
+
 
             if (n1.x >= 0 || n1.x < WORLD_SIZE) {
                 if (getChunk(n1).countSections() == 0) {
@@ -83,7 +85,7 @@ namespace client {
                     continue;
                 }
             }
-
+*/
             if (chunk.createMesh()) {
                 break;
             }
