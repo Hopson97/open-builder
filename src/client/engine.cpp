@@ -127,7 +127,6 @@ namespace client {
                 status = EngineStatus::Exit;
             }
         }
-        stateHandler.clear();
         return status;
     }
 } // namespace client

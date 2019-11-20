@@ -21,6 +21,7 @@ namespace client {
     class SurvivalState final : public GameState {
       public:
         SurvivalState(StateHandler &stateHandler);
+        ~SurvivalState();
 
         void handleKeyUp(sf::Keyboard::Key key) override;
 
@@ -28,8 +29,6 @@ namespace client {
                          const sf::Window &window) override;
         void update(Camera &camera) override;
         void render(Renderer &renderer) override;
-
-        void onExit() override;
 
       private:
         Entity &getPlayerEntity();
