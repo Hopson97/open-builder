@@ -43,6 +43,8 @@ namespace server {
       private:
         ChunkPosition m_position;
         std::vector<ChunkSection> m_sections;
+
+        bool m_isTerrainGenerated = false;
     };
 
 } // namespace server

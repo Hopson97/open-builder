@@ -62,11 +62,12 @@ namespace server {
                 }
             }
         }
+        m_isTerrainGenerated = true;
     }
 
     bool Chunk::readyForSend() const
     {
-        return m_sections.size() > 0;
+        return m_isTerrainGenerated;
     }
 
     void Chunk::sendChunks(Server &server) const
