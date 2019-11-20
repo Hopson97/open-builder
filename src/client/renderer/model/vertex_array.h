@@ -8,7 +8,7 @@
 namespace client {
     class Mesh;
 
-    class RenderInformation {
+    class RenderInformation final {
       public:
         RenderInformation(GLuint handle, GLsizei indicesCount);
 

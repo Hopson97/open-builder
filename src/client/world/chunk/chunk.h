@@ -9,7 +9,7 @@ namespace client {
     class Renderer;
     class World;
 
-    class ChunkSection {
+    class ChunkSection final {
       public:
         ChunkSection(int x, int y, int z, World &world);
 
