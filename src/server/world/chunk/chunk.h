@@ -3,6 +3,7 @@
 #include "../block/block.h"
 #include <array>
 #include <common/constants.h>
+#include <common/coordinate.h>
 #include <common/network/packet.h>
 #include <vector>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.h"
+#include "coordinate.h"
 #include <SFML/System/Vector3.hpp>
 #include <glm/glm.hpp>
 #include <ostream>

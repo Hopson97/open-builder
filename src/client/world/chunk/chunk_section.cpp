@@ -1,7 +1,7 @@
 #include "chunk.h"
 
 #include "../world.h"
-#include <common/coordinate_convertion.h>
+#include <common/coordinate.h>
 #include <iostream>
 
 #include <common/debug.h>

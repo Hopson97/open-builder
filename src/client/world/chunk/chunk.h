@@ -4,6 +4,7 @@
 #include "chunk_mesh.h"
 #include <SFML/Network/Packet.hpp>
 #include <common/constants.h>
+#include <common/coordinate.h>
 
 namespace client {
     class Renderer;

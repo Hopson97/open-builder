@@ -20,31 +20,3 @@ using peer_id_t = u8;
 using entityid_t = u16;
 using command_t = u8;
 using input_t = u8;
-
-// Game types
-using BlockPosition = sf::Vector3<i32>;
-using ChunkSectionPosition = sf::Vector3<i32>;
-
-struct ChunkPosition {
-    ChunkPosition() = default;
-    ChunkPosition(int xp, int zp)
-        : x(xp)
-        , z(zp)
-    {
-    }
-
-    i32 x = 0;
-    i32 z = 0;
-};
-
-struct ChunkPositionHash {
-    // http://www.beosil.com/download/CollisionDetectionHashing_VMV03.pdf
-    std::size_t operator()(const ChunkPosition &position) const
-    {
-        return (position.x * 130199) ^ (position.z * 146437);
-    }
-};
-
-template <typename T>
-using ChunkPositionMap =
-    std::unordered_map<ChunkPosition, T, ChunkPositionHash>;

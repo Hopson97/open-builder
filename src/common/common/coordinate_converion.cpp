@@ -1,4 +1,4 @@
-#include "coordinate_convertion.h"
+#include "coordinate.h"
 
 int toChunkBlockIndex(const BlockPosition &blockPosition)
 {
