@@ -36,7 +36,8 @@ namespace client {
         ChunkSection chunk(chunkX, chunkY, chunkZ, mp_world);
         packet >> chunk;
 
-        mp_world.getChunk({chunkX, chunkZ}).addSection(std::move(chunk));
+        mp_world.getChunk({chunkX, chunkZ})
+            .addSection(numChunks, std::move(chunk));
     }
 
     void Client::handlePlayerJoin(sf::Packet &packet)

@@ -19,5 +19,7 @@ namespace client {
 
       private:
         std::vector<Chunk> m_chunks;
+
+        Chunk m_emptyChunk;
     };
 } // namespace client

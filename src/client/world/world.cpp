@@ -6,7 +6,12 @@
 
 namespace client {
     World::World()
+        : m_emptyChunk({-1, -1}, *this)
     {
+        ChunkSection air(-1, 0, -1, *this);
+        m_emptyChunk.addSection(1, std::move(air));
+        std::cout << "CHUNK: " << m_emptyChunk.hasAllData() << std::endl;
+
         for (int z = 0; z < WORLD_SIZE; ++z) {
             for (int x = 0; x < WORLD_SIZE; ++x) {
                 m_chunks.emplace_back(ChunkPosition(x, z), *this);
@@ -40,43 +45,35 @@ namespace client {
 
     Chunk &World::getChunk(const ChunkPosition &position)
     {
+        if (position.x < 0 || position.x >= WORLD_SIZE || position.z < 0 ||
+            position.z >= WORLD_SIZE) {
+            return m_emptyChunk;
+        }
         return m_chunks[(position.z * WORLD_SIZE + position.x)];
     }
 
     void World::update([[maybe_unused]] Entity &player)
     {
         for (auto &chunk : m_chunks) {
-            /*
-            auto p = chunk.getPosition();
-            ChunkPosition n1(p.x, p.z - 1);
-            ChunkPosition n2(p.x, p.z + 1);
-            ChunkPosition n3(p.x - 1, p.z);
-            ChunkPosition n4(p.x + 1, p.z);
+            if (chunk.hasAllData()) {
+                if ([&]() {
+                        for (int z = -1; z <= 1; z++) {
+                            for (int x = -1; x <= 1; x++) {
+                                const Chunk &c =
+                                    getChunk({chunk.getPosition().x + x,
+                                              chunk.getPosition().z + z});
+                                if (!c.hasAllData()) {
+                                    return false;
+                                }
+                            }
+                        }
+                        return true;
+                    }()) {
 
-
-            if (n1.x >= 0 || n1.x < WORLD_SIZE) {
-                if (getChunk(n1).countSections() == 0) {
-                    continue;
+                    if (chunk.tryCreateMesh()) {
+                        break;
+                    }
                 }
-            }
-            if (n2.x >= 0 || n2.x < WORLD_SIZE) {
-                if (getChunk(n2).countSections() == 0) {
-                    continue;
-                }
-            }
-            if (n3.x >= 0 || n3.x < WORLD_SIZE) {
-                if (getChunk(n3).countSections() == 0) {
-                    continue;
-                }
-            }
-            if (n4.x >= 0 || n4.x < WORLD_SIZE) {
-                if (getChunk(n4).countSections() == 0) {
-                    continue;
-                }
-            }
-*/
-            if (chunk.createMesh()) {
-                break;
             }
         }
     }

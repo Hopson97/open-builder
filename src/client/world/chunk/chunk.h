@@ -30,19 +30,23 @@ namespace client {
       public:
         Chunk(const ChunkPosition &chunkPosition, World &world);
 
-        void addSection(ChunkSection&& section);
+        void addSection(int maxSections, ChunkSection &&section);
         Block getBlock(const BlockPosition &blockPosition);
 
         void render(Renderer &renderer);
-        bool createMesh();
 
         int countSections() const;
         const ChunkPosition &getPosition() const;
+
+        bool hasAllData() const;
+        bool tryCreateMesh();
 
       private:
         ChunkPosition m_position;
         std::vector<ChunkSection> m_sections;
         std::vector<ChunkMeshObjects> m_chunkMeshes;
+
+        int m_maxSections = -1;
 
         World &mp_world;
     };

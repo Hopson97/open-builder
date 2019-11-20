@@ -12,8 +12,9 @@ namespace client {
     {
     }
 
-    void Chunk::addSection(ChunkSection&& section)
+    void Chunk::addSection(int maxSections, ChunkSection &&section)
     {
+        m_maxSections = maxSections;
         if (section.getPosition().y >= 0) {
             while (section.getPosition().y > (int)m_sections.size() - 1) {
                 m_sections.emplace_back(m_position.x, m_sections.size(),
@@ -48,7 +49,22 @@ namespace client {
         }
     }
 
-    bool Chunk::createMesh()
+    int Chunk::countSections() const
+    {
+        return m_sections.size();
+    }
+
+    const ChunkPosition &Chunk::getPosition() const
+    {
+        return m_position;
+    }
+
+    bool Chunk::hasAllData() const
+    {
+        return m_maxSections == static_cast<int>(m_sections.size());
+    }
+
+    bool Chunk::tryCreateMesh()
     {
         for (unsigned i = 0; i < m_sections.size(); i++) {
             if (!m_chunkMeshes[i].solid.isCreated()) {
@@ -58,16 +74,6 @@ namespace client {
             }
         }
         return false;
-    }
-
-    int Chunk::countSections() const
-    {
-        return m_sections.size();
-    }
-
-    const ChunkPosition &Chunk::getPosition() const
-    {
-        return m_position;
     }
 
 } // namespace client
