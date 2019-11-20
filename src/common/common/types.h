@@ -33,19 +33,18 @@ struct ChunkPosition {
     {
     }
 
-    int x = 0;
-    int z = 0;
+    i32 x = 0;
+    i32 z = 0;
 };
 
 struct ChunkPositionHash {
     // http://www.beosil.com/download/CollisionDetectionHashing_VMV03.pdf
-    std::size_t operator()(const ChunkSectionPosition &position) const
+    std::size_t operator()(const ChunkPosition &position) const
     {
-        return (position.x * 130199) ^ (position.y * 146437) ^
-               (position.z * 178571);
+        return (position.x * 130199) ^ (position.z * 146437);
     }
 };
 
 template <typename T>
 using ChunkPositionMap =
-    std::unordered_map<ChunkSectionPosition, T, ChunkPositionHash>;
+    std::unordered_map<ChunkPosition, T, ChunkPositionHash>;
