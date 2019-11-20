@@ -8,7 +8,6 @@
 #include <thread>
 
 namespace server {
-
     void runServerApp(const LaunchConfig &config, port_t port, sf::Time timeout)
     {
         // Initilize the objects
