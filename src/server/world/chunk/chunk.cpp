@@ -75,7 +75,7 @@ namespace server {
         for (auto &chunk : m_sections) {
             auto packet = server.createPacket(CommandToClient::ChunkData,
                                               Packet::Flag::Reliable);
-            packet.payload << chunk;
+            packet.payload << static_cast<u16>(m_sections.size()) << chunk;
             server.sendToAllClients(packet);
         }
     }
