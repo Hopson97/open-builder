@@ -6,6 +6,8 @@
 
 *.temp
 
+open-builder/
+
 #
 #   Linux
 #
@@ -27,3 +29,4 @@ bin/
 
 Debug/
 Release/
+
