@@ -59,7 +59,7 @@ find_package(glm REQUIRED)
 # Add local libraries
 add_subdirectory(deps)
 
-add_subdirectory(src/common)
+add_subdirectory(src/common/common)
 add_subdirectory(src/client)
 add_subdirectory(src/server)
 
