@@ -5,8 +5,6 @@
 #include <common/network/commands.h>
 #include <common/network/input_state.h>
 
-#include "../world/chunk/chunk_section.h"
-
 #include <ctime>
 #include <iostream>
 #include <random>
@@ -49,11 +47,11 @@ namespace server {
         return -1;
     }
 
-    void Server::recievePackets()
+    void Server::receivePackets()
     {
         Packet packet;
         Endpoint endpoint;
-        while (recieve(packet, endpoint)) {
+        while (receivePacket(m_socket, packet, endpoint)) {
             switch (static_cast<CommandToServer>(packet.command)) {
                 case CommandToServer::PlayerInput:
                     handleKeyInput(packet.payload);
@@ -113,16 +111,21 @@ namespace server {
         }
     }
 
+    bool Server::send(Packet &packet, const Endpoint &endpoint)
+    {
+        bool result = m_socket.send(packet.payload, endpoint.address,
+                                    endpoint.port) == sf::Socket::Done;
+        if (packet.hasFlag(Packet::Flag::Reliable)) {
+            m_packetBuffer.append(std::move(packet), endpoint.id);
+        }
+        return result;
+    }
+
     bool Server::sendToClient(peer_id_t id, Packet &packet)
     {
         if (m_clientStatuses[id] == ClientStatus::Connected) {
             auto &endpoint = m_endpoints[id];
-            bool result = m_socket.send(packet.payload, endpoint.address,
-                                        endpoint.port) == sf::Socket::Done;
-            if (packet.hasFlag(Packet::Flag::Reliable)) {
-                m_packetBuffer.append(std::move(packet), endpoint.id);
-            }
-            return result;
+            return send(packet, endpoint);
         }
         return false;
     }
@@ -139,16 +142,5 @@ namespace server {
         return createCommandPacket(
             command, flag,
             flag == Packet::Flag::Reliable ? m_sequenceNumber++ : 0);
-    }
-
-    bool Server::recieve(Packet &packet, Endpoint &endpoint)
-    {
-        sf::Packet rawPacket;
-        if (m_socket.receive(rawPacket, endpoint.address, endpoint.port) ==
-            sf::Socket::Done) {
-            packet.initFromPacket(rawPacket);
-            return true;
-        }
-        return false;
     }
 } // namespace server

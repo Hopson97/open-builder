@@ -39,7 +39,7 @@ bool PacketBuffer::isEmpty() const
     return m_reliablePacketBuffer.empty();
 }
 
-ReliablePacket &PacketBuffer::begin()
+PacketBuffer::ReliablePacket &PacketBuffer::begin()
 {
     return m_reliablePacketBuffer.begin()->second;
 }

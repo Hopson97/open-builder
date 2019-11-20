@@ -1,7 +1,7 @@
 #include "client.h"
 
 #include "../world/world.h"
-
+#include <iostream>
 namespace client {
     void Client::handleWorldState(sf::Packet &packet)
     {
@@ -30,11 +30,14 @@ namespace client {
 
     void Client::handleChunkData(sf::Packet &packet)
     {
-        int chunkX, chunkY, chunkZ;
-        packet >> chunkX >> chunkY >> chunkZ;
+        i32 chunkX, chunkY, chunkZ;
+        u16 numChunks;
+        packet >> numChunks >> chunkX >> chunkY >> chunkZ;
         ChunkSection chunk(chunkX, chunkY, chunkZ, mp_world);
         packet >> chunk;
-        mp_world.addChunk(chunk);
+
+        mp_world.getChunk({chunkX, chunkZ})
+            .addSection(numChunks, std::move(chunk));
     }
 
     void Client::handlePlayerJoin(sf::Packet &packet)

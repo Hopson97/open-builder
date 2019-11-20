@@ -4,6 +4,8 @@
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Packet.hpp>
 
+struct Endpoint;
+
 /**
  * @brief Basis of all packet sent.
  * All have this structure
@@ -37,3 +39,5 @@ Packet createCommandPacket(CommandType command,
     Packet packet(static_cast<command_t>(command), flag, seqNumber);
     return packet;
 }
+
+bool receivePacket(sf::UdpSocket &socket, Packet &packet, Endpoint &endpoint);

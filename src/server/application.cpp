@@ -1,104 +1,97 @@
 #include "application.h"
 
-#include <SFML/System/Clock.hpp>
+#include "network/server.h"
+#include "world/chunk/chunk.h"
+#include "world/entity.h"
 #include <common/launch_config.h>
-#include <common/network/commands.h>
 #include <iostream>
 #include <thread>
 
 namespace server {
-    Application::Application(const LaunchConfig &config, port_t port)
-        : m_server(config.serverOptions.maxConnections, port, m_entities)
+    void runServerApp(const LaunchConfig &config, port_t port, sf::Time timeout)
     {
-        std::cout << "Server started on port " << port << "." << std::endl;
+        // Initilize the objects
+        int maxConnections = config.serverOptions.maxConnections;
+        EntityArray entities;
+        Server server(maxConnections, port, entities);
+        std::vector<Chunk> chunks;
+        chunks.reserve(WORLD_SIZE * WORLD_SIZE);
 
-        for (unsigned i = m_server.maxConnections(); i < m_entities.size();
-             i++) {
-            m_entities[i].isAlive = true;
+        // Initilize the world
+        for (unsigned i = maxConnections; i < entities.size(); i++) {
+            entities[i].isAlive = true;
         }
-
-        std::cout << "Generating world\n";
         for (int z = 0; z < WORLD_SIZE; ++z) {
             for (int x = 0; x < WORLD_SIZE; ++x) {
-                auto &c = m_chunks.emplace_back(ChunkPosition(x, z));
+                auto &c = chunks.emplace_back(ChunkPosition(x, z));
                 c.generateTerrain();
             }
         }
-        std::cout << "World has been created.\n" << std::endl;
-    }
 
-    void Application::run(sf::Time timeout)
-    {
+        // Start the main loop
         sf::Clock timeoutClock;
         sf::Clock deltaClock;
-        bool sent = false;
-        while (m_isRunning) {
+        while (true) {
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-            m_server.recievePackets();
-            update(deltaClock.restart());
-            sendState();
+            // Update
+            auto deltaTime = deltaClock.restart();
+            server.receivePackets();
+            server.resendPackets();
+            server.updatePlayers();
+            int id = 0;
+            for (auto &entity : entities) {
+                if (entity.isAlive) {
+                    entity.position += entity.velocity * deltaTime.asSeconds();
+                    entity.velocity.x *= 0.8f;
+                    entity.velocity.z *= 0.8f;
+                    if (id >= maxConnections) {
+                        entity.tick();
+                    }
+                }
+                id++;
+            }
 
-            if (m_server.connectedPlayes() != 0 && !sent) {
+            auto statePacket = server.createPacket(CommandToClient::WorldState,
+                                                   Packet::Flag::None);
+            statePacket.payload << static_cast<u16>(entities.size());
+            for (entityid_t i = 0; i < entities.size(); i++) {
+                if (entities[i].isAlive) {
+                    Entity &entity = entities[i];
+
+                    statePacket.payload << i;
+                    statePacket.payload << entity.position.x
+                                        << entity.position.y
+                                        << entity.position.z;
+                    statePacket.payload << entity.rotation.x
+                                        << entity.rotation.y;
+                }
+            }
+            server.sendToAllClients(statePacket);
+
+            //@TODO Move this and work out how to "do it correcty"
+            static bool temp = false;
+            if (server.connectedPlayes() != 0 && !temp) {
                 std::cout << "Sending chunks\n";
                 int i = 0;
-                for (auto &chunk : m_chunks) {
-                    chunk.sendChunks(m_server);
+                for (auto &chunk : chunks) {
+                    chunk.sendChunks(server);
                     i++;
                 }
                 std::cout << "Server sent: " << i << "chunks\n";
 
-                sent = true;
+                temp = true;
             }
 
-            if (m_server.connectedPlayes() == 0) {
+            // Check for timeout
+            if (server.connectedPlayes() == 0) {
                 if (timeoutClock.getElapsedTime() > timeout) {
-                    m_isRunning = false;
+                    break;
                 }
             }
             else {
                 timeoutClock.restart();
             }
         }
-    }
-
-    void Application::update(sf::Time deltaTime)
-    {
-        // update here
-        m_server.updatePlayers();
-
-        int id = 0;
-        for (auto &entity : m_entities) {
-            if (entity.isAlive) {
-                entity.position += entity.velocity * deltaTime.asSeconds();
-                entity.velocity.x *= 0.8f;
-                entity.velocity.z *= 0.8f;
-                if (id >= m_server.maxConnections()) {
-                    entity.tick();
-                }
-            }
-            id++;
-        }
-
-        m_server.resendPackets();
-    }
-
-    void Application::sendState()
-    {
-        auto statePacket = m_server.createPacket(CommandToClient::WorldState,
-                                                 Packet::Flag::None);
-        auto &payload = statePacket.payload;
-        payload << static_cast<u16>(m_entities.size());
-        for (entityid_t i = 0; i < m_entities.size(); i++) {
-            if (m_entities[i].isAlive) {
-                Entity &entity = m_entities[i];
-
-                payload << i;
-                payload << entity.position.x << entity.position.y
-                        << entity.position.z;
-                payload << entity.rotation.x << entity.rotation.y;
-            }
-        }
-        m_server.sendToAllClients(statePacket);
     }
 } // namespace server

@@ -35,9 +35,9 @@ namespace server {
 
             m_clientStatuses[slot] = ClientStatus::Connected;
             m_endpoints[slot] = endpoint;
-            m_clientSessions[slot].p_entity->position.y = CHUNK_SIZE + 1;
+            m_clientSessions[slot].p_entity->position.y = 50;
             m_clientSessions[slot].p_entity->isAlive = true;
-            m_clientSessions[slot].p_entity->speed = 16.0f;
+            m_clientSessions[slot].p_entity->speed = 4.0f;
 
             m_aliveEntities++;
             send(responsePacket, endpoint);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "chunk/chunk.h"
-#include "chunk/mesh/chunk_mesh.h"
+#include "chunk/chunk_mesh.h"
 #include "entity.h"
 
 namespace client {
@@ -12,15 +12,14 @@ namespace client {
 
         EntityArray entities;
 
-        void addChunk(ChunkSection section);
         void render(Renderer &renderer);
 
         Block getBlock(const BlockPosition &blockPosition);
-
-        const Chunk &getChunk(const ChunkPosition &position) const;
+        Chunk &getChunk(const ChunkPosition &position);
 
       private:
-        Chunk &getChunk(const ChunkPosition &position);
         std::vector<Chunk> m_chunks;
+
+        Chunk m_emptyChunk;
     };
 } // namespace client

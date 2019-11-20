@@ -32,6 +32,13 @@ namespace client {
         }
     }
 
+    SurvivalState::~SurvivalState()
+    {
+        if (m_client.isConnected()) {
+            m_client.disconnect();
+        }
+    }
+
     void SurvivalState::handleKeyUp(sf::Keyboard::Key key)
     {
         if (key == sf::Keyboard::L) {
@@ -89,7 +96,7 @@ namespace client {
 
     void SurvivalState::update(Camera &camera)
     {
-        m_client.update();
+        m_client.receivePackets();
         camera.reset(getPlayerEntity().transform);
 
         m_world.update(getPlayerEntity());
@@ -105,13 +112,6 @@ namespace client {
         }
 
         m_world.render(renderer);
-    }
-
-    void SurvivalState::onExit()
-    {
-        if (m_client.isConnected()) {
-            m_client.disconnect();
-        }
     }
 
     Entity &SurvivalState::getPlayerEntity()

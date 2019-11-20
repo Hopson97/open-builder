@@ -7,18 +7,9 @@
 
 namespace client {
     class Camera;
-    class ChunkMesh;
+    class ChunkMeshObjects;
 
     class ChunkRenderer {
-      public:
-        ChunkRenderer();
-
-        void process(const ChunkMesh &mesh);
-        void render(const Camera &camera);
-
-      private:
-        std::vector<RenderInformation> m_solidChunkRenders;
-
         struct ChunkShader {
             ChunkShader(const char *programName);
 
@@ -28,8 +19,15 @@ namespace client {
             GLuint locationCameraMatrix;
         };
 
-        ChunkShader m_solidBlockShader;
+      public:
+        ChunkRenderer();
 
+        void process(const ChunkMeshObjects &mesh);
+        void render(const Camera &camera);
+
+      private:
+        std::vector<RenderInformation> m_solidChunkRenders;
+        ChunkShader m_solidBlockShader;
         Texture2D m_texture;
     };
 } // namespace client

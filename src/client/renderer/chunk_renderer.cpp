@@ -1,6 +1,6 @@
 #include "chunk_renderer.h"
 
-#include "../world/chunk/mesh/chunk_mesh.h"
+#include "../world/chunk/chunk_mesh.h"
 #include "camera.h"
 
 #include <iostream>
@@ -12,9 +12,10 @@ namespace client {
         m_texture.create("grass.png");
     }
 
-    void ChunkRenderer::process(const ChunkMesh &mesh)
+    void ChunkRenderer::process(const ChunkMeshObjects &mesh)
     {
-        m_solidChunkRenders.push_back(mesh.solidBlocks.getRenderInfo());
+
+        m_solidChunkRenders.push_back(mesh.solid.getRenderInfo());
     }
 
     void ChunkRenderer::render(const Camera &camera)

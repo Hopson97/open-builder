@@ -6,7 +6,6 @@
 #include <common/network/commands.h>
 #include <common/network/endpoint.h>
 #include <common/network/input_state.h>
-#include <common/network/network_node.h>
 #include <common/network/packet.h>
 
 #include "../world/entity.h"
@@ -20,7 +19,7 @@ namespace client {
         void disconnect();
 
         void sendInput(input_t input, const glm::vec3 &rotation);
-        void update();
+        void receivePackets();
 
         bool isConnected() const;
 
@@ -29,7 +28,6 @@ namespace client {
 
       private:
         bool sendToServer(sf::Packet &packet);
-        bool getFromServer(Packet &package);
 
         void handleWorldState(sf::Packet &packet);
         void handleChunkData(sf::Packet &packet);

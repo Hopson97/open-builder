@@ -23,7 +23,7 @@ enum class CommandToServer : command_t {
     /// float: players y look direction
     PlayerInput,
 
-    /// To tell server that we have recieved a packet
+    /// To tell server that we have received a packet
     /// command_t: Acknowledgment
     /// u32: sequenceNumber
     Acknowledgment,
@@ -60,7 +60,7 @@ enum class CommandToClient : command_t {
     /// u16
     PlayerLeave,
 
-    /// To tell server that we have recieved a packet
+    /// To tell server that we have received a packet
     /// command_t: Acknowledgment
     /// u32: sequenceNumber
     Acknowledgment,

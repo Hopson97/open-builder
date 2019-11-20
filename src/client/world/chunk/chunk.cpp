@@ -2,7 +2,6 @@
 
 #include "../../renderer/renderer.h"
 #include "../world.h"
-#include "mesh/chunk_mesh_builder.h"
 
 #include <iostream>
 
@@ -13,15 +12,16 @@ namespace client {
     {
     }
 
-    void Chunk::addSection(ChunkSection section)
+    void Chunk::addSection(int maxSections, ChunkSection &&section)
     {
+        m_maxSections = maxSections;
         if (section.getPosition().y >= 0) {
             while (section.getPosition().y > (int)m_sections.size() - 1) {
                 m_sections.emplace_back(m_position.x, m_sections.size(),
                                         m_position.z, mp_world);
                 m_chunkMeshes.emplace_back();
             }
-            m_sections[section.getPosition().y] = section;
+            m_sections[section.getPosition().y] = std::move(section);
         }
     }
 
@@ -49,29 +49,31 @@ namespace client {
         }
     }
 
-    bool Chunk::createMesh()
-    {
-        for (unsigned i = 0; i < m_sections.size(); i++) {
-            if (!m_chunkMeshes[i].solidBlocks.isCreated()) {
-                ChunkMeshBuilder builder(m_sections[i]);
-                auto mesh = builder.createMesh();
-                m_chunkMeshes[i] = std::move(mesh);
-                return true;
-            }
-        }
-        return false;
-    }
-
-
     int Chunk::countSections() const
     {
         return m_sections.size();
     }
 
-    const ChunkPosition& Chunk::getPosition() const
+    const ChunkPosition &Chunk::getPosition() const
     {
         return m_position;
     }
 
+    bool Chunk::hasAllData() const
+    {
+        return m_maxSections == static_cast<int>(m_sections.size());
+    }
+
+    bool Chunk::tryCreateMesh()
+    {
+        for (unsigned i = 0; i < m_sections.size(); i++) {
+            if (!m_chunkMeshes[i].solid.isCreated()) {
+                auto meshGroup = createChunkMesh(m_sections[i]);
+                m_chunkMeshes[i] = bufferChunkMeshGroup(meshGroup);
+                return true;
+            }
+        }
+        return false;
+    }
 
 } // namespace client

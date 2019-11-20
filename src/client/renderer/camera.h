@@ -9,7 +9,7 @@
 struct LaunchConfig;
 
 namespace client {
-    class Camera {
+    class Camera final {
       public:
         Camera();
         Camera(const LaunchConfig &config);

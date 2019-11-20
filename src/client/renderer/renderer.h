@@ -7,7 +7,7 @@
 #include "model/textured_model.h"
 #include "skybox_renderer.h"
 
-#include "../world/chunk/mesh/chunk_mesh.h"
+#include "../world/chunk/chunk_mesh.h"
 
 #include <unordered_map>
 
@@ -29,7 +29,7 @@ namespace client {
         Renderer &operator=(const Renderer &) = delete;
 
         void process(const Entity &entity);
-        void process(const ChunkMesh &mesh);
+        void process(const ChunkMeshObjects &mesh);
 
         void render(const Camera &camera);
 

@@ -26,7 +26,6 @@ namespace client {
         void popState();
 
         void update();
-        void clear();
 
         bool isEmpty() const;
 
@@ -39,6 +38,5 @@ namespace client {
     void StateHandler::pushState(Args &&... args)
     {
         m_gameStates.push(std::make_unique<State>(std::forward<Args>(args)...));
-        peekState().onEnter();
     }
 } // namespace client

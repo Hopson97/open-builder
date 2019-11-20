@@ -104,21 +104,22 @@ namespace {
                      sf::Time timeout = sf::seconds(8))
     {
         std::cout << "Launching server.\n";
-        server::Application server(config, PORT);
-        server.run(timeout);
+        server::runServerApp(config, PORT, timeout);
+        // server::Application server(config, PORT);
+        // server.run(timeout);
         return EXIT_SUCCESS;
     }
 
     int launchClient(const LaunchConfig &config)
     {
         std::cout << "Launching client.\n";
-        client::Engine app(config);
-        switch (app.runClient()) {
-            case client::Engine::Status::Exit:
-            case client::Engine::Status::Ok:
+        // client::Engine app(config);
+        switch (client::runClientEngine(config)) {
+            case client::EngineStatus::Exit:
+            case client::EngineStatus::Ok:
                 return exitSuccess();
 
-            case client::Engine::Status::GLInitError:
+            case client::EngineStatus::GLInitError:
                 return exitFailure("OpenGL failed to initilise correctly");
         }
         return exitFailure("Unknown error");

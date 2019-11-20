@@ -55,18 +55,19 @@ namespace server {
 
     void Chunk::generateTerrain()
     {
-        for (int y = 0; y < 5; y++) {
+        for (int y = 0; y < CHUNK_SIZE + 2; y++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
                 for (int x = 0; x < CHUNK_SIZE; x++) {
                     setBlock(x, y, z, BlockType::Grass);
                 }
             }
         }
+        m_isTerrainGenerated = true;
     }
 
     bool Chunk::readyForSend() const
     {
-        return m_sections.size() > 0;
+        return m_isTerrainGenerated;
     }
 
     void Chunk::sendChunks(Server &server) const
@@ -74,7 +75,7 @@ namespace server {
         for (auto &chunk : m_sections) {
             auto packet = server.createPacket(CommandToClient::ChunkData,
                                               Packet::Flag::Reliable);
-            packet.payload << chunk;
+            packet.payload << static_cast<u16>(m_sections.size()) << chunk;
             server.sendToAllClients(packet);
         }
     }

@@ -22,19 +22,8 @@ namespace client {
         while (m_popCount > 0) {
             m_popCount--;
             if (!isEmpty()) {
-                peekState().onExit();
                 m_gameStates.pop();
             }
-        }
-        if (!isEmpty()) {
-            peekState().onEnter();
-        }
-    }
-
-    void StateHandler::clear() {
-        while(!isEmpty()) {
-            peekState().onExit();
-            m_gameStates.pop();
         }
     }
 

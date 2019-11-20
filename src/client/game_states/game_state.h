@@ -27,16 +27,6 @@ namespace client {
         virtual void update(Camera &camera) = 0;
         virtual void render(Renderer &renderer) = 0;
 
-        /// Called when the state is entered
-        virtual void onEnter()
-        {
-        }
-
-        /// Called when the state it exited
-        virtual void onExit()
-        {
-        }
-
       protected:
         StateHandler *mp_stateHandler;
     };

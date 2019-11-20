@@ -8,7 +8,6 @@
 #include <SFML/System/Clock.hpp>
 #include <common/network/commands.h>
 #include <common/network/endpoint.h>
-#include <common/network/network_node.h>
 #include <common/network/packet.h>
 #include <common/network/packet_buffer.h>
 
@@ -17,9 +16,8 @@ namespace server {
       public:
         Server(int maxConnections, port_t port, EntityArray &entities);
 
-        void recievePackets();
+        void receivePackets();
         void resendPackets();
-        void sendPackets();
         void updatePlayers();
 
         int connectedPlayes() const;
@@ -33,17 +31,7 @@ namespace server {
                             Packet::Flag flag = Packet::Flag::None);
 
       private:
-        bool send(Packet &packet, const Endpoint &endpoint)
-        {
-            bool result = m_socket.send(packet.payload, endpoint.address,
-                                        endpoint.port) == sf::Socket::Done;
-            if (packet.hasFlag(Packet::Flag::Reliable)) {
-                m_packetBuffer.append(std::move(packet), endpoint.id);
-            }
-            return result;
-        }
-
-        bool recieve(Packet &packet, Endpoint &endpoint);
+        bool send(Packet &packet, const Endpoint &endpoint);
 
         void handleIncomingConnection(const Endpoint &endpoint);
         void handleDisconnect(sf::Packet &packet);
