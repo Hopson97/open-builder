@@ -4,19 +4,19 @@
 #include <unordered_map>
 #include <unordered_set>
 
-
 /**
  * @brief Used for holding packets that need to be sent or resent
  *
  */
 class PacketBuffer final {
-  struct ReliablePacket {
-      ReliablePacket(Packet &&pkt)
-          : packet(std::move(pkt)){};
+    struct ReliablePacket {
+        ReliablePacket(Packet &&pkt)
+            : packet(std::move(pkt)){};
 
-      Packet packet;
-      std::unordered_set<peer_id_t> clients;
-  };
+        Packet packet;
+        std::unordered_set<peer_id_t> clients;
+    };
+
   public:
     bool isEmpty() const;
     bool hasPacket(u32 sequenceNumber) const;

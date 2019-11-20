@@ -5,8 +5,6 @@
 #include <common/network/commands.h>
 #include <common/network/input_state.h>
 
-#include "../world/chunk/chunk_section.h"
-
 #include <ctime>
 #include <iostream>
 #include <random>
