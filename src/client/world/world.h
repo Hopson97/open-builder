@@ -12,15 +12,12 @@ namespace client {
 
         EntityArray entities;
 
-        void addChunk(ChunkSection section);
         void render(Renderer &renderer);
 
         Block getBlock(const BlockPosition &blockPosition);
-
-        const Chunk &getChunk(const ChunkPosition &position) const;
+        Chunk &getChunk(const ChunkPosition &position);
 
       private:
-        Chunk &getChunk(const ChunkPosition &position);
         std::vector<Chunk> m_chunks;
     };
 } // namespace client

@@ -30,7 +30,7 @@ namespace client {
       public:
         Chunk(const ChunkPosition &chunkPosition, World &world);
 
-        void addSection(ChunkSection section);
+        void addSection(ChunkSection&& section);
         Block getBlock(const BlockPosition &blockPosition);
 
         void render(Renderer &renderer);

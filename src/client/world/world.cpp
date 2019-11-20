@@ -14,12 +14,6 @@ namespace client {
         }
     }
 
-    void World::addChunk(ChunkSection section)
-    {
-        getChunk({section.getPosition().x, section.getPosition().z})
-            .addSection(std::move(section));
-    }
-
     void World::render(Renderer &renderer)
     {
         for (auto &chunk : m_chunks) {
@@ -42,11 +36,6 @@ namespace client {
 
         return getChunk(chunkPosition)
             .getBlock(worldBlockToChunkBlockPosition(blockPosition));
-    }
-
-    const Chunk &World::getChunk(const ChunkPosition &position) const
-    {
-        return m_chunks.at(position.z * WORLD_SIZE + position.x);
     }
 
     Chunk &World::getChunk(const ChunkPosition &position)

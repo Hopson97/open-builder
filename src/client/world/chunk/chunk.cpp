@@ -12,7 +12,7 @@ namespace client {
     {
     }
 
-    void Chunk::addSection(ChunkSection section)
+    void Chunk::addSection(ChunkSection&& section)
     {
         if (section.getPosition().y >= 0) {
             while (section.getPosition().y > (int)m_sections.size() - 1) {
@@ -20,7 +20,7 @@ namespace client {
                                         m_position.z, mp_world);
                 m_chunkMeshes.emplace_back();
             }
-            m_sections[section.getPosition().y] = section;
+            m_sections[section.getPosition().y] = std::move(section);
         }
     }
 
