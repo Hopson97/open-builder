@@ -103,19 +103,19 @@ namespace client {
         return glCheck(glGetUniformLocation(m_program, name));
     }
 
-    void Shader::loadVector3(GLuint location, const glm::vec3 &vector)
+    void Shader::use() const
+    {
+        glCheck(glUseProgram(m_program));
+    }
+
+    void loadVector3(GLuint location, const glm::vec3 &vector)
     {
         glCheck(glUniform3fv(location, 1, glm::value_ptr(vector)));
     }
 
-    void Shader::loadMatrix4(GLuint location, const glm::mat4 &matrix)
+    void loadMatrix4(GLuint location, const glm::mat4 &matrix)
     {
         glCheck(
             glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix)));
-    }
-
-    void Shader::use() const
-    {
-        glCheck(glUseProgram(m_program));
     }
 } // namespace client

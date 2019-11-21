@@ -22,19 +22,20 @@ namespace client {
         Shader(const Shader &other) = delete;
         Shader &operator=(const Shader &other) = delete;
 
-        virtual ~Shader();
+        ~Shader();
 
         void load(const std::string &vertexFile,
                   const std::string &fragmentFile);
 
         GLuint getUniformLocation(const char *name) const;
 
-        void loadVector3(GLuint location, const glm::vec3 &vector);
-        void loadMatrix4(GLuint location, const glm::mat4 &matrix);
-
         void use() const;
 
       private:
         GLuint m_program = 0;
     };
+
+
+    void loadVector3(GLuint location, const glm::vec3 &vector);
+    void loadMatrix4(GLuint location, const glm::mat4 &matrix);
 } // namespace client
