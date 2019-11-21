@@ -59,10 +59,10 @@ namespace client {
         m_skyboxRenderer.render(camera);
 
         m_entityShader.use();
-        m_entityShader.loadVector3(m_locationColour, {1, 1, 1});
-        m_entityShader.loadMatrix4(m_locationProjectionViewMatrix,
-                                   camera.getProjectionViewMatrix());
-        m_entityShader.loadVector3(m_locationLightPosition,
+        loadVector3(m_locationColour, {1, 1, 1});
+        loadMatrix4(m_locationProjectionViewMatrix,
+                    camera.getProjectionViewMatrix());
+        loadVector3(m_locationLightPosition,
                                    {camera.getPosition().x,
                                     camera.getPosition().y + 0.5,
                                     camera.getPosition().z});
@@ -71,7 +71,7 @@ namespace client {
             batch.first->bind();
             for (auto entity : batch.second) {
                 auto mat = makeModelMatrix(entity, {0.5f, 0.f, 0.5f});
-                m_entityShader.loadMatrix4(m_locationModelMatrix, mat);
+                loadMatrix4(m_locationModelMatrix, mat);
                 drawElements(batch.first->getIndicesCount());
             }
         }
