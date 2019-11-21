@@ -34,7 +34,7 @@ namespace client {
             blockPosition.z < 0 ||
             blockPosition.z >= (WORLD_SIZE * CHUNK_SIZE) ||
             blockPosition.y < 0 || chunkPosition.x < 0 ||
-            chunkPosition.x > WORLD_SIZE || chunkPosition.z < 0 ||
+            chunkPosition.x >= WORLD_SIZE || chunkPosition.z < 0 ||
             chunkPosition.z >= WORLD_SIZE) {
             return BlockType::Air;
         }

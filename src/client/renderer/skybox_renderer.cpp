@@ -39,8 +39,8 @@ namespace client {
         viewMatrix[3][1] = 0;
         viewMatrix[3][2] = 0;
 
-        m_shader.loadMatrix4(m_locationViewMatrix, viewMatrix);
-        m_shader.loadMatrix4(m_locationProjectionMatrix,
+        loadMatrix4(m_locationViewMatrix, viewMatrix);
+        loadMatrix4(m_locationProjectionMatrix,
                              camera.getProjectionMatrix());
 
         glCheck(glDrawElements(GL_TRIANGLES, m_skybox.getIndicesCount(),
