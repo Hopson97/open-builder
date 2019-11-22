@@ -1,14 +1,14 @@
 #include "application.h"
 
 #include "network/server.h"
+#include "server_config.h"
 #include "world/chunk/chunk.h"
 #include "world/entity.h"
-#include "server_config.h"
 #include <iostream>
 #include <thread>
 
 namespace server {
-    void runServerApp(const Config &config, port_t port, sf::Time timeout)
+    void runServerApp(const Config &config, sf::Time timeout)
     {
         // Initilize the objects
         int maxConnections = config.maxConnections;

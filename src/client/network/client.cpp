@@ -1,6 +1,6 @@
 #include "client.h"
 
-#include <common/constants.h>
+#include <common/net_constants.h>
 #include <common/network/commands.h>
 #include <iostream>
 #include <thread>
@@ -124,7 +124,7 @@ namespace client {
 
     bool Client::sendToServer(sf::Packet &packet)
     {
-        return m_socket.send(packet, m_server.address, PORT) ==
+        return m_socket.send(packet, m_server.address, DEFAULT_PORT) ==
                sf::Socket::Done;
     }
 } // namespace client

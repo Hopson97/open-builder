@@ -6,6 +6,5 @@
 namespace server {
     struct Config;
 
-    void runServerApp(const Config &config, port_t port,
-                      sf::Time timeout);
+    void runServerApp(const Config &config, sf::Time timeout);
 } // namespace server

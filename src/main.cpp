@@ -8,7 +8,14 @@
 #include "client/engine.h"
 #include "server/application.h"
 
+#include "server/server_config.h"
+
 namespace {
+    struct Config {
+        server::Config serverOptions;
+        LaunchConfig clinetOptions;
+    };
+
     void loadFromConfigFile(LaunchConfig &config)
     {
         std::ifstream inFile("config.txt");
@@ -36,7 +43,7 @@ namespace {
         }
     }
 
-    void parseArgs(LaunchConfig &config,
+    void parseArgs(LaunchConfig &config, server::Config &serverConfig,
                    const std::vector<std::pair<std::string, std::string>> &args)
     {
         for (const auto &option : args) {
@@ -61,7 +68,7 @@ namespace {
                     std::cout << "Unable to set max connections, defaulting to "
                                  "4. Reason: "
                               << e.what() << "\n";
-                    config.serverOptions.maxConnections = 4;
+                    serverConfig.maxConnections = 4;
                 }
             }
             else if (option.first == "-client") {
@@ -72,7 +79,7 @@ namespace {
 
     auto loadConfig(int argc, char **argv)
     {
-        LaunchConfig config;
+        Config config;
 
         std::vector<std::pair<std::string, std::string>> args;
         for (int i = 1; i < argc; i++) {
@@ -81,7 +88,7 @@ namespace {
             }
         }
 
-        parseArgs(config, args);
+        parseArgs(config.clinetOptions, config.serverOptions, args);
         loadFromConfigFile(config);
 
         return config;
@@ -100,13 +107,11 @@ namespace {
         return EXIT_FAILURE;
     }
 
-    int launchServer(const LaunchConfig &config,
+    int launchServer(const server::Config &config,
                      sf::Time timeout = sf::seconds(8))
     {
         std::cout << "Launching server.\n";
-        server::runServerApp(config, PORT, timeout);
-        // server::Application server(config, PORT);
-        // server.run(timeout);
+        server::runServerApp(config, timeout);
         return EXIT_SUCCESS;
     }
 

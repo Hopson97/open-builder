@@ -1,6 +1,8 @@
 #pragma once
 
 #include "constants.h"
+#include "types.h"
+#include <SFML/System/Vector3.hpp>
 
 // Game types
 using BlockPosition = sf::Vector3<i32>;
