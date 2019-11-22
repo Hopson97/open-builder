@@ -11,10 +11,6 @@ struct LaunchConfig {
         bool isFpsCapped = true;
     } graphicOptions;
 
-    struct {
-        int maxConnections = 4;
-    } serverOptions;
-
     enum class Type {
         Server,
         Client,
