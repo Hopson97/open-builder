@@ -13,7 +13,7 @@ namespace server {
         // Initilize the objects
         int maxConnections = config.maxConnections;
         EntityArray entities;
-        Server server(maxConnections, config.port, entities);
+        Server server(maxConnections, DEFAULT_PORT, entities);
         std::vector<Chunk> chunks;
         chunks.reserve(WORLD_SIZE * WORLD_SIZE);
 
