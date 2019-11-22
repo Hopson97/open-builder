@@ -1,7 +1,6 @@
 #pragma once
 
-#include <SFML/System/Clock.hpp>
-#include <common/types.h>
+#include <SFML/System/Time.hpp>
 
 namespace server {
     struct Config;
