@@ -35,7 +35,6 @@ namespace client {
         GLuint m_program = 0;
     };
 
-
     void loadVector3(GLuint location, const glm::vec3 &vector);
     void loadMatrix4(GLuint location, const glm::mat4 &matrix);
 } // namespace client

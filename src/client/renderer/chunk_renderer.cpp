@@ -41,7 +41,6 @@ namespace client {
     void ChunkRenderer::ChunkShader::prepare(const Camera &camera)
     {
         program.use();
-        loadMatrix4(locationCameraMatrix,
-                            camera.getProjectionViewMatrix());
+        loadMatrix4(locationCameraMatrix, camera.getProjectionViewMatrix());
     }
 } // namespace client
