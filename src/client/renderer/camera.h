@@ -6,13 +6,12 @@
 
 #include <common/util/maths.h>
 
-struct LaunchConfig;
-
 namespace client {
+    struct Config;
     class Camera final {
       public:
         Camera();
-        Camera(const LaunchConfig &config);
+        Camera(const Config &config);
 
         void reset(const maths::Transform &transform);
 

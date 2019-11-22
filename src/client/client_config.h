@@ -1,6 +1,6 @@
 #pragma once
 
-namespace server {
+namespace client {
     struct Config {
         bool fullScreen = false;
         int windowWidth = 1280;
@@ -11,4 +11,4 @@ namespace server {
         bool isFpsCapped = true;
     };
 
-} // namespace server
+} // namespace client

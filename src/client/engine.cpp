@@ -1,13 +1,16 @@
 #include "engine.h"
-
-#include <iostream>
-
-#include "renderer/gl/gl_errors.h"
-#include <SFML/Window/Event.hpp>
-#include <glad/glad.h>
-
+#include "client_config.h"
+#include "game_states/state_handler.h"
 #include "game_states/survival_state.h"
-#include <common/launch_config.h>
+#include "input/keyboard.h"
+#include "renderer/camera.h"
+#include "renderer/gl/gl_errors.h"
+#include "renderer/renderer.h"
+#include "util/fps_counter.h"
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Window.hpp>
+#include <glad/glad.h>
+#include <iostream>
 
 namespace {
     void createWindow(sf::Window &window, const sf::VideoMode &mode, u32 style)
