@@ -1,5 +1,4 @@
 #include <common/constants.h>
-#include <common/launch_config.h>
 #include <fstream>
 #include <iostream>
 #include <thread>
@@ -8,49 +7,58 @@
 #include "client/engine.h"
 #include "server/application.h"
 
+#include "client/client_config.h"
 #include "server/server_config.h"
 
 namespace {
-    struct Config {
-        server::Config serverOptions;
-        LaunchConfig clinetOptions;
+    enum class LaunchType {
+        Server,
+        Client,
+        Both,
     };
 
-    void loadFromConfigFile(LaunchConfig &config)
+    struct Config {
+        LaunchType launchType;
+
+        server::Config serverOptions;
+        client::Config clientOptions;
+    };
+
+    void loadFromConfigFile(Config &config)
     {
         std::ifstream inFile("config.txt");
         std::string line;
         int option;
         while (inFile >> line >> option) {
             if (line == "FULLSCREEN") {
-                config.graphicOptions.fullScreen = option;
+                config.clientOptions.fullScreen = option;
             }
             else if (line == "WIN_WIDTH") {
-                config.graphicOptions.windowWidth = option;
+                config.clientOptions.windowWidth = option;
             }
             else if (line == "WIN_HEIGHT") {
-                config.graphicOptions.windowHeight = option;
+                config.clientOptions.windowHeight = option;
             }
             else if (line == "FPS_CAPPED") {
-                config.graphicOptions.isFpsCapped = option;
+                config.clientOptions.isFpsCapped = option;
             }
             else if (line == "FPS") {
-                config.graphicOptions.fpsLimit = option;
+                config.clientOptions.fpsLimit = option;
             }
             else if (line == "FOV") {
-                config.graphicOptions.fov = option;
+                config.clientOptions.fov = option;
             }
         }
     }
 
-    void parseArgs(LaunchConfig &config, server::Config &serverConfig,
+    void parseArgs(Config &config,
                    const std::vector<std::pair<std::string, std::string>> &args)
     {
         for (const auto &option : args) {
             // Set launch type to be server.
             // Option: MAX_CONNECTIONS 2-16
             if (option.first == "-server") {
-                config.type = LaunchConfig::Type::Server;
+                config.launchType = LaunchType::Server;
                 try {
                     int maxConnections = std::stoi(option.second);
                     if (maxConnections < 2) {
@@ -68,30 +76,13 @@ namespace {
                     std::cout << "Unable to set max connections, defaulting to "
                                  "4. Reason: "
                               << e.what() << "\n";
-                    serverConfig.maxConnections = 4;
+                    config.serverOptions.maxConnections = 4;
                 }
             }
             else if (option.first == "-client") {
-                config.type = LaunchConfig::Type::Client;
+                config.launchType = LaunchType::Client;
             }
         }
-    }
-
-    auto loadConfig(int argc, char **argv)
-    {
-        Config config;
-
-        std::vector<std::pair<std::string, std::string>> args;
-        for (int i = 1; i < argc; i++) {
-            if (argv[i][0] == '-' && argc > i + 1) {
-                args.emplace_back(argv[i], argv[i + 1]);
-            }
-        }
-
-        parseArgs(config.clinetOptions, config.serverOptions, args);
-        loadFromConfigFile(config);
-
-        return config;
     }
 
     int exitSuccess()
@@ -115,10 +106,9 @@ namespace {
         return EXIT_SUCCESS;
     }
 
-    int launchClient(const LaunchConfig &config)
+    int launchClient(const client::Config &config)
     {
         std::cout << "Launching client.\n";
-        // client::Engine app(config);
         switch (client::runClientEngine(config)) {
             case client::EngineStatus::Exit:
             case client::EngineStatus::Ok:
@@ -130,10 +120,11 @@ namespace {
         return exitFailure("Unknown error");
     }
 
-    int launchBoth(const LaunchConfig &config)
+    int launchBoth(const Config &config)
     {
-        std::thread serverThread(launchServer, config, sf::milliseconds(256));
-        int exit = launchClient(config);
+        std::thread serverThread(launchServer, config.serverOptions,
+                                 sf::milliseconds(256));
+        int exit = launchClient(config.clientOptions);
 
         std::cout << "Awaiting server shutdown.\n";
         serverThread.join();
@@ -143,17 +134,27 @@ namespace {
 
 int main(int argc, char **argv)
 {
-    auto options = loadConfig(argc, argv);
+    Config config;
 
-    switch (options.type) {
-        case LaunchConfig::Type::Both:
-            return launchBoth(options);
+    std::vector<std::pair<std::string, std::string>> args;
+    for (int i = 1; i < argc; i++) {
+        if (argv[i][0] == '-' && argc > i + 1) {
+            args.emplace_back(argv[i], argv[i + 1]);
+        }
+    }
 
-        case LaunchConfig::Type::Server:
-            return launchServer(options);
+    parseArgs(config, args);
+    loadFromConfigFile(config);
+
+    switch (config.launchType) {
+        case LaunchType::Both:
+            return launchBoth(config);
+
+        case LaunchType::Server:
+            return launchServer(config.serverOptions);
             break;
 
-        case LaunchConfig::Type::Client:
-            return launchClient(options);
+        case LaunchType::Client:
+            return launchClient(config.clientOptions);
     }
 }
