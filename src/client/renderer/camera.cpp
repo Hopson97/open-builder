@@ -1,7 +1,7 @@
 #include "camera.h"
 
+#include "../client_config.h"
 #include "../util/maths.h"
-#include <common/launch_config.h>
 #include <iostream>
 
 namespace client {
@@ -12,7 +12,7 @@ namespace client {
         updateMatrices();
     }
 
-    Camera::Camera(const LaunchConfig &config)
+    Camera::Camera(const Config &config)
     {
         m_projectionMatrix = makeProjectionMatrix(config);
 

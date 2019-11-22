@@ -1,13 +1,16 @@
 #include "engine.h"
-
-#include <iostream>
-
-#include "renderer/gl/gl_errors.h"
-#include <SFML/Window/Event.hpp>
-#include <glad/glad.h>
-
+#include "client_config.h"
+#include "game_states/state_handler.h"
 #include "game_states/survival_state.h"
-#include <common/launch_config.h>
+#include "input/keyboard.h"
+#include "renderer/camera.h"
+#include "renderer/gl/gl_errors.h"
+#include "renderer/renderer.h"
+#include "util/fps_counter.h"
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Window.hpp>
+#include <glad/glad.h>
+#include <iostream>
 
 namespace {
     void createWindow(sf::Window &window, const sf::VideoMode &mode, u32 style)
@@ -64,22 +67,22 @@ namespace {
 } // namespace
 
 namespace client {
-    EngineStatus runClientEngine(const LaunchConfig &config)
+    EngineStatus runClientEngine(const Config &config)
     {
         // Setup window
         sf::Window window;
         window.setKeyRepeatEnabled(false);
-        if (config.graphicOptions.fullScreen) {
+        if (config.fullScreen) {
             createWindow(window, sf::VideoMode::getDesktopMode(),
                          sf::Style::Fullscreen);
         }
         else {
-            auto w = static_cast<unsigned>(config.graphicOptions.windowWidth);
-            auto h = static_cast<unsigned>(config.graphicOptions.windowHeight);
+            auto w = static_cast<unsigned>(config.windowWidth);
+            auto h = static_cast<unsigned>(config.windowHeight);
             createWindow(window, {w, h}, sf::Style::Close);
         }
-        if (config.graphicOptions.isFpsCapped) {
-            window.setFramerateLimit(config.graphicOptions.fpsLimit);
+        if (config.isFpsCapped) {
+            window.setFramerateLimit(config.fpsLimit);
         }
 
         // Setup OpenGL

@@ -2,10 +2,9 @@
 
 #include <SFML/System/Clock.hpp>
 #include <common/types.h>
-class LaunchConfig;
 
 namespace server {
+    struct Config;
 
-    void runServerApp(const LaunchConfig &config, port_t port,
-                      sf::Time timeout);
+    void runServerApp(const Config &config, sf::Time timeout);
 } // namespace server

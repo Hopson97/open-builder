@@ -1,19 +1,19 @@
 #include "application.h"
 
 #include "network/server.h"
+#include "server_config.h"
 #include "world/chunk/chunk.h"
 #include "world/entity.h"
-#include <common/launch_config.h>
 #include <iostream>
 #include <thread>
 
 namespace server {
-    void runServerApp(const LaunchConfig &config, port_t port, sf::Time timeout)
+    void runServerApp(const Config &config, sf::Time timeout)
     {
         // Initilize the objects
-        int maxConnections = config.serverOptions.maxConnections;
+        int maxConnections = config.maxConnections;
         EntityArray entities;
-        Server server(maxConnections, port, entities);
+        Server server(maxConnections, config.port, entities);
         std::vector<Chunk> chunks;
         chunks.reserve(WORLD_SIZE * WORLD_SIZE);
 

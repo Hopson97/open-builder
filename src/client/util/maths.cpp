@@ -1,8 +1,8 @@
 #include "maths.h"
 
-#include <common/launch_config.h>
 #include <common/util/maths.h>
 
+#include "../client_config.h"
 // clang-format off
 namespace client {
 
@@ -36,11 +36,11 @@ namespace client {
         return matrix;
     }
 
-    glm::mat4 makeProjectionMatrix(const LaunchConfig &config)
+    glm::mat4 makeProjectionMatrix(const Config &config)
     {
-        float aspect = config.graphicOptions.windowWidth /
-                       config.graphicOptions.windowHeight;
-        float fov = glm::radians(static_cast<float>(config.graphicOptions.fov));
+        float aspect = config.windowWidth /
+                       config.windowHeight;
+        float fov = glm::radians(static_cast<float>(config.fov));
 
         return glm::perspective(fov, aspect, 0.01f, 2048.0f);
     }

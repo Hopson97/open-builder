@@ -63,9 +63,8 @@ namespace client {
         loadMatrix4(m_locationProjectionViewMatrix,
                     camera.getProjectionViewMatrix());
         loadVector3(m_locationLightPosition,
-                                   {camera.getPosition().x,
-                                    camera.getPosition().y + 0.5,
-                                    camera.getPosition().z});
+                    {camera.getPosition().x, camera.getPosition().y + 0.5,
+                     camera.getPosition().z});
 
         for (auto &batch : m_entityBatches) {
             batch.first->bind();
