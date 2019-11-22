@@ -64,22 +64,22 @@ namespace {
 } // namespace
 
 namespace client {
-    EngineStatus runClientEngine(const LaunchConfig &config)
+    EngineStatus runClientEngine(const Config &config)
     {
         // Setup window
         sf::Window window;
         window.setKeyRepeatEnabled(false);
-        if (config.graphicOptions.fullScreen) {
+        if (config.fullScreen) {
             createWindow(window, sf::VideoMode::getDesktopMode(),
                          sf::Style::Fullscreen);
         }
         else {
-            auto w = static_cast<unsigned>(config.graphicOptions.windowWidth);
-            auto h = static_cast<unsigned>(config.graphicOptions.windowHeight);
+            auto w = static_cast<unsigned>(config.windowWidth);
+            auto h = static_cast<unsigned>(config.windowHeight);
             createWindow(window, {w, h}, sf::Style::Close);
         }
-        if (config.graphicOptions.isFpsCapped) {
-            window.setFramerateLimit(config.graphicOptions.fpsLimit);
+        if (config.isFpsCapped) {
+            window.setFramerateLimit(config.fpsLimit);
         }
 
         // Setup OpenGL

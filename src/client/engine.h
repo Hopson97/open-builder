@@ -1,19 +1,10 @@
 #pragma once
 
-#include <SFML/Window/Window.hpp>
-#include <memory>
-
-#include "game_states/state_handler.h"
-#include "input/keyboard.h"
-#include "renderer/camera.h"
-#include "renderer/renderer.h"
-#include "util/fps_counter.h"
-
-struct LaunchConfig;
-
 /// The main "core" of the game, wherethe main loop lives and the states
 /// are processed
 namespace client {
+
+    struct Config;
 
     enum class EngineStatus {
         Ok = 10,
@@ -22,5 +13,5 @@ namespace client {
         GLInitError = 20,
     };
 
-    EngineStatus runClientEngine(const LaunchConfig &config);
+    EngineStatus runClientEngine(const Config &config);
 } // namespace client
