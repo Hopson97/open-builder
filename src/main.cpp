@@ -18,7 +18,7 @@ namespace {
     };
 
     struct Config {
-        LaunchType launchType;
+        LaunchType launchType = LaunchType::Both;
 
         server::Config serverOptions;
         client::Config clientOptions;
@@ -157,4 +157,5 @@ int main(int argc, char **argv)
         case LaunchType::Client:
             return launchClient(config.clientOptions);
     }
+    std::cout << "Exiting\n";
 }
