@@ -1,6 +1,5 @@
 #pragma once
 
-#include "coordinate.h"
 #include <SFML/System/Vector3.hpp>
 #include <glm/glm.hpp>
 #include <ostream>
@@ -19,4 +18,4 @@ std::ostream &operator<<(std::ostream &stream, const glm::vec3 &vec);
 std::ostream &operator<<(std::ostream &stream, const glm::vec2 &vec);
 
 std::ostream &operator<<(std::ostream &stream, const sf::Vector3i &vec);
-std::ostream &operator<<(std::ostream &stream, const ChunkPosition &vec);
+//std::ostream &operator<<(std::ostream &stream, const ChunkPosition &vec);

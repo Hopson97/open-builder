@@ -4,7 +4,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace util {
+
     std::string loadFileContents(const std::string &path)
     {
         std::ifstream inFile(path);
@@ -16,4 +16,3 @@ namespace util {
         stream << inFile.rdbuf();
         return stream.str();
     }
-} // namespace util

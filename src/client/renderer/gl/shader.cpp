@@ -1,7 +1,7 @@
 #include "shader.h"
 
 #include "gl_errors.h"
-#include <common/util/file_io.h>
+#include <common/file_io.h>
 #include <iostream>
 #include <stdexcept>
 
@@ -81,8 +81,8 @@ namespace client {
         std::string vertFileFull("shaders/" + vertexFile + "_vertex.glsl");
         std::string fragFileFull("shaders/" + fragmentFile + "_fragment.glsl");
 
-        auto vertexSource = util::loadFileContents(vertFileFull);
-        auto fragmentSource = util::loadFileContents(fragFileFull);
+        auto vertexSource = loadFileContents(vertFileFull);
+        auto fragmentSource = loadFileContents(fragFileFull);
 
         auto vertexShaderID =
             compileShader(vertexSource.c_str(), GL_VERTEX_SHADER);

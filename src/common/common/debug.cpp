@@ -18,8 +18,10 @@ std::ostream &operator<<(std::ostream &stream, const sf::Vector3i &vec)
     return stream;
 }
 
+/*
 std::ostream &operator<<(std::ostream &stream, const ChunkPosition &vec)
 {
     stream << "X: " << vec.x << " Z: " << vec.z;
     return stream;
 }
+*/
