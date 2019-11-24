@@ -1,11 +1,6 @@
 
 add_library(ob-server
-    network/server.cpp
-    network/server_command_handler.cpp
     application.cpp
-    world/chunk/chunk.cpp
-    world/chunk/chunk_section.cpp
-    world/entity.cpp
 )
 
 set_flags(ob-server)
