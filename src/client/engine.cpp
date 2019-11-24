@@ -26,28 +26,16 @@ namespace {
         auto status = client::EngineStatus::Ok;
         sf::Event e;
         while (window.pollEvent(e)) {
+
             keyboard.update(e);
-            switch (e.type) {
-                case sf::Event::KeyPressed:
-                    switch (e.key.code) {
-                        case sf::Keyboard::Escape:
-                            status = client::EngineStatus::Exit;
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-
-                case sf::Event::KeyReleased:
-                    break;
-
-                case sf::Event::Closed:
+            if (e.type == sf::Event::KeyPressed) {
+                if (e.key.code == sf::Keyboard::Escape) {
                     status = client::EngineStatus::Exit;
-                    break;
-
-                default:
-                    break;
-            }
+                }
+			}
+            else if (e.type == sf::Event::Closed) {
+				status = client::EngineStatus::Exit;
+			}
         }
         return status;
     }
