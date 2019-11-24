@@ -1,7 +1,7 @@
-#include "engine.h"
+#include "client_engine.h"
 #include "client_config.h"
-#include "input/keyboard.h"
 #include "gl/gl_errors.h"
+#include "input/keyboard.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/types.h>
@@ -32,27 +32,28 @@ namespace {
                 if (e.key.code == sf::Keyboard::Escape) {
                     status = client::EngineStatus::Exit;
                 }
-			}
+            }
             else if (e.type == sf::Event::Closed) {
-				status = client::EngineStatus::Exit;
-			}
+                status = client::EngineStatus::Exit;
+            }
         }
         return status;
     }
 
-/*
-    void printFps(client::FPSCounter counter)
-    {
-        std::cout << "Frame Time: " << counter.currentMsPerFrame() << " ms\n"
-                  << "FPS: " << counter.currentFps() << "\n\n";
-    }
-*/
+    /*
+        void printFps(client::FPSCounter counter)
+        {
+            std::cout << "Frame Time: " << counter.currentMsPerFrame() << "
+       ms\n"
+                      << "FPS: " << counter.currentFps() << "\n\n";
+        }
+    */
 } // namespace
 
 namespace client {
     EngineStatus runClientEngine(const Config &config)
     {
-        // Setup window
+        // Create the window
         sf::Window window;
         window.setKeyRepeatEnabled(false);
         if (config.fullScreen) {
@@ -65,7 +66,7 @@ namespace client {
             createWindow(window, {w, h}, sf::Style::Close);
         }
         if (config.isFpsCapped) {
-            window.setFramerateLimit(config.fpsLimit);
+            //window.setFramerateLimit(config.fpsLimit);
         }
 
         // Setup OpenGL
@@ -82,7 +83,8 @@ namespace client {
         // Start main loop of the game
         Keyboard keyboard;
 
-        sf::Clock fpsTimer;
+        sf::Clock frameTimer;
+        int frameCount = 0;
         while (status == EngineStatus::Ok) {
             // Input
             status = handleWindowEvents(window, keyboard);
@@ -95,7 +97,16 @@ namespace client {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             window.display();
 
-            //Stats
+            // Stats
+            frameCount++;
+            if (frameTimer.getElapsedTime().asSeconds() > 2) {
+                float ms = frameTimer.getElapsedTime().asMilliseconds();
+                int secs = frameTimer.getElapsedTime().asSeconds();
+                std::cout << "Average Frame Time: " << ms / frameCount
+                          << "Average FPS: " << frameCount / secs << "\n\n";
+                frameCount = 0;
+                frameTimer.restart();
+            }
             
         }
         return status;
