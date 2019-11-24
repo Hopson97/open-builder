@@ -8,7 +8,7 @@
 namespace server {
     void runServerEngine(const Config &config, sf::Time timeout)
     {
-        // Start the main loop
+        // Start the main server loop
         sf::Clock deltaClock;
         while (0) {
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
