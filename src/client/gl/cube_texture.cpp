@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics/Image.hpp>
 
-#include "../gl/gl_errors.h"
+#include "gl_errors.h"
 
 namespace client {
     CubeTexture::CubeTexture(const std::array<std::string, 6> &files)

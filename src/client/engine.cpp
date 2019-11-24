@@ -1,7 +1,7 @@
 #include "engine.h"
 #include "client_config.h"
 #include "input/keyboard.h"
-#include "renderer/gl/gl_errors.h"
+#include "gl/gl_errors.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/types.h>
