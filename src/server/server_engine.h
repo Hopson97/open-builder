@@ -5,5 +5,5 @@
 namespace server {
     struct Config;
 
-    void runServerApp(const Config &config, sf::Time timeout);
+    void runServerEngine(const Config &config, sf::Time timeout);
 } // namespace server

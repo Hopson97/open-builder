@@ -1,4 +1,4 @@
-#include "application.h"
+#include "server_engine.h"
 
 #include "server_config.h"
 #include <iostream>
@@ -6,7 +6,7 @@
 #include <SFML/System/Clock.hpp>
 
 namespace server {
-    void runServerApp(const Config &config, sf::Time timeout)
+    void runServerEngine(const Config &config, sf::Time timeout)
     {
         // Start the main loop
         sf::Clock deltaClock;

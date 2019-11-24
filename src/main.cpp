@@ -5,11 +5,22 @@
 #include <string>
 #include <vector>
 
-#include "client/engine.h"
-#include "server/application.h"
+#include "client/client_engine.h"
+#include "server/server_engine.h"
 
 #include "client/client_config.h"
 #include "server/server_config.h"
+
+/*
+//Enable nvidia 
+#ifdef _WIN32
+	#define WIN32_LEAN_AND_MEAN 
+	#include <Windows.h>
+	extern "C" {
+		_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+	}
+#endif
+*/
 
 namespace {
     enum class LaunchType {
@@ -103,7 +114,7 @@ namespace {
                      sf::Time timeout = sf::seconds(8))
     {
         std::cout << "Launching server.\n";
-        server::runServerApp(config, timeout);
+        server::runServerEngine(config, timeout);
         return EXIT_SUCCESS;
     }
 
