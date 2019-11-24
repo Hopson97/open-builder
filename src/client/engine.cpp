@@ -1,14 +1,10 @@
 #include "engine.h"
 #include "client_config.h"
-#include "game_states/state_handler.h"
-#include "game_states/survival_state.h"
 #include "input/keyboard.h"
-#include "renderer/camera.h"
 #include "renderer/gl/gl_errors.h"
-#include "renderer/renderer.h"
-#include "util/fps_counter.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Window.hpp>
+#include <common/types.h>
 #include <glad/glad.h>
 #include <iostream>
 
@@ -25,8 +21,7 @@ namespace {
         window.create(mode, "Open Builder", style, settings);
     }
 
-    auto handleWindowEvents(sf::Window &window, client::Keyboard &keyboard,
-                            client::GameState &currentState)
+    auto handleWindowEvents(sf::Window &window, client::Keyboard &keyboard)
     {
         auto status = client::EngineStatus::Ok;
         sf::Event e;
@@ -34,7 +29,6 @@ namespace {
             keyboard.update(e);
             switch (e.type) {
                 case sf::Event::KeyPressed:
-                    currentState.handleKeyDown(e.key.code);
                     switch (e.key.code) {
                         case sf::Keyboard::Escape:
                             status = client::EngineStatus::Exit;
@@ -45,7 +39,6 @@ namespace {
                     break;
 
                 case sf::Event::KeyReleased:
-                    currentState.handleKeyUp(e.key.code);
                     break;
 
                 case sf::Event::Closed:
@@ -59,11 +52,13 @@ namespace {
         return status;
     }
 
+/*
     void printFps(client::FPSCounter counter)
     {
         std::cout << "Frame Time: " << counter.currentMsPerFrame() << " ms\n"
                   << "FPS: " << counter.currentFps() << "\n\n";
     }
+*/
 } // namespace
 
 namespace client {
@@ -92,43 +87,25 @@ namespace client {
         auto status = EngineStatus::Ok;
         glClearColor(0.25, 0.75, 1.0, 1.0);
         glViewport(0, 0, window.getSize().x, window.getSize().y);
+        glCheck(glEnable(GL_DEPTH_TEST));
+        glCheck(glEnable(GL_CULL_FACE));
+        glCheck(glCullFace(GL_BACK));
 
         // Start main loop of the game
-        Camera camera(config);
         Keyboard keyboard;
-        Renderer renderer;
-        StateHandler stateHandler;
-        GameState *p_currentState = nullptr;
-        stateHandler.pushState<SurvivalState>(stateHandler);
 
         sf::Clock fpsTimer;
-        FPSCounter fps;
         while (status == EngineStatus::Ok) {
-            p_currentState = &stateHandler.peekState();
-
             // Input
-            status = handleWindowEvents(window, keyboard, *p_currentState);
-            p_currentState->handleInput(keyboard, window);
+            status = handleWindowEvents(window, keyboard);
 
             // Update
-            p_currentState->update(camera);
+
+            /* do update stuff here */
 
             // Render
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            p_currentState->render(renderer);
-            renderer.render(camera);
             window.display();
-
-            fps.update();
-            if (fpsTimer.getElapsedTime() > sf::seconds(4.0f)) {
-                printFps(fps);
-                fpsTimer.restart();
-            }
-
-            stateHandler.update();
-            if (stateHandler.isEmpty()) {
-                status = EngineStatus::Exit;
-            }
         }
         return status;
     }
