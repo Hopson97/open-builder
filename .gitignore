@@ -19,6 +19,8 @@ bin/
 #
 
 *.dll
+CMakeFiles/
+CMakeCache.txt
 
 # Visual Studio
 *.sln

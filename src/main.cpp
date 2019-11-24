@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 #include <thread>
+#include <cstdlib>
+#include <string>
 #include <vector>
 
 #include "client/engine.h"
