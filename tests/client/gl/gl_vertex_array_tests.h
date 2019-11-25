@@ -19,7 +19,7 @@ TEST_CASE("Vertex array is able to created, modified, and cleanly destroyed")
     SECTION("Vertex buffer can be added to the vertex array object")
     {
         VertexArrayContainer container = createVertexArray();
-        addVertexBuffer(&container, 2, buffer, DrawStyle::Static,
+        container.addVertexBuffer(2, buffer, DrawStyle::Static,
                         GLType::Float);
 
 		REQUIRE(container.bufferObjects.size() == 1);
@@ -30,9 +30,9 @@ TEST_CASE("Vertex array is able to created, modified, and cleanly destroyed")
     SECTION("Vertex buffer and indices can be added to the VAO")
 	{
         VertexArrayContainer container = createVertexArray();
-        addVertexBuffer(&container, 2, buffer, DrawStyle::Static,
+        container.addVertexBuffer(2, buffer, DrawStyle::Static,
                         GLType::Float);
-        addIndexBuffer(&container, indices);
+        container.addIndexBuffer(indices);
 
         REQUIRE(container.bufferObjects.size() == 2);
         REQUIRE(container.indicesCount == indices.size());
@@ -43,9 +43,9 @@ TEST_CASE("Vertex array is able to created, modified, and cleanly destroyed")
     SECTION("Vertex buffer container can be destroyed")
 	{
 	    VertexArrayContainer container = createVertexArray();
-	    addVertexBuffer(&container, 2, buffer, DrawStyle::Static,
+	    container.addVertexBuffer(2, buffer, DrawStyle::Static,
 	                    GLType::Float);
-	    addIndexBuffer(&container, indices);
+	    container.addIndexBuffer(indices);
 
 		destroyVertexArray(&container);
 	

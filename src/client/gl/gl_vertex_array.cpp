@@ -22,10 +22,10 @@ void bindVertexArray(VertexArray array)
     glCheck(glBindVertexArray(array.handle));
 }
 
-void addIndexBuffer(VertexArrayContainer *container,
+void VertexArrayContainer::addIndexBuffer(
                     const std::vector<GLuint> &indices)
 {
-    bindVertexArray(container->object);
+    bindVertexArray(object);
 
     GLuint elementBuffer;
     glCheck(glGenBuffers(1, &elementBuffer));
@@ -35,8 +35,8 @@ void addIndexBuffer(VertexArrayContainer *container,
                          indices.size() * sizeof(GLuint), indices.data(),
                          GL_STATIC_DRAW));
 
-    container->bufferObjects.push_back(elementBuffer);
-    container->indicesCount = indices.size();
+    bufferObjects.push_back(elementBuffer);
+    indicesCount = indices.size();
 }
 
 void drawElements(VertexArray array, GLsizei indices)

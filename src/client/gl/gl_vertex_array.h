@@ -24,23 +24,27 @@ struct VertexArrayContainer {
     std::vector<GLuint> bufferObjects;
     VertexArray object;
     GLsizei indicesCount = 0;
+
+    void addIndexBuffer(const std::vector<GLuint> &indices);
+
+    template <typename T>
+    void addVertexBuffer(int bufferMagntitude,
+                        const std::vector<T> &bufferData,
+                        DrawStyle bufferDrawStyle, GLType bufferType);
 };
 
 VertexArrayContainer createVertexArray();
 void destroyVertexArray(VertexArrayContainer *vertexArray);
 
 void bindVertexArray(VertexArray array);
-void addIndexBuffer(VertexArrayContainer *vertexArray,
-                    const std::vector<GLuint> &indices);
-
 void drawElements(VertexArray array, GLsizei indices);
 
 template <typename T>
-void addVertexBuffer(VertexArrayContainer *container, int bufferMagntitude,
+void VertexArrayContainer::addVertexBuffer(int bufferMagntitude,
                      const std::vector<T> &bufferData,
                      DrawStyle bufferDrawStyle, GLType bufferType)
 {
-    bindVertexArray(container->object);
+    bindVertexArray(object);
 
     GLuint vertexBuffer;
     glCheck(glGenBuffers(1, &vertexBuffer));
@@ -50,10 +54,10 @@ void addVertexBuffer(VertexArrayContainer *container, int bufferMagntitude,
                          bufferData.data(),
                          static_cast<GLenum>(bufferDrawStyle)));
 
-    glCheck(glVertexAttribPointer(
-        container->bufferObjects.size(), bufferMagntitude,
+    glCheck(glVertexAttribPointer(bufferObjects.size(), bufferMagntitude,
         static_cast<GLenum>(bufferType), GL_FALSE, 0, (GLvoid *)0));
 
-    glCheck(glEnableVertexAttribArray(container->bufferObjects.size()));
-    container->bufferObjects.push_back(vertexBuffer);
+    glCheck(glEnableVertexAttribArray(bufferObjects.size()));
+
+    bufferObjects.push_back(vertexBuffer);
 }

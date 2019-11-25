@@ -1,6 +1,6 @@
 #include "client_engine.h"
 #include "client_config.h"
-#include "gl/gl_errors.h"
+#include "gl/gl_vertex_array.h"
 #include "input/keyboard.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Window.hpp>
@@ -9,7 +9,7 @@
 #include <iostream>
 
 namespace {
-    void createWindow(sf::Window* window, const sf::VideoMode &mode, u32 style)
+    void createWindow(sf::Window *window, const sf::VideoMode &mode, u32 style)
     {
         sf::ContextSettings settings;
         settings.depthBits = 24;
@@ -21,12 +21,12 @@ namespace {
         window->create(mode, "Open Builder", style, settings);
     }
 
-    void initWindow(sf::Window* window, const ClientConfig& config)
+    void initWindow(sf::Window *window, const ClientConfig &config)
     {
         window->setKeyRepeatEnabled(false);
         if (config.fullScreen) {
             createWindow(window, sf::VideoMode::getDesktopMode(),
-                        sf::Style::Fullscreen);
+                         sf::Style::Fullscreen);
         }
         else {
             auto w = static_cast<unsigned>(config.windowWidth);
@@ -76,9 +76,17 @@ EngineStatus runClientEngine(const ClientConfig &config)
     glCheck(glEnable(GL_CULL_FACE));
     glCheck(glCullFace(GL_BACK));
 
+    // Create a rectangle for opengl testing
+    std::vector<GLfloat> vertices = {0,   0,   0, 0,   0.5, 0,
+                                     0.5, 0.5, 0, 0.5, 0,   0};
+    std::vector<GLuint> indices = {0, 1, 2, 2, 3, 0};
+
+    auto vao = createVertexArray();
+    vao.addVertexBuffer(3, vertices, DrawStyle::Static, GLType::Float);
+    vao.addIndexBuffer(indices);
+
     // Start main loop of the game
     Keyboard keyboard;
-
     sf::Clock frameTimer;
     int frameCount = 0;
     while (status == EngineStatus::Ok) {
@@ -91,6 +99,10 @@ EngineStatus runClientEngine(const ClientConfig &config)
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        bindVertexArray(vao.object);
+        drawElements(vao.object, vao.indicesCount);
+
         window.display();
 
         // Stats
@@ -104,5 +116,6 @@ EngineStatus runClientEngine(const ClientConfig &config)
             frameTimer.restart();
         }
     }
+    destroyVertexArray(&vao);
     return status;
 }
