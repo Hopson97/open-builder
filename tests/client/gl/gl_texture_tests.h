@@ -1,7 +1,6 @@
 #pragma once
 
 #include <catch2/catch.hpp>
-
 #include <client/gl/gl_textures.h>
 
 TEST_CASE("Cube textures are correctly created")
