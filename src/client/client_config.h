@@ -1,14 +1,11 @@
 #pragma once
 
-namespace client {
-    struct Config {
-        bool fullScreen = false;
-        int windowWidth = 1280;
-        int windowHeight = 720;
-        int fpsLimit = 60;
-        int fov = 65;
+struct ClientConfig {
+    bool fullScreen = false;
+    int windowWidth = 1280;
+    int windowHeight = 720;
+    int fpsLimit = 60;
+    int fov = 65;
 
-        bool isFpsCapped = true;
-    };
-
-} // namespace client
+    bool isFpsCapped = true;
+};

@@ -34,7 +34,7 @@ namespace {
         LaunchType launchType = LaunchType::Both;
 
         server::Config serverOptions;
-        client::Config clientOptions;
+        ClientConfig clientOptions;
     };
 
     void loadFromConfigFile(Config &config)
@@ -119,15 +119,15 @@ namespace {
         return EXIT_SUCCESS;
     }
 
-    int launchClient(const client::Config &config)
+    int launchClient(const ClientConfig &config)
     {
         std::cout << "Launching client.\n";
-        switch (client::runClientEngine(config)) {
-            case client::EngineStatus::Exit:
-            case client::EngineStatus::Ok:
+        switch (runClientEngine(config)) {
+            case EngineStatus::Exit:
+            case EngineStatus::Ok:
                 return exitSuccess();
 
-            case client::EngineStatus::GLInitError:
+            case EngineStatus::GLInitError:
                 return exitFailure("OpenGL failed to initilise correctly");
         }
         return exitFailure("Unknown error");
