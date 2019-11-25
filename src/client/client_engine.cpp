@@ -39,15 +39,6 @@ namespace {
         }
         return status;
     }
-
-    /*
-        void printFps(client::FPSCounter counter)
-        {
-            std::cout << "Frame Time: " << counter.currentMsPerFrame() << "
-       ms\n"
-                      << "FPS: " << counter.currentFps() << "\n\n";
-        }
-    */
 } // namespace
 
 namespace client {
