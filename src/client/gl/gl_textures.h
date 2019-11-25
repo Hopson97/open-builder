@@ -5,6 +5,7 @@
 
 enum class TextureType 
 { 
+	None,
 	CubeMap = GL_TEXTURE_CUBE_MAP,  
 	Texture2d = GL_TEXTURE_2D,
 };
@@ -14,11 +15,11 @@ enum class TextureType
 */
 struct Texture {
     GLuint handle = 0;
-    TextureType type;
+    TextureType type = TextureType::None;
 };
 
 Texture createCubeTexture(const std::array<std::string, 6> &textures);
 Texture createTexture2D(const std::string &file);
 
-void bindTexture(Texture texture);
+void bindTexture(const Texture& texture);
 void destroyTexture(Texture* texture);

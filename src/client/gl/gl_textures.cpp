@@ -69,8 +69,7 @@ Texture createTexture2D(const std::string &file)
 	return texture;
 }
 
-
-void bindTexture(Texture texture)
+void bindTexture(const Texture& texture)
 {
     glCheck(glBindTexture(static_cast<GLenum>(texture.type), texture.handle));
 }
@@ -79,4 +78,5 @@ void destroyTexture(Texture* texture)
 {
     glCheck(glDeleteTextures(1, &texture->handle));
     texture->handle = 0;
+    texture->type = TextureType::None;
 }
