@@ -3,6 +3,7 @@
 
 #include "client/gl/gl_texture_tests.h"
 #include "client/gl/gl_shader_tests.h"
+#include "client/gl/gl_vertex_array_tests.h"
 
 #include <glad/glad.h>
 #include <SFML/Window/Window.hpp>

@@ -1,5 +1,6 @@
 #pragma once
 
+/*
 #include "texture2d.h"
 
 #include <SFML/System/Vector2.hpp>
@@ -21,3 +22,4 @@ namespace client {
         const int m_individualTextureSize;
     };
 } // namespace client
+*/

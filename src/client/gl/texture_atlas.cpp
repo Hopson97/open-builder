@@ -1,5 +1,6 @@
 #include "texture_atlas.h"
 
+/*
 namespace client {
     TextureAtlas::TextureAtlas(const std::string &textureFileName,
                                int textureSize)
@@ -27,3 +28,4 @@ namespace client {
         return {xMax, yMax, xMin, yMax, xMin, yMin, xMax, yMin};
     }
 } // namespace client
+*/
