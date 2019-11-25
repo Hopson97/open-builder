@@ -9,4 +9,4 @@ enum class EngineStatus {
     GLInitError = 20,
 };
 
-EngineStatus runClientEngine(const Config &config);
+EngineStatus runClientEngine(const ClientConfig &config);

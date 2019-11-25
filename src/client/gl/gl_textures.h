@@ -21,4 +21,4 @@ Texture createCubeTexture(const std::array<std::string, 6> &textures);
 Texture createTexture2D(const std::string &file);
 
 void bindTexture(Texture texture);
-void destroyTexture(Texture texture);
+void destroyTexture(Texture* texture);

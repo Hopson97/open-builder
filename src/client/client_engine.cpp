@@ -21,7 +21,7 @@ namespace {
         window.create(mode, "Open Builder", style, settings);
     }
 
-    auto handleWindowEvents(sf::Window &window, client::Keyboard &keyboard)
+    auto handleWindowEvents(sf::Window &window, Keyboard &keyboard)
     {
         auto status = EngineStatus::Ok;
         sf::Event e;

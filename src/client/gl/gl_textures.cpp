@@ -75,7 +75,8 @@ void bindTexture(Texture texture)
     glCheck(glBindTexture(static_cast<GLenum>(texture.type), texture.handle));
 }
 
-void destroyTexture(Texture texture)
+void destroyTexture(Texture* texture)
 {
-    glCheck(glDeleteTextures(1, &texture.handle));
+    glCheck(glDeleteTextures(1, &texture->handle));
+    texture->handle = 0;
 }
