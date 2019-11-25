@@ -9,7 +9,7 @@
 #include <iostream>
 
 namespace {
-    void createWindow(sf::Window &window, const sf::VideoMode &mode, u32 style)
+    void createWindow(sf::Window* window, const sf::VideoMode &mode, u32 style)
     {
         sf::ContextSettings settings;
         settings.depthBits = 24;
@@ -18,7 +18,24 @@ namespace {
         settings.majorVersion = 3;
         settings.minorVersion = 3;
 
-        window.create(mode, "Open Builder", style, settings);
+        window->create(mode, "Open Builder", style, settings);
+    }
+
+    void initWindow(sf::Window* window, const ClientConfig& config)
+    {
+        window->setKeyRepeatEnabled(false);
+        if (config.fullScreen) {
+            createWindow(window, sf::VideoMode::getDesktopMode(),
+                        sf::Style::Fullscreen);
+        }
+        else {
+            auto w = static_cast<unsigned>(config.windowWidth);
+            auto h = static_cast<unsigned>(config.windowHeight);
+            createWindow(window, {w, h}, sf::Style::Close);
+        }
+        if (config.isFpsCapped) {
+            window->setFramerateLimit(config.fpsLimit);
+        }
     }
 
     auto handleWindowEvents(sf::Window &window, Keyboard &keyboard)
@@ -45,19 +62,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
 {
     // Create the window
     sf::Window window;
-    window.setKeyRepeatEnabled(false);
-    if (config.fullScreen) {
-        createWindow(window, sf::VideoMode::getDesktopMode(),
-                     sf::Style::Fullscreen);
-    }
-    else {
-        auto w = static_cast<unsigned>(config.windowWidth);
-        auto h = static_cast<unsigned>(config.windowHeight);
-        createWindow(window, {w, h}, sf::Style::Close);
-    }
-    if (config.isFpsCapped) {
-        // window.setFramerateLimit(config.fpsLimit);
-    }
+    initWindow(&window, config);
 
     // Setup OpenGL
     if (!gladLoadGL()) {
@@ -66,6 +71,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
     auto status = EngineStatus::Ok;
     glClearColor(0.25, 0.75, 1.0, 1.0);
     glViewport(0, 0, window.getSize().x, window.getSize().y);
+
     glCheck(glEnable(GL_DEPTH_TEST));
     glCheck(glEnable(GL_CULL_FACE));
     glCheck(glCullFace(GL_BACK));

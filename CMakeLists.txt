@@ -84,18 +84,19 @@ set_flags(${PROJECT_NAME})
 include_dirs(${PROJECT_NAME})
 include_dirs(ob-client)
 include_dirs(ob-server)
-
-
-#Create the unit test executable
-add_executable(tests
-    tests/tests.cpp
-)
-
-include_dirs(tests)
-target_include_directories(tests
-    PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/
-)
-
 link_exe(${PROJECT_NAME})
-link_exe(tests)
+
+
+# #Create the unit test executable
+# add_executable(tests
+#     tests/tests.cpp
+# )
+# 
+# include_dirs(tests)
+# target_include_directories(tests
+#     PRIVATE
+#     ${CMAKE_CURRENT_SOURCE_DIR}/src/
+# )
+# 
+# 
+# link_exe(tests)
