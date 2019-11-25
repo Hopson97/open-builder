@@ -44,6 +44,19 @@ function (include_dirs target)
     )
 endfunction(include_dirs)
 
+#
+# Link an executables to all the libraries
+#
+function (link_exe target)
+    target_link_libraries(${target} 
+        ob-common
+        ob-client
+        ob-server
+        glad
+        ${CMAKE_DL_LIBS}
+    )
+endfunction(link_exe)
+
 #Set module path
 set(
     CMAKE_MODULE_PATH 
@@ -68,16 +81,21 @@ add_executable(${PROJECT_NAME}
 )
 
 set_flags(${PROJECT_NAME})
-
 include_dirs(${PROJECT_NAME})
 include_dirs(ob-client)
 include_dirs(ob-server)
 
-# Link executable to the libraries
-target_link_libraries(${PROJECT_NAME} 
-    ob-common
-    ob-client
-    ob-server
-    glad
-    ${CMAKE_DL_LIBS}
+
+#Create the unit test executable
+add_executable(tests
+    tests/tests.cpp
 )
+
+include_dirs(tests)
+target_include_directories(tests
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/
+)
+
+link_exe(${PROJECT_NAME})
+link_exe(tests)
