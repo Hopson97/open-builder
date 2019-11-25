@@ -22,6 +22,12 @@ void bindVertexArray(VertexArray array)
     glCheck(glBindVertexArray(array.handle));
 }
 
+void drawElements(VertexArray array, GLsizei indices)
+{
+    glCheck(glBindVertexArray(array.handle));
+    glCheck(glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, nullptr));
+}
+
 void VertexArrayContainer::addIndexBuffer(
                     const std::vector<GLuint> &indices)
 {
@@ -37,10 +43,4 @@ void VertexArrayContainer::addIndexBuffer(
 
     bufferObjects.push_back(elementBuffer);
     indicesCount = indices.size();
-}
-
-void drawElements(VertexArray array, GLsizei indices)
-{
-    glCheck(glBindVertexArray(array.handle));
-    glCheck(glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, nullptr));
 }

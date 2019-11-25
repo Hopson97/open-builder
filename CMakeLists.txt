@@ -87,16 +87,16 @@ include_dirs(ob-server)
 link_exe(${PROJECT_NAME})
 
 
-#Create the unit test executable
-add_executable(tests
-    tests/tests.cpp
-)
-
-include_dirs(tests)
-target_include_directories(tests
-    PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/
-)
-
-
-link_exe(tests)
+# #Create the unit test executable
+# add_executable(tests
+#     tests/tests.cpp
+# )
+# 
+# include_dirs(tests)
+# target_include_directories(tests
+#     PRIVATE
+#     ${CMAKE_CURRENT_SOURCE_DIR}/src/
+# )
+# 
+# 
+# link_exe(tests)
