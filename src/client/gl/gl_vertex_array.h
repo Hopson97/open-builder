@@ -12,6 +12,10 @@ enum class GLType {
 	Byte  = GL_BYTE,
 };
 
+enum class DrawStyle {
+    Static = GL_STATIC_DRAW,
+};
+
 struct VertexArray {
     GLuint handle = 0;
 };
@@ -20,10 +24,6 @@ struct VertexArrayContainer {
     std::vector<GLuint> bufferObjects;
     VertexArray object;
     GLsizei indicesCount = 0;
-};
-
-enum class DrawStyle {
-    Static = GL_STATIC_DRAW,
 };
 
 VertexArrayContainer createVertexArray();
