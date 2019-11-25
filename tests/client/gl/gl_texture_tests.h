@@ -1,3 +1,5 @@
+#pragma once
+
 #include <catch2/catch.hpp>
 
 #include <client/gl/gl_textures.h>
