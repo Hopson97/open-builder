@@ -1,9 +1,9 @@
 #include "server_engine.h"
 
 #include "server_config.h"
+#include <SFML/System/Clock.hpp>
 #include <iostream>
 #include <thread>
-#include <SFML/System/Clock.hpp>
 
 namespace server {
     void runServerEngine(const Config &config, sf::Time timeout)

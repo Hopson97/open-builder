@@ -50,7 +50,7 @@ namespace {
 Shader createShader(const std::string &vertexFile,
                     const std::string &fragmentFile)
 {
-	glCheck(glUseProgram(0));
+    glCheck(glUseProgram(0));
     std::string vertFileFull("shaders/" + vertexFile + "_vertex.glsl");
     std::string fragFileFull("shaders/" + fragmentFile + "_fragment.glsl");
 
@@ -61,7 +61,7 @@ Shader createShader(const std::string &vertexFile,
     auto fragmentShaderID =
         compileShader(fragmentSource.c_str(), GL_FRAGMENT_SHADER);
 
-	Shader shader;
+    Shader shader;
     shader.program = linkProgram(vertexShaderID, fragmentShaderID);
 
     glCheck(glDetachShader(shader.program, vertexShaderID));
@@ -73,7 +73,7 @@ Shader createShader(const std::string &vertexFile,
     return shader;
 }
 
-void destroyShader(Shader* shader)
+void destroyShader(Shader *shader)
 {
     glCheck(glDeleteProgram(shader->program));
     shader->program = 0;
@@ -98,5 +98,6 @@ void loadUniform(UniformLocation location, const glm::vec3 &vector)
 
 void loadUniform(UniformLocation location, const glm::mat4 &matrix)
 {
-    glCheck(glUniformMatrix4fv(location.ptr, 1, GL_FALSE, glm::value_ptr(matrix)));
+    glCheck(
+        glUniformMatrix4fv(location.ptr, 1, GL_FALSE, glm::value_ptr(matrix)));
 }

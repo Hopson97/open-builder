@@ -16,7 +16,7 @@ struct UniformLocation {
 
 Shader createShader(const std::string &vertexFile,
                     const std::string &fragmentFile);
-void destroyShader(Shader* shader);
+void destroyShader(Shader *shader);
 void useShader(Shader shader);
 
 UniformLocation getUniformLocation(Shader shader, const char *name);

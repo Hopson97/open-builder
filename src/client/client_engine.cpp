@@ -41,7 +41,6 @@ namespace {
     }
 } // namespace
 
-
 EngineStatus runClientEngine(const ClientConfig &config)
 {
     // Create the window
@@ -57,7 +56,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
         createWindow(window, {w, h}, sf::Style::Close);
     }
     if (config.isFpsCapped) {
-        //window.setFramerateLimit(config.fpsLimit);
+        // window.setFramerateLimit(config.fpsLimit);
     }
 
     // Setup OpenGL
@@ -98,7 +97,6 @@ EngineStatus runClientEngine(const ClientConfig &config)
             frameCount = 0;
             frameTimer.restart();
         }
-        
     }
     return status;
 }

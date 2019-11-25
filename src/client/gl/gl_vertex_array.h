@@ -7,9 +7,9 @@
 #include "gl_errors.h"
 
 enum class GLType {
-	UnsignedInt = GL_UNSIGNED_INT,
-	Float = GL_FLOAT,
-	Byte  = GL_BYTE,
+    UnsignedInt = GL_UNSIGNED_INT,
+    Float = GL_FLOAT,
+    Byte = GL_BYTE,
 };
 
 enum class DrawStyle {
@@ -29,7 +29,6 @@ struct VertexArrayContainer {
 VertexArrayContainer createVertexArray();
 void destroyVertexArray(VertexArrayContainer *vertexArray);
 
-
 void bindVertexArray(VertexArray array);
 void addIndexBuffer(VertexArrayContainer *vertexArray,
                     const std::vector<GLuint> &indices);
@@ -37,7 +36,7 @@ void addIndexBuffer(VertexArrayContainer *vertexArray,
 void drawElements(VertexArray array, GLsizei indices);
 
 template <typename T>
-void addVertexBuffer(VertexArrayContainer* container, int bufferMagntitude,
+void addVertexBuffer(VertexArrayContainer *container, int bufferMagntitude,
                      const std::vector<T> &bufferData,
                      DrawStyle bufferDrawStyle, GLType bufferType)
 {
@@ -51,12 +50,10 @@ void addVertexBuffer(VertexArrayContainer* container, int bufferMagntitude,
                          bufferData.data(),
                          static_cast<GLenum>(bufferDrawStyle)));
 
-	glCheck(glVertexAttribPointer(
+    glCheck(glVertexAttribPointer(
         container->bufferObjects.size(), bufferMagntitude,
-                                  static_cast<GLenum>(bufferType),
-                                  GL_FALSE, 0, (GLvoid *)0));
+        static_cast<GLenum>(bufferType), GL_FALSE, 0, (GLvoid *)0));
 
     glCheck(glEnableVertexAttribArray(container->bufferObjects.size()));
-	container->bufferObjects.push_back(vertexBuffer);
+    container->bufferObjects.push_back(vertexBuffer);
 }
-

@@ -27,15 +27,15 @@ void addIndexBuffer(VertexArrayContainer *container,
 {
     bindVertexArray(container->object);
 
-	GLuint elementBuffer;
+    GLuint elementBuffer;
     glCheck(glGenBuffers(1, &elementBuffer));
-	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer));
+    glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer));
 
     glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                          indices.size() * sizeof(GLuint), indices.data(),
                          GL_STATIC_DRAW));
 
-	container->bufferObjects.push_back(elementBuffer);
+    container->bufferObjects.push_back(elementBuffer);
     container->indicesCount = indices.size();
 }
 
