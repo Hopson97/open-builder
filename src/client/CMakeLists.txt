@@ -1,14 +1,11 @@
 
 add_library(ob-client
-    renderer/gl/shader.cpp
-    renderer/gl/gl_errors.cpp
-    renderer/texture/texture_atlas.cpp
-    renderer/texture/cube_texture.cpp
-    renderer/texture/texture2d.cpp
-    renderer/model/vertex_array.cpp
-    engine.cpp
+    gl/gl_errors.cpp 
+    gl/gl_shader.cpp 
+    gl/gl_textures.cpp
+    gl/gl_vertex_array.cpp
+    client_engine.cpp
     input/keyboard.cpp
-    fps_counter.cpp
 )
 
 set_flags(ob-client)
