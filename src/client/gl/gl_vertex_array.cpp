@@ -44,12 +44,10 @@ void VertexArray::addVertexBuffer(int magnitude,
     glCheck(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
 
     glCheck(glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(GLfloat),
-                         data.data(),
-                         GL_STATIC_DRAW));
+                         data.data(), GL_STATIC_DRAW));
 
-    glCheck(glVertexAttribPointer(m_bufferObjects.size(), magnitude,
-                                  GL_FLOAT, GL_FALSE, 0,
-                                  (GLvoid *)0));
+    glCheck(glVertexAttribPointer(m_bufferObjects.size(), magnitude, GL_FLOAT,
+                                  GL_FALSE, 0, (GLvoid *)0));
 
     glCheck(glEnableVertexAttribArray(m_bufferObjects.size()));
 

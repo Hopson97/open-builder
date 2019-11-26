@@ -1,6 +1,7 @@
 #include "client_engine.h"
 #include "client_config.h"
-#include "gl/gl_vertex_array.h"
+#include "gl/gl_object.h"
+#include "gl/gl_errors.h"
 #include "input/keyboard.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Window.hpp>
@@ -77,12 +78,16 @@ EngineStatus runClientEngine(const ClientConfig &config)
     glCheck(glCullFace(GL_BACK));
 
     // Create a rectangle for opengl testing
-    std::vector<GLfloat> vertices = {0,   0,   0, 0,   0.5, 0,
-                                     0.5, 0.5, 0, 0.5, 0,   0};
+    std::vector<GLfloat> vertices = {0,   0,   0, 
+                                     0,   0.5, 0,
+                                     0.5, 0.5, 0, 
+                                     0.5, 0,   0};
     std::vector<GLuint> indices = {0, 1, 2, 2, 3, 0};
 
-    auto vao = createVertexArray();
-    vao.addVertexBuffer(3, vertices, DrawStyle::Static, GLType::Float);
+    gl::VertexArray vao;
+    vao.create();
+    vao.bind();
+    vao.addVertexBuffer(3, vertices);
     vao.addIndexBuffer(indices);
 
     // Start main loop of the game
@@ -100,8 +105,8 @@ EngineStatus runClientEngine(const ClientConfig &config)
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        bindVertexArray(vao.object);
-        drawElements(vao.object, vao.indicesCount);
+        vao.bind();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         window.display();
 
@@ -116,6 +121,6 @@ EngineStatus runClientEngine(const ClientConfig &config)
             frameTimer.restart();
         }
     }
-    destroyVertexArray(&vao);
+    vao.destroy();
     return status;
 }
