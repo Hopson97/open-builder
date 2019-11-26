@@ -4,7 +4,7 @@
 #include <common/types.h>
 
 namespace server {
-    struct Config {
-        int maxConnections = 4;
-    };
+struct Config {
+    int maxConnections = 4;
+};
 } // namespace server

@@ -28,9 +28,8 @@ struct VertexArrayContainer {
     void addIndexBuffer(const std::vector<GLuint> &indices);
 
     template <typename T>
-    void addVertexBuffer(int bufferMagntitude,
-                        const std::vector<T> &bufferData,
-                        DrawStyle bufferDrawStyle, GLType bufferType);
+    void addVertexBuffer(int bufferMagntitude, const std::vector<T> &bufferData,
+                         DrawStyle bufferDrawStyle, GLType bufferType);
 };
 
 VertexArrayContainer createVertexArray();
@@ -41,8 +40,9 @@ void drawElements(VertexArray array, GLsizei indices);
 
 template <typename T>
 void VertexArrayContainer::addVertexBuffer(int bufferMagntitude,
-                     const std::vector<T> &bufferData,
-                     DrawStyle bufferDrawStyle, GLType bufferType)
+                                           const std::vector<T> &bufferData,
+                                           DrawStyle bufferDrawStyle,
+                                           GLType bufferType)
 {
     bindVertexArray(object);
 
@@ -55,7 +55,8 @@ void VertexArrayContainer::addVertexBuffer(int bufferMagntitude,
                          static_cast<GLenum>(bufferDrawStyle)));
 
     glCheck(glVertexAttribPointer(bufferObjects.size(), bufferMagntitude,
-        static_cast<GLenum>(bufferType), GL_FALSE, 0, (GLvoid *)0));
+                                  static_cast<GLenum>(bufferType), GL_FALSE, 0,
+                                  (GLvoid *)0));
 
     glCheck(glEnableVertexAttribArray(bufferObjects.size()));
 

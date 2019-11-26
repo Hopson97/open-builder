@@ -1,7 +1,7 @@
 #include "client_engine.h"
 #include "client_config.h"
-#include "gl/gl_vertex_array.h"
 #include "gl/gl_shader.h"
+#include "gl/gl_vertex_array.h"
 #include "input/keyboard.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Window.hpp>
@@ -10,53 +10,53 @@
 #include <iostream>
 
 namespace {
-    void createWindow(sf::Window *window, const sf::VideoMode &mode, u32 style)
-    {
-        sf::ContextSettings settings;
-        settings.depthBits = 24;
-        settings.stencilBits = 8;
-        settings.antialiasingLevel = 4;
-        settings.majorVersion = 3;
-        settings.minorVersion = 3;
+void createWindow(sf::Window *window, const sf::VideoMode &mode, u32 style)
+{
+    sf::ContextSettings settings;
+    settings.depthBits = 24;
+    settings.stencilBits = 8;
+    settings.antialiasingLevel = 4;
+    settings.majorVersion = 3;
+    settings.minorVersion = 3;
 
-        window->create(mode, "Open Builder", style, settings);
+    window->create(mode, "Open Builder", style, settings);
+}
+
+void initWindow(sf::Window *window, const ClientConfig &config)
+{
+    window->setKeyRepeatEnabled(false);
+    if (config.fullScreen) {
+        createWindow(window, sf::VideoMode::getDesktopMode(),
+                     sf::Style::Fullscreen);
     }
-
-    void initWindow(sf::Window *window, const ClientConfig &config)
-    {
-        window->setKeyRepeatEnabled(false);
-        if (config.fullScreen) {
-            createWindow(window, sf::VideoMode::getDesktopMode(),
-                         sf::Style::Fullscreen);
-        }
-        else {
-            auto w = static_cast<unsigned>(config.windowWidth);
-            auto h = static_cast<unsigned>(config.windowHeight);
-            createWindow(window, {w, h}, sf::Style::Close);
-        }
-        if (config.isFpsCapped) {
-            window->setFramerateLimit(config.fpsLimit);
-        }
+    else {
+        auto w = static_cast<unsigned>(config.windowWidth);
+        auto h = static_cast<unsigned>(config.windowHeight);
+        createWindow(window, {w, h}, sf::Style::Close);
     }
+    if (config.isFpsCapped) {
+        window->setFramerateLimit(config.fpsLimit);
+    }
+}
 
-    auto handleWindowEvents(sf::Window &window, Keyboard &keyboard)
-    {
-        auto status = EngineStatus::Ok;
-        sf::Event e;
-        while (window.pollEvent(e)) {
+auto handleWindowEvents(sf::Window &window, Keyboard &keyboard)
+{
+    auto status = EngineStatus::Ok;
+    sf::Event e;
+    while (window.pollEvent(e)) {
 
-            keyboard.update(e);
-            if (e.type == sf::Event::KeyPressed) {
-                if (e.key.code == sf::Keyboard::Escape) {
-                    status = EngineStatus::Exit;
-                }
-            }
-            else if (e.type == sf::Event::Closed) {
+        keyboard.update(e);
+        if (e.type == sf::Event::KeyPressed) {
+            if (e.key.code == sf::Keyboard::Escape) {
                 status = EngineStatus::Exit;
             }
         }
-        return status;
+        else if (e.type == sf::Event::Closed) {
+            status = EngineStatus::Exit;
+        }
     }
+    return status;
+}
 } // namespace
 
 EngineStatus runClientEngine(const ClientConfig &config)

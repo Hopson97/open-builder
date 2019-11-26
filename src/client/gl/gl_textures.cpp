@@ -1,41 +1,46 @@
-#include "gl_textures.h"
 #include "gl_errors.h"
+#include "gl_object.h"
 #include <SFML/Graphics/Image.hpp>
 #include <iostream>
 
 namespace {
-    const std::string TEXTURE_PATH = "res/textures/";
+const std::string TEXTURE_PATH = "res/textures/";
 
-    GLuint createTexture()
-    {
-        GLuint handle;
-        glCheck(glGenTextures(1, &handle));
-        glCheck(glActiveTexture(GL_TEXTURE0));
-        return handle;
+GLuint createTexture()
+{
+    GLuint handle;
+    glCheck(glGenTextures(1, &handle));
+    glCheck(glActiveTexture(GL_TEXTURE0));
+    return handle;
+}
+
+bool bufferImage(GLenum param, const std::string &file)
+{
+    sf::Image img;
+    if (!img.loadFromFile(file)) {
+        std::cerr << "Could not load: " << file << '\n';
+        return false;
     }
 
-    bool bufferImage(GLenum param, const std::string &file)
-    {
-        sf::Image img;
-        if (!img.loadFromFile(file)) {
-            std::cerr << "Could not load: " << file << '\n';
-            return false;
-        }
+    glCheck(glTexImage2D(param, 0, GL_RGBA, img.getSize().x, img.getSize().y, 0,
+                         GL_RGBA, GL_UNSIGNED_BYTE, img.getPixelsPtr()));
+    return true;
+}
 
-        glCheck(glTexImage2D(param, 0, GL_RGBA, img.getSize().x,
-                             img.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                             img.getPixelsPtr()));
-        return true;
-    }
+void destroyTexture(GLuint *texture)
+{
+    glCheck(glDeleteTextures(1, texture));
+    *texture = 0;
+}
 
 } // namespace
 
-Texture createCubeTexture(const std::array<std::string, 6> &textures)
+namespace gl {
+
+void CubeTexture::create(const std::array<std::string, 6> &textures)
 {
-    Texture texture;
-    texture.handle = createTexture();
-    texture.type = TextureType::CubeMap;
-    bindTexture(texture);
+    m_handle = createTexture();
+    bind();
 
     for (int i = 0; i < 6; i++) {
         auto path = TEXTURE_PATH + "/skies/" + textures[i] + ".png";
@@ -51,31 +56,34 @@ Texture createCubeTexture(const std::array<std::string, 6> &textures)
                             GL_CLAMP_TO_EDGE));
     glCheck(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T,
                             GL_CLAMP_TO_EDGE));
-
-    return texture;
 }
 
-Texture createTexture2D(const std::string &file)
+void CubeTexture::destroy()
 {
-    Texture texture;
-    texture.handle = createTexture();
-    texture.type = TextureType::Texture2d;
-    bindTexture(texture);
+    destroyTexture(&m_handle);
+}
+
+void CubeTexture::bind()
+{
+    glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, m_handle));
+}
+
+void Texture2d::create(const std::string &file)
+{
+    m_handle = createTexture();
+    bind();
 
     auto path = TEXTURE_PATH + file + ".png";
     bufferImage(GL_TEXTURE_2D, path);
-
-    return texture;
 }
 
-void bindTexture(const Texture &texture)
+void Texture2d::destroy()
 {
-    glCheck(glBindTexture(static_cast<GLenum>(texture.type), texture.handle));
+    destroyTexture(&m_handle);
 }
 
-void destroyTexture(Texture *texture)
+void Texture2d::bind()
 {
-    glCheck(glDeleteTextures(1, &texture->handle));
-    texture->handle = 0;
-    texture->type = TextureType::None;
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_handle));
 }
+} // namespace gl

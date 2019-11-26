@@ -3,7 +3,7 @@
 #include <SFML/System/Time.hpp>
 
 namespace server {
-    struct Config;
+struct Config;
 
-    void runServerEngine(const Config &config, sf::Time timeout);
+void runServerEngine(const Config &config, sf::Time timeout);
 } // namespace server

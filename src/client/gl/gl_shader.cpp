@@ -1,50 +1,50 @@
-#include "gl_object.h"
 #include "gl_errors.h"
+#include "gl_object.h"
 #include <common/file_io.h>
 #include <stdexcept>
 
 namespace {
-    GLuint compileShader(const GLchar *source, GLenum shaderType)
-    {
-        auto shaderID = glCheck(glCreateShader(shaderType));
+GLuint compileShader(const GLchar *source, GLenum shaderType)
+{
+    auto shaderID = glCheck(glCreateShader(shaderType));
 
-        glCheck(glShaderSource(shaderID, 1, &source, nullptr));
-        glCheck(glCompileShader(shaderID));
+    glCheck(glShaderSource(shaderID, 1, &source, nullptr));
+    glCheck(glCompileShader(shaderID));
 
-        GLint isSuccess = 0;
-        GLchar infoLog[512];
+    GLint isSuccess = 0;
+    GLchar infoLog[512];
 
-        glCheck(glGetShaderiv(shaderID, GL_COMPILE_STATUS, &isSuccess));
-        if (!isSuccess) {
-            glCheck(glGetShaderInfoLog(shaderID, 512, nullptr, infoLog));
-            throw std::runtime_error("Unable to load a shader: " +
-                                     std::string(infoLog));
-        }
-
-        return shaderID;
+    glCheck(glGetShaderiv(shaderID, GL_COMPILE_STATUS, &isSuccess));
+    if (!isSuccess) {
+        glCheck(glGetShaderInfoLog(shaderID, 512, nullptr, infoLog));
+        throw std::runtime_error("Unable to load a shader: " +
+                                 std::string(infoLog));
     }
 
-    GLuint linkProgram(GLuint vertexShaderID, GLuint fragmentShaderID)
-    {
-        auto id = glCheck(glCreateProgram());
+    return shaderID;
+}
 
-        glCheck(glAttachShader(id, vertexShaderID));
-        glCheck(glAttachShader(id, fragmentShaderID));
+GLuint linkProgram(GLuint vertexShaderID, GLuint fragmentShaderID)
+{
+    auto id = glCheck(glCreateProgram());
 
-        glCheck(glLinkProgram(id));
+    glCheck(glAttachShader(id, vertexShaderID));
+    glCheck(glAttachShader(id, fragmentShaderID));
 
-        GLint isSuccess = 0;
-        GLchar infoLog[512];
+    glCheck(glLinkProgram(id));
 
-        glCheck(glGetProgramiv(id, GL_LINK_STATUS, &isSuccess));
-        if (!isSuccess) {
-            glCheck(glGetProgramInfoLog(id, 512, nullptr, infoLog));
-            throw std::runtime_error("Unable to link a shader: " +
-                                     std::string(infoLog));
-        }
+    GLint isSuccess = 0;
+    GLchar infoLog[512];
 
-        return id;
+    glCheck(glGetProgramiv(id, GL_LINK_STATUS, &isSuccess));
+    if (!isSuccess) {
+        glCheck(glGetProgramInfoLog(id, 512, nullptr, infoLog));
+        throw std::runtime_error("Unable to link a shader: " +
+                                 std::string(infoLog));
     }
+
+    return id;
+}
 } // namespace
 
 namespace gl {
@@ -101,4 +101,4 @@ void loadUniform(UniformLocation location, const glm::mat4 &matrix)
         glUniformMatrix4fv(location.ptr, 1, GL_FALSE, glm::value_ptr(matrix)));
 }
 
-}
+} // namespace gl
