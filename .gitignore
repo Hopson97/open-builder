@@ -8,6 +8,10 @@
 
 open-builder/
 
+*.srctrlprj
+*.srctrldb
+*.srctrlbm
+
 #
 #   Linux
 #
