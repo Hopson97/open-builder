@@ -57,6 +57,10 @@ class Texture2d {
     GLuint m_handle = 0;
 };
 
+/**
+ * @brief Minimal information for drawing with glDrawElements
+ * 
+ */
 class Drawable {
   public:
     Drawable(GLuint vao, GLsizei indices);
@@ -101,7 +105,7 @@ template <typename GLObject> class Object {
   public:
     template <typename... Args> void create(Args &&... args)
     {
-        m_object.create(std::forward(args)...);
+        m_object.create(args...);
     }
 
     void destroy()

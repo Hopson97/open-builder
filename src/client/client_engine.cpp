@@ -83,10 +83,13 @@ EngineStatus runClientEngine(const ClientConfig &config)
     std::vector<GLuint> indices = {0, 1, 2, 2, 3, 0};
 
     gl::Object<gl::VertexArray> vao;
-    vao.create();
+    vao->create();
     vao.bind();
     vao->addVertexBuffer(3, vertices);
     vao->addIndexBuffer(indices);
+
+    gl::Object<gl::Shader> shader;
+    shader.create("static", "static");
 
     // Start main loop of the game
     Keyboard keyboard;
@@ -102,9 +105,10 @@ EngineStatus runClientEngine(const ClientConfig &config)
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        vao.bind();
+        vao->getDrawable().drawElements();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+
 
         window.display();
 
