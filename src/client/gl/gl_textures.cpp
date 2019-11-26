@@ -86,4 +86,5 @@ void Texture2d::bind()
 {
     glCheck(glBindTexture(GL_TEXTURE_2D, m_handle));
 }
+
 } // namespace gl

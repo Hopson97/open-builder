@@ -1,6 +1,5 @@
 #include "client_engine.h"
 #include "client_config.h"
-#include "gl/gl_shader.h"
 #include "gl/gl_vertex_array.h"
 #include "input/keyboard.h"
 #include <SFML/Window/Event.hpp>

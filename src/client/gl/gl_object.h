@@ -57,6 +57,17 @@ class Texture2d {
     GLuint m_handle = 0;
 };
 
+class Drawable {
+  public:
+    Drawable(GLuint vao, GLsizei indices);
+
+    void drawElements();
+
+  private:
+    GLuint m_handle = 0;
+    GLsizei m_indicesCount = 0;
+};
+
 /**
  * @brief Wrapper for an OpenGL vertex array object (aka VAO)
  */
@@ -65,6 +76,9 @@ class VertexArray {
     void create();
     void destroy();
     void bind();
+
+    void addVertexBuffer(int magnitude, const std::vector<GLfloat> &data);
+    void addIndexBuffer(const std::vector<GLuint> &indices);
 
   private:
     std::vector<GLuint> m_bufferObjects;

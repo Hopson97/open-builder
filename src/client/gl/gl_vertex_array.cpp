@@ -1,36 +1,64 @@
-#include "gl_vertex_array.h"
+#include "gl_errors.h"
+#include "gl_object.h"
 
-VertexArrayContainer createVertexArray()
+namespace gl {
+Drawable::Drawable(GLuint vao, GLsizei indices)
+    : m_handle(vao)
+    , m_indicesCount(indices)
 {
-    VertexArrayContainer container;
-    glCheck(glGenVertexArrays(1, &container.object.handle));
-    return container;
 }
 
-void destroyVertexArray(VertexArrayContainer *vertexArray)
+void Drawable::drawElements()
 {
-    glCheck(glDeleteVertexArrays(1, &vertexArray->object.handle));
-    glCheck(glDeleteBuffers(vertexArray->bufferObjects.size(),
-                            vertexArray->bufferObjects.data()));
-    vertexArray->bufferObjects.clear();
-    vertexArray->object.handle = 0;
-    vertexArray->indicesCount = 0;
+    glCheck(glBindVertexArray(m_handle));
+    glCheck(
+        glDrawElements(GL_TRIANGLES, m_indicesCount, GL_UNSIGNED_INT, nullptr));
 }
 
-void bindVertexArray(VertexArray array)
+void VertexArray::create()
 {
-    glCheck(glBindVertexArray(array.handle));
+    glCheck(glGenVertexArrays(1, &m_handle));
 }
 
-void drawElements(VertexArray array, GLsizei indices)
+void VertexArray::bind()
 {
-    glCheck(glBindVertexArray(array.handle));
-    glCheck(glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, nullptr));
+    glCheck(glBindVertexArray(m_handle));
 }
 
-void VertexArrayContainer::addIndexBuffer(const std::vector<GLuint> &indices)
+void VertexArray::destroy()
 {
-    bindVertexArray(object);
+    glCheck(glDeleteVertexArrays(1, &m_handle));
+    glCheck(glDeleteBuffers(m_bufferObjects.size(), m_bufferObjects.data()));
+    m_bufferObjects.clear();
+    m_handle = 0;
+    m_indicesCount = 0;
+}
+
+void VertexArray::addVertexBuffer(int magnitude,
+                                  const std::vector<GLfloat> &data)
+{
+    bind();
+
+    GLuint vertexBuffer;
+    glCheck(glGenBuffers(1, &vertexBuffer));
+    glCheck(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
+
+    glCheck(glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(GLfloat),
+                         data.data(),
+                         GL_STATIC_DRAW));
+
+    glCheck(glVertexAttribPointer(m_bufferObjects.size(), magnitude,
+                                  GL_FLOAT, GL_FALSE, 0,
+                                  (GLvoid *)0));
+
+    glCheck(glEnableVertexAttribArray(m_bufferObjects.size()));
+
+    m_bufferObjects.push_back(vertexBuffer);
+}
+
+void VertexArray::addIndexBuffer(const std::vector<GLuint> &indices)
+{
+    bind();
 
     GLuint elementBuffer;
     glCheck(glGenBuffers(1, &elementBuffer));
@@ -40,6 +68,8 @@ void VertexArrayContainer::addIndexBuffer(const std::vector<GLuint> &indices)
                          indices.size() * sizeof(GLuint), indices.data(),
                          GL_STATIC_DRAW));
 
-    bufferObjects.push_back(elementBuffer);
-    indicesCount = indices.size();
+    m_bufferObjects.push_back(elementBuffer);
+    m_indicesCount = indices.size();
 }
+
+} // namespace gl
