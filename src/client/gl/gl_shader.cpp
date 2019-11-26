@@ -1,4 +1,4 @@
-#include "gl_shader.h"
+#include "gl_object.h"
 #include "gl_errors.h"
 #include <common/file_io.h>
 #include <stdexcept>
@@ -47,7 +47,9 @@ namespace {
     }
 } // namespace
 
-Shader createShader(const std::string &vertexFile,
+namespace gl {
+
+void Shader::create(const std::string &vertexFile,
                     const std::string &fragmentFile)
 {
     glCheck(glUseProgram(0));
@@ -61,33 +63,30 @@ Shader createShader(const std::string &vertexFile,
     auto fragmentShaderID =
         compileShader(fragmentSource.c_str(), GL_FRAGMENT_SHADER);
 
-    Shader shader;
-    shader.program = linkProgram(vertexShaderID, fragmentShaderID);
+    m_handle = linkProgram(vertexShaderID, fragmentShaderID);
 
-    glCheck(glDetachShader(shader.program, vertexShaderID));
-    glCheck(glDetachShader(shader.program, fragmentShaderID));
+    glCheck(glDetachShader(m_handle, vertexShaderID));
+    glCheck(glDetachShader(m_handle, fragmentShaderID));
 
     glCheck(glDeleteShader(vertexShaderID));
     glCheck(glDeleteShader(fragmentShaderID));
-
-    return shader;
 }
 
-void destroyShader(Shader *shader)
+void Shader::destroy()
 {
-    glCheck(glDeleteProgram(shader->program));
-    shader->program = 0;
+    glCheck(glDeleteProgram(m_handle));
+    m_handle = 0;
 }
 
-void useShader(Shader shader)
+void Shader::bind()
 {
-    glCheck(glUseProgram(shader.program));
+    glCheck(glUseProgram(m_handle));
 }
 
-UniformLocation getUniformLocation(Shader shader, const char *name)
+UniformLocation Shader::getUniformLocation(const char *name)
 {
     UniformLocation location;
-    location.ptr = glCheck(glGetUniformLocation(shader.program, name));
+    location.ptr = glCheck(glGetUniformLocation(m_handle, name));
     return location;
 }
 
@@ -100,4 +99,6 @@ void loadUniform(UniformLocation location, const glm::mat4 &matrix)
 {
     glCheck(
         glUniformMatrix4fv(location.ptr, 1, GL_FALSE, glm::value_ptr(matrix)));
+}
+
 }

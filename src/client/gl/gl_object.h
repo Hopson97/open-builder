@@ -10,17 +10,22 @@
 namespace gl
 {
 
+struct UniformLocation {
+    GLuint ptr = 0;
+};
+
 /**
  * @brief Wrapper for a OpenGL shder object
- * 
  */
 class Shader {
     public:
         void create(const std::string &vertexFile,
                     const std::string &fragmentFile);
         void destroy();
-
         void bind();
+
+        UniformLocation getUniformLocation(const char *name);
+
 
     private:
         GLuint m_handle = 0;
@@ -28,13 +33,11 @@ class Shader {
 
 /**
  * @brief Wrapper for an OpenGL cube-mapped texture object
- * 
  */
 class CubeTexture {
     public:
         void create(const std::array<std::string, 6> &textures);
         void destroy();
-
         void bind();
 
     private:
@@ -43,13 +46,11 @@ class CubeTexture {
 
 /**
  * @brief Wrapper for a regaulr OpenGL 2D texture
- * 
  */
 class Texture2d {
     public:
         void create(const std::string &file);
         void destroy();
-
         void bind();
 
     private:
@@ -58,14 +59,12 @@ class Texture2d {
 
 /**
  * @brief Wrapper for an OpenGL vertex array object (aka VAO)
- * 
  */
 class VertexArray 
 {
     public:
         void create();
         void destroy();
-
         void bind();
 
     private:
@@ -73,5 +72,11 @@ class VertexArray
         GLuint m_handle = 0;
         GLsizei m_indicesCount = 0;
 };
+
+//Functons for shaders
+void loadUniform(UniformLocation location, const glm::vec3 &vector);
+void loadUniform(UniformLocation location, const glm::mat4 &matrix);
+
+
 
 }
