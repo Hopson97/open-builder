@@ -63,7 +63,7 @@ void CubeTexture::destroy()
     destroyTexture(&m_handle);
 }
 
-void CubeTexture::bind()
+void CubeTexture::bind() const
 {
     glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, m_handle));
 }
@@ -82,7 +82,7 @@ void Texture2d::destroy()
     destroyTexture(&m_handle);
 }
 
-void Texture2d::bind()
+void Texture2d::bind() const
 {
     glCheck(glBindTexture(GL_TEXTURE_2D, m_handle));
 }

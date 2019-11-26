@@ -1,7 +1,7 @@
 #include "client_engine.h"
 #include "client_config.h"
-#include "gl/gl_object.h"
 #include "gl/gl_errors.h"
+#include "gl/gl_object.h"
 #include "input/keyboard.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Window.hpp>
@@ -30,9 +30,9 @@ void initWindow(sf::Window *window, const ClientConfig &config)
                      sf::Style::Fullscreen);
     }
     else {
-        auto w = static_cast<unsigned>(config.windowWidth);
-        auto h = static_cast<unsigned>(config.windowHeight);
-        createWindow(window, {w, h}, sf::Style::Close);
+        auto width = static_cast<unsigned>(config.windowWidth);
+        auto height = static_cast<unsigned>(config.windowHeight);
+        createWindow(window, {width, height}, sf::Style::Close);
     }
     if (config.isFpsCapped) {
         window->setFramerateLimit(config.fpsLimit);
@@ -78,17 +78,15 @@ EngineStatus runClientEngine(const ClientConfig &config)
     glCheck(glCullFace(GL_BACK));
 
     // Create a rectangle for opengl testing
-    std::vector<GLfloat> vertices = {0,   0,   0, 
-                                     0,   0.5, 0,
-                                     0.5, 0.5, 0, 
-                                     0.5, 0,   0};
+    std::vector<GLfloat> vertices = {0,   0,   0, 0.5, 0,   0,
+                                     0.5, 0.5, 0, 0,   0.5, 0};
     std::vector<GLuint> indices = {0, 1, 2, 2, 3, 0};
 
-    gl::VertexArray vao;
+    gl::Object<gl::VertexArray> vao;
     vao.create();
     vao.bind();
-    vao.addVertexBuffer(3, vertices);
-    vao.addIndexBuffer(indices);
+    vao->addVertexBuffer(3, vertices);
+    vao->addIndexBuffer(indices);
 
     // Start main loop of the game
     Keyboard keyboard;
@@ -121,6 +119,5 @@ EngineStatus runClientEngine(const ClientConfig &config)
             frameTimer.restart();
         }
     }
-    vao.destroy();
     return status;
 }

@@ -8,7 +8,7 @@ Drawable::Drawable(GLuint vao, GLsizei indices)
 {
 }
 
-void Drawable::drawElements()
+void Drawable::drawElements() const
 {
     glCheck(glBindVertexArray(m_handle));
     glCheck(
@@ -20,11 +20,6 @@ void VertexArray::create()
     glCheck(glGenVertexArrays(1, &m_handle));
 }
 
-void VertexArray::bind()
-{
-    glCheck(glBindVertexArray(m_handle));
-}
-
 void VertexArray::destroy()
 {
     glCheck(glDeleteVertexArrays(1, &m_handle));
@@ -32,6 +27,16 @@ void VertexArray::destroy()
     m_bufferObjects.clear();
     m_handle = 0;
     m_indicesCount = 0;
+}
+
+void VertexArray::bind() const
+{
+    glCheck(glBindVertexArray(m_handle));
+}
+
+Drawable VertexArray::getDrawable() const
+{
+    return {m_handle, m_indicesCount};
 }
 
 void VertexArray::addVertexBuffer(int magnitude,

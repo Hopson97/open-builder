@@ -78,7 +78,7 @@ void Shader::destroy()
     m_handle = 0;
 }
 
-void Shader::bind()
+void Shader::bind() const
 {
     glCheck(glUseProgram(m_handle));
 }
