@@ -4,6 +4,7 @@ add_library(ob-client
     gl/gl_shader.cpp 
     gl/gl_textures.cpp
     gl/gl_vertex_array.cpp
+    maths.cpp
     client_engine.cpp
     input/keyboard.cpp
 )

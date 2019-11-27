@@ -3,6 +3,7 @@
 #include "gl/gl_errors.h"
 #include "gl/gl_object.h"
 #include "input/keyboard.h"
+#include "maths.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/types.h>
@@ -116,7 +117,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
         static auto lastMousePosition = sf::Mouse::getPosition(window);
         auto change = sf::Mouse::getPosition(window) - lastMousePosition;
         player.rot.x += static_cast<float>(change.y / 10);
-        player.rot.y -= static_cast<float>(change.x / 10);
+        player.rot.y += static_cast<float>(change.x / 10);
         sf::Mouse::setPosition({static_cast<int>(window.getSize().x / 2),
                                 static_cast<int>(window.getSize().y / 2)},
                                window);
@@ -144,13 +145,8 @@ EngineStatus runClientEngine(const ClientConfig &config)
 
         // Update
         glm::mat4 viewMatrix{1.0f};
-        viewMatrix =
-            glm::rotate(viewMatrix, glm::radians(player.rot.x), {1, 0, 0});
-        viewMatrix =
-            glm::rotate(viewMatrix, glm::radians(player.rot.y), {0, 1, 0});
-        viewMatrix =
-            glm::rotate(viewMatrix, glm::radians(player.rot.z), {0, 0, 1});
-        viewMatrix = glm::translate(viewMatrix, -player.pos);
+        rotateMatrix(&viewMatrix, player.rot);
+        translateMatrix(&viewMatrix, -player.pos);
         projectionViewMatrix = projectionMatrix * viewMatrix;
 
         gl::loadUniform(pvLocation, projectionViewMatrix);
