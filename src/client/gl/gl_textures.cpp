@@ -2,6 +2,7 @@
 #include "gl_object.h"
 #include <SFML/Graphics/Image.hpp>
 #include <iostream>
+#include <common/debug.h>
 
 namespace {
 const std::string TEXTURE_PATH = "res/textures/";
@@ -61,6 +62,8 @@ void CubeTexture::create(const std::array<std::string, 6> &textures)
 void CubeTexture::destroy()
 {
     destroyTexture(&m_handle);
+    LOG("Texture destroyed with ID: ", m_handle);
+    m_handle = 0;
 }
 
 void CubeTexture::bind() const
@@ -75,9 +78,9 @@ void Texture2d::create(const std::string &file)
 
     auto path = TEXTURE_PATH + file + ".png";
     bufferImage(GL_TEXTURE_2D, path);
-    std::cout << "texture created\n";
+    LOG("Texture created.");
 
-        glCheck(glGenerateMipmap(GL_TEXTURE_2D));
+    glCheck(glGenerateMipmap(GL_TEXTURE_2D));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                             GL_LINEAR_MIPMAP_LINEAR));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));

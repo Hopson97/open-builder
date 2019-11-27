@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <common/debug.h>
 #include <vector>
 
 #include "client/client_engine.h"
@@ -113,14 +114,14 @@ int exitFailure(const char *message)
 int launchServer(const server::Config &config,
                  sf::Time timeout = sf::seconds(8))
 {
-    std::cout << "Launching server.\n";
+    LOG("Launching server");
     server::runServerEngine(config, timeout);
     return EXIT_SUCCESS;
 }
 
 int launchClient(const ClientConfig &config)
 {
-    std::cout << "Launching client.\n";
+    LOG("Launching client");
     switch (runClientEngine(config)) {
         case EngineStatus::Exit:
         case EngineStatus::Ok:
@@ -137,8 +138,6 @@ int launchBoth(const Config &config)
     std::thread serverThread(launchServer, config.serverOptions,
                              sf::milliseconds(256));
     int exit = launchClient(config.clientOptions);
-
-    std::cout << "Awaiting server shutdown.\n";
     serverThread.join();
     return exit;
 }
@@ -169,5 +168,4 @@ int main(int argc, char **argv)
         case LaunchType::Client:
             return launchClient(config.clientOptions);
     }
-    std::cout << "Exiting\n";
 }
