@@ -85,18 +85,26 @@ EngineStatus runClientEngine(const ClientConfig &config)
     // Create a rectangle for opengl testing
     std::vector<GLfloat> vertices = {0, 0, 0, 2, 0, 0, 2, 2, 0, 0, 2, 0};
     std::vector<GLuint> indices = {0, 1, 2, 2, 3, 0};
+    std::vector<GLfloat> textureCoords = {0.0f, 0.0f, 0.0f, 1.0f,
+                                          1.0f, 1.0f, 1.0f, 0.0f};
 
     gl::Object<gl::VertexArray> vao;
     vao->create();
     vao.bind();
     vao->addVertexBuffer(3, vertices);
+    vao->addVertexBuffer(2, textureCoords);
     vao->addIndexBuffer(indices);
+    
 
     gl::Object<gl::Shader> shader;
     shader.create("static", "static");
     shader.bind();
     auto mdLocarion = shader->getUniformLocation("modelMatrix");
     auto pvLocation = shader->getUniformLocation("projectionViewMatrix");
+
+    gl::Object<gl::Texture2d> texture;
+    texture.create("grass");
+    texture.bind();
 
     glm::mat4 modelMatrix{1.0f};
     glm::mat4 projectionMatrix{1.0f};

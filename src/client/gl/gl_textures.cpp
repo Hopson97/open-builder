@@ -75,6 +75,13 @@ void Texture2d::create(const std::string &file)
 
     auto path = TEXTURE_PATH + file + ".png";
     bufferImage(GL_TEXTURE_2D, path);
+    std::cout << "texture created\n";
+
+        glCheck(glGenerateMipmap(GL_TEXTURE_2D));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                            GL_LINEAR_MIPMAP_LINEAR));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.4));
 }
 
 void Texture2d::destroy()

@@ -1,6 +1,6 @@
 #pragma once
 
-//#define DEBUG_GL_ERRORS
+#define DEBUG_GL_ERRORS
 
 // clang-format off
  
