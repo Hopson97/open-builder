@@ -59,6 +59,10 @@ auto handleWindowEvents(sf::Window &window, Keyboard &keyboard)
 }
 } // namespace
 
+struct {
+    glm::vec3 pos{0.0, 0.0, 1.0f}, rot;
+} player;
+
 EngineStatus runClientEngine(const ClientConfig &config)
 {
     // Create the window
@@ -78,8 +82,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
     glCheck(glCullFace(GL_BACK));
 
     // Create a rectangle for opengl testing
-    std::vector<GLfloat> vertices = {0,   0,   0, 0.5, 0,   0,
-                                     0.5, 0.5, 0, 0,   0.5, 0};
+    std::vector<GLfloat> vertices = {0, 0, 0, 2, 0, 0, 2, 2, 0, 0, 2, 0};
     std::vector<GLuint> indices = {0, 1, 2, 2, 3, 0};
 
     gl::Object<gl::VertexArray> vao;
@@ -90,6 +93,17 @@ EngineStatus runClientEngine(const ClientConfig &config)
 
     gl::Object<gl::Shader> shader;
     shader.create("static", "static");
+    shader.bind();
+    auto mdLocarion = shader->getUniformLocation("modelMatrix");
+    auto pvLocation = shader->getUniformLocation("projectionViewMatrix");
+
+    glm::mat4 modelMatrix{1.0f};
+    glm::mat4 projectionMatrix{1.0f};
+    glm::mat4 projectionViewMatrix{1.0f};
+
+    projectionMatrix =
+        glm::perspective(3.14f / 2.0f, 1280.0f / 720.0f, 0.01f, 100.0f);
+    modelMatrix = glm::rotate(modelMatrix, 3.14f / 4.0f, {1.0, 0.0, 0.0});
 
     // Start main loop of the game
     Keyboard keyboard;
@@ -99,16 +113,53 @@ EngineStatus runClientEngine(const ClientConfig &config)
         // Input
         status = handleWindowEvents(window, keyboard);
 
-        // Update
+        static auto lastMousePosition = sf::Mouse::getPosition(window);
+        auto change = sf::Mouse::getPosition(window) - lastMousePosition;
+        player.rot.x += static_cast<float>(change.y / 10);
+        player.rot.y -= static_cast<float>(change.x / 10);
+        sf::Mouse::setPosition({static_cast<int>(window.getSize().x / 2),
+                                static_cast<int>(window.getSize().y / 2)},
+                               window);
+        lastMousePosition = sf::Mouse::getPosition(window);
+        player.rot.x = glm::clamp(player.rot.x, -170.0f, 170.0f);
 
-        /* do update stuff here */
+        // Input
+        const float SPEED = 0.05f;
+        if (keyboard.isKeyDown(sf::Keyboard::W)) {
+            player.pos.x -= glm::cos(glm::radians(player.rot.y + 90)) * SPEED;
+            player.pos.z -= glm::sin(glm::radians(player.rot.y + 90)) * SPEED;
+        }
+        else if (keyboard.isKeyDown(sf::Keyboard::S)) {
+            player.pos.x += glm::cos(glm::radians(player.rot.y + 90)) * SPEED;
+            player.pos.z += glm::sin(glm::radians(player.rot.y + 90)) * SPEED;
+        }
+        if (keyboard.isKeyDown(sf::Keyboard::A)) {
+            player.pos.x += -glm::cos(glm::radians(player.rot.y)) * SPEED;
+            player.pos.z += -glm::sin(glm::radians(player.rot.y)) * SPEED;
+        }
+        else if (keyboard.isKeyDown(sf::Keyboard::D)) {
+            player.pos.x += glm::cos(glm::radians(player.rot.y)) * SPEED;
+            player.pos.z += glm::sin(glm::radians(player.rot.y)) * SPEED;
+        }
+
+        // Update
+        glm::mat4 viewMatrix{1.0f};
+        viewMatrix =
+            glm::rotate(viewMatrix, glm::radians(player.rot.x), {1, 0, 0});
+        viewMatrix =
+            glm::rotate(viewMatrix, glm::radians(player.rot.y), {0, 1, 0});
+        viewMatrix =
+            glm::rotate(viewMatrix, glm::radians(player.rot.z), {0, 0, 1});
+        viewMatrix = glm::translate(viewMatrix, -player.pos);
+        projectionViewMatrix = projectionMatrix * viewMatrix;
+
+        gl::loadUniform(pvLocation, projectionViewMatrix);
+        gl::loadUniform(mdLocarion, modelMatrix);
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         vao->getDrawable().drawElements();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-
 
         window.display();
 

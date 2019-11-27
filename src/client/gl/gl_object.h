@@ -59,7 +59,7 @@ class Texture2d {
 
 /**
  * @brief Minimal information for drawing with glDrawElements
- * 
+ *
  */
 class Drawable {
   public:
