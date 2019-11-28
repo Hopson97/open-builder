@@ -105,7 +105,7 @@ template <typename GLObject> class Object {
   public:
     template <typename... Args> void create(Args &&... args)
     {
-        m_object.create(args...);
+        m_object.create(std::forward<Args>(args)...);
     }
 
     void destroy()
@@ -132,8 +132,18 @@ template <typename GLObject> class Object {
     Object(const Object &object) = delete;
     Object &operator=(const Object &object) = delete;
 
+    Object(Object &&object) = default;
+    Object &operator=(Object &&object) = default;
+
   private:
     GLObject m_object;
 };
+
+template <typename T, typename... Args> Object<T> makeObject(Args &&... args)
+{
+    Object<T> t;
+    t.create(std::forward<Args>(args)...);
+    return t;
+}
 
 } // namespace gl

@@ -11,16 +11,16 @@
 
 #ifdef DEBUG_MODE_
 
-#define LOG(title, var)                                                        \
-    std::cout << __FILE__ << ":" << __LINE__ << " - " << title << " " << var       \
+#define LOGVAR(title, var)                                                     \
+    std::cout << __FILE__ << ":" << __LINE__ << " - " << title << " " << var   \
               << std::endl;
 
 #define LOG(item)                                                              \
     std::cout << __FILE__ << ":" << __LINE__ << " - " << item << std::endl;
 #else
 
-#define LOG(title, var)
-#define LOG()
+#define LOGVAR(title, var)
+#define LOG(item)
 
 #endif
 

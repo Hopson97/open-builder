@@ -58,7 +58,8 @@ void VertexArray::addVertexBuffer(int magnitude,
     glCheck(glEnableVertexAttribArray(m_bufferObjects.size()));
 
     m_bufferObjects.push_back(vertexBuffer);
-    std::cout << "Added vertex buffer to location: " << (m_bufferObjects.size() - 1) << std::endl;
+    std::cout << "Added vertex buffer to location: "
+              << (m_bufferObjects.size() - 1) << std::endl;
 }
 
 void VertexArray::addIndexBuffer(const std::vector<GLuint> &indices)

@@ -1,9 +1,9 @@
+#include <common/debug.h>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <thread>
-#include <common/debug.h>
 #include <vector>
 
 #include "client/client_engine.h"
