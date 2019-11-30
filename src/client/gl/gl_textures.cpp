@@ -1,8 +1,8 @@
 #include "gl_errors.h"
 #include "gl_object.h"
 #include <SFML/Graphics/Image.hpp>
-#include <iostream>
 #include <common/debug.h>
+#include <iostream>
 
 namespace {
 const std::string TEXTURE_PATH = "res/textures/";
@@ -62,7 +62,7 @@ void CubeTexture::create(const std::array<std::string, 6> &textures)
 void CubeTexture::destroy()
 {
     destroyTexture(&m_handle);
-    LOG("Texture destroyed with ID: ", m_handle);
+    LOGVAR("Texture destroyed with ID: ", m_handle);
     m_handle = 0;
 }
 
