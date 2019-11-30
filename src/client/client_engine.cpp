@@ -82,11 +82,35 @@ EngineStatus runClientEngine(const ClientConfig &config)
     glCheck(glEnable(GL_CULL_FACE));
     glCheck(glCullFace(GL_BACK));
 
-    // Create a rectangle for opengl testing
-    std::vector<GLfloat> vertices = {0, 0, 0, 2, 0, 0, 2, 2, 0, 0, 2, 0};
-    std::vector<GLuint> indices = {0, 1, 2, 2, 3, 0};
-    std::vector<GLfloat> textureCoords = {0.0f, 0.0f, 0.0f, 1.0f,
-                                          1.0f, 1.0f, 1.0f, 0.0f};
+    // Create a cube for opengl testing
+    std::vector<GLfloat> vertices = {0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1,
+                                     // right
+                                     1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1,
+                                     // back
+                                     0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0,
+                                     // left
+                                     0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0,
+                                     // bottom
+                                     0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1,
+                                     // top
+                                     0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0};
+    std::vector<GLuint> indices;
+    for (int itr = 0, i = 0; itr < 6; itr++) {
+        indices.push_back(i);
+        indices.push_back(i + 1);
+        indices.push_back(i + 2);
+        indices.push_back(i + 2);
+        indices.push_back(i + 3);
+        indices.push_back(i);
+        i += 4;
+    }
+    std::vector<GLfloat> textureCoords;
+
+	for (int i = 0; i < 6; i++) {
+        textureCoords.insert(
+            textureCoords.end(),
+            {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f});
+    }
 
     gl::Object<gl::VertexArray> vao;
     vao->create();
@@ -94,7 +118,6 @@ EngineStatus runClientEngine(const ClientConfig &config)
     vao->addVertexBuffer(3, vertices);
     vao->addVertexBuffer(2, textureCoords);
     vao->addIndexBuffer(indices);
-    
 
     gl::Object<gl::Shader> shader;
     shader.create("static", "static");

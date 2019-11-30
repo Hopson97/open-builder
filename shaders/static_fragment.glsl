@@ -18,5 +18,5 @@ void main() {
     float difference = max(dot(passNormal, lightDirection), 0.2);
 
     //outColour = attenuation * difference * vec4(colour, 1.0) * texture(tex, passTexCoord);
-    outColour =  texture(tex, passTexCoord);
+    outColour = texture(tex, passTexCoord);
 }
