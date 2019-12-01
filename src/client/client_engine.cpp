@@ -187,8 +187,6 @@ EngineStatus runClientEngine(const ClientConfig &config)
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         vao->getDrawable().drawElements();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
         window.display();
 
         // Stats
