@@ -61,7 +61,7 @@ auto handleWindowEvents(sf::Window &window, Keyboard &keyboard)
 } // namespace
 
 struct {
-    glm::vec3 pos{0.0, 0.0, 1.0f}, rot;
+    glm::vec3 pos{0.0, 0.0, 12.0f}, rot;
 } player;
 
 EngineStatus runClientEngine(const ClientConfig &config)
@@ -106,10 +106,9 @@ EngineStatus runClientEngine(const ClientConfig &config)
     }
     std::vector<GLfloat> textureCoords;
 
-	for (int i = 0; i < 6; i++) {
-        textureCoords.insert(
-            textureCoords.end(),
-            {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f});
+    for (int i = 0; i < 6; i++) {
+        textureCoords.insert(textureCoords.end(),
+                             {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f});
     }
 
     gl::Object<gl::VertexArray> vao;
@@ -141,41 +140,43 @@ EngineStatus runClientEngine(const ClientConfig &config)
     Keyboard keyboard;
     sf::Clock frameTimer;
     int frameCount = 0;
+    auto lastMousePosition = sf::Mouse::getPosition(window);
     while (status == EngineStatus::Ok) {
         // Input
         status = handleWindowEvents(window, keyboard);
 
-        static auto lastMousePosition = sf::Mouse::getPosition(window);
+        // Mouse input
         auto change = sf::Mouse::getPosition(window) - lastMousePosition;
-        player.rot.x += static_cast<float>(change.y / 10);
-        player.rot.y += static_cast<float>(change.x / 10);
-        sf::Mouse::setPosition({static_cast<int>(window.getSize().x / 2),
-                                static_cast<int>(window.getSize().y / 2)},
-                               window);
+
+        player.rot.x += static_cast<float>(change.y / 16.0f);
+        player.rot.y += static_cast<float>(change.x / 16.0f);
+
         lastMousePosition = sf::Mouse::getPosition(window);
+
         player.rot.x = glm::clamp(player.rot.x, -170.0f, 170.0f);
 
-        // Input
-        const float SPEED = 0.05f;
+		const float PLAYER_SPEED = 0.05f;
+		float rads = (glm::radians(player.rot.y));
+		float rads90 = (glm::radians(player.rot.y + 90));
         if (keyboard.isKeyDown(sf::Keyboard::W)) {
-            player.pos.x -= glm::cos(glm::radians(player.rot.y + 90)) * SPEED;
-            player.pos.z -= glm::sin(glm::radians(player.rot.y + 90)) * SPEED;
-        }
+			player.pos.x -= glm::cos(rads90) * PLAYER_SPEED;
+            player.pos.z -= glm::sin(rads90) * PLAYER_SPEED;
+		}
         else if (keyboard.isKeyDown(sf::Keyboard::S)) {
-            player.pos.x += glm::cos(glm::radians(player.rot.y + 90)) * SPEED;
-            player.pos.z += glm::sin(glm::radians(player.rot.y + 90)) * SPEED;
+            player.pos.x += glm::cos(rads90) * PLAYER_SPEED;
+            player.pos.z += glm::sin(rads90) * PLAYER_SPEED;
         }
         if (keyboard.isKeyDown(sf::Keyboard::A)) {
-            player.pos.x += -glm::cos(glm::radians(player.rot.y)) * SPEED;
-            player.pos.z += -glm::sin(glm::radians(player.rot.y)) * SPEED;
+            player.pos.x -= glm::cos(rads) * PLAYER_SPEED;
+            player.pos.z -= glm::sin(rads) * PLAYER_SPEED;
         }
         else if (keyboard.isKeyDown(sf::Keyboard::D)) {
-            player.pos.x += glm::cos(glm::radians(player.rot.y)) * SPEED;
-            player.pos.z += glm::sin(glm::radians(player.rot.y)) * SPEED;
+            player.pos.x += glm::cos(rads) * PLAYER_SPEED;
+            player.pos.z += glm::sin(rads) * PLAYER_SPEED;
         }
 
-        // Update
-        glm::mat4 viewMatrix{1.0f};
+            // Update
+            glm::mat4 viewMatrix{1.0f};
         rotateMatrix(&viewMatrix, player.rot);
         translateMatrix(&viewMatrix, -player.pos);
         projectionViewMatrix = projectionMatrix * viewMatrix;
