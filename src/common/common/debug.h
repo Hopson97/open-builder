@@ -7,7 +7,7 @@
 #include <ostream>
 #include <vector>
 
-//#define DEBUG_MODE_
+#define DEBUG_MODE_
 
 #ifdef DEBUG_MODE_
 
