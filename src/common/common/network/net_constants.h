@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.h"
+#include "net_types.h"
 
 constexpr port_t DEFAULT_PORT = 51666;
 constexpr int MIN_CONNECTIONS = 2;

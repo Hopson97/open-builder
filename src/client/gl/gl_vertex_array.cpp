@@ -28,6 +28,7 @@ void VertexArray::destroy()
     m_bufferObjects.clear();
     m_handle = 0;
     m_indicesCount = 0;
+    std::cout << "ded\n";
 }
 
 void VertexArray::bind() const
@@ -58,8 +59,6 @@ void VertexArray::addVertexBuffer(int magnitude,
     glCheck(glEnableVertexAttribArray(m_bufferObjects.size()));
 
     m_bufferObjects.push_back(vertexBuffer);
-    std::cout << "Added vertex buffer to location: "
-              << (m_bufferObjects.size() - 1) << std::endl;
 }
 
 void VertexArray::addIndexBuffer(const std::vector<GLuint> &indices)

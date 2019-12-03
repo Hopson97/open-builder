@@ -86,7 +86,7 @@ class VertexArray {
     void addVertexBuffer(int magnitude, const std::vector<GLfloat> &data);
     void addIndexBuffer(const std::vector<GLuint> &indices);
 
-  private:
+    // private:
     std::vector<GLuint> m_bufferObjects;
     GLuint m_handle = 0;
     GLsizei m_indicesCount = 0;
@@ -95,55 +95,5 @@ class VertexArray {
 // Functons for shaders
 void loadUniform(UniformLocation location, const glm::vec3 &vector);
 void loadUniform(UniformLocation location, const glm::mat4 &matrix);
-
-/**
- * @brief Class for managing the lifetime of an OpenGL object
- *
- * @tparam GLObject The object type to create
- */
-template <typename GLObject> class Object {
-  public:
-    template <typename... Args> void create(Args &&... args)
-    {
-        m_object.create(std::forward<Args>(args)...);
-    }
-
-    void destroy()
-    {
-        m_object.destroy();
-    }
-
-    void bind()
-    {
-        m_object.bind();
-    }
-
-    GLObject *operator->()
-    {
-        return &m_object;
-    }
-
-    ~Object()
-    {
-        destroy();
-    }
-
-    Object() = default;
-    Object(const Object &object) = delete;
-    Object &operator=(const Object &object) = delete;
-
-    Object(Object &&object) = default;
-    Object &operator=(Object &&object) = default;
-
-  private:
-    GLObject m_object;
-};
-
-template <typename T, typename... Args> Object<T> makeObject(Args &&... args)
-{
-    Object<T> t;
-    t.create(std::forward<Args>(args)...);
-    return t;
-}
 
 } // namespace gl
