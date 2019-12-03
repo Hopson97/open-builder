@@ -31,7 +31,7 @@ function (set_flags target)
             -pedantic
             -Wshadow 
             -Wpointer-arith
-            -Werror 
+           # -Werror 
         )	
     endif()
 endfunction(set_flags)
