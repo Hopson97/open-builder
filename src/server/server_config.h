@@ -1,10 +1,7 @@
 #pragma once
 
-#include <common/net_constants.h>
-#include <common/types.h>
+#include <common/network/net_constants.h>
 
-namespace server {
-struct Config {
+struct ServerConfig {
     int maxConnections = 4;
 };
-} // namespace server

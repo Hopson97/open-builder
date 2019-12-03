@@ -5,8 +5,8 @@
 #include <iostream>
 #include <thread>
 
-namespace server {
-void runServerEngine(const Config &config, sf::Time timeout)
+
+void runServerEngine(const ServerConfig &config, sf::Time timeout)
 {
     // Start the main server loop
     sf::Clock deltaClock;
@@ -19,4 +19,4 @@ void runServerEngine(const Config &config, sf::Time timeout)
         (void)timeout;
     }
 }
-} // namespace server
+

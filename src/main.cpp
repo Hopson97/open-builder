@@ -33,7 +33,7 @@ enum class LaunchType {
 struct Config {
     LaunchType launchType = LaunchType::Both;
 
-    server::Config serverOptions;
+    ServerConfig serverOptions;
     ClientConfig clientOptions;
 };
 
@@ -111,11 +111,11 @@ int exitFailure(const char *message)
     return EXIT_FAILURE;
 }
 
-int launchServer(const server::Config &config,
+int launchServer(const ServerConfig &config,
                  sf::Time timeout = sf::seconds(8))
 {
     LOG("Launching server");
-    server::runServerEngine(config, timeout);
+    runServerEngine(config, timeout);
     return EXIT_SUCCESS;
 }
 
@@ -130,6 +130,7 @@ int launchClient(const ClientConfig &config)
         case EngineStatus::GLInitError:
             return exitFailure("OpenGL failed to initilise correctly");
     }
+
     return exitFailure("Unknown error");
 }
 
