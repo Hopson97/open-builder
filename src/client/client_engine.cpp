@@ -145,6 +145,9 @@ EngineStatus runClientEngine(const ClientConfig &config)
         glm::perspective(3.14f / 2.0f, 1280.0f / 720.0f, 0.01f, 100.0f);
     modelMatrix = glm::rotate(modelMatrix, 3.14f / 4.0f, {1.0, 0.0, 0.0});
 
+	ClientConnection client;
+    client.connectTo(sf::IpAddress::LocalHost);
+
     // Start main loop of the game
     Keyboard keyboard;
     sf::Clock frameTimer;
@@ -215,6 +218,8 @@ EngineStatus runClientEngine(const ClientConfig &config)
     cube.destroy();
     texture.destroy();
     shader.destroy();
+
+	client.disconnect();
 
     return status;
 }

@@ -137,7 +137,7 @@ int launchClient(const ClientConfig &config)
 int launchBoth(const Config &config)
 {
     std::thread serverThread(launchServer, config.serverOptions,
-                             sf::milliseconds(256));
+                             sf::milliseconds(5000));
     int exit = launchClient(config.clientOptions);
     serverThread.join();
     return exit;
