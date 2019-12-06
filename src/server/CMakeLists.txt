@@ -1,6 +1,7 @@
 
 add_library(ob-server
     server_engine.cpp
+    network/server.cpp
 )
 
 set_flags(ob-server)
