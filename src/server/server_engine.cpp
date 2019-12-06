@@ -30,26 +30,28 @@ void runServerEngine(const ServerConfig &config, sf::Time timeout)
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
         auto deltaTime = deltaClock.restart();
 
+		//=========================
+		// Handle incoming packets
+		//
         Packet incoming;
         Endpoint endpoint;
         while (receivePacket(server.socket, incoming, endpoint)) {
             switch (static_cast<ServerCommand>(incoming.command)) {
 
                 case ServerCommand::Connect: {
-                    int slot = server.clients.emptySlot();
+                    LOG("Server: Connection request got")
+                    int slot = server.clients.addClient(endpoint);
                     if (slot >= 0) {
                         auto packet =
                             makePacket(ClientCommand::AcceptConnection);
                         packet.data << static_cast<client_id_t>(slot);
-                        server.socket.send(packet.data, endpoint.address,
-                                           endpoint.port);
+                        server.sendPacket(slot, packet);
 
-                        server.clients.currentConnections++;
-                        server.clients.isConnected[slot] = true;
-                        server.clients.endpoints[slot] = endpoint;
+                        auto broadcast =
+                            makePacket(ClientCommand::PlayerJoin);
+                        broadcast.data << static_cast<client_id_t>(slot);
+                        server.broadcastPacket(broadcast);
 
-                        // TODO Broadcast to all players that this player has
-                        // connected
                         // TODO Tell the new player the world/entity state
                     }
                     else {
@@ -66,15 +68,20 @@ void runServerEngine(const ServerConfig &config, sf::Time timeout)
                 case ServerCommand::Disconnect: {
                     client_id_t id = 0;
                     incoming.data >> id;
-                    if (server.clients.isConnected[id]) {
-                        server.clients.isConnected[id] = false;
-                        server.clients.currentConnections--;
-                    }
+                    server.clients.removeClient(id);
+
+					auto broadcast = makePacket(ClientCommand::PlayerJoin);
+                    broadcast.data << static_cast<client_id_t>(id);
+					server.broadcastPacket(broadcast);
                 } break;
             }
         }
 
-        if (server.clients.currentConnections == 0) {
+
+		//==============
+		//	Check if server should auto shutdown
+		//
+        if (server.clients.connectedCount() == 0) {
             if (timeoutClock.getElapsedTime() >= timeout) {
                 isRunning = false;
             }

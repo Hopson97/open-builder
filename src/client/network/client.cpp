@@ -36,7 +36,7 @@ bool ClientConnection::connectTo(const sf::IpAddress &address)
         Packet response;
         std::cout << "Sent\n";
         Endpoint end;
-        if (receivePacket(m_socket, response, end)) {
+        if (receivePacket(m_socket, response, end) == sf::Socket::Done) {
             if (static_cast<ClientCommand>(response.command) ==
                 ClientCommand::AcceptConnection) {
                 std::cout << "Accepted\n";

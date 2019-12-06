@@ -8,7 +8,7 @@
 */
 struct Packet {
     sf::Packet data;
-    command_t command;
+    command_t command = 0;
 };
 
 template <typename Command> Packet makePacket(Command command)

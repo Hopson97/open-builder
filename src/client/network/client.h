@@ -18,5 +18,5 @@ class ClientConnection {
     sf::UdpSocket m_socket;
     Endpoint m_serverEndpoint;
     client_id_t m_clientId = 0;
-    bool connected;
+    bool connected = false;
 };

@@ -1,19 +1,31 @@
 #pragma once
 
 #include <array>
-#include <SFML/Network/Packet.hpp>
+#include <common/network/packet.h>
 #include <SFML/Network/UdpSocket.hpp>
 #include <common/network/net_constants.h>
 
-struct ClientManager {
-    std::array<Endpoint, MAX_CONNECTIONS> endpoints;
-    std::array<bool, MAX_CONNECTIONS> isConnected{false};
-    int currentConnections = 0;
+class ClientConnector {
+  public:
+    int addClient(const Endpoint &endpoint);
+	bool removeClient(client_id_t id);
 
-	int emptySlot();
+	const Endpoint &clientEndpoint(client_id_t id);
+	bool clientIsConnected(client_id_t id) const;	
+	int connectedCount() const;
+
+	private:
+		std::array<Endpoint, MAX_CONNECTIONS> m_endpoints;
+		std::array<bool, MAX_CONNECTIONS> m_isClientConnected{false};
+		int m_connectedCount = 0;
+
+		int emptySlot();
 };
 
 struct Server {
-    ClientManager clients;
+    ClientConnector clients;
     sf::UdpSocket socket;
+
+	void sendPacket(client_id_t client, Packet& packet);
+    void broadcastPacket(Packet &packet);
 };
