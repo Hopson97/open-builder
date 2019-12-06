@@ -24,7 +24,6 @@ void runServerEngine(const ServerConfig &config, sf::Time timeout)
 
     Server server;
 
-
     bool isRunning = true;
     while (isRunning) {
         std::this_thread::sleep_for(std::chrono::milliseconds(20));

@@ -71,5 +71,5 @@ bool ClientConnection::sendToServer(Packet &packet)
 
 bool ClientConnection::isConnected() const
 {
-    return false;
+    return true;
 }

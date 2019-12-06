@@ -2,6 +2,7 @@
 
 #include <SFML/Network/UdpSocket.hpp>
 #include <common/network/net_types.h>
+#include <common/network/net_command.h>
 
 struct Packet;
 
