@@ -1,8 +1,12 @@
 #pragma once
 
 #include <SFML/Network/UdpSocket.hpp>
-#include <common/network/net_types.h>
 #include <common/network/net_command.h>
+#include <common/network/net_constants.h>
+#include <common/network/net_types.h>
+#include <array>
+
+#include "../maths.h"
 
 struct Packet;
 
@@ -15,9 +19,19 @@ class ClientConnection {
 
     bool isConnected() const;
 
-  private:
+    struct Player {
+        glm::vec3 position{0.0f, 0.0f, 12.0f}, rotation{0.0f};
+	};
+	std::array<Player, MAX_CONNECTIONS> players;
+
+
+	void sendPlayerPosition();
+
+	client_id_t getClientId() const;
+
+  //private:
     sf::UdpSocket m_socket;
     Endpoint m_serverEndpoint;
     client_id_t m_clientId = 0;
-    bool connected = false;
+    bool m_isConnected = false;
 };

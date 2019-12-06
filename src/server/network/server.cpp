@@ -71,6 +71,21 @@ void Server::recievePackets()
     }
 }
 
+void Server::tick()
+{
+    auto packet = makePacket(ClientCommand::Snapshot);
+    auto count = static_cast<u16>(m_clients.connectedCount());
+    packet.data << count;
+
+    for (int i = 0; i < MAX_CONNECTIONS; i++) {
+        if (m_clients.clientIsConnected(i)) {
+            packet.data << static_cast<client_id_t>(i);
+            packet.data << players[i].x << players[i].y << players[i].z;
+        }
+    }
+    broadcastPacket(packet);
+}
+
 void Server::sendPacket(client_id_t client, Packet &packet)
 {
     if (m_clients.clientIsConnected(client)) {
@@ -106,6 +121,10 @@ void Server::processPacket(Packet &packet)
             handleDisconnect(packet);
             break;
 
+        case ServerCommand::PlayerPosition:
+            handlePlayerPosition(packet);
+            break;
+
         default:
             break;
     }
@@ -116,13 +135,13 @@ void Server::handleConnectRequest(Packet &packet)
     LOG("Server: Connection request got")
     int slot = m_clients.addClient(packet.endpoint);
     if (slot >= 0) {
-		//Send connection acceptance to the connecting client
+        // Send connection acceptance to the connecting client
         auto packet = makePacket(ClientCommand::AcceptConnection);
         packet.data << static_cast<client_id_t>(slot);
         sendPacket(slot, packet);
         std::cout << "Packet sent\n";
 
-		//Tell all players that a player has joined
+        // Tell all players that a player has joined
         auto broadcast = makePacket(ClientCommand::PlayerJoin);
         broadcast.data << static_cast<client_id_t>(slot);
         broadcastPacket(broadcast);
@@ -134,9 +153,9 @@ void Server::handleConnectRequest(Packet &packet)
     }
 }
 
-
-void Server::handleDisconnect(Packet & packet)
+void Server::handleDisconnect(Packet &packet)
 {
+    LOG("Server: Disconnect request got")
     client_id_t id = 0;
     packet.data >> id;
     m_clients.removeClient(id);
@@ -144,4 +163,15 @@ void Server::handleDisconnect(Packet & packet)
     auto broadcast = makePacket(ClientCommand::PlayerJoin);
     broadcast.data << static_cast<client_id_t>(id);
     broadcastPacket(broadcast);
+}
+
+void Server::handlePlayerPosition(Packet &packet)
+{
+    client_id_t id = 0;
+    packet.data >> id;
+
+    if (m_clients.clientIsConnected(id)) {
+        Player *player = &players[id];
+        packet.data >> player->x >> player->y >> player->z;
+    }
 }

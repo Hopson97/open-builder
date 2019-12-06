@@ -26,6 +26,13 @@ class Server {
 	public:
 		Server();
 		void recievePackets();
+
+		    struct Player {
+                    float x = 0, y = 0, z = 0;
+                };
+                std::array<Player, MAX_CONNECTIONS> players;
+
+		void tick();
 		
 		void sendPacket(client_id_t client, Packet& packet);
     	void broadcastPacket(Packet &packet);
@@ -37,6 +44,8 @@ class Server {
 
 		void handleConnectRequest(Packet& packet);
 		void handleDisconnect(Packet& packet);
+		void handlePlayerPosition(Packet &packet);
+
 
     	ClientConnector m_clients;
     	sf::UdpSocket m_socket;

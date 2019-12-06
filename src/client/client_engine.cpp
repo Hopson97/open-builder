@@ -7,6 +7,8 @@
 #include "network/client.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Window.hpp>
+#include <common/debug.h>
+#include <common/network/packet.h>
 #include <common/types.h>
 #include <glad/glad.h>
 #include <iostream>
@@ -19,8 +21,7 @@ class Window {
     {
         window.setKeyRepeatEnabled(false);
         if (config.fullScreen) {
-            create(sf::VideoMode::getDesktopMode(),
-                   sf::Style::Fullscreen);
+            create(sf::VideoMode::getDesktopMode(), sf::Style::Fullscreen);
             width = window.getSize().x;
             height = window.getSize().y;
         }
@@ -34,7 +35,7 @@ class Window {
         }
     }
 
-	auto pollEvents(Keyboard &keyboard)
+    auto pollEvents(Keyboard &keyboard)
     {
         auto status = EngineStatus::Ok;
         sf::Event e;
@@ -58,17 +59,17 @@ class Window {
     unsigned height;
 
   private:
-	void create(const sf::VideoMode& mode, u32 style)
-	{
-            sf::ContextSettings settings;
-            settings.depthBits = 24;
-            settings.stencilBits = 8;
-            settings.antialiasingLevel = 4;
-            settings.majorVersion = 3;
-            settings.minorVersion = 3;
+    void create(const sf::VideoMode &mode, u32 style)
+    {
+        sf::ContextSettings settings;
+        settings.depthBits = 24;
+        settings.stencilBits = 8;
+        settings.antialiasingLevel = 4;
+        settings.majorVersion = 3;
+        settings.minorVersion = 3;
 
-            window.create(mode, "Open Builder", style, settings);
-	}
+        window.create(mode, "Open Builder", style, settings);
+    }
 };
 
 gl::VertexArray createCube()
@@ -114,10 +115,6 @@ gl::VertexArray createCube()
 
 } // namespace
 
-struct {
-    glm::vec3 pos{0.0, 0.0, 12.0f}, rot;
-} player{};
-
 EngineStatus runClientEngine(const ClientConfig &config)
 {
     // Create the window
@@ -127,7 +124,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
     if (!gladLoadGL()) {
         return EngineStatus::GLInitError;
     }
-    
+
     glClearColor(0.25, 0.75, 1.0, 1.0);
     glViewport(0, 0, window.width, window.height);
 
@@ -153,64 +150,120 @@ EngineStatus runClientEngine(const ClientConfig &config)
 
     projectionMatrix =
         glm::perspective(3.14f / 2.0f, 1280.0f / 720.0f, 0.01f, 100.0f);
-    modelMatrix = glm::rotate(modelMatrix, 3.14f / 4.0f, {1.0, 0.0, 0.0});
 
     ClientConnection client;
     client.connectTo(sf::IpAddress::LocalHost);
+    auto &player = client.players[client.getClientId()];
 
     // Start main loop of the game
     Keyboard keyboard;
     sf::Clock frameTimer;
     int frameCount = 0;
-    auto lastMousePosition = sf::Mouse::getPosition(window.window);
+    auto lastMousepositionition = sf::Mouse::getPosition(window.window);
     auto status = EngineStatus::Ok;
+    bool useMouse = true;
     while (status == EngineStatus::Ok) {
         // Input
         status = window.pollEvents(keyboard);
 
-        // Mouse input
-        auto change = sf::Mouse::getPosition(window.window) - lastMousePosition;
+		if (useMouse) {
 
-        player.rot.x += static_cast<float>(change.y / 16.0f);
-        player.rot.y += static_cast<float>(change.x / 16.0f);
+            // Mouse input
+            auto change =
+                sf::Mouse::getPosition(window.window) - lastMousepositionition;
 
-        lastMousePosition = sf::Mouse::getPosition(window.window);
+            player.rotation.x += static_cast<float>(change.y / 16.0f);
+            player.rotation.y += static_cast<float>(change.x / 16.0f);
 
-        player.rot.x = glm::clamp(player.rot.x, -170.0f, 170.0f);
+            lastMousepositionition = sf::Mouse::getPosition(window.window);
+
+            player.rotation.x = glm::clamp(player.rotation.x, -170.0f, 170.0f);
+        }
+
+		if (keyboard.keyReleased(sf::Keyboard::L)) {
+            useMouse = !useMouse;
+		}
 
         const float PLAYER_SPEED = 0.05f;
-        float rads = (glm::radians(player.rot.y));
-        float rads90 = (glm::radians(player.rot.y + 90));
+        float rads = (glm::radians(player.rotation.y));
+        float rads90 = (glm::radians(player.rotation.y + 90));
         if (keyboard.isKeyDown(sf::Keyboard::W)) {
-            player.pos.x -= glm::cos(rads90) * PLAYER_SPEED;
-            player.pos.z -= glm::sin(rads90) * PLAYER_SPEED;
+            player.position.x -= glm::cos(rads90) * PLAYER_SPEED;
+            player.position.z -= glm::sin(rads90) * PLAYER_SPEED;
         }
         else if (keyboard.isKeyDown(sf::Keyboard::S)) {
-            player.pos.x += glm::cos(rads90) * PLAYER_SPEED;
-            player.pos.z += glm::sin(rads90) * PLAYER_SPEED;
+            player.position.x += glm::cos(rads90) * PLAYER_SPEED;
+            player.position.z += glm::sin(rads90) * PLAYER_SPEED;
         }
         if (keyboard.isKeyDown(sf::Keyboard::A)) {
-            player.pos.x -= glm::cos(rads) * PLAYER_SPEED;
-            player.pos.z -= glm::sin(rads) * PLAYER_SPEED;
+            player.position.x -= glm::cos(rads) * PLAYER_SPEED;
+            player.position.z -= glm::sin(rads) * PLAYER_SPEED;
         }
         else if (keyboard.isKeyDown(sf::Keyboard::D)) {
-            player.pos.x += glm::cos(rads) * PLAYER_SPEED;
-            player.pos.z += glm::sin(rads) * PLAYER_SPEED;
+            player.position.x += glm::cos(rads) * PLAYER_SPEED;
+            player.position.z += glm::sin(rads) * PLAYER_SPEED;
         }
 
         // Update
         glm::mat4 viewMatrix{1.0f};
-        rotateMatrix(&viewMatrix, player.rot);
-        translateMatrix(&viewMatrix, -player.pos);
+        rotateMatrix(&viewMatrix, player.rotation);
+        translateMatrix(&viewMatrix, -player.position);
         projectionViewMatrix = projectionMatrix * viewMatrix;
 
         gl::loadUniform(pvLocation, projectionViewMatrix);
         gl::loadUniform(mdLocarion, modelMatrix);
 
+        client.sendPlayerPosition();
+
+        Packet incoming;
+        while (receivePacket(client.m_socket, incoming)) {
+            switch (command) {
+                case ClientCommand::ConnectionChallenge:
+                    break;
+
+                case ClientCommand::AcceptConnection:
+                    break;
+
+                case ClientCommand::RejectConnection:
+                    break;
+
+                case ClientCommand::PlayerJoin:
+                    break;
+
+                case ClientCommand::PlayerLeave:
+                    break;
+
+                case ClientCommand::Snapshot: {
+                    u16 n = 0;
+                    incoming.data >> n;
+					
+                    for (u16 i = 0; i < n; i++) {
+                        client_id_t id = 0;
+                        incoming.data >> id;
+                        ClientConnection::Player *p = &client.players[id];
+
+						incoming.data >> p->position.x >> p->position.y >>
+                            p->position.z;
+						p->position.y -= 2;
+					}
+
+                } break;
+
+                default:
+                    break;
+            }
+        }
+
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        cube.getDrawable().drawElements();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        for (auto &player : client.players) {
+            modelMatrix = glm::mat4{1.0f};
+            translateMatrix(&modelMatrix, {player.position.x, player.position.y,
+                                           player.position.z});
+            gl::loadUniform(mdLocarion, modelMatrix);
+            cube.getDrawable().drawElements();
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        }
 
         window.window.display();
 

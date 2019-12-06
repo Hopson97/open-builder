@@ -30,7 +30,7 @@ void runServerEngine(const ServerConfig &config, sf::Time timeout)
         auto deltaTime = deltaClock.restart();
 
 		server.recievePackets();
-
+        server.tick();
 
 		//==============
 		//	Check if server should auto shutdown

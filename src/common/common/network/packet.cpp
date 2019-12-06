@@ -1,7 +1,10 @@
 #include "packet.h"
 
+#include <iostream>
+
 bool receivePacket(sf::UdpSocket &socket, Packet &packet)
 {
+
     sf::Packet data;
     if (socket.receive(data, packet.endpoint.address, packet.endpoint.port) ==
         sf::Socket::Done) {

@@ -1,9 +1,9 @@
 #include "client.h"
 
+#include <common/debug.h>
 #include <common/network/net_command.h>
 #include <common/network/net_constants.h>
 #include <common/network/packet.h>
-#include <common/debug.h>
 #include <ctime>
 #include <iostream>
 #include <limits>
@@ -35,12 +35,13 @@ bool ClientConnection::connectTo(const sf::IpAddress &address)
     auto conPacket = makePacket(ServerCommand::Connect);
     if (sendToServer(conPacket)) {
         Packet response;
-        LOG("Client sent request to connect\n");;
+        LOG("Client sent request to connect\n");
         if (receivePacket(m_socket, response)) {
             if (static_cast<ClientCommand>(response.command) ==
                 ClientCommand::AcceptConnection) {
                 LOG("Client connection accepted\n");
                 response.data >> m_clientId;
+                m_socket.setBlocking(false);
                 return true;
             }
             else if (static_cast<ClientCommand>(response.command) ==
@@ -72,4 +73,18 @@ bool ClientConnection::sendToServer(Packet &packet)
 bool ClientConnection::isConnected() const
 {
     return true;
+}
+
+void ClientConnection::sendPlayerPosition()
+{
+    auto packet = makePacket(ServerCommand::PlayerPosition);
+    packet.data << m_clientId << players[m_clientId].position.x
+                << players[m_clientId].position.y
+                << players[m_clientId].position.z;
+    sendToServer(packet);
+}
+
+client_id_t ClientConnection::getClientId() const
+{
+    return m_clientId;
 }
