@@ -3,6 +3,7 @@
 #include <common/network/net_command.h>
 #include <common/network/net_constants.h>
 #include <common/network/packet.h>
+#include <common/debug.h>
 #include <ctime>
 #include <iostream>
 #include <limits>
@@ -34,25 +35,23 @@ bool ClientConnection::connectTo(const sf::IpAddress &address)
     auto conPacket = makePacket(ServerCommand::Connect);
     if (sendToServer(conPacket)) {
         Packet response;
-        std::cout << "Sent\n";
-        Endpoint end;
-        if (receivePacket(m_socket, response) == sf::Socket::Done) {
+        LOG("Client sent request to connect\n");;
+        if (receivePacket(m_socket, response)) {
             if (static_cast<ClientCommand>(response.command) ==
                 ClientCommand::AcceptConnection) {
-                std::cout << "Accepted\n";
+                LOG("Client connection accepted\n");
                 response.data >> m_clientId;
                 return true;
             }
             else if (static_cast<ClientCommand>(response.command) ==
                      ClientCommand::RejectConnection) {
-                std::cout << "Rejected\n";
+                LOG("Client connection rejected\n");
                 return false;
             }
         }
     }
-    else {
-        return false;
-	}
+    LOG("Client failed to connect\n");
+    return false;
 }
 
 void ClientConnection::disconnect()

@@ -120,6 +120,7 @@ void Server::handleConnectRequest(Packet &packet)
         auto packet = makePacket(ClientCommand::AcceptConnection);
         packet.data << static_cast<client_id_t>(slot);
         sendPacket(slot, packet);
+        std::cout << "Packet sent\n";
 
 		//Tell all players that a player has joined
         auto broadcast = makePacket(ClientCommand::PlayerJoin);
