@@ -17,7 +17,7 @@ namespace {
 //         u64(0), std::numeric_limits<u64>::max() - 1);
 //     return dist(rng);
 // }
-   
+
 // auto createConnectionPacket()
 // {
 //     // auto salt = createSalt();
@@ -36,11 +36,12 @@ bool ClientConnection::connectTo(const sf::IpAddress &address)
         Packet response;
         std::cout << "Sent\n";
         Endpoint end;
-        if (receivePacket(m_socket, response, end) == sf::Socket::Done) {
+        if (receivePacket(m_socket, response) == sf::Socket::Done) {
             if (static_cast<ClientCommand>(response.command) ==
                 ClientCommand::AcceptConnection) {
                 std::cout << "Accepted\n";
                 response.data >> m_clientId;
+                return true;
             }
             else if (static_cast<ClientCommand>(response.command) ==
                      ClientCommand::RejectConnection) {
@@ -49,6 +50,9 @@ bool ClientConnection::connectTo(const sf::IpAddress &address)
             }
         }
     }
+    else {
+        return false;
+	}
 }
 
 void ClientConnection::disconnect()
@@ -57,7 +61,7 @@ void ClientConnection::disconnect()
     disconnectPacket.data << m_clientId;
     for (int i = 0; i < 10; i++) {
         sendToServer(disconnectPacket);
-	}
+    }
 }
 
 bool ClientConnection::sendToServer(Packet &packet)

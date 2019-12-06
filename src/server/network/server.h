@@ -22,10 +22,22 @@ class ClientConnector {
 		int emptySlot();
 };
 
-struct Server {
-    ClientConnector clients;
-    sf::UdpSocket socket;
+class Server {
+	public:
+		Server();
+		void recievePackets();
+		
+		void sendPacket(client_id_t client, Packet& packet);
+    	void broadcastPacket(Packet &packet);
 
-	void sendPacket(client_id_t client, Packet& packet);
-    void broadcastPacket(Packet &packet);
+		const ClientConnector& clients() const;
+
+	private:
+		void processPacket(Packet& packet);
+
+		void handleConnectRequest(Packet& packet);
+		void handleDisconnect(Packet& packet);
+
+    	ClientConnector m_clients;
+    	sf::UdpSocket m_socket;
 };
