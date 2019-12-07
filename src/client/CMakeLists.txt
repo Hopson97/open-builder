@@ -1,12 +1,14 @@
 
 add_library(ob-client
-    gl/gl_errors.cpp 
-    gl/gl_shader.cpp 
-    gl/gl_textures.cpp
+    input/keyboard.cpp
+    network/client.cpp
     gl/gl_vertex_array.cpp
+    gl/texture_atlas.cpp
+    gl/gl_shader.cpp
+    gl/gl_textures.cpp
+    gl/gl_errors.cpp
     maths.cpp
     client_engine.cpp
-    input/keyboard.cpp
 )
 
 set_flags(ob-client)

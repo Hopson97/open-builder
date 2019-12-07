@@ -65,7 +65,10 @@ class Drawable {
   public:
     Drawable(GLuint vao, GLsizei indices);
 
-    void drawElements() const;
+    void bindAndDraw() const;
+
+	void bind() const;
+    void draw() const;
 
   private:
     const GLuint m_handle = 0;

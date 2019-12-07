@@ -1,1 +1,1 @@
-.\Release\open-builder.exe
+.\Release\open-builder.exe -client x
