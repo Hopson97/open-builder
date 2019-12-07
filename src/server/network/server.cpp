@@ -18,7 +18,6 @@ int ClientConnector::addClient(const Endpoint &endpoint)
 {
     int slot = emptySlot();
     if (slot >= 0) {
-        LOGVAR("Adding client into slot: ", slot)
         m_endpoints[slot] = endpoint;
         m_isClientConnected[slot] = true;
         m_connectedCount++;
@@ -82,6 +81,7 @@ int Server::tryConnectClient(Packet &packet)
 {
     int slot = clients.addClient(packet.endpoint);
     if (slot >= 0) {
+        LOGVAR("Server", "Connection by request from client - ", (int)slot);
         // Send connection acceptance to the connecting client
         auto response = makePacket(ClientCommand::AcceptConnection);
         response.data << static_cast<client_id_t>(slot);
@@ -103,11 +103,10 @@ int Server::tryConnectClient(Packet &packet)
 
 int Server::tryDisconnectClient(Packet &packet)
 {
-    LOG("Server: Disconnect request got")
     client_id_t id = 0;
     packet.data >> id;
     if (clients.removeClient(id)) {
-
+        LOGVAR("Server", "Disconnect by request from client - ", (int)id);
         auto broadcast = makePacket(ClientCommand::PlayerLeave);
         broadcast.data << static_cast<client_id_t>(id);
         broadcastPacket(broadcast);

@@ -62,7 +62,6 @@ void CubeTexture::create(const std::array<std::string, 6> &textures)
 void CubeTexture::destroy()
 {
     destroyTexture(&m_handle);
-    LOGVAR("Texture destroyed with ID: ", m_handle);
     m_handle = 0;
 }
 
@@ -78,7 +77,7 @@ void Texture2d::create(const std::string &file)
 
     auto path = TEXTURE_PATH + file + ".png";
     bufferImage(GL_TEXTURE_2D, path);
-    LOG("Texture created.");
+    LOG("Client", "Texture created.");
 
     glCheck(glGenerateMipmap(GL_TEXTURE_2D));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,

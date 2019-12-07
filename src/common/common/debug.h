@@ -20,15 +20,21 @@ class DebugLogger {
         return logger;
     }
 
+    /*
     template <typename T> void log(const char *file, int line, const T &item)
     {
-        std::cout << file << ":" << line << " - " << item << std::endl;
+        std::cout << file << ": " << line << " - " << item << std::endl;
+    }*/
+
+    template <typename T> void log(const char* where, const T &item)
+    {
+        std::cout << where << ": " << item << std::endl;
     }
 
     template <typename T, typename Var>
-    void log(const char *file, int line, const T &title, const Var &var)
+    void log(const char* where, const T& title, const Var &var)
     {
-        std::cout << file << ":" << line << " - " << title << " " << var
+        std::cout << where << ": " << title << " " << var
                   << std::endl;
     }
 
@@ -37,15 +43,19 @@ class DebugLogger {
     inline static std::mutex mu;
 };
 
-#define LOGVAR(title, var)                                                     \
-    DebugLogger::get().log(__FILE__, __LINE__, title, var);
-
-#define LOG(item) DebugLogger::get().log(__FILE__, __LINE__, item);
+#define LOGVAR(where, title, var)   \
+    DebugLogger::get().log(where, title, var);
+/*
+#define LOGLINE(title, var)   \
+    DebugLogger::get().log(where, title, var);
+*/
+#define LOG(where, item) DebugLogger::get().log(where, item);
 
 #else
 
-#define LOGVAR(title, var)
-#define LOG(item)
+#define LOGVAR(where, title, var)
+#define LOGLINE(title, var)
+#define LOG(where, item)
 
 #endif
 

@@ -35,23 +35,23 @@ bool ClientConnection::connectTo(const sf::IpAddress &address)
     auto conPacket = makePacket(ServerCommand::Connect);
     if (sendPacketToServer(conPacket)) {
         Packet response;
-        LOG("Client sent request to connect\n");
+        LOG("Client", "Connection request sent");
         if (receivePacket(socket, response)) {
             if (static_cast<ClientCommand>(response.command) ==
                 ClientCommand::AcceptConnection) {
-                LOG("Client connection accepted\n");
+                LOG("Client", "Connection accepted\n");
                 response.data >> m_clientId;
                 socket.setBlocking(false);
                 return true;
             }
             else if (static_cast<ClientCommand>(response.command) ==
                      ClientCommand::RejectConnection) {
-                LOG("Client connection rejected\n");
+                LOG("Client", "Connection rejected\n");
                 return false;
             }
         }
     }
-    LOG("Client failed to connect\n");
+    LOG("Client", "Failed to connect\n");
     return false;
 }
 

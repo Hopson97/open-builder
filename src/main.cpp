@@ -139,7 +139,7 @@ int exitFailure(const char *message)
  */
 int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
 {
-    LOG("Launching server");
+    LOG("Launcher", "Launching server");
     runServerEngine(config, timeout);
     return EXIT_SUCCESS;
 }
@@ -151,7 +151,7 @@ int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
  */
 int launchClient(const ClientConfig &config)
 {
-    LOG("Launching client");
+    LOG("Launcher", "Launching client");
     switch (runClientEngine(config)) {
         case EngineStatus::Exit:
         case EngineStatus::Ok:
