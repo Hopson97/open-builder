@@ -1,8 +1,6 @@
 #pragma once
 
-#include <SFML/System/Vector3.hpp>
 #include <cstdint>
-#include <unordered_map>
 
 // Integral types
 using u8 = uint8_t;
