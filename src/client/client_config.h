@@ -1,5 +1,9 @@
 #pragma once
 
+/**
+ * @brief Config options for client
+ * Mostly for the window and general graphics options
+ */
 struct ClientConfig {
     bool fullScreen = false;
     int windowWidth = 1280;
