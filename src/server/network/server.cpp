@@ -78,7 +78,7 @@ void Server::broadcastPacket(Packet &packet)
     }
 }
 
-int Server::handleConnectRequest(Packet &packet)
+int Server::tryConnectClient(Packet &packet)
 {
     int slot = clients.addClient(packet.endpoint);
     if (slot >= 0) {
@@ -101,7 +101,7 @@ int Server::handleConnectRequest(Packet &packet)
     }
 }
 
-int Server::handleDisconnect(Packet &packet)
+int Server::tryDisconnectClient(Packet &packet)
 {
     LOG("Server: Disconnect request got")
     client_id_t id = 0;

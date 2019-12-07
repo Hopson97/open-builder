@@ -101,7 +101,7 @@ class ServerEngine {
     void handleConnectRequest(Packet &packet)
     {
         LOG("Server: Connection request got")
-        int slot = m_server.handleConnectRequest(packet);
+        int slot = m_server.tryConnectClient(packet);
         if (slot >= 0) {
             m_entities[slot].active = true;
         }
@@ -110,7 +110,7 @@ class ServerEngine {
     void handleDisconnect(Packet &packet)
     {
         LOG("Server: Disconnect request got")
-        int slot = m_server.handleDisconnect(packet);
+        int slot = m_server.tryDisconnectClient(packet);
         if (slot >= 0) {
             m_entities[slot].active = false;
         }
