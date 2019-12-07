@@ -36,12 +36,12 @@ bool ClientConnection::connectTo(const sf::IpAddress &address)
     if (sendToServer(conPacket)) {
         Packet response;
         LOG("Client sent request to connect\n");
-        if (receivePacket(m_socket, response)) {
+        if (receivePacket(socket, response)) {
             if (static_cast<ClientCommand>(response.command) ==
                 ClientCommand::AcceptConnection) {
                 LOG("Client connection accepted\n");
                 response.data >> m_clientId;
-                m_socket.setBlocking(false);
+                socket.setBlocking(false);
                 return true;
             }
             else if (static_cast<ClientCommand>(response.command) ==
@@ -66,7 +66,7 @@ void ClientConnection::disconnect()
 
 bool ClientConnection::sendToServer(Packet &packet)
 {
-    return m_socket.send(packet.data, m_serverEndpoint.address,
+    return socket.send(packet.data, m_serverEndpoint.address,
                          m_serverEndpoint.port) == sf::Socket::Done;
 }
 

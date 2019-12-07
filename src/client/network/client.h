@@ -20,7 +20,7 @@ class ClientConnection {
     bool isConnected() const;
 
     struct Player {
-        glm::vec3 position{0.0f, 0.0f, 0.0f}, rotation{0.0f};
+        glm::vec3 position{0.0f, 0.0f, -12.0f}, rotation{0.0f};
     };
     std::array<Player, MAX_CONNECTIONS> players;
 
@@ -28,8 +28,9 @@ class ClientConnection {
 
     client_id_t getClientId() const;
 
-    // private:
-    sf::UdpSocket m_socket;
+    sf::UdpSocket socket;
+
+  private:
     Endpoint m_serverEndpoint;
     client_id_t m_clientId = 0;
     bool m_isConnected = false;
