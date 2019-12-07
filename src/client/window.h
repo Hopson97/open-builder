@@ -5,7 +5,7 @@
 #include <SFML/Window/Window.hpp>
 #include <common/types.h>
 
-class ClientConfig;
+struct ClientConfig;
 class Keyboard;
 
 class Window {
