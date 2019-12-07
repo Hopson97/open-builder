@@ -9,9 +9,19 @@ Drawable::Drawable(GLuint vao, GLsizei indices)
 {
 }
 
-void Drawable::drawElements() const
+void Drawable::bindAndDraw() const
+{
+    bind();
+    draw();
+}
+
+void Drawable::bind() const
 {
     glCheck(glBindVertexArray(m_handle));
+}
+
+void Drawable::draw() const
+{
     glCheck(
         glDrawElements(GL_TRIANGLES, m_indicesCount, GL_UNSIGNED_INT, nullptr));
 }

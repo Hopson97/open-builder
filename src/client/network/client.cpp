@@ -75,15 +75,6 @@ bool ClientConnection::isConnected() const
     return true;
 }
 
-void ClientConnection::sendPlayerPosition()
-{
-    auto packet = makePacket(ServerCommand::PlayerPosition);
-    packet.data << m_clientId << players[m_clientId].position.x
-                << players[m_clientId].position.y
-                << players[m_clientId].position.z;
-    sendToServer(packet);
-}
-
 client_id_t ClientConnection::getClientId() const
 {
     return m_clientId;

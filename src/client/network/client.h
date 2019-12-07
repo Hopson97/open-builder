@@ -19,13 +19,6 @@ class ClientConnection {
 
     bool isConnected() const;
 
-    struct Player {
-        glm::vec3 position{0.0f, 0.0f, -12.0f}, rotation{0.0f};
-    };
-    std::array<Player, MAX_CONNECTIONS> players;
-
-    void sendPlayerPosition();
-
     client_id_t getClientId() const;
 
     sf::UdpSocket socket;

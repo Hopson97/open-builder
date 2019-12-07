@@ -58,39 +58,16 @@ int ClientConnector::connectedCount() const
 //
 Server::Server()
 {
-    m_socket.setBlocking(false);
-    m_socket.bind(DEFAULT_PORT);
-}
 
-void Server::recievePackets()
-{
-    Packet incoming;
-    Endpoint endpoint;
-    while (receivePacket(m_socket, incoming)) {
-        processPacket(incoming);
-    }
-}
-
-void Server::tick()
-{
-    auto packet = makePacket(ClientCommand::Snapshot);
-    auto count = static_cast<u16>(m_clients.connectedCount());
-    packet.data << count;
-
-    for (int i = 0; i < MAX_CONNECTIONS; i++) {
-        if (m_clients.clientIsConnected(i)) {
-            packet.data << static_cast<client_id_t>(i);
-            packet.data << players[i].x << players[i].y << players[i].z;
-        }
-    }
-    broadcastPacket(packet);
+    socket.setBlocking(false);
+    socket.bind(DEFAULT_PORT);
 }
 
 void Server::sendPacket(client_id_t client, Packet &packet)
 {
-    if (m_clients.clientIsConnected(client)) {
-        auto &endpoint = m_clients.clientEndpoint(client);
-        m_socket.send(packet.data, endpoint.address, endpoint.port);
+    if (clients.clientIsConnected(client)) {
+        auto &endpoint = clients.clientEndpoint(client);
+        socket.send(packet.data, endpoint.address, endpoint.port);
     }
 }
 
@@ -101,76 +78,42 @@ void Server::broadcastPacket(Packet &packet)
     }
 }
 
-const ClientConnector &Server::clients() const
+int Server::handleConnectRequest(Packet &packet)
 {
-    return m_clients;
-}
-
-void Server::processPacket(Packet &packet)
-{
-    auto command = static_cast<ServerCommand>(packet.command);
-    switch (command) {
-        case ServerCommand::Connect:
-            handleConnectRequest(packet);
-            break;
-
-        case ServerCommand::ConnectionChallengeResponse:
-            break;
-
-        case ServerCommand::Disconnect:
-            handleDisconnect(packet);
-            break;
-
-        case ServerCommand::PlayerPosition:
-            handlePlayerPosition(packet);
-            break;
-
-        default:
-            break;
-    }
-}
-
-void Server::handleConnectRequest(Packet &packet)
-{
-    LOG("Server: Connection request got")
-    int slot = m_clients.addClient(packet.endpoint);
+    int slot = clients.addClient(packet.endpoint);
     if (slot >= 0) {
         // Send connection acceptance to the connecting client
         auto response = makePacket(ClientCommand::AcceptConnection);
         response.data << static_cast<client_id_t>(slot);
         sendPacket(slot, response);
-        std::cout << "Response sent\n";
 
         // Tell all players that a player has joined
         auto broadcast = makePacket(ClientCommand::PlayerJoin);
         broadcast.data << static_cast<client_id_t>(slot);
         broadcastPacket(broadcast);
+        return slot;
     }
     else {
         auto response = makePacket(ClientCommand::RejectConnection);
-        m_socket.send(response.data, response.endpoint.address,
+        socket.send(response.data, response.endpoint.address,
                       response.endpoint.port);
+        return -1;
     }
 }
 
-void Server::handleDisconnect(Packet &packet)
+int Server::handleDisconnect(Packet &packet)
 {
     LOG("Server: Disconnect request got")
     client_id_t id = 0;
     packet.data >> id;
-    m_clients.removeClient(id);
+    if (clients.removeClient(id)) {
 
-    auto broadcast = makePacket(ClientCommand::PlayerJoin);
-    broadcast.data << static_cast<client_id_t>(id);
-    broadcastPacket(broadcast);
-}
-
-void Server::handlePlayerPosition(Packet &packet)
-{
-    client_id_t id = 0;
-    packet.data >> id;
-    if (m_clients.clientIsConnected(id)) {
-        Player *player = &players[id];
-        packet.data >> player->x >> player->y >> player->z;
+        auto broadcast = makePacket(ClientCommand::PlayerLeave);
+        broadcast.data << static_cast<client_id_t>(id);
+        broadcastPacket(broadcast);
+        return id;
+    }
+    else {
+        return -1;
     }
 }

@@ -24,28 +24,15 @@ class ClientConnector {
 
 class Server {
   public:
+    sf::UdpSocket socket;
+    ClientConnector clients;
+
+  public:
     Server();
-    void recievePackets();
-
-    struct Player {
-        float x = 0, y = 0, z = 0;
-    };
-    std::array<Player, MAX_CONNECTIONS> players;
-
-    void tick();
 
     void sendPacket(client_id_t client, Packet &packet);
     void broadcastPacket(Packet &packet);
 
-    const ClientConnector &clients() const;
-
-  private:
-    void processPacket(Packet &packet);
-
-    void handleConnectRequest(Packet &packet);
-    void handleDisconnect(Packet &packet);
-    void handlePlayerPosition(Packet &packet);
-
-    ClientConnector m_clients;
-    sf::UdpSocket m_socket;
+    [[no_discard]] int handleConnectRequest(Packet &packet);
+    [[no_discard]] int handleDisconnect(Packet &packet);
 };

@@ -28,7 +28,9 @@ EngineStatus Window::pollEvents(Keyboard &keyboard)
     auto status = EngineStatus::Ok;
     sf::Event e;
     while (window.pollEvent(e)) {
-        keyboard.update(e);
+        if (window.hasFocus()) {
+			keyboard.update(e);
+		}
         if (e.type == sf::Event::KeyPressed) {
             if (e.key.code == sf::Keyboard::Escape) {
                 status = EngineStatus::Exit;

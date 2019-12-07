@@ -5,6 +5,7 @@
 #include "input/keyboard.h"
 #include "maths.h"
 #include "network/client.h"
+#include "window.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/debug.h>
@@ -12,7 +13,6 @@
 #include <common/types.h>
 #include <glad/glad.h>
 #include <iostream>
-#include "window.h"
 
 namespace {
 gl::VertexArray createCube()
@@ -56,6 +56,11 @@ gl::VertexArray createCube()
     return vao;
 }
 
+struct Entity {
+    glm::vec3 position{0.0f, 0.0f, -12.0f}, rotation{0.0f};
+    bool active = false;
+};
+
 class ClientEngine {
   private:
     Window &m_window;
@@ -69,7 +74,9 @@ class ClientEngine {
     gl::UniformLocation m_projectionViewLocation;
 
     ClientConnection m_client;
-    ClientConnection::Player *m_player = nullptr;
+    std::array<Entity, 512> m_entities;
+
+    Entity *m_player = nullptr;
 
   public:
     ClientEngine(Window &window)
@@ -109,7 +116,7 @@ class ClientEngine {
             render(projectionMatrix);
 
             // Stats
-			frameCount++;
+            frameCount++;
             if (frameTimer.getElapsedTime().asSeconds() > 2) {
                 float ms = static_cast<float>(
                     frameTimer.getElapsedTime().asMilliseconds());
@@ -160,7 +167,11 @@ class ClientEngine {
 
     void update()
     {
-        m_client.sendPlayerPosition();
+        auto packet = makePacket(ServerCommand::PlayerPosition);
+        auto id = m_client.getClientId();
+        packet.data << id << m_entities[id].position.x
+                    << m_entities[id].position.y << m_entities[id].position.z;
+        m_client.sendToServer(packet);
         handlePackets();
     }
 
@@ -175,22 +186,25 @@ class ClientEngine {
         gl::loadUniform(m_projectionViewLocation, projectionViewMatrix);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        for (auto &p : m_client.players) {
-            glm::mat4 modelMatrix{1.0f};
-            translateMatrix(&modelMatrix,
-                            {p.position.x, p.position.y, p.position.z});
-            gl::loadUniform(m_modelLocation, modelMatrix);
-            m_cube.getDrawable().drawElements();
+
+        auto drawable = m_cube.getDrawable();
+        drawable.bind();
+        for (auto &p : m_entities) {
+            if (p.active) {
+
+                glm::mat4 modelMatrix{1.0f};
+                translateMatrix(&modelMatrix,
+                                {p.position.x, p.position.y, p.position.z});
+                gl::loadUniform(m_modelLocation, modelMatrix);
+                drawable.draw();
+            }
         }
-		
+
         glm::mat4 modelMatrix{1.0f};
         gl::loadUniform(m_modelLocation, modelMatrix);
-        m_cube.getDrawable().drawElements();
+        drawable.draw();
         m_window.window.display();
     }
-
-
 
     void init()
     {
@@ -199,13 +213,14 @@ class ClientEngine {
         m_shader.create("static", "static");
         m_shader.bind();
         m_modelLocation = m_shader.getUniformLocation("modelMatrix");
-        m_projectionViewLocation = m_shader.getUniformLocation("projectionViewMatrix");
+        m_projectionViewLocation =
+            m_shader.getUniformLocation("projectionViewMatrix");
 
         m_texture.create("grass");
         m_texture.bind();
 
         m_client.connectTo(sf::IpAddress::LocalHost);
-        m_player = &m_client.players[m_client.getClientId()];
+        m_player = &m_entities[m_client.getClientId()];
     }
 
     void handlePackets()
@@ -213,34 +228,27 @@ class ClientEngine {
         Packet incoming;
         while (receivePacket(m_client.socket, incoming)) {
             switch (static_cast<ClientCommand>(incoming.command)) {
-                case ClientCommand::ConnectionChallenge:
-                    break;
-
-                case ClientCommand::AcceptConnection:
-                    break;
-
-                case ClientCommand::RejectConnection:
-                    break;
-
                 case ClientCommand::PlayerJoin:
-                    LOG("Player joined");
+                    handlePlayerJoin(incoming);
                     break;
 
                 case ClientCommand::PlayerLeave:
-                    LOG("Player left");
+                    handlePlayerLeave(incoming);
                     break;
 
-                case ClientCommand::Snapshot: 
-                    handleCommandSnapshot(incoming);
-					break;
+                case ClientCommand::Snapshot:
+                    handleSnapshot(incoming);
+                    break;
 
-                default:
+                case ClientCommand::ConnectionChallenge:
+                case ClientCommand::AcceptConnection:
+                case ClientCommand::RejectConnection:
                     break;
             }
         }
     }
 
-    void handleCommandSnapshot(Packet &packet)
+    void handleSnapshot(Packet &packet)
     {
         u16 n = 0;
         packet.data >> n;
@@ -250,10 +258,24 @@ class ClientEngine {
             float x, y, z;
             packet.data >> id >> x >> y >> z;
             if (id != m_client.getClientId()) {
-                auto *p = &m_client.players[id];
+                auto *p = &m_entities[id];
                 p->position = {x, y, z};
             }
         }
+    }
+
+    void handlePlayerJoin(Packet &packet)
+    {
+        client_id_t id = 0;
+        packet.data >> id;
+        m_entities[id].active = true;
+    }
+
+    void handlePlayerLeave(Packet &packet)
+    {
+        client_id_t id = 0;
+        packet.data >> id;
+        m_entities[id].active = false;
     }
 };
 
