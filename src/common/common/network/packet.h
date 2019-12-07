@@ -17,7 +17,7 @@ template <typename Command> Packet makePacket(Command command)
     Packet packet;
     packet.command = static_cast<command_t>(command);
     packet.data << packet.command;
-	return packet;
+    return packet;
 }
 
 bool receivePacket(sf::UdpSocket &socket, Packet &packet);

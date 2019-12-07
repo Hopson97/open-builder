@@ -13,7 +13,7 @@
 #include <thread>
 
 namespace {
-    
+
 } // namespace
 
 void runServerEngine(const ServerConfig &config, sf::Time timeout)
@@ -29,12 +29,12 @@ void runServerEngine(const ServerConfig &config, sf::Time timeout)
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
         auto deltaTime = deltaClock.restart();
 
-		server.recievePackets();
+        server.recievePackets();
         server.tick();
 
-		//==============
-		//	Check if server should auto shutdown
-		//
+        //==============
+        //	Check if server should auto shutdown
+        //
         if (server.clients().connectedCount() == 0) {
             if (timeoutClock.getElapsedTime() >= timeout) {
                 isRunning = false;

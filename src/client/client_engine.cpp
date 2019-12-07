@@ -166,23 +166,25 @@ EngineStatus runClientEngine(const ClientConfig &config)
         // Input
         status = window.pollEvents(keyboard);
 
-		if (useMouse) {
+        if (useMouse) {
 
             // Mouse input
             auto change =
                 sf::Mouse::getPosition(window.window) - lastMousepositionition;
 
-            player.rotation.x += static_cast<float>(change.y / 16.0f);
-            player.rotation.y += static_cast<float>(change.x / 16.0f);
+            player.rotation.x += static_cast<float>(change.y / 2.0f);
+            player.rotation.y += static_cast<float>(change.x / 2.0f);
 
             lastMousepositionition = sf::Mouse::getPosition(window.window);
 
             player.rotation.x = glm::clamp(player.rotation.x, -170.0f, 170.0f);
+            // sf::Mouse::setPosition({(int)window.width / 2, (int)window.height
+            // / 2});
         }
 
-		if (keyboard.keyReleased(sf::Keyboard::L)) {
+        if (keyboard.keyReleased(sf::Keyboard::L)) {
             useMouse = !useMouse;
-		}
+        }
 
         const float PLAYER_SPEED = 0.05f;
         float rads = (glm::radians(player.rotation.y));
@@ -217,7 +219,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
 
         Packet incoming;
         while (receivePacket(client.m_socket, incoming)) {
-            switch (command) {
+            switch (static_cast<ClientCommand>(incoming.command)) {
                 case ClientCommand::ConnectionChallenge:
                     break;
 
@@ -228,24 +230,26 @@ EngineStatus runClientEngine(const ClientConfig &config)
                     break;
 
                 case ClientCommand::PlayerJoin:
+                    LOG("Player joined");
                     break;
 
                 case ClientCommand::PlayerLeave:
+                    LOG("Player left");
                     break;
 
                 case ClientCommand::Snapshot: {
                     u16 n = 0;
                     incoming.data >> n;
-					
+
                     for (u16 i = 0; i < n; i++) {
                         client_id_t id = 0;
-                        incoming.data >> id;
-                        ClientConnection::Player *p = &client.players[id];
-
-						incoming.data >> p->position.x >> p->position.y >>
-                            p->position.z;
-						p->position.y -= 2;
-					}
+                        float x, y, z;
+                        incoming.data >> id >> x >> y >> z;
+                        if (id != client.getClientId()) {
+                            auto *p = &client.players[id];
+                            p->position = {x, y, z};
+                        }
+                    }
 
                 } break;
 
@@ -256,10 +260,10 @@ EngineStatus runClientEngine(const ClientConfig &config)
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        for (auto &player : client.players) {
+        for (auto &p : client.players) {
             modelMatrix = glm::mat4{1.0f};
-            translateMatrix(&modelMatrix, {player.position.x, player.position.y,
-                                           player.position.z});
+            translateMatrix(&modelMatrix,
+                            {p.position.x, p.position.y, p.position.z});
             gl::loadUniform(mdLocarion, modelMatrix);
             cube.getDrawable().drawElements();
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

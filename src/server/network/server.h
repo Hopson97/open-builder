@@ -1,52 +1,51 @@
 #pragma once
 
-#include <array>
-#include <common/network/packet.h>
 #include <SFML/Network/UdpSocket.hpp>
+#include <array>
 #include <common/network/net_constants.h>
+#include <common/network/packet.h>
 
 class ClientConnector {
   public:
     int addClient(const Endpoint &endpoint);
-	bool removeClient(client_id_t id);
+    bool removeClient(client_id_t id);
 
-	const Endpoint &clientEndpoint(client_id_t id);
-	bool clientIsConnected(client_id_t id) const;	
-	int connectedCount() const;
+    const Endpoint &clientEndpoint(client_id_t id);
+    bool clientIsConnected(client_id_t id) const;
+    int connectedCount() const;
 
-	private:
-		std::array<Endpoint, MAX_CONNECTIONS> m_endpoints;
-		std::array<bool, MAX_CONNECTIONS> m_isClientConnected{false};
-		int m_connectedCount = 0;
+  private:
+    std::array<Endpoint, MAX_CONNECTIONS> m_endpoints;
+    std::array<bool, MAX_CONNECTIONS> m_isClientConnected{false};
+    int m_connectedCount = 0;
 
-		int emptySlot();
+    int emptySlot();
 };
 
 class Server {
-	public:
-		Server();
-		void recievePackets();
+  public:
+    Server();
+    void recievePackets();
 
-		    struct Player {
-                    float x = 0, y = 0, z = 0;
-                };
-                std::array<Player, MAX_CONNECTIONS> players;
+    struct Player {
+        float x = 0, y = 0, z = 0;
+    };
+    std::array<Player, MAX_CONNECTIONS> players;
 
-		void tick();
-		
-		void sendPacket(client_id_t client, Packet& packet);
-    	void broadcastPacket(Packet &packet);
+    void tick();
 
-		const ClientConnector& clients() const;
+    void sendPacket(client_id_t client, Packet &packet);
+    void broadcastPacket(Packet &packet);
 
-	private:
-		void processPacket(Packet& packet);
+    const ClientConnector &clients() const;
 
-		void handleConnectRequest(Packet& packet);
-		void handleDisconnect(Packet& packet);
-		void handlePlayerPosition(Packet &packet);
+  private:
+    void processPacket(Packet &packet);
 
+    void handleConnectRequest(Packet &packet);
+    void handleDisconnect(Packet &packet);
+    void handlePlayerPosition(Packet &packet);
 
-    	ClientConnector m_clients;
-    	sf::UdpSocket m_socket;
+    ClientConnector m_clients;
+    sf::UdpSocket m_socket;
 };

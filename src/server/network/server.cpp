@@ -136,10 +136,10 @@ void Server::handleConnectRequest(Packet &packet)
     int slot = m_clients.addClient(packet.endpoint);
     if (slot >= 0) {
         // Send connection acceptance to the connecting client
-        auto packet = makePacket(ClientCommand::AcceptConnection);
-        packet.data << static_cast<client_id_t>(slot);
-        sendPacket(slot, packet);
-        std::cout << "Packet sent\n";
+        auto response = makePacket(ClientCommand::AcceptConnection);
+        response.data << static_cast<client_id_t>(slot);
+        sendPacket(slot, response);
+        std::cout << "Response sent\n";
 
         // Tell all players that a player has joined
         auto broadcast = makePacket(ClientCommand::PlayerJoin);
@@ -147,9 +147,9 @@ void Server::handleConnectRequest(Packet &packet)
         broadcastPacket(broadcast);
     }
     else {
-        auto packet = makePacket(ClientCommand::RejectConnection);
-        m_socket.send(packet.data, packet.endpoint.address,
-                      packet.endpoint.port);
+        auto response = makePacket(ClientCommand::RejectConnection);
+        m_socket.send(response.data, response.endpoint.address,
+                      response.endpoint.port);
     }
 }
 
@@ -169,7 +169,6 @@ void Server::handlePlayerPosition(Packet &packet)
 {
     client_id_t id = 0;
     packet.data >> id;
-
     if (m_clients.clientIsConnected(id)) {
         Player *player = &players[id];
         packet.data >> player->x >> player->y >> player->z;

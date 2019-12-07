@@ -20,29 +20,27 @@ class DebugLogger {
         return logger;
     }
 
-    template <typename T> 
-	void log(const char* file, int line, const T &item)
+    template <typename T> void log(const char *file, int line, const T &item)
     {
         std::cout << file << ":" << line << " - " << item << std::endl;
-	}
+    }
 
     template <typename T, typename Var>
-	void log(const char *file, int line, const T &title, const Var& var)
-	{
+    void log(const char *file, int line, const T &title, const Var &var)
+    {
         std::cout << file << ":" << line << " - " << title << " " << var
                   << std::endl;
-	}
+    }
 
   private:
-	DebugLogger() = default;
+    DebugLogger() = default;
     inline static std::mutex mu;
 };
 
-#define LOGVAR(title, var)  \
-	DebugLogger::get().log( __FILE__, __LINE__, title, var);
+#define LOGVAR(title, var)                                                     \
+    DebugLogger::get().log(__FILE__, __LINE__, title, var);
 
-#define LOG(item) \
-	DebugLogger::get().log(__FILE__, __LINE__, item);
+#define LOG(item) DebugLogger::get().log(__FILE__, __LINE__, item);
 
 #else
 

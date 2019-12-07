@@ -111,8 +111,7 @@ int exitFailure(const char *message)
     return EXIT_FAILURE;
 }
 
-int launchServer(const ServerConfig &config,
-                 sf::Time timeout = sf::seconds(8))
+int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
 {
     LOG("Launching server");
     runServerEngine(config, timeout);
@@ -137,7 +136,7 @@ int launchClient(const ClientConfig &config)
 int launchBoth(const Config &config)
 {
     std::thread serverThread(launchServer, config.serverOptions,
-                             sf::milliseconds(5000));
+                             sf::milliseconds(500));
     int exit = launchClient(config.clientOptions);
     serverThread.join();
     return exit;
