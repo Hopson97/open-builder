@@ -33,7 +33,7 @@ bool ClientConnection::connectTo(const sf::IpAddress &address)
 {
     m_serverEndpoint = {address, DEFAULT_PORT};
     auto conPacket = makePacket(ServerCommand::Connect);
-    if (sendToServer(conPacket)) {
+    if (sendPacketToServer(conPacket)) {
         Packet response;
         LOG("Client sent request to connect\n");
         if (receivePacket(socket, response)) {
@@ -60,11 +60,11 @@ void ClientConnection::disconnect()
     auto disconnectPacket = makePacket(ServerCommand::Disconnect);
     disconnectPacket.data << m_clientId;
     for (int i = 0; i < 10; i++) {
-        sendToServer(disconnectPacket);
+        sendPacketToServer(disconnectPacket);
     }
 }
 
-bool ClientConnection::sendToServer(Packet &packet)
+bool ClientConnection::sendPacketToServer(Packet &packet)
 {
     return socket.send(packet.data, m_serverEndpoint.address,
                          m_serverEndpoint.port) == sf::Socket::Done;

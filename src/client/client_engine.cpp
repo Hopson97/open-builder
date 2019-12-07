@@ -171,7 +171,7 @@ class ClientEngine {
         auto id = m_client.getClientId();
         packet.data << id << m_entities[id].position.x
                     << m_entities[id].position.y << m_entities[id].position.z;
-        m_client.sendToServer(packet);
+        m_client.sendPacketToServer(packet);
         handlePackets();
     }
 

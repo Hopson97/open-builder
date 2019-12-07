@@ -10,18 +10,19 @@
 
 struct Packet;
 
+/**
+ * @brief Provides an interface for connection between the client and the server
+ */
 class ClientConnection {
   public:
+    sf::UdpSocket socket;
+
+  public:
+    bool isConnected() const;
+    bool sendPacketToServer(Packet &packet);
     bool connectTo(const sf::IpAddress &address);
     void disconnect();
-
-    bool sendToServer(Packet &packet);
-
-    bool isConnected() const;
-
     client_id_t getClientId() const;
-
-    sf::UdpSocket socket;
 
   private:
     Endpoint m_serverEndpoint;

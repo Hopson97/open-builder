@@ -5,9 +5,12 @@
 #include <SFML/Window/Window.hpp>
 #include <common/types.h>
 
-class ClientConfig;
+struct ClientConfig;
 class Keyboard;
 
+/**
+ * @brief Provides an interface for creating and common window interactions
+ */
 class Window {
   public:
     Window(const ClientConfig &config);
