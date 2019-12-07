@@ -30,6 +30,9 @@ enum class LaunchType {
     Both,
 };
 
+/**
+ * @brief Holds config for both client and server
+ */
 struct Config {
     LaunchType launchType = LaunchType::Both;
 
@@ -37,6 +40,10 @@ struct Config {
     ClientConfig clientOptions;
 };
 
+/**
+ * @brief Loads config eg window size from the config.txt file
+ * @param config The config object to put the data into
+ */
 void loadFromConfigFile(Config &config)
 {
     std::ifstream inFile("config.txt");
@@ -64,6 +71,11 @@ void loadFromConfigFile(Config &config)
     }
 }
 
+/**
+ * @brief Parses the CLI arguments from the user
+ * @param config The config to load data into
+ * @param args CLI arguments paired as <argument, param>
+ */
 void parseArgs(Config &config,
                const std::vector<std::pair<std::string, std::string>> &args)
 {
@@ -98,12 +110,20 @@ void parseArgs(Config &config,
     }
 }
 
+/**
+ * @brief Prints success message
+ * @return int Exit success flag
+ */
 int exitSuccess()
 {
     std::cout << "Engine exited successfully." << std::endl;
     return EXIT_SUCCESS;
 }
 
+/**
+ * @brief Prints failure message
+ * @return int Exit failure flag
+ */
 int exitFailure(const char *message)
 {
     std::cerr << "Engine exited with error: \"" << message << "\"."
@@ -111,6 +131,12 @@ int exitFailure(const char *message)
     return EXIT_FAILURE;
 }
 
+/**
+ * @brief Launches the server
+ * @param config Config to be used by the server engine
+ * @param timeout How long the server waits for a connection before closing
+ * @return int Exit success flag 
+ */
 int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
 {
     LOG("Launching server");
@@ -118,6 +144,11 @@ int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
     return EXIT_SUCCESS;
 }
 
+/**
+ * @brief Launches the client
+ * @param config Config to be used by the client engine
+ * @return int Exit flag (Success, or Failure) 
+ */
 int launchClient(const ClientConfig &config)
 {
     LOG("Launching client");
@@ -133,6 +164,11 @@ int launchClient(const ClientConfig &config)
     return exitFailure("Unknown error");
 }
 
+/**
+ * @brief Launches both the client and the server
+ * @param config The config to be used by client/server engines
+ * @return int Exit flag (Success, or Failure) 
+ */
 int launchBoth(const Config &config)
 {
     std::thread serverThread(launchServer, config.serverOptions,
