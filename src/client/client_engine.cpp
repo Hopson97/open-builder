@@ -18,7 +18,8 @@ namespace {
 gl::VertexArray createCube()
 {
     // Create a cube for opengl testing
-    std::vector<GLfloat> vertices = {0, 0, 2, 2, 0, 2, 2, 2, 2, 0, 2, 2,
+    std::vector<GLfloat> vertices = {// Front
+                                     0, 0, 2, 2, 0, 2, 2, 2, 2, 0, 2, 2,
                                      // right
                                      2, 0, 0, 2, 2, 0, 2, 2, 2, 2, 0, 2,
                                      // back
@@ -78,6 +79,8 @@ class ClientEngine {
 
     Entity *m_player = nullptr;
 
+    bool m_isMouseLocked = false;
+
   public:
     ClientEngine(Window &window)
         : m_window(window)
@@ -99,18 +102,23 @@ class ClientEngine {
 
         glm::mat4 projectionMatrix{1.0f};
         projectionMatrix =
-            glm::perspective(3.14f / 2.0f, 1280.0f / 720.0f, 0.01f, 100.0f);
+            glm::perspective(3.14f / 2.0f, m_window.aspect, 0.01f, 100.0f);
 
         EngineStatus status = EngineStatus::Ok;
         sf::Clock frameTimer;
         int frameCount = 0;
         while (status == EngineStatus::Ok) {
-            status = m_window.pollEvents(m_keyboard);
+            status = m_window.pollEvents(m_keyboard, [this](auto key) {
+                if (key == sf::Keyboard::L) {
+                    m_isMouseLocked = !m_isMouseLocked;
+                }
+            });
             input();
             update();
             render(projectionMatrix);
 
             // Stats
+            /*
             frameCount++;
             if (frameTimer.getElapsedTime().asSeconds() > 2) {
                 float ms = static_cast<float>(
@@ -121,23 +129,41 @@ class ClientEngine {
                 frameCount = 0;
                 frameTimer.restart();
             }
+            */
         }
         return status;
     }
 
   private:
+    void init()
+    {
+        m_cube = createCube();
+
+        m_shader.create("static", "static");
+        m_shader.bind();
+        m_modelLocation = m_shader.getUniformLocation("modelMatrix");
+        m_projectionViewLocation =
+            m_shader.getUniformLocation("projectionViewMatrix");
+
+        m_texture.create("p2");
+        m_texture.bind();
+
+        m_client.connectTo(sf::IpAddress::LocalHost);
+        m_player = &m_entities[m_client.getClientId()];
+    }
+
     void input()
     {
         static auto lastMousepositionition =
             sf::Mouse::getPosition(m_window.window);
 
-        auto change =
-            sf::Mouse::getPosition(m_window.window) - lastMousepositionition;
-
-        m_player->rotation.x += static_cast<float>(change.y / 8.0f);
-        m_player->rotation.y += static_cast<float>(change.x / 8.0f);
-
-        lastMousepositionition = sf::Mouse::getPosition(m_window.window);
+        if (!m_isMouseLocked && m_window.window.hasFocus()) {
+            auto change = sf::Mouse::getPosition(m_window.window) -
+                          lastMousepositionition;
+            m_player->rotation.x += static_cast<float>(change.y / 8.0f);
+            m_player->rotation.y += static_cast<float>(change.x / 8.0f);
+            lastMousepositionition = sf::Mouse::getPosition(m_window.window);
+        }
 
         const float PLAYER_SPEED = 0.05f;
         float rads = (glm::radians(m_player->rotation.y));
@@ -195,27 +221,10 @@ class ClientEngine {
             }
         }
 
-        glm::mat4 modelMatrix{1.0f};
-        gl::loadUniform(m_modelLocation, modelMatrix);
-        drawable.draw();
+        //glm::mat4 modelMatrix{1.0f};
+        //gl::loadUniform(m_modelLocation, modelMatrix);
+        //drawable.draw();
         m_window.window.display();
-    }
-
-    void init()
-    {
-        m_cube = createCube();
-
-        m_shader.create("static", "static");
-        m_shader.bind();
-        m_modelLocation = m_shader.getUniformLocation("modelMatrix");
-        m_projectionViewLocation =
-            m_shader.getUniformLocation("projectionViewMatrix");
-
-        m_texture.create("grass");
-        m_texture.bind();
-
-        m_client.connectTo(sf::IpAddress::LocalHost);
-        m_player = &m_entities[m_client.getClientId()];
     }
 
     void handlePackets()
@@ -255,6 +264,7 @@ class ClientEngine {
             if (id != m_client.getClientId()) {
                 auto *p = &m_entities[id];
                 p->position = {x, y, z};
+                p->active = true;
             }
         }
     }
@@ -264,6 +274,7 @@ class ClientEngine {
         client_id_t id = 0;
         packet.data >> id;
         m_entities[id].active = true;
+        LOGVAR("Client", "Player has joined the game, Client ID:", (int)id);
     }
 
     void handlePlayerLeave(Packet &packet)
@@ -271,6 +282,7 @@ class ClientEngine {
         client_id_t id = 0;
         packet.data >> id;
         m_entities[id].active = false;
+        LOGVAR("Client", "Player has left the game, Client ID:", (int)id);
     }
 };
 

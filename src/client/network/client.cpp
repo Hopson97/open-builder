@@ -39,8 +39,8 @@ bool ClientConnection::connectTo(const sf::IpAddress &address)
         if (receivePacket(socket, response)) {
             if (static_cast<ClientCommand>(response.command) ==
                 ClientCommand::AcceptConnection) {
-                LOG("Client", "Connection accepted\n");
                 response.data >> m_clientId;
+                LOGVAR("Client", "Connection accepted, client ID: ", (int)m_clientId);
                 socket.setBlocking(false);
                 return true;
             }

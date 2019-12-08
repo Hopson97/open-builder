@@ -57,9 +57,9 @@ int ClientConnector::connectedCount() const
 //
 Server::Server()
 {
-
     socket.setBlocking(false);
     socket.bind(DEFAULT_PORT);
+    LOGVAR("Server", "Listening for messages on port ", DEFAULT_PORT)
 }
 
 void Server::sendPacket(client_id_t client, Packet &packet)
@@ -81,7 +81,9 @@ int Server::tryConnectClient(Packet &packet)
 {
     int slot = clients.addClient(packet.endpoint);
     if (slot >= 0) {
-        LOGVAR("Server", "Connection by request from client - ", (int)slot);
+        LOGVAR("Server",
+               "Connection by request from client accepted, Client ID: ",
+               (int)slot);
         // Send connection acceptance to the connecting client
         auto response = makePacket(ClientCommand::AcceptConnection);
         response.data << static_cast<client_id_t>(slot);
@@ -96,7 +98,7 @@ int Server::tryConnectClient(Packet &packet)
     else {
         auto response = makePacket(ClientCommand::RejectConnection);
         socket.send(response.data, response.endpoint.address,
-                      response.endpoint.port);
+                    response.endpoint.port);
         return -1;
     }
 }
@@ -106,7 +108,8 @@ int Server::tryDisconnectClient(Packet &packet)
     client_id_t id = 0;
     packet.data >> id;
     if (clients.removeClient(id)) {
-        LOGVAR("Server", "Disconnect by request from client - ", (int)id);
+        LOGVAR("Server",
+               "Disconnect by request from client, Client ID: ", (int)id);
         auto broadcast = makePacket(ClientCommand::PlayerLeave);
         broadcast.data << static_cast<client_id_t>(id);
         broadcastPacket(broadcast);

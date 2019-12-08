@@ -2,8 +2,6 @@
 
 #include "client_config.h"
 #include <SFML/Window/Event.hpp>
-#include "input/keyboard.h"
-
 
 Window::Window(const ClientConfig &config)
 {
@@ -12,40 +10,18 @@ Window::Window(const ClientConfig &config)
         create(sf::VideoMode::getDesktopMode(), sf::Style::Fullscreen);
         width = window.getSize().x;
         height = window.getSize().y;
+        aspect = width / height;
     }
     else {
         width = static_cast<unsigned>(config.windowWidth);
         height = static_cast<unsigned>(config.windowHeight);
+        aspect = width / height;
         create({width, height}, sf::Style::Close);
     }
     if (config.isFpsCapped) {
         window.setFramerateLimit(config.fpsLimit);
     }
 }
-
-EngineStatus Window::pollEvents(Keyboard &keyboard)
-{
-    auto status = EngineStatus::Ok;
-    sf::Event e;
-    while (window.pollEvent(e)) {
-        if (window.hasFocus()) {
-			keyboard.update(e);
-		}
-        if (e.type == sf::Event::KeyPressed) {
-            if (e.key.code == sf::Keyboard::Escape) {
-                status = EngineStatus::Exit;
-            }
-        }
-        else if (e.type == sf::Event::KeyReleased) {
-            //  onKeyRelease(e.key.code);
-        }
-        else if (e.type == sf::Event::Closed) {
-            status = EngineStatus::Exit;
-        }
-    }
-    return status;
-}
-
 
 void Window::create(const sf::VideoMode &mode, u32 style)
 {

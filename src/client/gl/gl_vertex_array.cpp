@@ -38,7 +38,6 @@ void VertexArray::destroy()
     m_bufferObjects.clear();
     m_handle = 0;
     m_indicesCount = 0;
-    std::cout << "ded\n";
 }
 
 void VertexArray::bind() const
