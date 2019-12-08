@@ -105,14 +105,9 @@ class ClientEngine {
         sf::Clock frameTimer;
         int frameCount = 0;
         while (status == EngineStatus::Ok) {
-            // Input
             status = m_window.pollEvents(m_keyboard);
             input();
-
-            // Update
             update();
-
-            // Draw
             render(projectionMatrix);
 
             // Stats
@@ -139,8 +134,8 @@ class ClientEngine {
         auto change =
             sf::Mouse::getPosition(m_window.window) - lastMousepositionition;
 
-        m_player->rotation.x += static_cast<float>(change.y / 2.0f);
-        m_player->rotation.y += static_cast<float>(change.x / 2.0f);
+        m_player->rotation.x += static_cast<float>(change.y / 8.0f);
+        m_player->rotation.y += static_cast<float>(change.x / 8.0f);
 
         lastMousepositionition = sf::Mouse::getPosition(m_window.window);
 
