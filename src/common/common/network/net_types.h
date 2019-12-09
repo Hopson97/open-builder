@@ -8,7 +8,7 @@
 // Port, used for uh ports
 using port_t = u16;
 
-// Client ID, the number used for client naming over the network 
+// Client ID, the number used for client naming over the network
 using client_id_t = u8;
 
 // Command, the numerical representation of a command sent over a network

@@ -135,7 +135,7 @@ int exitFailure(const char *message)
  * @brief Launches the server
  * @param config Config to be used by the server engine
  * @param timeout How long the server waits for a connection before closing
- * @return int Exit success flag 
+ * @return int Exit success flag
  */
 int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
 {
@@ -147,7 +147,7 @@ int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
 /**
  * @brief Launches the client
  * @param config Config to be used by the client engine
- * @return int Exit flag (Success, or Failure) 
+ * @return int Exit flag (Success, or Failure)
  */
 int launchClient(const ClientConfig &config)
 {
@@ -167,7 +167,7 @@ int launchClient(const ClientConfig &config)
 /**
  * @brief Launches both the client and the server
  * @param config The config to be used by client/server engines
- * @return int Exit flag (Success, or Failure) 
+ * @return int Exit flag (Success, or Failure)
  */
 int launchBoth(const Config &config)
 {

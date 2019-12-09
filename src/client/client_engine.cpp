@@ -221,9 +221,9 @@ class ClientEngine {
             }
         }
 
-        //glm::mat4 modelMatrix{1.0f};
-        //gl::loadUniform(m_modelLocation, modelMatrix);
-        //drawable.draw();
+        // glm::mat4 modelMatrix{1.0f};
+        // gl::loadUniform(m_modelLocation, modelMatrix);
+        // drawable.draw();
         m_window.window.display();
     }
 

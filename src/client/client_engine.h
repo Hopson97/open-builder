@@ -14,7 +14,7 @@ enum class EngineStatus {
 
 /**
  * @brief Run the client
- * @param config 
+ * @param config
  * @return EngineStatus The status of the engine on exit
  */
 EngineStatus runClientEngine(const ClientConfig &config);

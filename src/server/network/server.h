@@ -13,7 +13,8 @@ class ClientConnector {
     /**
      * @brief Tries to connect a client
      * @param endpoint The endpoint of the client trying to connect
-     * @return int The client id of the new client, returns -1 if the client did not connect
+     * @return int The client id of the new client, returns -1 if the client did
+     * not connect
      */
     int addClient(const Endpoint &endpoint);
 
@@ -56,7 +57,8 @@ class ClientConnector {
 };
 
 /**
- * @brief The server, handles the sending and interaction between the server and a client
+ * @brief The server, handles the sending and interaction between the server and
+ * a client
  */
 class Server {
   public:
@@ -72,15 +74,17 @@ class Server {
     /**
      * @brief Try handle a connection request
      * @param packet Connection request packet
-     * @return int The client ID of the newly connected client, -1 if they did not connect
+     * @return int The client ID of the newly connected client, -1 if they did
+     * not connect
      */
     [[nodiscard]] int tryConnectClient(Packet &packet);
 
     /**
      * @brief Try to disconnect a client
-     * 
+     *
      * @param packet Disconnection request packet
-     * @return int The client id of the disconnected client, -1 if one did not disconnect
+     * @return int The client id of the disconnected client, -1 if one did not
+     * disconnect
      */
     [[nodiscard]] int tryDisconnectClient(Packet &packet);
 };

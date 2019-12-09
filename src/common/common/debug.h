@@ -26,16 +26,15 @@ class DebugLogger {
         std::cout << file << ": " << line << " - " << item << std::endl;
     }*/
 
-    template <typename T> void log(const char* where, const T &item)
+    template <typename T> void log(const char *where, const T &item)
     {
         std::cout << where << ": " << item << std::endl;
     }
 
     template <typename T, typename Var>
-    void log(const char* where, const T& title, const Var &var)
+    void log(const char *where, const T &title, const Var &var)
     {
-        std::cout << where << ": " << title << " " << var
-                  << std::endl;
+        std::cout << where << ": " << title << " " << var << std::endl;
     }
 
   private:
@@ -43,8 +42,7 @@ class DebugLogger {
     inline static std::mutex mu;
 };
 
-#define LOGVAR(where, title, var)   \
-    DebugLogger::get().log(where, title, var);
+#define LOGVAR(where, title, var) DebugLogger::get().log(where, title, var);
 /*
 #define LOGLINE(title, var)   \
     DebugLogger::get().log(where, title, var);

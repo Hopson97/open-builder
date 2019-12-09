@@ -40,7 +40,8 @@ bool ClientConnection::connectTo(const sf::IpAddress &address)
             if (static_cast<ClientCommand>(response.command) ==
                 ClientCommand::AcceptConnection) {
                 response.data >> m_clientId;
-                LOGVAR("Client", "Connection accepted, client ID: ", (int)m_clientId);
+                LOGVAR("Client",
+                       "Connection accepted, client ID: ", (int)m_clientId);
                 socket.setBlocking(false);
                 return true;
             }
@@ -67,7 +68,7 @@ void ClientConnection::disconnect()
 bool ClientConnection::sendPacketToServer(Packet &packet)
 {
     return socket.send(packet.data, m_serverEndpoint.address,
-                         m_serverEndpoint.port) == sf::Socket::Done;
+                       m_serverEndpoint.port) == sf::Socket::Done;
 }
 
 bool ClientConnection::isConnected() const

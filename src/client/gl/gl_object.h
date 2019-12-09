@@ -67,7 +67,7 @@ class Drawable {
 
     void bindAndDraw() const;
 
-	void bind() const;
+    void bind() const;
     void draw() const;
 
   private:
