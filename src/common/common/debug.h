@@ -28,13 +28,13 @@ class DebugLogger {
 
     template <typename T> void log(const char *where, const T &item)
     {
-        std::cout << where << ": " << item << std::endl;
+        std::cout << where << ": " << item << '\n';
     }
 
     template <typename T, typename Var>
     void log(const char *where, const T &title, const Var &var)
     {
-        std::cout << where << ": " << title << " " << var << std::endl;
+        std::cout << where << ": " << title << " " << var << '\n';
     }
 
   private:

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
 #include "gl/gl_object.h"
 #include "network/client.h"
@@ -8,7 +9,7 @@
 class Keyboard;
 
 struct Entity {
-    glm::vec3 position{0.0f, 0.0f, -12.0f}, rotation{0.0f};
+    glm::vec3 position{0.0f, 0.0f, 12.0f}, rotation{0.0f};
     bool active = false;
 };
 
@@ -16,6 +17,7 @@ class Gameplay {
   public:
     void init(float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
+    void onKeyRelease(sf::Keyboard::Key key);
     void update();
     void render();
     void endGame();

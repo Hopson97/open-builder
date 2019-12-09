@@ -1,15 +1,33 @@
 #include "client_engine.h"
 
-#include "window.h"
-#include "gl/gl_errors.h"
-#include <glad/glad.h>
 #include "gameplay.h"
+#include "gl/gl_errors.h"
+#include "window.h"
+#include <glad/glad.h>
+#include <iostream>
 
 namespace {
 struct FPSCounter {
+    float frameCount = 0;
+    sf::Clock timer;
 
+    void update()
+    {
+        frameCount++;
+        if (timer.getElapsedTime() > sf::seconds(2)) {
+            auto time = timer.getElapsedTime();
+
+            float fps = frameCount / time.asSeconds();
+            float frameTime = time.asMilliseconds() / frameCount;
+
+            std::cout << "==============\nAverage Current Performance\nFPS: "
+                      << fps << "\nFrame time: " << frameTime << "ms\n\n";
+            frameCount = 0;
+            timer.restart();
+        }
+    }
 };
-}
+} // namespace
 
 EngineStatus runClientEngine(const ClientConfig &config)
 {
@@ -29,34 +47,31 @@ EngineStatus runClientEngine(const ClientConfig &config)
     glCheck(glCullFace(GL_BACK));
 
     Gameplay gameplay;
-    gameplay.init(window.aspect);
-
     Keyboard keyboard;
     EngineStatus status = EngineStatus::Ok;
-    sf::Clock frameTimer;
-    int frameCount = 0;
+    FPSCounter counter;
+
+    gameplay.init(window.aspect);
+
     while (status == EngineStatus::Ok) {
-        status = window.pollEvents(keyboard, [](auto key) { (void)key; }
-        );
+        // Input
+        status = window.pollEvents(
+            keyboard, [&gameplay](auto key) { 
+                gameplay.onKeyRelease(key); 
+       });
+
         gameplay.handleInput(window.window, keyboard);
+
+        // Update
         gameplay.update();
+
+        // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         gameplay.render();
         window.window.display();
 
-        // Stats
-        /*
-        frameCount++;
-        if (frameTimer.getElapsedTime().asSeconds() > 2) {
-            float ms = static_cast<float>(
-                frameTimer.getElapsedTime().asMilliseconds());
-            float secs = frameTimer.getElapsedTime().asSeconds();
-            std::cout << "Average Frame Time: " << ms / frameCount
-                      << "Average FPS: " << frameCount / secs << "\n\n";
-            frameCount = 0;
-            frameTimer.restart();
-        }
-        */
+        // Stats and stuff
+        counter.update();
     }
     gameplay.endGame();
     return status;
