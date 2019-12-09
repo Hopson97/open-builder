@@ -9,6 +9,7 @@ add_library(ob-client
     gl/gl_errors.cpp
     maths.cpp
     client_engine.cpp
+    window.cpp
 )
 
 set_flags(ob-client)
