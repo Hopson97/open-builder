@@ -51,7 +51,7 @@ gl::VertexArray createCube()
 }
 } // namespace
 
-void Gameplay::init(float aspect)
+bool Gameplay::init(float aspect)
 {
     m_cube = createCube();
 
@@ -64,10 +64,13 @@ void Gameplay::init(float aspect)
     m_texture.create("player");
     m_texture.bind();
 
-    m_client.connectTo(sf::IpAddress::LocalHost);
+    if (!m_client.connectTo(sf::IpAddress::LocalHost)) {
+        return false;
+    }
     m_player = &m_entities[m_client.getClientId()];
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
+    return true;
 }
 
 void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)

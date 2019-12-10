@@ -15,7 +15,7 @@ struct Entity {
 
 class Gameplay {
   public:
-    void init(float aspect);
+    bool init(float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
     void update();
