@@ -1,6 +1,6 @@
 #include "gameplay.h"
-#include <common/network/packet.h>
 #include <common/debug.h>
+#include <common/network/packet.h>
 
 void Gameplay::handlePackets()
 {

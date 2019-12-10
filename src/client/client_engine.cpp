@@ -56,9 +56,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
     while (status == EngineStatus::Ok) {
         // Input
         status = window.pollEvents(
-            keyboard, [&gameplay](auto key) { 
-                gameplay.onKeyRelease(key); 
-       });
+            keyboard, [&gameplay](auto key) { gameplay.onKeyRelease(key); });
 
         gameplay.handleInput(window.window, keyboard);
 

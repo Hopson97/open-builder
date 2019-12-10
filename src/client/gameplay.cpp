@@ -8,60 +8,21 @@
 namespace {
 gl::VertexArray createCube()
 {
-    // Create a cube for opengl testing
-    std::vector<GLfloat> vertices = {// Front
-                                     1, 2, 1, 
-                                     0, 2, 1,
-                                     0, 0, 1, 
-                                     1, 0, 1,
-
-                                     //Left
-                                     0, 2, 1,
-                                     0, 2, 0,
-                                     0, 0, 0,
-                                     0, 0, 1,
-
-
-                                     //Back
-                                     0, 2, 0,
-                                     1, 2, 0,
-                                     1, 0, 0,
-                                     0, 0, 0,
-
-
-                                     //Right
-                                     1, 2, 0,
-                                     1, 2, 1,
-                                     1, 0, 1,
-                                     1, 0, 0,
-
-                                     //Top
-                                     1, 2, 0,
-                                     0, 2, 0,
-                                     0, 2, 1,
-                                     1, 2, 1,
-
-                                     //Bottom
-                                     
-                                     0, 0, 0, 
-                                     1, 0, 0, 
-                                     1, 0, 1,
-                                     0, 0, 1, 
-
-
-
-                                     /*
-                                     // right
-                                     2, 0, 0, 2, 2, 0, 2, 2, 2, 2, 0, 2,
-                                     // back
-                                     0, 0, 0, 0, 2, 0, 2, 2, 0, 2, 0, 0,
-                                     // left
-                                     0, 0, 0, 0, 0, 2, 0, 2, 2, 0, 2, 0,
-                                     // bottom
-                                     0, 0, 2, 0, 0, 0, 2, 0, 0, 2, 0, 2,
-                                     // top
-                                     0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 2, 0};
-                                     */};
+    std::vector<GLfloat> vertices = {
+        // Front
+        1, 2, 1, 0, 2, 1, 0, 0, 1, 1, 0, 1,
+        // Left
+        0, 2, 1, 0, 2, 0, 0, 0, 0, 0, 0, 1,
+        // Back
+        0, 2, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0,
+        // Right
+        1, 2, 0, 1, 2, 1, 1, 0, 1, 1, 0, 0,
+        // Top
+        1, 2, 0, 0, 2, 0, 0, 2, 1, 1, 2, 1,
+        // Bottom
+        0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1,
+        // this just stops clang format from making the array long
+    };
     std::vector<GLuint> indices;
     for (int itr = 0, i = 0; itr < 6; itr++) {
         indices.push_back(i);
@@ -113,6 +74,7 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
 {
     static auto lastMousepositionition = sf::Mouse::getPosition(window);
 
+    // Handle mouse input
     if (!m_isMouseLocked && window.hasFocus()) {
         auto change = sf::Mouse::getPosition(window) - lastMousepositionition;
         m_player->rotation.x += static_cast<float>(change.y / 8.0f);
@@ -122,6 +84,7 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
         lastMousepositionition = sf::Mouse::getPosition(window);
     }
 
+    // Handle keyboard input
     const float PLAYER_SPEED = 0.05f;
     float rads = (glm::radians(m_player->rotation.y));
     float rads90 = (glm::radians(m_player->rotation.y + 90));
@@ -159,26 +122,31 @@ void Gameplay::onKeyRelease(sf::Keyboard::Key key)
 
 void Gameplay::update()
 {
-    // Send position of this player to the server
+    // Send the position of this player to the server
     auto packet = makePacket(ServerCommand::PlayerPosition);
     auto id = m_client.getClientId();
     auto &entity = m_entities[id];
     packet.data << id << m_entities[id].position.x << m_entities[id].position.y
                 << entity.position.z;
     m_client.sendPacketToServer(packet);
+
+    //Recieve updates from the server
     handlePackets();
 }
 
 void Gameplay::render()
 {
+    //Setup matrices
     glm::mat4 viewMatrix{1.0f};
+    glm::mat4 projectionViewMatrix{1.0f};
+
     rotateMatrix(&viewMatrix, m_player->rotation);
     translateMatrix(&viewMatrix, -m_player->position);
 
-    glm::mat4 projectionViewMatrix{1.0f};
     projectionViewMatrix = m_projectionMatrix * viewMatrix;
     gl::loadUniform(m_projectionViewLocation, projectionViewMatrix);
 
+    //Render all the players
     auto drawable = m_cube.getDrawable();
     drawable.bind();
     for (auto &p : m_entities) {
@@ -191,7 +159,8 @@ void Gameplay::render()
             drawable.draw();
         }
     }
-
+    
+    //Render the """"""""world"""""""""""
     glm::mat4 modelMatrix{1.0f};
     gl::loadUniform(m_modelLocation, modelMatrix);
     drawable.draw();

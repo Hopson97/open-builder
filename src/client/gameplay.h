@@ -1,10 +1,10 @@
 #pragma once
 
+#include "gl/gl_object.h"
+#include "maths.h"
+#include "network/client.h"
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
-#include "gl/gl_object.h"
-#include "network/client.h"
-#include "maths.h"
 
 class Keyboard;
 
