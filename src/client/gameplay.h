@@ -5,6 +5,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/network/packet.h>
+#include <common/network/enet.h>
 
 class Keyboard;
 
@@ -40,6 +41,10 @@ class Gameplay {
     std::array<Entity, 512> m_entities;
 
     Entity *m_player = nullptr;
+
+    ENetHost *m_host;
+    ENetPeer *m_serverPeer;
+    client_id_t m_clientId;
 
     bool m_isMouseLocked = false;
 };

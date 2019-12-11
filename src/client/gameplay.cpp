@@ -3,6 +3,8 @@
 #include "input/keyboard.h"
 #include <SFML/Window/Mouse.hpp>
 #include <common/debug.h>
+#include <common/network/net_command.h>
+#include <common/network/net_constants.h>
 #include <common/network/packet.h>
 
 namespace {
@@ -64,9 +66,39 @@ bool Gameplay::init(float aspect)
     m_texture.create("player");
     m_texture.bind();
 
-    // m_client.connectTo(sf::IpAddress::LocalHost);
-    // m_player = &m_entities[m_client.getClientId()];
+    // Connect to the server
+    m_host = enet_host_create(nullptr, 1, 2, 0, 0);
+    ENetAddress address{0};
+    enet_address_set_host(&address, "127.0.0.1");
+    address.port = DEFAULT_PORT;
 
+    m_serverPeer = enet_host_connect(m_host, &address, 2, 0);
+
+    // Ensure connection is recieved and player pointer is created
+    sf::Clock timeout;
+    while (timeout.getElapsedTime().asSeconds() < 5.0f) {
+        std::cout << "Trying to connect correctly\n";
+        ENetEvent event;
+        if (enet_host_service(m_host, &event, 100)) {
+            if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+                ENetPacket *packet = event.packet;
+                sf::Packet pkt;
+                pkt.append(packet->data, packet->dataLength);
+                ClientCommand command;
+                pkt >> command;
+                if (command == ClientCommand::AcceptConnection) {
+                    client_id_t id;
+                    pkt >> id;
+                    m_player = &m_entities[id];
+                    m_clientId = id;
+                    break;
+                }
+            }
+        }
+    }
+    if (!m_player) {
+        return false;
+    }
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
     return true;
 }
@@ -107,10 +139,10 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
 
     if (keyboard.isKeyDown(sf::Keyboard::Q)) {
-        m_player->position.y += 0.1;
+        m_player->position.y += 0.1f;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::E)) {
-        m_player->position.y -= 0.1;
+        m_player->position.y -= 0.1f;
     }
 }
 
@@ -123,7 +155,7 @@ void Gameplay::onKeyRelease(sf::Keyboard::Key key)
 
 void Gameplay::update()
 {
-    // Send the position of this player to the servr
+    // Send the position of this player to the server
 
     /*
     auto packet = makePacket(ServerCommand::PlayerPosition);

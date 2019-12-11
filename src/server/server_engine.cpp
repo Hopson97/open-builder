@@ -34,8 +34,9 @@ class ServerEngine {
         sf::Clock deltaClock;
         sf::Clock timeoutClock;
         ENetAddress address{0};
-        address.host = ENET_HOST_ANY;
-        address.port = 12345;
+        //address.host = ENET_HOST_ANY;
+        enet_address_set_host(&address, "127.0.0.1");
+        address.port = DEFAULT_PORT;
 
         m_host = enet_host_create(&address, MAX_CONNECTIONS, 2, 0, 0);
 
@@ -87,6 +88,8 @@ class ServerEngine {
         while (enet_host_service(m_host, &event, 0)) {
             switch (event.type) {
                 case ENET_EVENT_TYPE_RECEIVE:
+                    processPacket(event.packet);
+                    enet_packet_destroy(event.packet);
                     break;
 
                 case ENET_EVENT_TYPE_CONNECT:

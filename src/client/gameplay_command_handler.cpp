@@ -5,6 +5,9 @@
 
 void Gameplay::handlePackets()
 {
+
+
+
     Packet incoming;
     while (0 /*receivePacket(m_client.socket, incoming)*/) {
         switch (static_cast<ClientCommand>(incoming.command)) {
