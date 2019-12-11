@@ -84,7 +84,7 @@ class ServerEngine {
     {
         Packet incoming;
         ENetEvent event;
-        if (enet_host_service(m_host, &event, 0)) {
+        while (enet_host_service(m_host, &event, 0)) {
             switch (event.type) {
                 case ENET_EVENT_TYPE_RECEIVE:
                     break;
@@ -102,12 +102,6 @@ class ServerEngine {
                     break;
             }
         }
-
-        /*
-        while (receivePacket(m_server.socket, incoming)) {
-            processPacket(incoming);
-        }
-        */
     }
 
     void processPacket(ENetPacket *packet)
