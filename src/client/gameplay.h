@@ -2,9 +2,9 @@
 
 #include "gl/gl_object.h"
 #include "maths.h"
-#include "network/client.h"
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
+#include <common/network/packet.h>
 
 class Keyboard;
 
@@ -37,7 +37,6 @@ class Gameplay {
     gl::UniformLocation m_modelLocation;
     gl::UniformLocation m_projectionViewLocation;
 
-    ClientConnection m_client;
     std::array<Entity, 512> m_entities;
 
     Entity *m_player = nullptr;

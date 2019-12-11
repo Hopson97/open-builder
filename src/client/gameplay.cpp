@@ -64,8 +64,8 @@ void Gameplay::init(float aspect)
     m_texture.create("player");
     m_texture.bind();
 
-    m_client.connectTo(sf::IpAddress::LocalHost);
-    m_player = &m_entities[m_client.getClientId()];
+    //m_client.connectTo(sf::IpAddress::LocalHost);
+    //m_player = &m_entities[m_client.getClientId()];
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
 }
@@ -122,13 +122,16 @@ void Gameplay::onKeyRelease(sf::Keyboard::Key key)
 
 void Gameplay::update()
 {
-    // Send the position of this player to the server
+    // Send the position of this player to the servr
+
+    /*
     auto packet = makePacket(ServerCommand::PlayerPosition);
     auto id = m_client.getClientId();
     auto &entity = m_entities[id];
     packet.data << id << m_entities[id].position.x << m_entities[id].position.y
                 << entity.position.z;
     m_client.sendPacketToServer(packet);
+    */
 
     //Recieve updates from the server
     handlePackets();
@@ -172,5 +175,5 @@ void Gameplay::endGame()
     m_texture.destroy();
     m_shader.destroy();
 
-    m_client.disconnect();
+    //m_client.disconnect();
 }

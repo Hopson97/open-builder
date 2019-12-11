@@ -1,7 +1,6 @@
 
 add_library(ob-client
     input/keyboard.cpp
-    network/client.cpp
     gl/gl_vertex_array.cpp
     gl/texture_atlas.cpp
     gl/gl_shader.cpp

@@ -1,6 +1,5 @@
 #include "server_engine.h"
 
-#include "network/server.h"
 #include "server_config.h"
 #include <SFML/System/Clock.hpp>
 #include <array>
@@ -20,7 +19,6 @@ struct Entity {
 
 class ServerEngine {
   private:
-    Server m_server;
     std::array<Entity, MAX_CONNECTIONS> m_entities;
 
   public:
@@ -37,7 +35,7 @@ class ServerEngine {
 
             receivePackets();
             tick();
-
+/*
             if (m_server.clients.connectedCount() == 0) {
                 if (timeoutClock.getElapsedTime() >= timeout) {
                     isRunning = false;
@@ -46,13 +44,16 @@ class ServerEngine {
             else {
                 timeoutClock.restart();
             }
+*/
         }
+
     }
 
   private:
     void tick()
     {
         auto packet = makePacket(ClientCommand::Snapshot);
+        /*
         auto count = static_cast<u16>(m_server.clients.connectedCount());
         packet.data << count;
 
@@ -64,14 +65,17 @@ class ServerEngine {
             }
         }
         m_server.broadcastPacket(packet);
+        */
     }
 
     void receivePackets()
     {
         Packet incoming;
+        /*
         while (receivePacket(m_server.socket, incoming)) {
             processPacket(incoming);
         }
+        */
     }
 
     void processPacket(Packet &packet)
@@ -100,28 +104,34 @@ class ServerEngine {
 
     void handleConnectRequest(Packet &packet)
     {
+        /*
         int slot = m_server.tryConnectClient(packet);
         if (slot >= 0) {
             m_entities[slot].active = true;
         }
+        */
     }
 
     void handleDisconnect(Packet &packet)
     {
+        /*
         int slot = m_server.tryDisconnectClient(packet);
         if (slot >= 0) {
             m_entities[slot].active = false;
         }
+        */
     }
 
     void handlePlayerPosition(Packet &packet)
     {
+        /*
         client_id_t id = 0;
         packet.data >> id;
         if (m_server.clients.clientIsConnected(id)) {
             auto *player = &m_entities[id];
             packet.data >> player->x >> player->y >> player->z;
         }
+        */
     }
 };
 } // namespace

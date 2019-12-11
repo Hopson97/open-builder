@@ -1,11 +1,12 @@
 #include "gameplay.h"
 #include <common/debug.h>
 #include <common/network/packet.h>
+#include <common/network/net_command.h>
 
 void Gameplay::handlePackets()
 {
     Packet incoming;
-    while (receivePacket(m_client.socket, incoming)) {
+    while (0/*receivePacket(m_client.socket, incoming)*/) {
         switch (static_cast<ClientCommand>(incoming.command)) {
             case ClientCommand::PlayerJoin:
                 handlePlayerJoin(incoming);
@@ -29,6 +30,7 @@ void Gameplay::handlePackets()
 
 void Gameplay::handleSnapshot(Packet &packet)
 {
+    /*
     u16 n = 0;
     packet.data >> n;
 
@@ -42,6 +44,7 @@ void Gameplay::handleSnapshot(Packet &packet)
             p->active = true;
         }
     }
+    */
 }
 
 void Gameplay::handlePlayerJoin(Packet &packet)
