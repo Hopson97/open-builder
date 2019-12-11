@@ -64,8 +64,8 @@ void Gameplay::init(float aspect)
     m_texture.create("player");
     m_texture.bind();
 
-    //m_client.connectTo(sf::IpAddress::LocalHost);
-    //m_player = &m_entities[m_client.getClientId()];
+    // m_client.connectTo(sf::IpAddress::LocalHost);
+    // m_player = &m_entities[m_client.getClientId()];
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
 }
@@ -133,13 +133,13 @@ void Gameplay::update()
     m_client.sendPacketToServer(packet);
     */
 
-    //Recieve updates from the server
+    // Recieve updates from the server
     handlePackets();
 }
 
 void Gameplay::render()
 {
-    //Setup matrices
+    // Setup matrices
     glm::mat4 viewMatrix{1.0f};
     glm::mat4 projectionViewMatrix{1.0f};
 
@@ -149,7 +149,7 @@ void Gameplay::render()
     projectionViewMatrix = m_projectionMatrix * viewMatrix;
     gl::loadUniform(m_projectionViewLocation, projectionViewMatrix);
 
-    //Render all the players
+    // Render all the players
     auto drawable = m_cube.getDrawable();
     drawable.bind();
     for (auto &p : m_entities) {
@@ -162,8 +162,8 @@ void Gameplay::render()
             drawable.draw();
         }
     }
-    
-    //Render the """"""""world"""""""""""
+
+    // Render the """"""""world"""""""""""
     glm::mat4 modelMatrix{1.0f};
     gl::loadUniform(m_modelLocation, modelMatrix);
     drawable.draw();
@@ -175,5 +175,5 @@ void Gameplay::endGame()
     m_texture.destroy();
     m_shader.destroy();
 
-    //m_client.disconnect();
+    // m_client.disconnect();
 }

@@ -1,12 +1,12 @@
 #include "gameplay.h"
 #include <common/debug.h>
-#include <common/network/packet.h>
 #include <common/network/net_command.h>
+#include <common/network/packet.h>
 
 void Gameplay::handlePackets()
 {
     Packet incoming;
-    while (0/*receivePacket(m_client.socket, incoming)*/) {
+    while (0 /*receivePacket(m_client.socket, incoming)*/) {
         switch (static_cast<ClientCommand>(incoming.command)) {
             case ClientCommand::PlayerJoin:
                 handlePlayerJoin(incoming);
