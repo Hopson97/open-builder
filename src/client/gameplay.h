@@ -19,16 +19,12 @@ class Gameplay {
     bool init(float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
+    void onLoopBegin();
     void update();
     void render();
     void endGame();
 
   private:
-    void handlePackets();
-    void handlePacket(ENetPacket* packet);
-    void handleSnapshot(sf::Packet &packet);
-    void handlePlayerJoin(sf::Packet &packet);
-    void handlePlayerLeave(sf::Packet &packet);
 
     glm::mat4 m_projectionMatrix{1.0f};
 
@@ -43,7 +39,7 @@ class Gameplay {
 
     Entity *m_player = nullptr;
 
-    ENetHost *m_host = nullptr;
+    ENetHost *m_client = nullptr;
     ENetPeer *m_serverPeer = nullptr;
     client_id_t m_clientId = 0;
 

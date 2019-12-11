@@ -55,6 +55,7 @@ gl::VertexArray createCube()
 
 bool Gameplay::init(float aspect)
 {
+    // OpenGL stuff
     m_cube = createCube();
 
     m_shader.create("static", "static");
@@ -66,49 +67,38 @@ bool Gameplay::init(float aspect)
     m_texture.create("player");
     m_texture.bind();
 
+    // ENet Stuff
+    // Create the client
+    m_client = enet_host_create(0, 1, 2, 0, 0);
+    if (!m_client) {
+        LOG("Client", "Failed to create client, exiting");
+        return false;
+    }
+
     // Connect to the server
-    m_host = enet_host_create(nullptr, 1, 2, 0, 0);
-    ENetAddress address{0};
+    ENetAddress address = {0};
     enet_address_set_host(&address, "127.0.0.1");
     address.port = DEFAULT_PORT;
-    m_serverPeer = enet_host_connect(m_host, &address, 2, 0);
-    LOG("Client", "Connection request sent to server.");
+    m_serverPeer = enet_host_connect(m_client, &address, 2, 0);
+    if (!m_serverPeer) {
+        LOG("Client", "Server is full, exiting");
+        return false;
+    }
 
+    // Ensure connection is successful
     ENetEvent event;
-    if (enet_host_service(m_host, &event, 5000) > 0 &&
-        event.type == ENET_EVENT_TYPE_CONNECT) {
-        LOG("Client", "Connection was a success\n");
+    if (enet_host_service(m_client, &event, 5000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
+        LOG("Client", "Connection successful");
+    }
+    else {
+        LOG("Client", "Failed to connect to the server, exiting");
+        enet_peer_reset(m_serverPeer);
+        return false;
     }
 
-    /*
-    // Ensure connection is recieved and player pointer is created
-    sf::Clock timeout;
-    while (timeout.getElapsedTime().asSeconds() < 5.0f) {
-        ENetEvent event;
-        if (enet_host_service(m_host, &event, 100)) {
-            if (event.type == ENET_EVENT_TYPE_RECEIVE) {
-                ENetPacket *packet = event.packet;
-                sf::Packet pkt;
-                pkt.append(packet->data, packet->dataLength);
-                ClientCommand command;
-                pkt >> command;
-                if (command == ClientCommand::AcceptConnection) {
-                    client_id_t id;
-                    pkt >> id;
-                    m_player = &m_entities[id];
-                    m_clientId = id;
-                    LOGVAR("Client",
-                           "Connection to server accepted. Client ID: ",
-                           (int)m_clientId);
-                    break;
-                }
-            }
-        }
-    }
-    */
     if (!m_player) {
         m_player = &m_entities[0];
-    //    return false;
+        //    return false;
     }
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
     return true;
@@ -164,21 +154,13 @@ void Gameplay::onKeyRelease(sf::Keyboard::Key key)
     }
 }
 
+void Gameplay::onLoopBegin()
+{
+}
+
 void Gameplay::update()
 {
-    // Send the position of this player to the server
-
-    /*
-    auto packet = makePacket(ServerCommand::PlayerPosition);
-    auto id = m_client.getClientId();
-    auto &entity = m_entities[id];
-    packet.data << id << m_entities[id].position.x << m_entities[id].position.y
-                << entity.position.z;
-    m_client.sendPacketToServer(packet);
-    */
-
-    // Recieve updates from the server
-    handlePackets();
+    // Empty... for now
 }
 
 void Gameplay::render()
@@ -218,35 +200,4 @@ void Gameplay::endGame()
     m_cube.destroy();
     m_texture.destroy();
     m_shader.destroy();
-
-    LOG("Client", "Disconnecting from server.");
-
-    sf::Packet packet;
-    packet << ServerCommand::Disconnect << m_clientId;
-    ENetPacket *enetpacket = enet_packet_create(
-        packet.getData(), packet.getDataSize(),
-        ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
-    enet_peer_send(m_serverPeer, 0, enetpacket);
-    enet_host_flush(m_host);
-    enet_packet_destroy(enetpacket);
-
-    // Server diconnect
-    enet_peer_disconnect(m_serverPeer, 0);
-    ENetEvent event;
-    while (enet_host_service(m_host, &event, 1000) > 0) {
-        switch (event.type) {
-            case ENET_EVENT_TYPE_RECEIVE:
-                enet_packet_destroy(event.packet);
-                break;
-            case ENET_EVENT_TYPE_DISCONNECT:
-                LOG("Client", "Disconnect was a success")
-                break;
-            case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
-                break;
-            default:
-                break;
-        }
-    }
-    enet_peer_reset(m_serverPeer);
-    enet_host_destroy(m_host);
 }
