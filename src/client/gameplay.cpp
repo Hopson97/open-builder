@@ -71,13 +71,19 @@ bool Gameplay::init(float aspect)
     ENetAddress address{0};
     enet_address_set_host(&address, "127.0.0.1");
     address.port = DEFAULT_PORT;
-
     m_serverPeer = enet_host_connect(m_host, &address, 2, 0);
+    LOG("Client", "Connection request sent to server.");
 
+    ENetEvent event;
+    if (enet_host_service(m_host, &event, 5000) > 0 &&
+        event.type == ENET_EVENT_TYPE_CONNECT) {
+        LOG("Client", "Connection was a success\n");
+    }
+
+    /*
     // Ensure connection is recieved and player pointer is created
     sf::Clock timeout;
     while (timeout.getElapsedTime().asSeconds() < 5.0f) {
-        std::cout << "Trying to connect correctly\n";
         ENetEvent event;
         if (enet_host_service(m_host, &event, 100)) {
             if (event.type == ENET_EVENT_TYPE_RECEIVE) {
@@ -91,13 +97,18 @@ bool Gameplay::init(float aspect)
                     pkt >> id;
                     m_player = &m_entities[id];
                     m_clientId = id;
+                    LOGVAR("Client",
+                           "Connection to server accepted. Client ID: ",
+                           (int)m_clientId);
                     break;
                 }
             }
         }
     }
+    */
     if (!m_player) {
-        return false;
+        m_player = &m_entities[0];
+    //    return false;
     }
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
     return true;
@@ -208,5 +219,34 @@ void Gameplay::endGame()
     m_texture.destroy();
     m_shader.destroy();
 
-    // m_client.disconnect();
+    LOG("Client", "Disconnecting from server.");
+
+    sf::Packet packet;
+    packet << ServerCommand::Disconnect << m_clientId;
+    ENetPacket *enetpacket = enet_packet_create(
+        packet.getData(), packet.getDataSize(),
+        ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
+    enet_peer_send(m_serverPeer, 0, enetpacket);
+    enet_host_flush(m_host);
+    enet_packet_destroy(enetpacket);
+
+    // Server diconnect
+    enet_peer_disconnect(m_serverPeer, 0);
+    ENetEvent event;
+    while (enet_host_service(m_host, &event, 1000) > 0) {
+        switch (event.type) {
+            case ENET_EVENT_TYPE_RECEIVE:
+                enet_packet_destroy(event.packet);
+                break;
+            case ENET_EVENT_TYPE_DISCONNECT:
+                LOG("Client", "Disconnect was a success")
+                break;
+            case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
+                break;
+            default:
+                break;
+        }
+    }
+    enet_peer_reset(m_serverPeer);
+    enet_host_destroy(m_host);
 }

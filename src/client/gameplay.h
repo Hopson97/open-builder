@@ -25,9 +25,10 @@ class Gameplay {
 
   private:
     void handlePackets();
-    void handleSnapshot(Packet &packet);
-    void handlePlayerJoin(Packet &packet);
-    void handlePlayerLeave(Packet &packet);
+    void handlePacket(ENetPacket* packet);
+    void handleSnapshot(sf::Packet &packet);
+    void handlePlayerJoin(sf::Packet &packet);
+    void handlePlayerLeave(sf::Packet &packet);
 
     glm::mat4 m_projectionMatrix{1.0f};
 
@@ -42,9 +43,9 @@ class Gameplay {
 
     Entity *m_player = nullptr;
 
-    ENetHost *m_host;
-    ENetPeer *m_serverPeer;
-    client_id_t m_clientId;
+    ENetHost *m_host = nullptr;
+    ENetPeer *m_serverPeer = nullptr;
+    client_id_t m_clientId = 0;
 
     bool m_isMouseLocked = false;
 };

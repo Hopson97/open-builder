@@ -7,9 +7,6 @@
         Commands to be sent to the client
 */
 enum class ClientCommand : command_t {
-    // Packet for ensuring connections are not spoofed
-    ConnectionChallenge,
-
     // Accept an incoming connection
     // Data:
     // client_id_t: The ID of this client
@@ -43,14 +40,6 @@ enum class ClientCommand : command_t {
         Commands to be sent to server
 */
 enum class ServerCommand : command_t {
-    // Command to connect to a server
-    // Data:
-    // None
-    Connect,
-
-    // Packet for ensuring connections are not spoofed
-    ConnectionChallengeResponse,
-
     // Command to connect to a server
     // Data:
     // client_id_t: The ID of the player trying to leave

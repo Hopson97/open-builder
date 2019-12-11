@@ -22,19 +22,17 @@ struct Entity {
 class ServerEngine {
   private:
     std::array<Entity, 512> m_entities;
-    std::array<ENetPeer *, MAX_CONNECTIONS> m_peers{nullptr};
     std::array<bool, MAX_CONNECTIONS> m_peerConnected;
-    ENetHost *m_host;
+    ENetHost *m_host = nullptr;
 
   public:
     void run(const ServerConfig &config, sf::Time timeout)
     {
-
         // Start the main server loop
         sf::Clock deltaClock;
         sf::Clock timeoutClock;
         ENetAddress address{0};
-        //address.host = ENET_HOST_ANY;
+        // address.host = ENET_HOST_ANY;
         enet_address_set_host(&address, "127.0.0.1");
         address.port = DEFAULT_PORT;
 
@@ -47,16 +45,15 @@ class ServerEngine {
 
             receivePackets();
             tick();
-            /*
-                        if (m_server.clients.connectedCount() == 0) {
-                            if (timeoutClock.getElapsedTime() >= timeout) {
-                                isRunning = false;
-                            }
-                        }
-                        else {
-                            timeoutClock.restart();
-                        }
-            */
+
+            if (m_host->connectedPeers == 0) {
+                if (timeoutClock.getElapsedTime() >= timeout) {
+                    isRunning = false;
+                }
+            }
+            else {
+                timeoutClock.restart();
+            }
         }
 
         enet_host_destroy(m_host);
@@ -65,7 +62,7 @@ class ServerEngine {
   private:
     void tick()
     {
-        auto packet = makePacket(ClientCommand::Snapshot);
+        //auto packet = makePacket(ClientCommand::Snapshot);
         /*
         auto count = static_cast<u16>(m_server.clients.connectedCount());
         packet.data << count;
@@ -85,7 +82,7 @@ class ServerEngine {
     {
         Packet incoming;
         ENetEvent event;
-        while (enet_host_service(m_host, &event, 0)) {
+        if (enet_host_service(m_host, &event, 0)) {
             switch (event.type) {
                 case ENET_EVENT_TYPE_RECEIVE:
                     processPacket(event.packet);
@@ -93,12 +90,13 @@ class ServerEngine {
                     break;
 
                 case ENET_EVENT_TYPE_CONNECT:
+                    LOG("Server", "Connection request has been received.");
                     handleConnectRequest(event.peer);
                     break;
 
                 case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
                 case ENET_EVENT_TYPE_DISCONNECT:
-                    // todo
+                    LOG("Server", "Disconnect received\n");
                     break;
 
                 default:
@@ -113,6 +111,7 @@ class ServerEngine {
         pkt.append(packet->data, packet->dataLength);
         ServerCommand command;
         pkt >> command;
+
         switch (command) {
             case ServerCommand::PlayerPosition:
                 handlePlayerPosition(pkt);
@@ -126,19 +125,21 @@ class ServerEngine {
 
     void handleConnectRequest(ENetPeer *peer)
     {
+        // Try to find an empty slot
         for (int i = 0; i < MAX_CONNECTIONS; i++) {
             if (!m_peerConnected[i]) {
-                m_peers[i] = peer;
                 m_peerConnected[i] = true;
-
+                /*
                 // Tell client they are connected
                 sf::Packet packet;
                 packet << ClientCommand::AcceptConnection
                        << static_cast<client_id_t>(i);
                 ENetPacket *enetpacket =
                     enet_packet_create(packet.getData(), packet.getDataSize(),
-                                       ENET_PACKET_FLAG_RELIABLE);
+                                       ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
                 enet_peer_send(peer, 0, enetpacket);
+                LOGVAR("Server",
+                       "Connection request has been accepted. Client ID:", i);
 
                 // Tell all clients a player has joined
                 sf::Packet broadcast;
@@ -146,44 +147,47 @@ class ServerEngine {
                           << static_cast<client_id_t>(i);
                 ENetPacket *enetbroadcast = enet_packet_create(
                     broadcast.getData(), broadcast.getDataSize(),
-                    ENET_PACKET_FLAG_RELIABLE);
+                    ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
 
-                for (int i = 0; i < MAX_CONNECTIONS; i++) {
-                    if (m_peerConnected[i]) {
-                        enet_peer_send(m_peers[i], 0, enetbroadcast);
-                    }
-                }
+                enet_host_broadcast(m_host, 0, enetbroadcast);
 
                 enet_host_flush(m_host);
                 enet_packet_destroy(enetpacket);
                 enet_packet_destroy(enetbroadcast);
+                */
+                return;
             }
         }
+
+        // No room for the client :(
+        sf::Packet packet;
+        packet << ClientCommand::RejectConnection;
+        ENetPacket *enetpacket = enet_packet_create(
+            packet.getData(), packet.getDataSize(),
+            ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
+        enet_peer_send(peer, 0, enetpacket);
+        enet_peer_reset(peer);
     }
 
-    void handleDisconnect(sf::Packet &packet)
+    void handleDisconnect(sf::Packet packet)
     {
         client_id_t id = 0;
         packet >> id;
-        if (m_peers[id]) {
-            m_peerConnected[id] = false;
-            enet_peer_reset(m_peers[id]);
-            // Tell all clients a player has joined
-            sf::Packet broadcast;
-            broadcast << ClientCommand::PlayerLeave
-                      << static_cast<client_id_t>(id);
-            ENetPacket *enetbroadcast =
-                enet_packet_create(broadcast.getData(), broadcast.getDataSize(),
-                                   ENET_PACKET_FLAG_RELIABLE);
+        m_peerConnected[id] = false;
 
-            for (int i = 0; i < MAX_CONNECTIONS; i++) {
-                if (m_peerConnected[i]) {
-                    enet_peer_send(m_peers[i], 0, enetbroadcast);
-                }
-            }
-            enet_host_flush(m_host);
-            enet_packet_destroy(enetbroadcast);
-        }
+        LOGVAR("Server", "Disconnect packet got from client", (int)id);
+
+        // Broadcast a player has left
+        sf::Packet broadcast;
+        broadcast << ClientCommand::PlayerLeave << static_cast<client_id_t>(id);
+        ENetPacket *enetbroadcast =
+            enet_packet_create(broadcast.getData(), broadcast.getDataSize(),
+                               ENET_PACKET_FLAG_RELIABLE);
+
+        enet_host_broadcast(m_host, 0, enetbroadcast);
+
+        enet_host_flush(m_host);
+        enet_packet_destroy(enetbroadcast);
     }
 
     void handlePlayerPosition(sf::Packet &packet)

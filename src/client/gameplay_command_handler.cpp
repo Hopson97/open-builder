@@ -5,33 +5,55 @@
 
 void Gameplay::handlePackets()
 {
-
-
-
-    Packet incoming;
-    while (0 /*receivePacket(m_client.socket, incoming)*/) {
-        switch (static_cast<ClientCommand>(incoming.command)) {
-            case ClientCommand::PlayerJoin:
-                handlePlayerJoin(incoming);
+    ENetEvent event;
+    while (enet_host_service(m_host, &event, 0) > 0) {
+        switch (event.type) {
+            case ENET_EVENT_TYPE_RECEIVE:
+                handlePacket(event.packet);
+                enet_packet_destroy(event.packet);
                 break;
 
-            case ClientCommand::PlayerLeave:
-                handlePlayerLeave(incoming);
+            case ENET_EVENT_TYPE_CONNECT:
+                LOG("Client", "Connection request has been received.");
                 break;
 
-            case ClientCommand::Snapshot:
-                handleSnapshot(incoming);
+            case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
+            case ENET_EVENT_TYPE_DISCONNECT:
+                LOG("Client", "Disconnect received\n");
                 break;
 
-            case ClientCommand::ConnectionChallenge:
-            case ClientCommand::AcceptConnection:
-            case ClientCommand::RejectConnection:
+            default:
                 break;
         }
     }
 }
 
-void Gameplay::handleSnapshot(Packet &packet)
+void Gameplay::handlePacket(ENetPacket *packet)
+{
+    sf::Packet pkt;
+    pkt.append(packet->data, packet->dataLength);
+    ClientCommand command;
+    pkt >> command;
+    switch (command) {
+        case ClientCommand::PlayerJoin:
+            handlePlayerJoin(pkt);
+            break;
+
+        case ClientCommand::PlayerLeave:
+            handlePlayerLeave(pkt);
+            break;
+
+        case ClientCommand::Snapshot:
+            handleSnapshot(pkt);
+            break;
+
+        case ClientCommand::AcceptConnection:
+        case ClientCommand::RejectConnection:
+            break;
+    }
+}
+
+void Gameplay::handleSnapshot(sf::Packet &packet)
 {
     /*
     u16 n = 0;
@@ -50,18 +72,18 @@ void Gameplay::handleSnapshot(Packet &packet)
     */
 }
 
-void Gameplay::handlePlayerJoin(Packet &packet)
+void Gameplay::handlePlayerJoin(sf::Packet &packet)
 {
     client_id_t id = 0;
-    packet.data >> id;
+    packet >> id;
     m_entities[id].active = true;
     LOGVAR("Client", "Player has joined the game, Client ID:", (int)id);
 }
 
-void Gameplay::handlePlayerLeave(Packet &packet)
+void Gameplay::handlePlayerLeave(sf::Packet &packet)
 {
     client_id_t id = 0;
-    packet.data >> id;
+    packet >> id;
     m_entities[id].active = false;
     LOGVAR("Client", "Player has left the game, Client ID:", (int)id);
 }

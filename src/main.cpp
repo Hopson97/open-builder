@@ -188,8 +188,9 @@ int launchBoth(const Config &config)
 int main(int argc, char **argv)
 {
     Config config;
-#ifdef __WIN32
-    if (!enet_initialize()) {
+#ifdef WIN32
+    std::cout << "Init enet\n";
+    if (enet_initialize() != 0) {
         return exitFailure("Failed to initialise enet");
     }
 #endif
