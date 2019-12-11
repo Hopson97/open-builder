@@ -51,7 +51,9 @@ EngineStatus runClientEngine(const ClientConfig &config)
     EngineStatus status = EngineStatus::Ok;
     FPSCounter counter;
 
-    gameplay.init(window.aspect);
+    if (!gameplay.init(window.aspect)) {
+        return EngineStatus::CouldNotConnect;
+    }
 
     while (status == EngineStatus::Ok) {
         // Input

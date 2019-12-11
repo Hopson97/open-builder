@@ -10,6 +10,7 @@ enum class EngineStatus {
     Exit = 11,
 
     GLInitError = 20,
+    CouldNotConnect = 21,
 };
 
 /**

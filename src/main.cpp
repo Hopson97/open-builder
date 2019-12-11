@@ -162,6 +162,9 @@ int launchClient(const ClientConfig &config)
 
         case EngineStatus::GLInitError:
             return exitFailure("OpenGL failed to initilise correctly");
+
+        case EngineStatus::CouldNotConnect:
+            return exitFailure("Connection to server could not be established");
     }
 
     return exitFailure("Unknown error");
