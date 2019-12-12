@@ -74,7 +74,7 @@ class ServerEngine {
 
                 case ENET_EVENT_TYPE_RECEIVE:
                     onDataReceive(*event.packet);
-                    //enet_packet_destroy(event.packet);
+                    enet_packet_destroy(event.packet);
                     break;
 
                 case ENET_EVENT_TYPE_DISCONNECT:
@@ -112,10 +112,8 @@ class ServerEngine {
             packet << ClientCommand::ClientId << slot;
             ENetPacket *p =
                 enet_packet_create(packet.getData(), packet.getDataSize(),
-                                   ENET_PACKET_FLAG_RELIABLE);
+                                   ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
             enet_peer_send(&peer, 0, p);
-            enet_host_flush(m_server);
-            //enet_packet_destroy(p);
 
             m_peerConnected[slot] = true;
 
@@ -124,8 +122,9 @@ class ServerEngine {
             // Broadcast the connection event
             sf::Packet announcement;
             announcement << ClientCommand::PlayerJoin << slot;
-            broadcastToPeers(announcement, ENET_PACKET_FLAG_RELIABLE);
+            broadcastToPeers(announcement, ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
 
+            enet_host_flush(m_server);
         }
     }
 
@@ -135,7 +134,6 @@ class ServerEngine {
             enet_packet_create(packet.getData(), packet.getDataSize(), flags);
         enet_host_broadcast(m_server, 0, broadcast);
         enet_host_flush(m_server);
-        //enet_packet_destroy(broadcast);
     }
 
     void onDisconnect(const ENetPeer &peer)

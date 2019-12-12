@@ -188,7 +188,7 @@ void Gameplay::update()
             case ENET_EVENT_TYPE_RECEIVE:
                 std::cout << "Client on data rec\n";
                 onDataReceive(*event.packet);
-                enet_packet_destroy(event.packet);
+                //enet_packet_destroy(event.packet);
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
@@ -247,14 +247,13 @@ void Gameplay::endGame()
     sf::Packet packet;
     packet << ServerCommand::Disconnect << m_clientId;
     ENetPacket *p = enet_packet_create(packet.getData(), packet.getDataSize(),
-                                       ENET_PACKET_FLAG_RELIABLE);
+                                       ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
     if (enet_peer_send(m_serverPeer, 0, p) != 0) {
         LOG("Client", "Failed to send disconnect packet");
     }
-
     enet_host_flush(m_client);
+    
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    enet_packet_destroy(p);
 
     ENetEvent event;
     enet_peer_disconnect(m_serverPeer, 0);
