@@ -4,7 +4,7 @@
 
 // The default port the server socket is bounds to (And what clients send data
 // to)
-constexpr port_t DEFAULT_PORT = 52666;
+constexpr port_t DEFAULT_PORT = 56355;
 
 // The minimum number connections the server can hold
 constexpr int MIN_CONNECTIONS = 1;
