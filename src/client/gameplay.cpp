@@ -243,7 +243,7 @@ void Gameplay::render()
     // Render the """"""""world"""""""""""
     glm::mat4 modelMatrix{1.0f};
     gl::loadUniform(m_modelLocation, modelMatrix);
-    //drawable.draw();
+    // drawable.draw();
 }
 
 void Gameplay::endGame()
