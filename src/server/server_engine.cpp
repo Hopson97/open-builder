@@ -49,9 +49,10 @@ class ServerEngine {
 
             receivePackets();
 
-            if (m_server->connectedPeers == 0 &&
-                timeoutClock.getElapsedTime() >= timeout) {
-                m_isRunning = false;
+            if (m_server->connectedPeers == 0) {
+                if (timeoutClock.getElapsedTime() >= timeout) {
+                    m_isRunning = false;
+                }
             }
             else {
                 timeoutClock.restart();

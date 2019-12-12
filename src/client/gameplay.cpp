@@ -248,10 +248,12 @@ void Gameplay::endGame()
         switch (event.type) {
             case ENET_EVENT_TYPE_RECEIVE:
                 enet_packet_destroy(event.packet);
+
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
                 LOG("Client", "Disconnected from server success");
+                enet_host_destroy(m_client);
                 return;
 
             default:
@@ -259,4 +261,5 @@ void Gameplay::endGame()
         }
     }
     enet_peer_reset(m_serverPeer);
+    enet_host_destroy(m_client);
 }
