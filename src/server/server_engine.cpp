@@ -90,10 +90,34 @@ class ServerEngine {
         }
     }
 
-    void onConnect(const ENetPeer &peer)
+    int emptySlot()
+    {
+        for (int i = 0; i < MAX_CONNECTIONS; i++) {
+            if (!m_peerConnected[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    void onConnect(ENetPeer &peer)
     {
         LOG("Server", "Got connection event.");
         LOGVAR("Server", "New Connection Port: ", peer.address.port);
+
+        client_id_t slot = emptySlot();
+        if (slot >= 0) {
+
+            sf::Packet packet;
+            packet << ClientCommand::ClientId << slot;
+            ENetPacket* p = enet_packet_create(packet.getData(), packet.getDataSize(), ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(&peer, 0, p);
+            enet_host_flush(m_server);
+            enet_packet_destroy(p);
+
+            m_peerConnected[slot] = true;
+            LOGVAR("Server", "New Connection Client ID: ", (int)slot);
+        }
     }
 
     void onDisconnect(const ENetPeer &peer)

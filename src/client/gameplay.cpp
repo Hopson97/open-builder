@@ -98,24 +98,25 @@ bool Gameplay::init(float aspect)
     }
     // Ensure packet is sent
     enet_host_flush(m_client);
-    /*
+
         // Wait for client ID
         sf::Clock test;
-        while (test.getElapsedTime().asSeconds() < 2.0f &&
-               enet_host_service(m_client, &event, 0) > 0 &&
-               event.type == ENET_EVENT_TYPE_RECEIVE) {
-            ClientCommand command;
-            sf::Packet packet;
-            packet.append(event.packet->data, event.packet->dataLength);
-            packet >> command;
-            if (command == ClientCommand::ClientId) {
-                LOG("Client", "Got client ID");
-                packet >> m_clientId;
-                m_player = &m_entities[m_clientId];
-                break;
+        while (test.getElapsedTime().asSeconds() < 2.0f) {
+            enet_host_service(m_client, &event, 0);
+            if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+                ClientCommand command;
+                sf::Packet packet;
+                packet.append(event.packet->data, event.packet->dataLength);
+                packet >> command;
+                if (command == ClientCommand::ClientId) {
+                    LOG("Client", "Got client ID");
+                    packet >> m_clientId;
+                    m_player = &m_entities[m_clientId];
+                    break;
+                }
             }
         }
-    */
+
     if (!m_player) {
         LOG("Client", "Client did not receive client ID, exiting");
         return false;
