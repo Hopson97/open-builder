@@ -28,6 +28,11 @@ class Gameplay {
     void endGame();
 
   private:
+    void onDataReceive(const ENetPacket &packet);
+
+    void onPlayerJoin(sf::Packet& packet);
+    void onPlayerLeave(sf::Packet &packet);
+
     glm::mat4 m_projectionMatrix{1.0f};
 
     gl::VertexArray m_cube;

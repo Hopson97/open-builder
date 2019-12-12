@@ -108,17 +108,32 @@ class ServerEngine {
 
         client_id_t slot = emptySlot();
         if (slot >= 0) {
-
             sf::Packet packet;
             packet << ClientCommand::ClientId << slot;
-            ENetPacket* p = enet_packet_create(packet.getData(), packet.getDataSize(), ENET_PACKET_FLAG_RELIABLE);
+            ENetPacket *p =
+                enet_packet_create(packet.getData(), packet.getDataSize(),
+                                   ENET_PACKET_FLAG_RELIABLE);
             enet_peer_send(&peer, 0, p);
             enet_host_flush(m_server);
             enet_packet_destroy(p);
 
             m_peerConnected[slot] = true;
             LOGVAR("Server", "New Connection Client ID: ", (int)slot);
+
+            // Broadcast the connection event
+            sf::Packet announcement;
+            announcement << ClientCommand::PlayerJoin << slot;
+            broadcastToPeers(announcement, ENET_PACKET_FLAG_RELIABLE);
         }
+    }
+
+    void broadcastToPeers(sf::Packet &packet, u32 flags)
+    {
+        ENetPacket *broadcast = enet_packet_create(
+            packet.getData(), packet.getDataSize(), flags);
+        enet_host_broadcast(m_server, 0, broadcast);
+        enet_host_flush(m_server);
+        enet_packet_destroy(broadcast);
     }
 
     void onDisconnect(const ENetPeer &peer)
@@ -133,20 +148,33 @@ class ServerEngine {
 
     void onDataReceive(const ENetPacket &packet)
     {
-        sf::Packet buffer;
-        client_id_t senderId;
-        buffer.append(packet.data, packet.dataLength);
-        
+        sf::Packet pkt;
+        pkt.append(packet.data, packet.dataLength);
+
         ServerCommand command;
-        buffer >> command;
-        switch (command)
-        {
+        pkt >> command;
+        switch (command) {
             case ServerCommand::PlayerPosition:
                 break;
 
             case ServerCommand::Disconnect:
+                handleCommandDisconnect(pkt);
                 break;
         }
+    }
+
+    void handleCommandDisconnect(sf::Packet &packet)
+    {
+        LOG("Server", "Disconnect command received");
+        // Set connect flag to false for this client
+        client_id_t id;
+        packet >> id;
+        m_peerConnected[id] = false;
+
+        // Broadcast the disconnection event
+        sf::Packet announcement;
+        announcement << ClientCommand::PlayerLeave << id;
+        broadcastToPeers(announcement, ENET_PACKET_FLAG_RELIABLE);
     }
 };
 } // namespace

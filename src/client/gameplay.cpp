@@ -99,23 +99,23 @@ bool Gameplay::init(float aspect)
     // Ensure packet is sent
     enet_host_flush(m_client);
 
-        // Wait for client ID
-        sf::Clock test;
-        while (test.getElapsedTime().asSeconds() < 2.0f) {
-            enet_host_service(m_client, &event, 0);
-            if (event.type == ENET_EVENT_TYPE_RECEIVE) {
-                ClientCommand command;
-                sf::Packet packet;
-                packet.append(event.packet->data, event.packet->dataLength);
-                packet >> command;
-                if (command == ClientCommand::ClientId) {
-                    LOG("Client", "Got client ID");
-                    packet >> m_clientId;
-                    m_player = &m_entities[m_clientId];
-                    break;
-                }
+    // Wait for client ID
+    sf::Clock test;
+    while (test.getElapsedTime().asSeconds() < 2.0f) {
+        enet_host_service(m_client, &event, 0);
+        if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+            ClientCommand command;
+            sf::Packet packet;
+            packet.append(event.packet->data, event.packet->dataLength);
+            packet >> command;
+            if (command == ClientCommand::ClientId) {
+                packet >> m_clientId;
+                m_player = &m_entities[m_clientId];
+                LOGVAR("Client", "Got client ID", (int)m_clientId);
+                break;
             }
         }
+    }
 
     if (!m_player) {
         LOG("Client", "Client did not receive client ID, exiting");
@@ -186,6 +186,7 @@ void Gameplay::update()
 
             case ENET_EVENT_TYPE_RECEIVE:
                 std::cout << "Client on data rec\n";
+                onDataReceive(*event.packet);
                 enet_packet_destroy(event.packet);
                 break;
 
@@ -242,6 +243,18 @@ void Gameplay::endGame()
     m_shader.destroy();
 
     // Disconnect from the server
+    sf::Packet packet;
+    packet << ServerCommand::Disconnect << m_clientId;
+    ENetPacket *p = enet_packet_create(packet.getData(), packet.getDataSize(),
+                                       ENET_PACKET_FLAG_RELIABLE);
+    if (enet_peer_send(m_serverPeer, 0, p) != 0) {
+        LOG("Client", "Failed to send disconnect packet");
+    }
+
+    enet_host_flush(m_client);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    enet_packet_destroy(p);
+
     ENetEvent event;
     enet_peer_disconnect(m_serverPeer, 0);
     while (enet_host_service(m_client, &event, 3000) > 0) {
@@ -262,4 +275,46 @@ void Gameplay::endGame()
     }
     enet_peer_reset(m_serverPeer);
     enet_host_destroy(m_client);
+}
+
+void Gameplay::onDataReceive(const ENetPacket &packet)
+{
+    sf::Packet pkt;
+    pkt.append(packet.data, packet.dataLength);
+
+    ClientCommand command;
+    pkt >> command;
+    switch (command) {
+        case ClientCommand::PlayerJoin:
+            onPlayerJoin(pkt);
+            break;
+
+        case ClientCommand::PlayerLeave:
+            onPlayerLeave(pkt);
+            break;
+
+        case ClientCommand::Snapshot:
+            break;
+
+        case ClientCommand::ClientId:
+            break;
+    }
+}
+
+void Gameplay::onPlayerJoin(sf::Packet &packet)
+{
+    client_id_t id;
+    packet >> id;
+    m_entities[id].active = true;
+
+    LOGVAR("Client", "Player joined, client id: ", (int)id);
+}
+
+void Gameplay::onPlayerLeave(sf::Packet &packet)
+{
+    client_id_t id;
+    packet >> id;
+    m_entities[id].active = false;
+
+    LOGVAR("Client", "Player left, client id: ", (int)id);
 }
