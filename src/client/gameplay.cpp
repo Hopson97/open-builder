@@ -87,7 +87,8 @@ bool Gameplay::init(float aspect)
 
     // Ensure connection is successful
     ENetEvent event;
-    if (enet_host_service(m_client, &event, 5000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
+    if (enet_host_service(m_client, &event, 5000) > 0 &&
+        event.type == ENET_EVENT_TYPE_CONNECT) {
         LOG("Client", "Connection successful");
     }
     else {
@@ -95,6 +96,7 @@ bool Gameplay::init(float aspect)
         enet_peer_reset(m_serverPeer);
         return false;
     }
+    enet_host_flush(m_client);
 
     if (!m_player) {
         m_player = &m_entities[0];
@@ -154,13 +156,32 @@ void Gameplay::onKeyRelease(sf::Keyboard::Key key)
     }
 }
 
-void Gameplay::onLoopBegin()
-{
-}
-
 void Gameplay::update()
 {
-    // Empty... for now
+    ENetEvent event;
+    while (enet_host_service(m_client, &event, 0) > 0) {
+        switch (event.type) {
+            case ENET_EVENT_TYPE_CONNECT:
+                std::cout << "Client on connect\n";
+                break;
+
+            case ENET_EVENT_TYPE_RECEIVE:
+                std::cout << "Client on data rec\n";
+                enet_packet_destroy(event.packet);
+                break;
+
+            case ENET_EVENT_TYPE_DISCONNECT:
+                std::cout << "Client on disconnect\n";
+                break;
+
+            case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
+                std::cout << "Client on timeout\n";
+                break;
+
+            case ENET_EVENT_TYPE_NONE:
+                break;
+        }
+    }
 }
 
 void Gameplay::render()
@@ -200,4 +221,23 @@ void Gameplay::endGame()
     m_cube.destroy();
     m_texture.destroy();
     m_shader.destroy();
+
+    // Disconnect from the server
+    ENetEvent event;
+    enet_peer_disconnect(m_serverPeer, 0);
+    while (enet_host_service(m_client, &event, 3000) > 0) {
+        switch (event.type) {
+            case ENET_EVENT_TYPE_RECEIVE:
+                enet_packet_destroy(event.packet);
+                break;
+
+            case ENET_EVENT_TYPE_DISCONNECT:
+                LOG("Client", "Disconnected from server success");
+                return;
+
+            default:
+                break;
+        }
+    }
+    enet_peer_reset(m_serverPeer);
 }

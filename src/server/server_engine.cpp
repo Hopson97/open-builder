@@ -66,7 +66,8 @@ class ServerEngine {
     void receivePackets()
     {
         ENetEvent event;
-        while (enet_host_service(m_server, &event, 0) > 0) {
+        while (enet_host_service(m_server, &event, 0) > 0)
+        {
             switch (event.type) {
                 case ENET_EVENT_TYPE_CONNECT:
                     onConnect(*event.peer);
@@ -109,7 +110,6 @@ class ServerEngine {
 
     void onDataReceive(const ENetPacket &packet)
     {
-
     }
 };
 } // namespace

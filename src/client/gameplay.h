@@ -19,7 +19,7 @@ class Gameplay {
     bool init(float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
-    void onLoopBegin();
+
     void update();
     void render();
     void endGame();
