@@ -188,12 +188,11 @@ int launchBoth(const Config &config)
 int main(int argc, char **argv)
 {
     Config config;
-#ifdef WIN32
+
     std::cout << "Init enet\n";
     if (enet_initialize() != 0) {
         return exitFailure("Failed to initialise enet");
     }
-#endif
 
     std::vector<std::pair<std::string, std::string>> args;
     for (int i = 1; i < argc; i++) {
@@ -217,7 +216,5 @@ int main(int argc, char **argv)
             return launchClient(config.clientOptions);
     }
 
-#ifdef __WIN32
     enet_deinitialize();
-#endif
 }

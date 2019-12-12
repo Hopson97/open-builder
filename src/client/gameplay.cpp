@@ -6,6 +6,7 @@
 #include <common/network/net_command.h>
 #include <common/network/net_constants.h>
 #include <common/network/packet.h>
+#include <thread>
 
 namespace {
 gl::VertexArray createCube()

@@ -74,7 +74,7 @@ class ServerEngine {
 
                 case ENET_EVENT_TYPE_RECEIVE:
                     onDataReceive(*event.packet);
-                    enet_packet_destroy(event.packet);
+                    //enet_packet_destroy(event.packet);
                     break;
 
                 case ENET_EVENT_TYPE_DISCONNECT:
@@ -115,25 +115,27 @@ class ServerEngine {
                                    ENET_PACKET_FLAG_RELIABLE);
             enet_peer_send(&peer, 0, p);
             enet_host_flush(m_server);
-            enet_packet_destroy(p);
+            //enet_packet_destroy(p);
 
             m_peerConnected[slot] = true;
+
             LOGVAR("Server", "New Connection Client ID: ", (int)slot);
 
             // Broadcast the connection event
             sf::Packet announcement;
             announcement << ClientCommand::PlayerJoin << slot;
             broadcastToPeers(announcement, ENET_PACKET_FLAG_RELIABLE);
+
         }
     }
 
     void broadcastToPeers(sf::Packet &packet, u32 flags)
     {
-        ENetPacket *broadcast = enet_packet_create(
-            packet.getData(), packet.getDataSize(), flags);
+        ENetPacket *broadcast =
+            enet_packet_create(packet.getData(), packet.getDataSize(), flags);
         enet_host_broadcast(m_server, 0, broadcast);
         enet_host_flush(m_server);
-        enet_packet_destroy(broadcast);
+        //enet_packet_destroy(broadcast);
     }
 
     void onDisconnect(const ENetPeer &peer)
@@ -175,6 +177,7 @@ class ServerEngine {
         sf::Packet announcement;
         announcement << ClientCommand::PlayerLeave << id;
         broadcastToPeers(announcement, ENET_PACKET_FLAG_RELIABLE);
+
     }
 };
 } // namespace
