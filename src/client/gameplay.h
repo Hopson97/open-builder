@@ -32,6 +32,7 @@ class Gameplay {
 
     void onPlayerJoin(sf::Packet &packet);
     void onPlayerLeave(sf::Packet &packet);
+    void onSnapshot(sf::Packet &packet);
 
     glm::mat4 m_projectionMatrix{1.0f};
 

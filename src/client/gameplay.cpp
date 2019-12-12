@@ -178,6 +178,15 @@ void Gameplay::onKeyRelease(sf::Keyboard::Key key)
 
 void Gameplay::update()
 {
+    sf::Packet packet;
+    packet << ServerCommand::PlayerPosition << m_clientId
+           << m_player->position.x << m_player->position.y
+           << m_player->position.z;
+    ENetPacket *p =
+        enet_packet_create(packet.getData(), packet.getDataSize(), 0);
+    enet_peer_send(m_serverPeer, 0, p);
+    enet_host_flush(m_client);
+
     ENetEvent event;
     while (enet_host_service(m_client, &event, 0) > 0) {
         switch (event.type) {
@@ -186,9 +195,8 @@ void Gameplay::update()
                 break;
 
             case ENET_EVENT_TYPE_RECEIVE:
-                std::cout << "Client on data rec\n";
                 onDataReceive(*event.packet);
-                //enet_packet_destroy(event.packet);
+                // enet_packet_destroy(event.packet);
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
@@ -220,9 +228,10 @@ void Gameplay::render()
     // Render all the players
     auto drawable = m_cube.getDrawable();
     drawable.bind();
+    int count = 0;
     for (auto &p : m_entities) {
         if (p.active) {
-
+            std::cout << m_player->position << p.position << std::endl;
             glm::mat4 modelMatrix{1.0f};
             translateMatrix(&modelMatrix,
                             {p.position.x, p.position.y, p.position.z});
@@ -234,7 +243,7 @@ void Gameplay::render()
     // Render the """"""""world"""""""""""
     glm::mat4 modelMatrix{1.0f};
     gl::loadUniform(m_modelLocation, modelMatrix);
-    drawable.draw();
+    //drawable.draw();
 }
 
 void Gameplay::endGame()
@@ -247,12 +256,13 @@ void Gameplay::endGame()
     sf::Packet packet;
     packet << ServerCommand::Disconnect << m_clientId;
     ENetPacket *p = enet_packet_create(packet.getData(), packet.getDataSize(),
-                                       ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
+                                       ENET_PACKET_FLAG_RELIABLE |
+                                           ENET_PACKET_FLAG_NO_ALLOCATE);
     if (enet_peer_send(m_serverPeer, 0, p) != 0) {
         LOG("Client", "Failed to send disconnect packet");
     }
     enet_host_flush(m_client);
-    
+
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     ENetEvent event;
@@ -294,6 +304,7 @@ void Gameplay::onDataReceive(const ENetPacket &packet)
             break;
 
         case ClientCommand::Snapshot:
+            onSnapshot(pkt);
             break;
 
         case ClientCommand::ClientId:
@@ -317,4 +328,20 @@ void Gameplay::onPlayerLeave(sf::Packet &packet)
     m_entities[id].active = false;
 
     LOGVAR("Client", "Player left, client id: ", (int)id);
+}
+
+void Gameplay::onSnapshot(sf::Packet &packet)
+{
+    u16 updateEntityCount = 0;
+    packet >> updateEntityCount;
+    for (u16 i = 0; i < updateEntityCount; i++) {
+        client_id_t id = 0;
+        float x, y, z;
+        packet >> id >> x >> y >> z;
+        if (id != m_clientId) {
+            auto *p = &m_entities[id];
+            p->position = {x, y, z};
+            p->active = true;
+        }
+    }
 }

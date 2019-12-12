@@ -72,7 +72,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
         window.window.display();
 
         // Stats and stuff
-        //counter.update();
+        // counter.update();
     }
     gameplay.endGame();
     return status;

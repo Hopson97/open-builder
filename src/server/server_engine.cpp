@@ -48,6 +48,7 @@ class ServerEngine {
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
             receivePackets();
+            sendPackets();
 
             if (m_server->connectedPeers == 0) {
                 if (timeoutClock.getElapsedTime() >= timeout) {
@@ -63,6 +64,20 @@ class ServerEngine {
     }
 
   private:
+    void sendPackets()
+    {
+        sf::Packet packet;
+        u16 count = m_server->connectedPeers;
+        packet << ClientCommand::Snapshot << count;
+        for (int i = 0; i < MAX_CONNECTIONS; i++) {
+            if (m_peerConnected[i]) {
+                packet << static_cast<client_id_t>(i) << m_entities[i].x
+                       << m_entities[i].y << m_entities[i].z;
+            }
+        }
+        broadcastToPeers(packet, 0);
+    }
+
     void receivePackets()
     {
         ENetEvent event;
@@ -110,9 +125,9 @@ class ServerEngine {
         if (slot >= 0) {
             sf::Packet packet;
             packet << ClientCommand::ClientId << slot;
-            ENetPacket *p =
-                enet_packet_create(packet.getData(), packet.getDataSize(),
-                                   ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
+            ENetPacket *p = enet_packet_create(
+                packet.getData(), packet.getDataSize(),
+                ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
             enet_peer_send(&peer, 0, p);
 
             m_peerConnected[slot] = true;
@@ -122,7 +137,8 @@ class ServerEngine {
             // Broadcast the connection event
             sf::Packet announcement;
             announcement << ClientCommand::PlayerJoin << slot;
-            broadcastToPeers(announcement, ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
+            broadcastToPeers(announcement, ENET_PACKET_FLAG_RELIABLE |
+                                               ENET_PACKET_FLAG_NO_ALLOCATE);
 
             enet_host_flush(m_server);
         }
@@ -155,6 +171,7 @@ class ServerEngine {
         pkt >> command;
         switch (command) {
             case ServerCommand::PlayerPosition:
+                handleCommandPlayerPosition(pkt);
                 break;
 
             case ServerCommand::Disconnect:
@@ -175,7 +192,13 @@ class ServerEngine {
         sf::Packet announcement;
         announcement << ClientCommand::PlayerLeave << id;
         broadcastToPeers(announcement, ENET_PACKET_FLAG_RELIABLE);
+    }
 
+    void handleCommandPlayerPosition(sf::Packet &packet)
+    {
+        client_id_t id;
+        packet >> id;
+        packet >> m_entities[id].x >> m_entities[id].y >> m_entities[id].z;
     }
 };
 } // namespace
