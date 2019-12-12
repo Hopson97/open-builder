@@ -231,7 +231,6 @@ void Gameplay::render()
     int count = 0;
     for (auto &p : m_entities) {
         if (p.active) {
-            std::cout << m_player->position << p.position << std::endl;
             glm::mat4 modelMatrix{1.0f};
             translateMatrix(&modelMatrix,
                             {p.position.x, p.position.y, p.position.z});
