@@ -2,10 +2,11 @@
 
 #include "gl/gl_object.h"
 #include "maths.h"
+#include <SFML/Network/Packet.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/network/enet.h>
-#include <common/network/packet.h>
+#include <common/network/net_types.h>
 
 class Keyboard;
 

@@ -5,7 +5,6 @@
 #include <common/debug.h>
 #include <common/network/net_command.h>
 #include <common/network/net_constants.h>
-#include <common/network/packet.h>
 #include <thread>
 
 namespace {
@@ -228,7 +227,6 @@ void Gameplay::render()
     // Render all the players
     auto drawable = m_cube.getDrawable();
     drawable.bind();
-    int count = 0;
     for (auto &p : m_entities) {
         if (p.active) {
             glm::mat4 modelMatrix{1.0f};
