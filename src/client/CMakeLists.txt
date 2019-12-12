@@ -10,7 +10,6 @@ add_library(ob-client
     client_engine.cpp
     window.cpp
     gameplay.cpp
-    gameplay_command_handler.cpp
 )
 
 set_flags(ob-client)
