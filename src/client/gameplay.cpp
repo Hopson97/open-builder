@@ -313,7 +313,7 @@ void Gameplay::onDataReceive(const ENetPacket &packet)
 
 void Gameplay::onPlayerJoin(sf::Packet &packet)
 {
-    client_id_t id;
+    peer_id_t id;
     packet >> id;
     m_entities[id].active = true;
 
@@ -322,7 +322,7 @@ void Gameplay::onPlayerJoin(sf::Packet &packet)
 
 void Gameplay::onPlayerLeave(sf::Packet &packet)
 {
-    client_id_t id;
+    peer_id_t id;
     packet >> id;
     m_entities[id].active = false;
 
@@ -334,7 +334,7 @@ void Gameplay::onSnapshot(sf::Packet &packet)
     u16 updateEntityCount = 0;
     packet >> updateEntityCount;
     for (u16 i = 0; i < updateEntityCount; i++) {
-        client_id_t id = 0;
+        peer_id_t id = 0;
         float x, y, z;
         packet >> id >> x >> y >> z;
         if (id != m_clientId) {

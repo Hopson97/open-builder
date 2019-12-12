@@ -49,7 +49,7 @@ class Gameplay {
 
     ENetHost *m_client = nullptr;
     ENetPeer *m_serverPeer = nullptr;
-    client_id_t m_clientId = 0;
+    peer_id_t m_clientId = 0;
 
     bool m_isMouseLocked = false;
 };

@@ -1,7 +1,6 @@
 
 add_library(ob-common
     file_io.cpp
-    network/packet.cpp
     debug.cpp
 )
 

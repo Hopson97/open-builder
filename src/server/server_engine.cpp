@@ -71,7 +71,7 @@ class ServerEngine {
         packet << ClientCommand::Snapshot << count;
         for (int i = 0; i < MAX_CONNECTIONS; i++) {
             if (m_peerConnected[i]) {
-                packet << static_cast<client_id_t>(i) << m_entities[i].x
+                packet << static_cast<peer_id_t>(i) << m_entities[i].x
                        << m_entities[i].y << m_entities[i].z;
             }
         }
@@ -121,7 +121,7 @@ class ServerEngine {
         LOG("Server", "Got connection event.");
         LOGVAR("Server", "New Connection Port: ", peer.address.port);
 
-        client_id_t slot = emptySlot();
+        peer_id_t slot = emptySlot();
         if (slot >= 0) {
             sf::Packet packet;
             packet << ClientCommand::ClientId << slot;
@@ -184,7 +184,7 @@ class ServerEngine {
     {
         LOG("Server", "Disconnect command received");
         // Set connect flag to false for this client
-        client_id_t id;
+        peer_id_t id;
         packet >> id;
         m_peerConnected[id] = false;
 
@@ -196,7 +196,7 @@ class ServerEngine {
 
     void handleCommandPlayerPosition(sf::Packet &packet)
     {
-        client_id_t id;
+        peer_id_t id;
         packet >> id;
         packet >> m_entities[id].x >> m_entities[id].y >> m_entities[id].z;
     }
