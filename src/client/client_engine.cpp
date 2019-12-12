@@ -3,8 +3,8 @@
 #include "gameplay.h"
 #include "gl/gl_errors.h"
 #include "window.h"
-#include <glad/glad.h>
 #include <common/debug.h>
+#include <glad/glad.h>
 #include <iostream>
 
 namespace {

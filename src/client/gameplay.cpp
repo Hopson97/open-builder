@@ -76,7 +76,7 @@ bool Gameplay::init(float aspect)
     }
 
     // Connect to the server
-    ENetAddress address = {0};
+    ENetAddress address{};
     enet_address_set_host(&address, "127.0.0.1");
     address.port = DEFAULT_PORT;
     m_serverPeer = enet_host_connect(m_client, &address, 2, 0);
@@ -96,11 +96,29 @@ bool Gameplay::init(float aspect)
         enet_peer_reset(m_serverPeer);
         return false;
     }
+    // Ensure packet is sent
     enet_host_flush(m_client);
-
+    /*
+        // Wait for client ID
+        sf::Clock test;
+        while (test.getElapsedTime().asSeconds() < 2.0f &&
+               enet_host_service(m_client, &event, 0) > 0 &&
+               event.type == ENET_EVENT_TYPE_RECEIVE) {
+            ClientCommand command;
+            sf::Packet packet;
+            packet.append(event.packet->data, event.packet->dataLength);
+            packet >> command;
+            if (command == ClientCommand::ClientId) {
+                LOG("Client", "Got client ID");
+                packet >> m_clientId;
+                m_player = &m_entities[m_clientId];
+                break;
+            }
+        }
+    */
     if (!m_player) {
-        m_player = &m_entities[0];
-        //    return false;
+        LOG("Client", "Client did not receive client ID, exiting");
+        return false;
     }
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
     return true;

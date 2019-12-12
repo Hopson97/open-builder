@@ -32,7 +32,7 @@ class ServerEngine {
     void run(const ServerConfig &config, sf::Time timeout)
     {
         // Create the enet server
-        ENetAddress address = {0};
+        ENetAddress address{};
         address.host = ENET_HOST_ANY;
         address.port = DEFAULT_PORT;
         m_server = enet_host_create(&address, MAX_CONNECTIONS, 2, 0, 0);
@@ -49,10 +49,9 @@ class ServerEngine {
 
             receivePackets();
 
-            if (m_server->connectedPeers == 0) {
-                if (timeoutClock.getElapsedTime() >= timeout) {
-                    m_isRunning = false;
-                }
+            if (m_server->connectedPeers == 0 &&
+                timeoutClock.getElapsedTime() >= timeout) {
+                m_isRunning = false;
             }
             else {
                 timeoutClock.restart();
@@ -66,8 +65,7 @@ class ServerEngine {
     void receivePackets()
     {
         ENetEvent event;
-        while (enet_host_service(m_server, &event, 0) > 0)
-        {
+        while (enet_host_service(m_server, &event, 0) > 0) {
             switch (event.type) {
                 case ENET_EVENT_TYPE_CONNECT:
                     onConnect(*event.peer);
@@ -110,6 +108,20 @@ class ServerEngine {
 
     void onDataReceive(const ENetPacket &packet)
     {
+        sf::Packet buffer;
+        client_id_t senderId;
+        buffer.append(packet.data, packet.dataLength);
+        
+        ServerCommand command;
+        buffer >> command;
+        switch (command)
+        {
+            case ServerCommand::PlayerPosition:
+                break;
+
+            case ServerCommand::Disconnect:
+                break;
+        }
     }
 };
 } // namespace

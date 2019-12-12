@@ -4,14 +4,17 @@
 #include "maths.h"
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
-#include <common/network/packet.h>
 #include <common/network/enet.h>
+#include <common/network/packet.h>
 
 class Keyboard;
 
 struct Entity {
     glm::vec3 position{0.0f, 0.0f, 12.0f}, rotation{0.0f};
     bool active = false;
+};
+
+struct Client {
 };
 
 class Gameplay {
@@ -25,7 +28,6 @@ class Gameplay {
     void endGame();
 
   private:
-
     glm::mat4 m_projectionMatrix{1.0f};
 
     gl::VertexArray m_cube;

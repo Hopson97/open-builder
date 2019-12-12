@@ -7,15 +7,10 @@
         Commands to be sent to the client
 */
 enum class ClientCommand : command_t {
-    // Accept an incoming connection
+    // Send client ID to a new connection
     // Data:
     // client_id_t: The ID of this client
-    AcceptConnection,
-
-    // Reject an incoming connection
-    // Data:
-    // None
-    RejectConnection,
+    ClientId,
 
     // Notify client that a player has joined the server
     // Data:
