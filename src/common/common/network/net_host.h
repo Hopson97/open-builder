@@ -16,6 +16,9 @@ class NetworkHost {
 
     std::optional<ENetPeer *> connectToServer(const std::string &ip);
     bool createAsServer();
+    void disconnectFromPeer(ENetPeer& peer);
+
+    int getConnectedPeerCount() const;
 
   protected:
     bool sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel, u32 flags);

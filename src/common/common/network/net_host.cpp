@@ -21,7 +21,7 @@ ENetPeer *connectHostTo(ENetHost *host, const std::string &ip)
     }
     LOG("Connection", "Address set up, connecting to server...");
 
-    ENetPeer* peer = enet_host_connect(host, &address, 2, 0);
+    ENetPeer *peer = enet_host_connect(host, &address, 2, 0);
     if (!peer) {
         LOG("Connection", "Failed to connect to server (Game Full).");
         return nullptr;
@@ -105,11 +105,37 @@ bool NetworkHost::createAsServer()
     return mp_host;
 }
 
+void NetworkHost::disconnectFromPeer(ENetPeer &peer)
+{
+    enet_peer_disconnect(&peer, static_cast<u32>(m_peerId));
+    ENetEvent event;
+    while (enet_host_service(mp_host, &event, 3000) > 0) {
+        switch (event.type) {
+            case ENET_EVENT_TYPE_RECEIVE:
+                enet_packet_destroy(event.packet);
+                break;
+
+            case ENET_EVENT_TYPE_DISCONNECT:
+                LOG(m_name.c_str(), "Peer disconnect success", (u32)peer.data);
+                return;
+
+            default:
+                break;
+        }
+    }
+    enet_peer_reset(&peer);
+}
+
+int NetworkHost::getConnectedPeerCount() const
+{
+    return mp_host->connectedPeers;
+}
+
 bool NetworkHost::sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel,
                              u32 flags)
 {
     auto enetPacket =
-        enet_packet_create(packet.getData(), packet.getDataSize(), flags); 
+        enet_packet_create(packet.getData(), packet.getDataSize(), flags);
     int result = enet_peer_send(&peer, channel, enetPacket);
     flush();
     return result == 0;
@@ -144,7 +170,7 @@ void NetworkHost::tick()
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
-                LOG(m_name.c_str(), "Disconnection Event Recieved.");
+                LOG(m_name.c_str(), "Disconnected Event Received");
                 onPeerDisconnect(*event.peer);
                 break;
 

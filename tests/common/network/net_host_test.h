@@ -59,6 +59,7 @@ class Client : public NetworkHost {
     }
 };
 
+
 TEST_CASE("The server works")
 {
     Server server;
@@ -76,29 +77,48 @@ TEST_CASE("The client can interact with the server.")
 
     SECTION("The client is able to connect to the server")
     {
-        std::atomic<bool> run = true;
-        std::thread serverThread([&run, &server]() {
-            while (run) {
+        std::atomic<bool> control = true;
+        std::thread serverThread([&control, &server]() {
+            while (control) {
                 server.tick();
             }
         });
 
         Client client;
         auto serverConnection = client.connectToServer(LOCAL_HOST);
-        if (serverConnection) {
-            std::cout << "TRUUUUUUUUUUUU\n";
-        }
-        else {
-            std::cout << "falseeeeeeeeee\n";
-        }
 
         REQUIRE(serverConnection.has_value() == true);
+        REQUIRE(server.getConnectedPeerCount() == 1);
+        REQUIRE(client.getConnectedPeerCount() == 1);
 
-        run = false;
-
-        server.destroy();
+        control = false;
         client.destroy();
 
         serverThread.join();
     }
+    
+    SECTION("The client can disconnect from the server")
+    {
+        std::atomic<bool> control = true;
+        std::thread serverThread([&control, &server]() {
+            while (control) {
+                server.tick();
+            }
+        });
+
+        Client client;
+        auto serverConnection = client.connectToServer(LOCAL_HOST);
+        client.disconnectFromPeer(**serverConnection);
+
+        //REQUIRE(server.getConnectedPeerCount() == 0);
+        //REQUIRE(client.getConnectedPeerCount() == 0);
+
+        control = false;
+        client.destroy();
+
+        serverThread.join();
+    }
+    
+
+    server.destroy();
 }
