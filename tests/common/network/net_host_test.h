@@ -69,6 +69,7 @@ TEST_CASE("The server works")
     SECTION( "The server is able to be created" ) {
         REQUIRE(server.createAsServer() == true);
     }
+    server.destroy();
 }
 
 TEST_CASE("The client can interact with the server.") 
@@ -90,5 +91,8 @@ TEST_CASE("The client can interact with the server.")
 
         run = false;
         serverThread.join();
+        server.destroy();
+        client.destroy();
     }
+    
 }
