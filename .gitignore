@@ -36,5 +36,6 @@ CMakeCache.txt
 
 Debug/
 Release/
+UnitTests/
 open-builder-unit-tests/
 

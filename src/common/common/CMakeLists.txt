@@ -1,8 +1,8 @@
 
 add_library(ob-common
     file_io.cpp
-    network/packet.cpp
     debug.cpp
+    network/net_host.cpp
 )
 
 set_flags(ob-common)

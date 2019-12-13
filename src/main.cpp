@@ -12,6 +12,8 @@
 #include "client/client_config.h"
 #include "server/server_config.h"
 
+#include <common/network/enet.h>
+
 /*
 //Enable nvidia
 #ifdef _WIN32
@@ -186,6 +188,11 @@ int main(int argc, char **argv)
 {
     Config config;
 
+    std::cout << "Init enet\n";
+    if (enet_initialize() != 0) {
+        return exitFailure("Failed to initialise enet");
+    }
+
     std::vector<std::pair<std::string, std::string>> args;
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-' && argc > i + 1) {
@@ -207,4 +214,6 @@ int main(int argc, char **argv)
         case LaunchType::Client:
             return launchClient(config.clientOptions);
     }
+
+    enet_deinitialize();
 }

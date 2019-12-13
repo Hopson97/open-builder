@@ -3,6 +3,7 @@
 #include "gameplay.h"
 #include "gl/gl_errors.h"
 #include "window.h"
+#include <common/debug.h>
 #include <glad/glad.h>
 #include <iostream>
 
@@ -54,7 +55,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
     if (!gameplay.init(window.aspect)) {
         return EngineStatus::CouldNotConnect;
     }
-
+    LOG("Client", "Starting game.");
     while (status == EngineStatus::Ok) {
         // Input
         status = window.pollEvents(
@@ -71,7 +72,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
         window.window.display();
 
         // Stats and stuff
-        counter.update();
+        // counter.update();
     }
     gameplay.endGame();
     return status;

@@ -2,9 +2,12 @@
 
 #include "gl/gl_object.h"
 #include "maths.h"
-#include "network/client.h"
+#include <SFML/Network/Packet.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
+#include <common/network/enet.h>
+#include <common/network/net_host.h>
+#include <common/network/net_types.h>
 
 class Keyboard;
 
@@ -13,20 +16,27 @@ struct Entity {
     bool active = false;
 };
 
-class Gameplay {
+class Gameplay : public NetworkHost {
   public:
+    Gameplay();
+
     bool init(float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
+
     void update();
     void render();
     void endGame();
 
   private:
-    void handlePackets();
-    void handleSnapshot(Packet &packet);
-    void handlePlayerJoin(Packet &packet);
-    void handlePlayerLeave(Packet &packet);
+    void onPeerConnect(ENetPeer &peer) override;
+    void onPeerDisconnect(ENetPeer &peer) override;
+    void onPeerTimeout(ENetPeer &peer) override;
+    void onCommandRecieve(sf::Packet &packet, command_t command) override;
+
+    void onPlayerJoin(sf::Packet &packet);
+    void onPlayerLeave(sf::Packet &packet);
+    void onSnapshot(sf::Packet &packet);
 
     glm::mat4 m_projectionMatrix{1.0f};
 
@@ -37,10 +47,10 @@ class Gameplay {
     gl::UniformLocation m_modelLocation;
     gl::UniformLocation m_projectionViewLocation;
 
-    ClientConnection m_client;
     std::array<Entity, 512> m_entities;
 
-    Entity *m_player = nullptr;
+    Entity *mp_player = nullptr;
+    ENetPeer *mp_serverPeer = nullptr;
 
     bool m_isMouseLocked = false;
 };

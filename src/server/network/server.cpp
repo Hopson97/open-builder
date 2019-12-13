@@ -1,121 +1,143 @@
 #include "server.h"
 
+#include "../server_config.h"
+#include <SFML/System/Clock.hpp>
 #include <common/debug.h>
-#include <common/network/net_command.h>
-#include <iostream>
+#include <thread>
 
-int ClientConnector::emptySlot()
+Server::Server()
+    : NetworkHost("Server")
 {
-    for (int i = 0; i < MAX_CONNECTIONS; i++) {
-        if (!m_isClientConnected[i]) {
+}
+
+void Server::start(const ServerConfig &config, sf::Time timeout)
+{
+    NetworkHost::createAsServer(config.maxConnections);
+
+    // Start the main server loop
+    sf::Clock timeoutClock;
+    while (m_isRunning) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+        NetworkHost::tick();
+        sendPackets();
+
+        if (NetworkHost::getConnectedPeerCount() == 0) {
+            if (timeoutClock.getElapsedTime() >= timeout) {
+                m_isRunning = false;
+            }
+        }
+        else {
+            timeoutClock.restart();
+        }
+    }
+
+    NetworkHost::destroy();
+}
+
+void Server::onPeerConnect(ENetPeer &peer)
+{
+    int slot = emptySlot();
+    if (slot >= 0) {
+        peer_id_t id = static_cast<peer_id_t>(slot);
+
+        // Send client back their id
+        sf::Packet packet;
+        packet << ClientCommand::ClientId << id;
+        NetworkHost::sendToPeer(peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
+
+        // Broadcast the connection event
+        sf::Packet announcement;
+        announcement << ClientCommand::PlayerJoin << id;
+        broadcastToPeers(announcement, 0,
+                         ENET_PACKET_FLAG_RELIABLE |
+                             ENET_PACKET_FLAG_NO_ALLOCATE);
+
+        addPeer(peer.connectID, id);
+    }
+}
+
+void Server::onPeerDisconnect(ENetPeer &peer)
+{
+    removePeer(peer.connectID);
+}
+
+void Server::onPeerTimeout(ENetPeer &peer)
+{
+    removePeer(peer.connectID);
+}
+
+void Server::onCommandRecieve(sf::Packet &packet, command_t command)
+{
+    switch (static_cast<ServerCommand>(command)) {
+        case ServerCommand::PlayerPosition:
+            handleCommandPlayerPosition(packet);
+            break;
+
+        case ServerCommand::Disconnect:
+            handleCommandDisconnect(packet);
+            break;
+    }
+}
+
+void Server::handleCommandDisconnect(sf::Packet &packet)
+{
+    // Set connect flag to false for this client
+    peer_id_t id;
+    packet >> id;
+    m_peerConnected[id] = false;
+
+    // Broadcast the disconnection event
+    sf::Packet announcement;
+    announcement << ClientCommand::PlayerLeave << id;
+    broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);
+}
+
+void Server::handleCommandPlayerPosition(sf::Packet &packet)
+{
+    peer_id_t id;
+    packet >> id;
+    packet >> m_entities[id].x >> m_entities[id].y >> m_entities[id].z;
+}
+
+void Server::sendPackets()
+{
+    sf::Packet packet;
+    u16 count = NetworkHost::getConnectedPeerCount();
+    packet << ClientCommand::Snapshot << count;
+    for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
+        if (m_peerConnected[i]) {
+            packet << static_cast<peer_id_t>(i) << m_entities[i].x
+                   << m_entities[i].y << m_entities[i].z;
+        }
+    }
+    broadcastToPeers(packet, 0, 0);
+}
+
+int Server::emptySlot() const
+{
+    for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
+        if (!m_peerConnected[i]) {
             return i;
         }
     }
     return -1;
 }
 
-int ClientConnector::addClient(const Endpoint &endpoint)
+void Server::addPeer(u32 connectionId, peer_id_t id)
 {
-    int slot = emptySlot();
-    if (slot >= 0) {
-        m_endpoints[slot] = endpoint;
-        m_isClientConnected[slot] = true;
-        m_connectedCount++;
-    }
-    return slot;
+    LOGVAR("Server", "New Peer, Peer Id:", (int)id);
+    m_peerIds[connectionId] = id;
+    m_peerConnected[id] = true;
 }
 
-bool ClientConnector::removeClient(client_id_t id)
+void Server::removePeer(u32 connectionId)
 {
-    if (m_isClientConnected[id]) {
-        m_isClientConnected[id] = false;
-        m_connectedCount--;
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-const Endpoint &ClientConnector::clientEndpoint(client_id_t id)
-{
-    return m_endpoints[id];
-}
-
-bool ClientConnector::clientIsConnected(client_id_t id) const
-{
-    return m_isClientConnected[id];
-}
-
-int ClientConnector::connectedCount() const
-{
-    return m_connectedCount;
-}
-
-//
-//	Server
-//
-Server::Server()
-{
-    socket.setBlocking(false);
-    socket.bind(DEFAULT_PORT);
-    LOGVAR("Server", "Listening for messages on port ", DEFAULT_PORT)
-}
-
-void Server::sendPacket(client_id_t client, Packet &packet)
-{
-    if (clients.clientIsConnected(client)) {
-        auto &endpoint = clients.clientEndpoint(client);
-        socket.send(packet.data, endpoint.address, endpoint.port);
-    }
-}
-
-void Server::broadcastPacket(Packet &packet)
-{
-    for (int i = 0; i < MAX_CONNECTIONS; i++) {
-        sendPacket(i, packet);
-    }
-}
-
-int Server::tryConnectClient(Packet &packet)
-{
-    int slot = clients.addClient(packet.endpoint);
-    if (slot >= 0) {
-        LOGVAR("Server",
-               "Connection by request from client accepted, Client ID: ",
-               (int)slot);
-        // Send connection acceptance to the connecting client
-        auto response = makePacket(ClientCommand::AcceptConnection);
-        response.data << static_cast<client_id_t>(slot);
-        sendPacket(slot, response);
-
-        // Tell all players that a player has joined
-        auto broadcast = makePacket(ClientCommand::PlayerJoin);
-        broadcast.data << static_cast<client_id_t>(slot);
-        broadcastPacket(broadcast);
-        return slot;
-    }
-    else {
-        auto response = makePacket(ClientCommand::RejectConnection);
-        socket.send(response.data, response.endpoint.address,
-                    response.endpoint.port);
-        return -1;
-    }
-}
-
-int Server::tryDisconnectClient(Packet &packet)
-{
-    client_id_t id = 0;
-    packet.data >> id;
-    if (clients.removeClient(id)) {
-        LOGVAR("Server",
-               "Disconnect by request from client, Client ID: ", (int)id);
-        auto broadcast = makePacket(ClientCommand::PlayerLeave);
-        broadcast.data << static_cast<client_id_t>(id);
-        broadcastPacket(broadcast);
-        return id;
-    }
-    else {
-        return -1;
+    auto itr = m_peerIds.find(connectionId);
+    if (itr != m_peerIds.end()) {
+        int id = m_peerIds[connectionId];
+        LOGVAR("Server", "Peer disconnect, Peer Id:", id);
+        m_peerConnected[id] = false;
+        m_peerIds.erase(itr);
     }
 }
