@@ -19,6 +19,7 @@ class NetworkHost {
     void disconnectFromPeer(ENetPeer &peer);
 
     int getConnectedPeerCount() const;
+    peer_id_t getPeerId() const;
 
   protected:
     bool sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel, u32 flags);

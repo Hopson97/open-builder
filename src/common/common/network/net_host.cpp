@@ -117,6 +117,7 @@ void NetworkHost::disconnectFromPeer(ENetPeer &peer)
 
             case ENET_EVENT_TYPE_DISCONNECT:
                 LOG(m_name.c_str(), "Peer disconnect success");
+                flush();
                 return;
 
             default:
@@ -129,6 +130,11 @@ void NetworkHost::disconnectFromPeer(ENetPeer &peer)
 int NetworkHost::getConnectedPeerCount() const
 {
     return mp_host->connectedPeers;
+}
+
+peer_id_t NetworkHost::getPeerId() const
+{
+    return m_peerId;
 }
 
 bool NetworkHost::sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel,

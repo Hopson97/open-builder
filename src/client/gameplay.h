@@ -7,6 +7,7 @@
 #include <SFML/Window/Window.hpp>
 #include <common/network/enet.h>
 #include <common/network/net_types.h>
+#include <common/network/net_host.h>
 
 class Keyboard;
 
@@ -15,11 +16,10 @@ struct Entity {
     bool active = false;
 };
 
-struct Client {
-};
-
-class Gameplay {
+class Gameplay : public NetworkHost {
   public:
+    Gameplay();
+
     bool init(float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
@@ -29,7 +29,10 @@ class Gameplay {
     void endGame();
 
   private:
-    void onDataReceive(const ENetPacket &packet);
+    void onPeerConnect(ENetPeer &peer) override;
+    void onPeerDisconnect(ENetPeer &peer) override;
+    void onPeerTimeout(ENetPeer &peer) override;
+    void onCommandRecieve(sf::Packet & packet, command_t command) override;
 
     void onPlayerJoin(sf::Packet &packet);
     void onPlayerLeave(sf::Packet &packet);
@@ -46,11 +49,8 @@ class Gameplay {
 
     std::array<Entity, 512> m_entities;
 
-    Entity *m_player = nullptr;
-
-    ENetHost *m_client = nullptr;
-    ENetPeer *m_serverPeer = nullptr;
-    peer_id_t m_clientId = 0;
+    Entity *mp_player = nullptr;
+    ENetPeer *mp_serverPeer = nullptr;
 
     bool m_isMouseLocked = false;
 };
