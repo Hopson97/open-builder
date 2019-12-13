@@ -12,9 +12,7 @@ Server::Server()
 
 void Server::start(const ServerConfig &config, sf::Time timeout)
 {
-    std::cout << "create seerver " << std::endl;
     NetworkHost::createAsServer();
-    std::cout << "create seerver\n";
 
     // Start the main server loop
     sf::Clock timeoutClock;
@@ -39,22 +37,21 @@ void Server::start(const ServerConfig &config, sf::Time timeout)
 
 void Server::onPeerConnect(ENetPeer &peer)
 {
-    peer_id_t slot = emptySlot();
+    std::cout << "Connection ID: " << peer.connectID << std::endl;
+    int slot = emptySlot();
     if (slot >= 0) {
+        peer_id_t id = static_cast<peer_id_t>(slot);
         sf::Packet packet;
-        packet << ClientCommand::ClientId << slot;
-        ENetPacket *p = enet_packet_create(
-            packet.getData(), packet.getDataSize(),
-            ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_NO_ALLOCATE);
-        enet_peer_send(&peer, 0, p);
+        packet << ClientCommand::ClientId << id;
+        NetworkHost::sendToPeer(peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
 
         m_peerConnected[slot] = true;
 
-        LOGVAR("Server", "New Connection Client ID: ", (int)slot);
+        LOGVAR("Server", "New Connection Client ID: ", slot);
 
         // Broadcast the connection event
         sf::Packet announcement;
-        announcement << ClientCommand::PlayerJoin << slot;
+        announcement << ClientCommand::PlayerJoin << id;
         broadcastToPeers(announcement, 0,
                          ENET_PACKET_FLAG_RELIABLE |
                              ENET_PACKET_FLAG_NO_ALLOCATE);
@@ -63,10 +60,12 @@ void Server::onPeerConnect(ENetPeer &peer)
 
 void Server::onPeerDisconnect(ENetPeer &peer)
 {
+    std::cout << "Connection ID: " << peer.connectID << std::endl;
 }
 
 void Server::onPeerTimeout(ENetPeer &peer)
 {
+    std::cout << "Connection ID: " << peer.connectID << std::endl;
 }
 
 void Server::onCommandRecieve(sf::Packet &packet, command_t command)

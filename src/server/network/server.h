@@ -6,7 +6,7 @@
 
 struct ServerConfig;
 
-struct Entity {
+struct ServerEntity {
     float x = 0, y = 0, z = 0;
     bool active = false;
 };
@@ -30,7 +30,7 @@ class Server : public NetworkHost {
 
     int emptySlot() const;
 
-    std::array<Entity, 512> m_entities;
+    std::array<ServerEntity, 512> m_entities;
     std::array<bool, MAX_CONNECTIONS> m_peerConnected;
 
     bool m_isRunning = true;
