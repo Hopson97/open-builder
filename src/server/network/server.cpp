@@ -1,5 +1,6 @@
 #include "server.h"
 
+#include "../server_config.h"
 #include <SFML/System/Clock.hpp>
 #include <common/debug.h>
 #include <thread>
@@ -7,12 +8,11 @@
 Server::Server()
     : NetworkHost("Server")
 {
-    std::cout << "Starting server\n";
 }
 
 void Server::start(const ServerConfig &config, sf::Time timeout)
 {
-    NetworkHost::createAsServer();
+    NetworkHost::createAsServer(config.maxConnections);
 
     // Start the main server loop
     sf::Clock timeoutClock;
@@ -41,7 +41,7 @@ void Server::onPeerConnect(ENetPeer &peer)
     if (slot >= 0) {
         peer_id_t id = static_cast<peer_id_t>(slot);
 
-        //Send client back their id
+        // Send client back their id
         sf::Packet packet;
         packet << ClientCommand::ClientId << id;
         NetworkHost::sendToPeer(peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
@@ -105,7 +105,7 @@ void Server::sendPackets()
     sf::Packet packet;
     u16 count = NetworkHost::getConnectedPeerCount();
     packet << ClientCommand::Snapshot << count;
-    for (int i = 0; i < MAX_CONNECTIONS; i++) {
+    for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
         if (m_peerConnected[i]) {
             packet << static_cast<peer_id_t>(i) << m_entities[i].x
                    << m_entities[i].y << m_entities[i].z;
@@ -116,7 +116,7 @@ void Server::sendPackets()
 
 int Server::emptySlot() const
 {
-    for (int i = 0; i < MAX_CONNECTIONS; i++) {
+    for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
         if (!m_peerConnected[i]) {
             return i;
         }

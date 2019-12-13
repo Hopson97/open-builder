@@ -91,12 +91,13 @@ std::optional<ENetPeer *> NetworkHost::connectToServer(const std::string &ip)
     return server;
 }
 
-bool NetworkHost::createAsServer()
+bool NetworkHost::createAsServer(int maxConnections)
 {
+    m_maxConnections = maxConnections;
     ENetAddress address{};
     address.host = ENET_HOST_ANY;
     address.port = DEFAULT_PORT;
-    mp_host = createHost(&address, MAX_CONNECTIONS);
+    mp_host = createHost(&address, maxConnections);
     return mp_host;
 }
 
@@ -129,6 +130,11 @@ int NetworkHost::getConnectedPeerCount() const
 peer_id_t NetworkHost::getPeerId() const
 {
     return m_peerId;
+}
+
+int NetworkHost::getMaxConnections() const
+{
+    return m_maxConnections;
 }
 
 bool NetworkHost::sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel,

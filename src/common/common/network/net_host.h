@@ -15,11 +15,12 @@ class NetworkHost {
     void broadcast(sf::Packet &packet, u32 flags);
 
     std::optional<ENetPeer *> connectToServer(const std::string &ip);
-    bool createAsServer();
+    bool createAsServer(int maxConnections);
     void disconnectFromPeer(ENetPeer &peer);
 
     int getConnectedPeerCount() const;
     peer_id_t getPeerId() const;
+    int getMaxConnections() const;
 
   protected:
     bool sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel, u32 flags);
@@ -39,4 +40,5 @@ class NetworkHost {
     const std::string m_name;
 
     peer_id_t m_peerId = 0;
+    int m_maxConnections;
 };

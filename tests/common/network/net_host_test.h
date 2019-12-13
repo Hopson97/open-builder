@@ -65,7 +65,9 @@ TEST_CASE("The server works")
     TestServer server;
     SECTION("The server is able to be created")
     {
-        REQUIRE(server.createAsServer() == true);
+        REQUIRE(server.createAsServer(4) == true);
+        REQUIRE(server.getMaxConnections() == 4);
+        REQUIRE(server.getConnectedPeerCount() == 0);
     }
     server.destroy();
 }
@@ -73,7 +75,7 @@ TEST_CASE("The server works")
 TEST_CASE("The client can interact with the server.")
 {
     TestServer server;
-    server.createAsServer();
+    server.createAsServer(4);
 
     SECTION("The client is able to connect to the server")
     {
