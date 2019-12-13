@@ -91,17 +91,20 @@ include_dirs(ob-client)
 include_dirs(ob-server)
 link_exe(${PROJECT_NAME})
 
+function (do_tests)
+    #Create the unit test executable
+    add_executable(tests
+        tests/tests.cpp
+    )
+    
+    include_dirs(tests)
+    target_include_directories(tests
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/
+    )
+    
+    
+    link_exe(tests)
+endfunction(do_tests)
 
-# #Create the unit test executable
-# add_executable(tests
-#     tests/tests.cpp
-# )
-# 
-# include_dirs(tests)
-# target_include_directories(tests
-#     PRIVATE
-#     ${CMAKE_CURRENT_SOURCE_DIR}/src/
-# )
-# 
-# 
-# link_exe(tests)
+do_tests()

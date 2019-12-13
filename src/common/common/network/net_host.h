@@ -13,7 +13,6 @@ class NetworkHost {
     void destroy();
     void broadcast(sf::Packet &packet, u32 flags);
 
-  protected:
     std::optional<ENetPeer *> connectToServer(const std::string &ip);
     bool createAsServer();
 
