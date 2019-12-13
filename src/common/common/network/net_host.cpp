@@ -19,7 +19,6 @@ ENetPeer *connectHostTo(ENetHost *host, const std::string &ip)
         LOG("Connection", "Failed to create address.");
         return nullptr;
     }
-    LOG("Connection", "Address set up, connecting to server...");
 
     ENetPeer *peer = enet_host_connect(host, &address, 2, 0);
     if (!peer) {
@@ -27,12 +26,9 @@ ENetPeer *connectHostTo(ENetHost *host, const std::string &ip)
         return nullptr;
     }
 
-    LOG("Connection", "Connection success, awaiting handshake confirmation.");
-
     ENetEvent event;
     if (enet_host_service(host, &event, 5000) > 0 &&
         event.type == ENET_EVENT_TYPE_CONNECT) {
-        LOG("Connection", "Connection successful");
         return peer;
     }
     else {
@@ -58,7 +54,6 @@ int getPeerIdFromServer(ENetHost *host)
                 peer_id_t peerId;
                 packet >> peerId;
                 id = peerId;
-                LOGVAR("Connection", "Got peer ID from server: ", id);
                 break;
             }
         }
@@ -116,7 +111,6 @@ void NetworkHost::disconnectFromPeer(ENetPeer &peer)
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
-                LOG(m_name.c_str(), "Peer disconnect success");
                 flush();
                 return;
 
@@ -151,7 +145,7 @@ void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
 {
     ENetPacket *broadcast =
         enet_packet_create(packet.getData(), packet.getDataSize(), flags);
-    enet_host_broadcast(mp_host, 0, broadcast);
+    enet_host_broadcast(mp_host, channel, broadcast);
     enet_host_flush(mp_host);
 }
 
@@ -174,7 +168,6 @@ void NetworkHost::tick()
     while (enet_host_service(mp_host, &event, 0) > 0) {
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
-                LOG(m_name.c_str(), "Connection Event Recieved.");
                 onPeerConnect(*event.peer);
                 break;
 
@@ -184,12 +177,10 @@ void NetworkHost::tick()
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
-                LOG(m_name.c_str(), "Disconnected Event Received");
                 onPeerDisconnect(*event.peer);
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
-                LOG(m_name.c_str(), "Timeout Event Recieved.");
                 onPeerTimeout(*event.peer);
                 break;
 

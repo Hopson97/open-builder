@@ -37,17 +37,14 @@ void Server::start(const ServerConfig &config, sf::Time timeout)
 
 void Server::onPeerConnect(ENetPeer &peer)
 {
-    std::cout << "Connection ID: " << peer.connectID << std::endl;
     int slot = emptySlot();
     if (slot >= 0) {
         peer_id_t id = static_cast<peer_id_t>(slot);
+
+        //Send client back their id
         sf::Packet packet;
         packet << ClientCommand::ClientId << id;
         NetworkHost::sendToPeer(peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
-
-        m_peerConnected[slot] = true;
-
-        LOGVAR("Server", "New Connection Client ID: ", slot);
 
         // Broadcast the connection event
         sf::Packet announcement;
@@ -55,17 +52,19 @@ void Server::onPeerConnect(ENetPeer &peer)
         broadcastToPeers(announcement, 0,
                          ENET_PACKET_FLAG_RELIABLE |
                              ENET_PACKET_FLAG_NO_ALLOCATE);
+
+        addPeer(peer.connectID, id);
     }
 }
 
 void Server::onPeerDisconnect(ENetPeer &peer)
 {
-    std::cout << "Connection ID: " << peer.connectID << std::endl;
+    removePeer(peer.connectID);
 }
 
 void Server::onPeerTimeout(ENetPeer &peer)
 {
-    std::cout << "Connection ID: " << peer.connectID << std::endl;
+    removePeer(peer.connectID);
 }
 
 void Server::onCommandRecieve(sf::Packet &packet, command_t command)
@@ -83,7 +82,6 @@ void Server::onCommandRecieve(sf::Packet &packet, command_t command)
 
 void Server::handleCommandDisconnect(sf::Packet &packet)
 {
-    LOG("Server", "Disconnect command received");
     // Set connect flag to false for this client
     peer_id_t id;
     packet >> id;
@@ -124,4 +122,22 @@ int Server::emptySlot() const
         }
     }
     return -1;
+}
+
+void Server::addPeer(u32 connectionId, peer_id_t id)
+{
+    LOGVAR("Server", "New Peer, Peer Id:", (int)id);
+    m_peerIds[connectionId] = id;
+    m_peerConnected[id] = true;
+}
+
+void Server::removePeer(u32 connectionId)
+{
+    auto itr = m_peerIds.find(connectionId);
+    if (itr != m_peerIds.end()) {
+        int id = m_peerIds[connectionId];
+        LOGVAR("Server", "Peer disconnect, Peer Id:", id);
+        m_peerConnected[id] = false;
+        m_peerIds.erase(itr);
+    }
 }

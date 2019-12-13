@@ -3,6 +3,7 @@
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/network/net_host.h>
+#include <unordered_map>
 
 struct ServerConfig;
 
@@ -30,8 +31,12 @@ class Server : public NetworkHost {
 
     int emptySlot() const;
 
+    void addPeer(u32 connectionId, peer_id_t id);
+    void removePeer(u32 connectionId);
+
     std::array<ServerEntity, 512> m_entities;
     std::array<bool, MAX_CONNECTIONS> m_peerConnected;
+    std::unordered_map<u32, peer_id_t> m_peerIds;
 
     bool m_isRunning = true;
 };
