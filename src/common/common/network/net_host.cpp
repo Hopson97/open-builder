@@ -15,7 +15,7 @@ ENetPeer *connectHostTo(ENetHost *host, const std::string &ip)
 {
     ENetAddress address{};
     address.port = DEFAULT_PORT;
-    if (enet_address_set_host(&address, "127.0.0.1") != 0) {
+    if (enet_address_set_host(&address, ip.c_str()) != 0) {
         LOG("Connection", "Failed to create address.");
         return nullptr;
     }
@@ -116,7 +116,7 @@ void NetworkHost::disconnectFromPeer(ENetPeer &peer)
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
-                LOG(m_name.c_str(), "Peer disconnect success", (u32)peer.data);
+                LOG(m_name.c_str(), "Peer disconnect success");
                 return;
 
             default:

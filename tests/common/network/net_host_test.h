@@ -110,8 +110,8 @@ TEST_CASE("The client can interact with the server.")
         auto serverConnection = client.connectToServer(LOCAL_HOST);
         client.disconnectFromPeer(**serverConnection);
 
-        //REQUIRE(server.getConnectedPeerCount() == 0);
-        //REQUIRE(client.getConnectedPeerCount() == 0);
+        REQUIRE(server.getConnectedPeerCount() == 0);
+        REQUIRE(client.getConnectedPeerCount() == 0);
 
         control = false;
         client.destroy();
