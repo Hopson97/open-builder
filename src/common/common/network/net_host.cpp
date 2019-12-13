@@ -15,16 +15,19 @@ ENetPeer *connectHostTo(ENetHost *host, const std::string &ip)
 {
     ENetAddress address{};
     address.port = DEFAULT_PORT;
-    if (enet_address_set_host(&address, ip.c_str()) != 0) {
+    if (enet_address_set_host(&address, "127.0.0.1") != 0) {
         LOG("Connection", "Failed to create address.");
         return nullptr;
     }
+    LOG("Connection", "Address set up, connecting to server...");
 
-    auto peer = enet_host_connect(host, &address, 2, 0);
+    ENetPeer* peer = enet_host_connect(host, &address, 2, 0);
     if (!peer) {
         LOG("Connection", "Failed to connect to server (Game Full).");
         return nullptr;
     }
+
+    LOG("Connection", "Connection success, awaiting handshake confirmation.");
 
     ENetEvent event;
     if (enet_host_service(host, &event, 5000) > 0 &&
@@ -102,6 +105,16 @@ bool NetworkHost::createAsServer()
     return mp_host;
 }
 
+bool NetworkHost::sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel,
+                             u32 flags)
+{
+    auto enetPacket =
+        enet_packet_create(packet.getData(), packet.getDataSize(), flags); 
+    int result = enet_peer_send(&peer, channel, enetPacket);
+    flush();
+    return result == 0;
+}
+
 void NetworkHost::broadcast(sf::Packet &packet, u32 flags)
 {
     auto enetPacket =
@@ -121,6 +134,7 @@ void NetworkHost::tick()
     while (enet_host_service(mp_host, &event, 0) > 0) {
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
+                LOG(m_name.c_str(), "Connection Event Recieved.");
                 onPeerConnect(*event.peer);
                 break;
 
@@ -130,10 +144,12 @@ void NetworkHost::tick()
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
+                LOG(m_name.c_str(), "Disconnection Event Recieved.");
                 onPeerDisconnect(*event.peer);
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
+                LOG(m_name.c_str(), "Timeout Event Recieved.");
                 onPeerTimeout(*event.peer);
                 break;
 

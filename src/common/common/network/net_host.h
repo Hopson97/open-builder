@@ -4,6 +4,7 @@
 #include "net_command.h"
 #include "net_constants.h"
 #include <optional>
+#include <SFML/Network/Packet.hpp>
 
 class NetworkHost {
   public:
@@ -16,6 +17,9 @@ class NetworkHost {
     std::optional<ENetPeer *> connectToServer(const std::string &ip);
     bool createAsServer();
 
+  protected:
+    bool sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel, u32 flags);
+
   private:
     virtual void onPeerConnect(ENetPeer &peer) = 0;
     virtual void onPeerDisconnect(ENetPeer &peer) = 0;
@@ -26,7 +30,7 @@ class NetworkHost {
 
     void flush();
 
-    ENetHost *mp_host;
+    ENetHost *mp_host = nullptr;
     const std::string m_name;
 
     peer_id_t m_peerId = 0;

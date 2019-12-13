@@ -25,11 +25,11 @@
 
 int main(int argc, char *argv[])
 {
-    sf::Window window({200, 200}, "Tests");
-    gladLoadGL();
+    //sf::Window window({200, 200}, "Tests");
+    //gladLoadGL();
     enet_initialize();
     int result = Catch::Session().run(argc, argv);
-	window.close();
+	//window.close();
     enet_deinitialize();
     return result;
 }
