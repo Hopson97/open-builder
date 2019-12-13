@@ -5,9 +5,9 @@
 #include <common/network/net_host.h>
 #include <thread>
 
-class Server : public NetworkHost {
+class TestServer : public NetworkHost {
   public:
-    Server()
+    TestServer()
         : NetworkHost("Server")
     {
     }
@@ -34,9 +34,9 @@ class Server : public NetworkHost {
     }
 };
 
-class Client : public NetworkHost {
+class TestClient : public NetworkHost {
   public:
-    Client()
+    TestClient()
         : NetworkHost("Client")
     {
     }
@@ -62,7 +62,7 @@ class Client : public NetworkHost {
 
 TEST_CASE("The server works")
 {
-    Server server;
+    TestServer server;
     SECTION("The server is able to be created")
     {
         REQUIRE(server.createAsServer() == true);
@@ -72,7 +72,7 @@ TEST_CASE("The server works")
 
 TEST_CASE("The client can interact with the server.")
 {
-    Server server;
+    TestServer server;
     server.createAsServer();
 
     SECTION("The client is able to connect to the server")
@@ -84,7 +84,7 @@ TEST_CASE("The client can interact with the server.")
             }
         });
 
-        Client client;
+        TestClient client;
         auto serverConnection = client.connectToServer(LOCAL_HOST);
 
         REQUIRE(serverConnection.has_value() == true);
@@ -106,7 +106,7 @@ TEST_CASE("The client can interact with the server.")
             }
         });
 
-        Client client;
+        TestClient client;
         auto serverConnection = client.connectToServer(LOCAL_HOST);
         client.disconnectFromPeer(**serverConnection);
 
