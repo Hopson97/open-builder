@@ -10,12 +10,12 @@ Window::Window(const ClientConfig &config)
         create(sf::VideoMode::getDesktopMode(), sf::Style::Fullscreen);
         width = window.getSize().x;
         height = window.getSize().y;
-        aspect = width / height;
+        aspect = static_cast<float>(width) / static_cast<float>(height);
     }
     else {
         width = static_cast<unsigned>(config.windowWidth);
         height = static_cast<unsigned>(config.windowHeight);
-        aspect = width / height;
+        aspect = static_cast<float>(width) / static_cast<float>(height);
         create({width, height}, sf::Style::Close);
     }
     if (config.isFpsCapped) {
