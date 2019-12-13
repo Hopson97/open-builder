@@ -155,14 +155,6 @@ void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
     enet_host_flush(mp_host);
 }
 
-void NetworkHost::broadcast(sf::Packet &packet, u32 flags)
-{
-    auto enetPacket =
-        enet_packet_create(packet.getData(), packet.getDataSize(), flags);
-    enet_host_broadcast(mp_host, 0, enetPacket);
-    flush();
-}
-
 void NetworkHost::destroy()
 {
     enet_host_destroy(mp_host);

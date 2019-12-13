@@ -6,16 +6,48 @@
 #include <SFML/Network/Packet.hpp>
 #include <optional>
 
+/**
+ * @brief Base class for network hosts (clients/ servers)
+ */
 class NetworkHost {
   public:
     NetworkHost(std::string &&name);
 
+    /**
+     * @brief Does 1 tick of the host, must be called once per frame.
+     * The function will do all the receving and handling of connections and
+     * commands
+     */
     void tick();
-    void destroy();
-    void broadcast(sf::Packet &packet, u32 flags);
 
+    /**
+     * @brief Deletes the internal ENetHost object
+     */
+    void destroy();
+
+    /**
+     * @brief Connects the host to a server
+     *
+     * @param ip The IP address of the server
+     * @return std::optional<ENetPeer *> The server peer, might not be
+     * successful connection hence optional
+     */
     std::optional<ENetPeer *> connectToServer(const std::string &ip);
+
+    /**
+     * @brief Sets up the host to be a server
+     *
+     * @param maxConnections The maximum number connections to allow
+     * @return true
+     * @return false
+     */
     bool createAsServer(int maxConnections);
+
+    /**
+     * @brief Sends a disconnect request to the peer
+     *
+     * @param peer The peer to disconnect from
+     */
     void disconnectFromPeer(ENetPeer &peer);
 
     int getConnectedPeerCount() const;
@@ -23,7 +55,25 @@ class NetworkHost {
     int getMaxConnections() const;
 
   protected:
+    /**
+     * @brief Send a packet to a peer
+     *
+     * @param peer The peer to send the packet to
+     * @param packet The packet to send
+     * @param channel The channel ID to send the packet on
+     * @param flags Flags for the packet (ENetPacketFlag)
+     * @return true The packet was sent successfully
+     * @return false The packet was not sent
+     */
     bool sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel, u32 flags);
+
+    /**
+     * @brief Broadcasts a packet to all connected peers
+     *
+     * @param packet The packet to broadcast
+     * @param channel The channel ID to send the packet on
+     * @param flags Flags for the packet (ENetPacketFlag)
+     */
     void broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags);
 
   private:
