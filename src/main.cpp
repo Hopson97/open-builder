@@ -6,10 +6,10 @@
 #include <thread>
 #include <vector>
 
-#include "client/client_engine.h"
+#include "client/core/client_engine.h"
 #include "server/server_engine.h"
 
-#include "client/client_config.h"
+#include "client/core/client_config.h"
 #include "server/server_config.h"
 
 #include <common/network/enet.h>

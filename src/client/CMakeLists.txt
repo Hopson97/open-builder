@@ -7,8 +7,8 @@ add_library(ob-client
     gl/gl_textures.cpp
     gl/gl_errors.cpp
     maths.cpp
-    client_engine.cpp
-    window.cpp
+    core/client_engine.cpp
+    core/window.cpp
     gameplay.cpp
 )
 
