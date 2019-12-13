@@ -6,8 +6,8 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/network/enet.h>
-#include <common/network/net_types.h>
 #include <common/network/net_host.h>
+#include <common/network/net_types.h>
 
 class Keyboard;
 
@@ -32,7 +32,7 @@ class Gameplay : public NetworkHost {
     void onPeerConnect(ENetPeer &peer) override;
     void onPeerDisconnect(ENetPeer &peer) override;
     void onPeerTimeout(ENetPeer &peer) override;
-    void onCommandRecieve(sf::Packet & packet, command_t command) override;
+    void onCommandRecieve(sf::Packet &packet, command_t command) override;
 
     void onPlayerJoin(sf::Packet &packet);
     void onPlayerLeave(sf::Packet &packet);

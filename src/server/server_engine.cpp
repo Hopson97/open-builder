@@ -5,11 +5,11 @@
 #include <array>
 #include <common/debug.h>
 #include <common/network/net_command.h>
+#include <common/network/net_host.h>
 #include <ctime>
 #include <iostream>
 #include <random>
 #include <thread>
-#include <common/network/net_host.h>
 
 #include <common/network/enet.h>
 
@@ -30,7 +30,6 @@ class ServerEngine : public NetworkHost {
     ServerEngine()
         : NetworkHost("Server")
     {
-    
     }
 
     void run(const ServerConfig &config, sf::Time timeout)
@@ -73,7 +72,6 @@ class ServerEngine : public NetworkHost {
         broadcastToPeers(packet, 0, 0);
     }
 
-
     int emptySlot()
     {
         for (int i = 0; i < MAX_CONNECTIONS; i++) {
@@ -102,19 +100,18 @@ class ServerEngine : public NetworkHost {
             // Broadcast the connection event
             sf::Packet announcement;
             announcement << ClientCommand::PlayerJoin << slot;
-            broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE |
-                                               ENET_PACKET_FLAG_NO_ALLOCATE);
+            broadcastToPeers(announcement, 0,
+                             ENET_PACKET_FLAG_RELIABLE |
+                                 ENET_PACKET_FLAG_NO_ALLOCATE);
         }
     }
 
     void onPeerDisconnect(ENetPeer &peer) override
     {
-
     }
 
     void onPeerTimeout(ENetPeer &peer) override
     {
-
     }
 
     void onCommandRecieve(sf::Packet &packet, command_t command) override
