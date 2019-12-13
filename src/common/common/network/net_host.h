@@ -3,8 +3,8 @@
 #include "enet.h"
 #include "net_command.h"
 #include "net_constants.h"
-#include <optional>
 #include <SFML/Network/Packet.hpp>
+#include <optional>
 
 class NetworkHost {
   public:
@@ -16,14 +16,15 @@ class NetworkHost {
 
     std::optional<ENetPeer *> connectToServer(const std::string &ip);
     bool createAsServer();
-    void disconnectFromPeer(ENetPeer& peer);
+    void disconnectFromPeer(ENetPeer &peer);
 
     int getConnectedPeerCount() const;
 
   protected:
     bool sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel, u32 flags);
+    void broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags);
 
-  private:
+  private: 
     virtual void onPeerConnect(ENetPeer &peer) = 0;
     virtual void onPeerDisconnect(ENetPeer &peer) = 0;
     virtual void onPeerTimeout(ENetPeer &peer) = 0;

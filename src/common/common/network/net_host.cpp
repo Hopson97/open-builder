@@ -141,6 +141,14 @@ bool NetworkHost::sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel,
     return result == 0;
 }
 
+void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
+{
+    ENetPacket *broadcast =
+        enet_packet_create(packet.getData(), packet.getDataSize(), flags);
+    enet_host_broadcast(mp_host, 0, broadcast);
+    enet_host_flush(mp_host);
+}
+
 void NetworkHost::broadcast(sf::Packet &packet, u32 flags)
 {
     auto enetPacket =

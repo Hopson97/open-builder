@@ -9,6 +9,7 @@
 #include <iostream>
 #include <random>
 #include <thread>
+#include <common/network/net_host.h>
 
 #include <common/network/enet.h>
 
@@ -18,38 +19,33 @@ struct Entity {
     bool active = false;
 };
 
-class ServerEngine {
+class ServerEngine : public NetworkHost {
   private:
     std::array<Entity, 512> m_entities;
     std::array<bool, MAX_CONNECTIONS> m_peerConnected;
-    ENetAddress m_address;
-    ENetHost *m_server = nullptr;
 
     bool m_isRunning = true;
 
   public:
+    ServerEngine()
+        : NetworkHost("Server")
+    {
+    
+    }
+
     void run(const ServerConfig &config, sf::Time timeout)
     {
-        // Create the enet server
-        ENetAddress address{};
-        address.host = ENET_HOST_ANY;
-        address.port = DEFAULT_PORT;
-        m_server = enet_host_create(&address, MAX_CONNECTIONS, 2, 0, 0);
-        if (!m_server) {
-            LOG("Server", "Failed to create server, exiting\n");
-            return;
-        }
-        LOG("Server", "Server has been created.");
+        NetworkHost::createAsServer();
 
         // Start the main server loop
         sf::Clock timeoutClock;
         while (m_isRunning) {
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-            receivePackets();
+            NetworkHost::tick();
             sendPackets();
 
-            if (m_server->connectedPeers == 0) {
+            if (NetworkHost::getConnectedPeerCount() == 0) {
                 if (timeoutClock.getElapsedTime() >= timeout) {
                     m_isRunning = false;
                 }
@@ -59,14 +55,14 @@ class ServerEngine {
             }
         }
 
-        enet_host_destroy(m_server);
+        NetworkHost::destroy();
     }
 
   private:
     void sendPackets()
     {
         sf::Packet packet;
-        u16 count = m_server->connectedPeers;
+        u16 count = NetworkHost::getConnectedPeerCount();
         packet << ClientCommand::Snapshot << count;
         for (int i = 0; i < MAX_CONNECTIONS; i++) {
             if (m_peerConnected[i]) {
@@ -74,36 +70,9 @@ class ServerEngine {
                        << m_entities[i].y << m_entities[i].z;
             }
         }
-        broadcastToPeers(packet, 0);
+        broadcastToPeers(packet, 0, 0);
     }
 
-    void receivePackets()
-    {
-        ENetEvent event;
-        while (enet_host_service(m_server, &event, 0) > 0) {
-            switch (event.type) {
-                case ENET_EVENT_TYPE_CONNECT:
-                    onConnect(*event.peer);
-                    break;
-
-                case ENET_EVENT_TYPE_RECEIVE:
-                    onDataReceive(*event.packet);
-                    enet_packet_destroy(event.packet);
-                    break;
-
-                case ENET_EVENT_TYPE_DISCONNECT:
-                    onDisconnect(*event.peer);
-                    break;
-
-                case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
-                    onDisconnectTimeout(*event.peer);
-                    break;
-
-                case ENET_EVENT_TYPE_NONE:
-                    break;
-            }
-        }
-    }
 
     int emptySlot()
     {
@@ -115,11 +84,8 @@ class ServerEngine {
         return -1;
     }
 
-    void onConnect(ENetPeer &peer)
+    void onPeerConnect(ENetPeer &peer) override
     {
-        LOG("Server", "Got connection event.");
-        LOGVAR("Server", "New Connection Port: ", peer.address.port);
-
         peer_id_t slot = emptySlot();
         if (slot >= 0) {
             sf::Packet packet;
@@ -136,45 +102,30 @@ class ServerEngine {
             // Broadcast the connection event
             sf::Packet announcement;
             announcement << ClientCommand::PlayerJoin << slot;
-            broadcastToPeers(announcement, ENET_PACKET_FLAG_RELIABLE |
+            broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE |
                                                ENET_PACKET_FLAG_NO_ALLOCATE);
-
-            enet_host_flush(m_server);
         }
     }
 
-    void broadcastToPeers(sf::Packet &packet, u32 flags)
+    void onPeerDisconnect(ENetPeer &peer) override
     {
-        ENetPacket *broadcast =
-            enet_packet_create(packet.getData(), packet.getDataSize(), flags);
-        enet_host_broadcast(m_server, 0, broadcast);
-        enet_host_flush(m_server);
+
     }
 
-    void onDisconnect(const ENetPeer &peer)
+    void onPeerTimeout(ENetPeer &peer) override
     {
-        LOG("Server", "Got disconnect event.");
+
     }
 
-    void onDisconnectTimeout(const ENetPeer &peer)
+    void onCommandRecieve(sf::Packet &packet, command_t command) override
     {
-        LOG("Server", "Got disconnect due to timeout event.");
-    }
-
-    void onDataReceive(const ENetPacket &packet)
-    {
-        sf::Packet pkt;
-        pkt.append(packet.data, packet.dataLength);
-
-        ServerCommand command;
-        pkt >> command;
-        switch (command) {
+        switch (static_cast<ServerCommand>(command)) {
             case ServerCommand::PlayerPosition:
-                handleCommandPlayerPosition(pkt);
+                handleCommandPlayerPosition(packet);
                 break;
 
             case ServerCommand::Disconnect:
-                handleCommandDisconnect(pkt);
+                handleCommandDisconnect(packet);
                 break;
         }
     }
@@ -190,7 +141,7 @@ class ServerEngine {
         // Broadcast the disconnection event
         sf::Packet announcement;
         announcement << ClientCommand::PlayerLeave << id;
-        broadcastToPeers(announcement, ENET_PACKET_FLAG_RELIABLE);
+        broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);
     }
 
     void handleCommandPlayerPosition(sf::Packet &packet)
