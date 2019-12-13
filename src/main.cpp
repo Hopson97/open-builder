@@ -12,21 +12,7 @@
 #include "client/client_config.h"
 #include "server/server_config.h"
 
-// ENet causes a bunch compiler warnings eg unused vars so these are here to
-// hide that
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#pragma GCC diagnostic ignored "-Wextra"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
-#define ENET_IMPLEMENTATION
 #include <common/network/enet.h>
-
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
 
 /*
 //Enable nvidia

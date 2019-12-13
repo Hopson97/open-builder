@@ -53,6 +53,7 @@ function (link_exe target)
         ob-client
         ob-server
         glad
+        enet
         ${CMAKE_DL_LIBS}
     )
 endfunction(link_exe)
