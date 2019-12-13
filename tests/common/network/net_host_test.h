@@ -16,7 +16,7 @@ class TestServer : public NetworkHost {
     void onPeerConnect(ENetPeer &peer) override
     {
         sf::Packet packet;
-        packet << ClientCommand::ClientId << static_cast<peer_id_t>(0);
+        packet << ClientCommand::PeerId << static_cast<peer_id_t>(0);
 
         sendToPeer(peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
     }

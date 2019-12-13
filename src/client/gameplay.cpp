@@ -221,7 +221,7 @@ void Gameplay::onCommandRecieve(sf::Packet &packet, command_t command)
             onSnapshot(packet);
             break;
 
-        case ClientCommand::ClientId:
+        case ClientCommand::PeerId:
             break;
     }
 }

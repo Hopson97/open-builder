@@ -7,10 +7,10 @@
         Commands to be sent to the client
 */
 enum class ClientCommand : command_t {
-    // Send client ID to a new connection
+    // Send peer ID to a new connection
     // Data:
     // peer_id_t: The ID of this client
-    ClientId,
+    PeerId,
 
     // Notify client that a player has joined the server
     // Data:

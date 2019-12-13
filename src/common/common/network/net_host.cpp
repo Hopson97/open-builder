@@ -50,7 +50,7 @@ int getPeerIdFromServer(ENetHost *host)
             sf::Packet packet;
             packet.append(event.packet->data, event.packet->dataLength);
             packet >> command;
-            if (command == ClientCommand::ClientId) {
+            if (command == ClientCommand::PeerId) {
                 peer_id_t peerId;
                 packet >> peerId;
                 id = peerId;

@@ -43,7 +43,7 @@ void Server::onPeerConnect(ENetPeer &peer)
 
         // Send client back their id
         sf::Packet packet;
-        packet << ClientCommand::ClientId << id;
+        packet << ClientCommand::PeerId << id;
         NetworkHost::sendToPeer(peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
 
         // Broadcast the connection event
