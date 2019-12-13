@@ -2,6 +2,7 @@
 add_library(ob-common
     file_io.cpp
     debug.cpp
+    network/net_host.cpp
 )
 
 set_flags(ob-common)

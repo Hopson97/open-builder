@@ -80,6 +80,11 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
 )
 
+target_include_directories(ob-common
+    PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/
+)
+
 set_flags(${PROJECT_NAME})
 include_dirs(${PROJECT_NAME})
 include_dirs(ob-client)
