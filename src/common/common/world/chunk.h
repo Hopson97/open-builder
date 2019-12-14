@@ -7,6 +7,9 @@
 
 class ChunkManager;
 
+template<typename T>
+using BlockArray = std::array<T, CHUNK_VOLUME>;
+
 struct Chunk {
   public:
     Chunk(ChunkManager *manager, const ChunkPosition& position);
@@ -19,7 +22,7 @@ struct Chunk {
     const ChunkPosition &getPosition() const;
 
   private: 
-    std::array<u8, CHUNK_VOLUME> blocks{0};
+    BlockArray<u8> blocks{0};
     ChunkManager *mp_manager;
     ChunkPosition m_position;
 };

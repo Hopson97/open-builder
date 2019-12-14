@@ -83,6 +83,8 @@ bool Gameplay::init(float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {0, 10, 0};
 
+    m_testChunk = &m_chunks.addChunk({0, 0, 0});
+
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
     return true;
 }

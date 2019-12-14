@@ -9,6 +9,7 @@
 #include <common/network/net_host.h>
 #include <common/network/net_types.h>
 #include "core/client_engine.h"
+#include <common/world/chunk.h>
 
 class Keyboard;
 
@@ -57,6 +58,9 @@ class Gameplay final : public NetworkHost {
     ENetPeer *mp_serverPeer = nullptr;
 
     EngineStatus m_status = EngineStatus::Ok;
+
+    ChunkManager m_chunks;
+    Chunk *m_testChunk;
 
     bool m_isMouseLocked = false;
 };
