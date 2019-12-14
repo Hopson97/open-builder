@@ -12,7 +12,7 @@ ChunkPosition toChunkPosition(const BlockPosition &position)
     int x = position.x;
     int y = position.y;
     int z = position.z;
-    //@TODO Probably a better way to deal with negative coordinates?
+    //@TODO Might be a better way to deal with negative coordinates?
     return {
         x < 0 ? ((x - CHUNK_SIZE) / CHUNK_SIZE) : (x / CHUNK_SIZE),
         y < 0 ? ((y - CHUNK_SIZE) / CHUNK_SIZE) : (y / CHUNK_SIZE),
@@ -31,13 +31,7 @@ BlockPosition toLocalBlockPosition(const BlockPosition &position)
 BlockPosition toGlobalBlockPosition(const BlockPosition &blockPosition,
                                     const ChunkPosition &localChunkPosition)
 {
-    int cx = localChunkPosition.x;
-    int cy = localChunkPosition.y;
-    int cz = localChunkPosition.z;
-
-    int bx = blockPosition.x;
-    int by = blockPosition.y;
-    int bz = blockPosition.z;
-
-    return {cx * CHUNK_SIZE + bx, cy * CHUNK_SIZE + by, cz * CHUNK_SIZE + bz};
+    return {localChunkPosition.x * CHUNK_SIZE + blockPosition.x,
+            localChunkPosition.y * CHUNK_SIZE + blockPosition.y,
+            localChunkPosition.z * CHUNK_SIZE + blockPosition.z};
 }

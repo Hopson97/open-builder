@@ -21,6 +21,8 @@ struct Chunk {
 
     const ChunkPosition &getPosition() const;
 
+    void forEachBlock(void(*func)(int x, int y, int z, u8 &block));
+
   private: 
     BlockArray<u8> blocks{0};
     ChunkManager *mp_manager;
