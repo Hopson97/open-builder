@@ -3,9 +3,9 @@
 #include "server_config.h"
 #include <SFML/System/Clock.hpp>
 
-#include <thread>
 #include <atomic>
 #include <iostream>
+#include <thread>
 
 void runServerEngine(const ServerConfig &config, sf::Time timeout)
 {
@@ -20,8 +20,7 @@ void runServerEngine(const ServerConfig &config, sf::Time timeout)
         while (serverRunning) {
             std::cout
                 << "This is the server console. You can enter commands here.";
-            std::cout
-                << "Server console: Enter exit to shut down server.";
+            std::cout << "Server console: Enter exit to shut down server.";
             std::getline(std::cin, line);
             if (line == "exit") {
                 serverRunning = false;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/client_engine.h"
 #include "gl/gl_object.h"
 #include "maths.h"
 #include <SFML/Network/Packet.hpp>
@@ -8,7 +9,6 @@
 #include <common/network/enet.h>
 #include <common/network/net_host.h>
 #include <common/network/net_types.h>
-#include "core/client_engine.h"
 
 class Keyboard;
 

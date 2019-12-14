@@ -116,7 +116,7 @@ void parseArgs(Config &config,
  * @brief Prints success message
  * @return int Exit success flag
  */
-int exitSuccess(const char* message = "Normal exit")
+int exitSuccess(const char *message = "Normal exit")
 {
     std::cout << "Engine exited successfully.\"" << message << "\"."
               << std::endl;
@@ -167,7 +167,6 @@ int launchClient(const ClientConfig &config)
         case EngineStatus::ExitServerTimeout:
             return exitSuccess(
                 "Server timeout, client forcefully was disconnected.");
-
 
         case EngineStatus::GLInitError:
             return exitFailure("OpenGL failed to initilise correctly");

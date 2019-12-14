@@ -9,7 +9,7 @@ class ChunkManager;
 
 struct Chunk {
   public:
-    Chunk(ChunkManager *manager, const ChunkPosition& position);
+    Chunk(ChunkManager *manager, const ChunkPosition &position);
 
     u8 qGetBlock(const BlockPosition &blockPosition) const;
     void qSetBlock(const BlockPosition &blockPosition, u8 block);
@@ -18,7 +18,7 @@ struct Chunk {
 
     const ChunkPosition &getPosition() const;
 
-  private: 
+  private:
     std::array<u8, CHUNK_VOLUME> blocks{0};
     ChunkManager *mp_manager;
     ChunkPosition m_position;
