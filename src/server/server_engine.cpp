@@ -18,7 +18,10 @@ void runServerEngine(const ServerConfig &config, sf::Time timeout)
     std::thread console([&serverRunning, &serverConsoleRunning]() {
         std::string line;
         while (serverRunning) {
-            std::cout << "Type 'exit' to exit: ";
+            std::cout
+                << "This is the server console. You can enter commands here.";
+            std::cout
+                << "Server console: Enter exit to shut down server.";
             std::getline(std::cin, line);
             if (line == "exit") {
                 serverRunning = false;
