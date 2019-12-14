@@ -74,7 +74,11 @@ EngineStatus runClientEngine(const ClientConfig &config)
 
         // Stats and stuff
         counter.update();
+        if (status == EngineStatus::Ok) {
+            status = gameplay.currentStatus();
+        }
     }
+    window.window.close();
     gameplay.endGame();
     return status;
 }

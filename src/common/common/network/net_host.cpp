@@ -122,6 +122,32 @@ void NetworkHost::disconnectFromPeer(ENetPeer &peer)
     enet_peer_reset(&peer);
 }
 
+void NetworkHost::disconnectAllPeers()
+{
+    int maxConnection = getConnectedPeerCount();
+    int connections = maxConnection;
+    for (int i = 0; i < maxConnection; i++) {
+        enet_peer_disconnect(&mp_host->peers[i], 0);
+    }
+
+    ENetEvent event;
+    LOG(m_name.c_str(), "Allowing 1 second to disconnect all peers.")
+    while (enet_host_service(mp_host, &event, 1000) > 0 && connections > 0) {
+        switch (event.type) {
+            case ENET_EVENT_TYPE_RECEIVE:
+                enet_packet_destroy(event.packet);
+                break;
+
+            case ENET_EVENT_TYPE_DISCONNECT:
+                connections--;
+                break;
+
+            default:
+                break;
+        }
+    }
+}
+
 int NetworkHost::getConnectedPeerCount() const
 {
     return mp_host->connectedPeers;

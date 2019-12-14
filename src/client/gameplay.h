@@ -8,6 +8,7 @@
 #include <common/network/enet.h>
 #include <common/network/net_host.h>
 #include <common/network/net_types.h>
+#include "core/client_engine.h"
 
 class Keyboard;
 
@@ -27,6 +28,8 @@ class Gameplay : public NetworkHost {
     void update();
     void render();
     void endGame();
+
+    EngineStatus currentStatus() const;
 
   private:
     void onPeerConnect(ENetPeer &peer) override;
@@ -52,6 +55,8 @@ class Gameplay : public NetworkHost {
 
     Entity *mp_player = nullptr;
     ENetPeer *mp_serverPeer = nullptr;
+
+    EngineStatus m_status = EngineStatus::Ok;
 
     bool m_isMouseLocked = false;
 };

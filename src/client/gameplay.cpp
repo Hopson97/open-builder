@@ -180,7 +180,6 @@ void Gameplay::render()
     translateMatrix(&modelMatrix, {0, 5, 0});
     gl::loadUniform(m_modelLocation, modelMatrix);
     drawable.draw();
-
 }
 
 void Gameplay::endGame()
@@ -189,17 +188,24 @@ void Gameplay::endGame()
     m_texture.destroy();
     m_shader.destroy();
 
-    // Disconnect from the server
-    sf::Packet packet;
-    packet << ServerCommand::Disconnect << NetworkHost::getPeerId();
-    if (!sendToPeer(*mp_serverPeer, packet, 0, ENET_PACKET_FLAG_RELIABLE)) {
-        LOG("Client", "Failed to send disconnect packet");
+    if (m_status == EngineStatus::Ok) {
+        // Disconnect from the server
+        sf::Packet packet;
+        packet << ServerCommand::Disconnect << NetworkHost::getPeerId();
+        if (!sendToPeer(*mp_serverPeer, packet, 0, ENET_PACKET_FLAG_RELIABLE)) {
+            LOG("Client", "Failed to send disconnect packet");
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(64));
+
+        NetworkHost::disconnectFromPeer(*mp_serverPeer);
     }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(64));
-
-    NetworkHost::disconnectFromPeer(*mp_serverPeer);
     NetworkHost::destroy();
+}
+
+EngineStatus Gameplay::currentStatus() const
+{
+    return m_status;
 }
 
 void Gameplay::onPeerConnect(ENetPeer &peer)
@@ -208,10 +214,12 @@ void Gameplay::onPeerConnect(ENetPeer &peer)
 
 void Gameplay::onPeerDisconnect(ENetPeer &peer)
 {
+    m_status = EngineStatus::ExitServerDisconnect;
 }
 
 void Gameplay::onPeerTimeout(ENetPeer &peer)
 {
+    m_status = EngineStatus::ExitServerTimeout;
 }
 
 void Gameplay::onCommandRecieve(sf::Packet &packet, command_t command)

@@ -50,6 +50,11 @@ class NetworkHost {
      */
     void disconnectFromPeer(ENetPeer &peer);
 
+    /**
+     * @brief Disconnects all peers from this host
+    */
+    void disconnectAllPeers();
+
     int getConnectedPeerCount() const;
     peer_id_t getPeerId() const;
     int getMaxConnections() const;

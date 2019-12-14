@@ -8,6 +8,8 @@ struct ClientConfig;
 enum class EngineStatus {
     Ok = 10,
     Exit = 11,
+    ExitServerDisconnect = 12,
+    ExitServerTimeout = 13,
 
     GLInitError = 20,
     CouldNotConnect = 21,

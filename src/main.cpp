@@ -116,9 +116,10 @@ void parseArgs(Config &config,
  * @brief Prints success message
  * @return int Exit success flag
  */
-int exitSuccess()
+int exitSuccess(const char* message = "Normal exit")
 {
-    std::cout << "Engine exited successfully." << std::endl;
+    std::cout << "Engine exited successfully.\"" << message << "\"."
+              << std::endl;
     return EXIT_SUCCESS;
 }
 
@@ -143,6 +144,7 @@ int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
 {
     LOG("Launcher", "Launching server");
     runServerEngine(config, timeout);
+    LOG("Launcher", "Server has exited.");
     return EXIT_SUCCESS;
 }
 
@@ -158,6 +160,14 @@ int launchClient(const ClientConfig &config)
         case EngineStatus::Exit:
         case EngineStatus::Ok:
             return exitSuccess();
+
+        case EngineStatus::ExitServerDisconnect:
+            return exitSuccess("Client was disconnected from the server.");
+
+        case EngineStatus::ExitServerTimeout:
+            return exitSuccess(
+                "Server timeout, client forcefully was disconnected.");
+
 
         case EngineStatus::GLInitError:
             return exitFailure("OpenGL failed to initilise correctly");
@@ -188,7 +198,6 @@ int main(int argc, char **argv)
 {
     Config config;
 
-    std::cout << "Init enet\n";
     if (enet_initialize() != 0) {
         return exitFailure("Failed to initialise enet");
     }

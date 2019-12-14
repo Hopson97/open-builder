@@ -4,13 +4,30 @@
 #include <SFML/System/Clock.hpp>
 
 #include <thread>
+#include <atomic>
+#include <iostream>
 
 void runServerEngine(const ServerConfig &config, sf::Time timeout)
 {
     Server engine;
     engine.createAsServer(config.maxConnections);
 
-    bool serverRunning = true;
+    std::atomic<bool> serverRunning = true;
+    std::atomic<bool> serverConsoleRunning = true;
+
+    std::thread console([&serverRunning, &serverConsoleRunning]() {
+        std::string line;
+        while (serverRunning) {
+            std::cout << "Type 'exit' to exit: ";
+            std::getline(std::cin, line);
+            if (line == "exit") {
+                serverRunning = false;
+                serverConsoleRunning = false;
+                return;
+            }
+        }
+    });
+
     sf::Clock clock;
     while (serverRunning) {
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -27,5 +44,12 @@ void runServerEngine(const ServerConfig &config, sf::Time timeout)
             clock.restart();
         }
     }
+    engine.disconnectAllPeers();
     engine.destroy();
+    if (serverConsoleRunning) {
+        std::cout
+            << "Server console is still active.\nPlease type anything to exit."
+            << std::endl;
+    }
+    console.join();
 }
