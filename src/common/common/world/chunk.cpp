@@ -3,8 +3,9 @@
 #include "../debug.h"
 #include <iostream>
 
-Chunk::Chunk(ChunkManager *manager)
+Chunk::Chunk(ChunkManager *manager, const ChunkPosition &position)
     : mp_manager(manager)
+    , m_position(position)
 {
 }
 
@@ -18,11 +19,30 @@ void Chunk::qSetBlock(const BlockPosition &blockPosition, u8 block)
     blocks.at(toLocalBlockIndex(blockPosition)) = block;
 }
 
+u8 Chunk::getBlock(const BlockPosition &blockPosition) const
+{
+    if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
+        blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE ||
+        blockPosition.z < 0 || blockPosition.z >= CHUNK_SIZE) {
+        return mp_manager->getBlock(toGlobalBlockPosition(blockPosition, m_position));
+    }
+    return qGetBlock(blockPosition);
+}
+
+const ChunkPosition &Chunk::getPosition() const
+{
+    return m_position;
+}
+
+
 Chunk &ChunkManager::addChunk(const ChunkPosition &chunk)
 {
     auto itr = m_chunks.find(chunk);
     if (itr == m_chunks.cend()) {
-        return m_chunks.emplace(chunk, Chunk{this}).first->second;
+        return m_chunks
+            .emplace(std::piecewise_construct, std::forward_as_tuple(chunk),
+                     std::forward_as_tuple(this, chunk))
+            .first->second;
     }
     return itr->second;
 }

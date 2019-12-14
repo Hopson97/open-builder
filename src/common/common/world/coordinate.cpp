@@ -9,9 +9,9 @@ int toLocalBlockIndex(const BlockPosition &position)
 
 ChunkPosition toChunkPosition(const BlockPosition &position)
 {
-    auto x = position.x;
-    auto y = position.y;
-    auto z = position.z;
+    int x = position.x;
+    int y = position.y;
+    int z = position.z;
     //@TODO Probably a better way to deal with negative coordinates? 
     return 
     {
@@ -30,4 +30,19 @@ BlockPosition toLocalBlockPosition(const BlockPosition &position)
         (CHUNK_SIZE + (position.y % CHUNK_SIZE)) % CHUNK_SIZE,
         (CHUNK_SIZE + (position.z % CHUNK_SIZE)) % CHUNK_SIZE
    };
+}
+
+BlockPosition toGlobalBlockPosition(const BlockPosition &blockPosition,
+                                    const ChunkPosition &localChunkPosition)
+{
+    int cx = localChunkPosition.x;
+    int cy = localChunkPosition.y;
+    int cz = localChunkPosition.z;
+
+    int bx = blockPosition.x;
+    int by = blockPosition.y;
+    int bz = blockPosition.z;
+
+    return {cx * CHUNK_SIZE + bx, cy * CHUNK_SIZE + by,
+            cz * CHUNK_SIZE + bz};
 }

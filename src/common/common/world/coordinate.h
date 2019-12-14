@@ -24,3 +24,5 @@ int toLocalBlockIndex(const BlockPosition &position);
 
 ChunkPosition toChunkPosition(const BlockPosition &position);
 BlockPosition toLocalBlockPosition(const BlockPosition &position);
+BlockPosition toGlobalBlockPosition(const BlockPosition &blockPosition,
+                                    const ChunkPosition &localChunkPosition);
