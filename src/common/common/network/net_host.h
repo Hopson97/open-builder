@@ -13,6 +13,8 @@ class NetworkHost {
   public:
     NetworkHost(std::string &&name);
 
+    virtual ~NetworkHost() = default;
+
     /**
      * @brief Does 1 tick of the host, must be called once per frame.
      * The function will do all the receving and handling of connections and

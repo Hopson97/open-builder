@@ -12,12 +12,12 @@
 
 class Keyboard;
 
-struct Entity {
+struct Entity final {
     glm::vec3 position{0.0f, 0.0f, 12.0f}, rotation{0.0f};
     bool active = false;
 };
 
-class Gameplay : public NetworkHost {
+class Gameplay final : public NetworkHost {
   public:
     Gameplay();
 

@@ -8,7 +8,7 @@
 #include <iostream>
 
 namespace {
-struct FPSCounter {
+struct FPSCounter final {
     float frameCount = 0;
     sf::Clock timer;
 

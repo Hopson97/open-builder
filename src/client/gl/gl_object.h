@@ -12,14 +12,14 @@ namespace gl {
 /**
  * @brief A uniform location in a shader
  */
-struct UniformLocation {
+struct UniformLocation final {
     GLuint ptr = 0;
 };
 
 /**
  * @brief Wrapper for a OpenGL shder object
  */
-class Shader {
+class Shader final {
   public:
     void create(const std::string &vertexFile, const std::string &fragmentFile);
     void destroy();
@@ -34,7 +34,7 @@ class Shader {
 /**
  * @brief Wrapper for an OpenGL cube-mapped texture object
  */
-class CubeTexture {
+class CubeTexture final {
   public:
     void create(const std::array<std::string, 6> &textures);
     void destroy();
@@ -47,7 +47,7 @@ class CubeTexture {
 /**
  * @brief Wrapper for a regaulr OpenGL 2D texture
  */
-class Texture2d {
+class Texture2d final {
   public:
     void create(const std::string &file);
     void destroy();
@@ -61,7 +61,7 @@ class Texture2d {
  * @brief Minimal information for drawing with glDrawElements
  *
  */
-class Drawable {
+class Drawable final {
   public:
     Drawable(GLuint vao, GLsizei indices);
 
@@ -78,7 +78,7 @@ class Drawable {
 /**
  * @brief Wrapper for an OpenGL vertex array object (aka VAO)
  */
-class VertexArray {
+class VertexArray final {
   public:
     void create();
     void destroy();

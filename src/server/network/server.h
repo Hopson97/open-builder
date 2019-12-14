@@ -12,7 +12,7 @@ struct ServerEntity {
     bool active = false;
 };
 
-class Server : public NetworkHost {
+class Server final : public NetworkHost {
   public:
     Server();
 

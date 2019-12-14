@@ -11,7 +11,7 @@
 
 #ifdef DEBUG_MODE_
 
-class DebugLogger {
+class DebugLogger final {
   public:
     static DebugLogger &get()
     {
