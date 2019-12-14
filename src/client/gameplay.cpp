@@ -75,6 +75,7 @@ bool Gameplay::init(float aspect)
     m_grassTexture.create("grass");
     m_grassTexture.bind();
 
+    // Set up the server connection
     auto peer = NetworkHost::connectToServer(LOCAL_HOST);
     if (!peer) {
         return false;
@@ -83,7 +84,15 @@ bool Gameplay::init(float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {0, 10, 0};
 
+    //Set up world
     m_testChunk = &m_chunks.addChunk({0, 0, 0});
+    for (int y = 0; y < CHUNK_SIZE; y++) {
+        for (int z = 0; z < CHUNK_SIZE; z++) {
+            for (int x = 0; x < CHUNK_SIZE; x++) {
+                m_testChunk->qSetBlock({x, y, z}, 1);
+            }
+        }
+    }
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
     return true;
@@ -210,6 +219,9 @@ EngineStatus Gameplay::currentStatus() const
     return m_status;
 }
 
+//
+//      Network Related Code
+//
 void Gameplay::onPeerConnect(ENetPeer &peer)
 {
 }
