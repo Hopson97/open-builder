@@ -1,6 +1,7 @@
 #include "gameplay.h"
 
 #include "input/keyboard.h"
+#include "world/chunk_mesh_generation.h"
 #include <SFML/Window/Mouse.hpp>
 #include <common/debug.h>
 #include <common/network/net_command.h>
@@ -93,6 +94,8 @@ bool Gameplay::init(float aspect)
             }
         }
     }
+    m_chunk = makeChunkMesh(*m_testChunk);
+    
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
     return true;
@@ -176,7 +179,7 @@ void Gameplay::render()
     drawable.bind();
     m_texture.bind();
     for (auto &p : m_entities) {
-        if (p.active) {
+        if (p.active && &p != mp_player) {
             glm::mat4 modelMatrix{1.0f};
             translateMatrix(&modelMatrix,
                             {p.position.x, p.position.y, p.position.z});
@@ -191,6 +194,10 @@ void Gameplay::render()
     translateMatrix(&modelMatrix, {0, 5, 0});
     gl::loadUniform(m_modelLocation, modelMatrix);
     drawable.draw();
+
+    glm::mat4 mm{1.0f};
+    gl::loadUniform(m_modelLocation, mm);
+    m_chunk.getDrawable().bindAndDraw();
 }
 
 void Gameplay::endGame()

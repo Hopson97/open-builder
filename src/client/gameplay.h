@@ -44,6 +44,7 @@ class Gameplay final : public NetworkHost {
 
     glm::mat4 m_projectionMatrix{1.0f};
 
+    gl::VertexArray m_chunk;
     gl::VertexArray m_cube;
     gl::Shader m_shader;
     gl::Texture2d m_texture;
