@@ -33,7 +33,7 @@ class Server : public NetworkHost {
     void removePeer(u32 connectionId);
 
     std::array<ServerEntity, 512> m_entities;
-    std::array<bool, MAX_CONNECTIONS> m_peerConnected;
+    std::array<bool, MAX_CONNECTIONS> m_peerConnected{false};
     std::unordered_map<u32, peer_id_t> m_peerIds;
 
     bool m_isRunning = true;
