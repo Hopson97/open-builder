@@ -43,6 +43,7 @@ class Gameplay : public NetworkHost {
     gl::VertexArray m_cube;
     gl::Shader m_shader;
     gl::Texture2d m_texture;
+    gl::Texture2d m_grassTexture;
 
     gl::UniformLocation m_modelLocation;
     gl::UniformLocation m_projectionViewLocation;

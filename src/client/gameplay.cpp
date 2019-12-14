@@ -8,19 +8,19 @@
 #include <thread>
 
 namespace {
-gl::VertexArray createCube()
+gl::VertexArray createCube(float height = 1)
 {
     std::vector<GLfloat> vertices = {
         // Front
-        1, 2, 1, 0, 2, 1, 0, 0, 1, 1, 0, 1,
+        1, height, 1, 0, height, 1, 0, 0, 1, 1, 0, 1,
         // Left
-        0, 2, 1, 0, 2, 0, 0, 0, 0, 0, 0, 1,
+        0, height, 1, 0, height, 0, 0, 0, 0, 0, 0, 1,
         // Back
-        0, 2, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0,
+        0, height, 0, 1, height, 0, 1, 0, 0, 0, 0, 0,
         // Right
-        1, 2, 0, 1, 2, 1, 1, 0, 1, 1, 0, 0,
+        1, height, 0, 1, height, 1, 1, 0, 1, 1, 0, 0,
         // Top
-        1, 2, 0, 0, 2, 0, 0, 2, 1, 1, 2, 1,
+        1, height, 0, 0, height, 0, 0, height, 1, 1, height, 1,
         // Bottom
         0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1,
         // this just stops clang format from making the array long
@@ -61,7 +61,7 @@ Gameplay::Gameplay()
 bool Gameplay::init(float aspect)
 {
     // OpenGL stuff
-    m_cube = createCube();
+    m_cube = createCube(1);
 
     m_shader.create("static", "static");
     m_shader.bind();
@@ -72,12 +72,16 @@ bool Gameplay::init(float aspect)
     m_texture.create("player");
     m_texture.bind();
 
+    m_grassTexture.create("grass");
+    m_grassTexture.bind();
+
     auto peer = NetworkHost::connectToServer(LOCAL_HOST);
     if (!peer) {
         return false;
     }
     mp_serverPeer = *peer;
     mp_player = &m_entities[NetworkHost::getPeerId()];
+    mp_player->position = {0, 10, 0};
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
     return true;
@@ -159,6 +163,7 @@ void Gameplay::render()
     // Render all the players
     auto drawable = m_cube.getDrawable();
     drawable.bind();
+    m_texture.bind();
     for (auto &p : m_entities) {
         if (p.active) {
             glm::mat4 modelMatrix{1.0f};
@@ -170,9 +175,12 @@ void Gameplay::render()
     }
 
     // Render the """"""""world"""""""""""
+    m_grassTexture.bind();
     glm::mat4 modelMatrix{1.0f};
+    translateMatrix(&modelMatrix, {0, 5, 0});
     gl::loadUniform(m_modelLocation, modelMatrix);
-    // drawable.draw();
+    drawable.draw();
+
 }
 
 void Gameplay::endGame()
