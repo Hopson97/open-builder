@@ -16,7 +16,7 @@ class Server : public NetworkHost {
   public:
     Server();
 
-    void start(const ServerConfig &config, sf::Time timeout);
+    void sendPackets();
 
   private:
     void onPeerConnect(ENetPeer &peer) override;
@@ -26,8 +26,6 @@ class Server : public NetworkHost {
 
     void handleCommandDisconnect(sf::Packet &packet);
     void handleCommandPlayerPosition(sf::Packet &packet);
-
-    void sendPackets();
 
     int emptySlot() const;
 

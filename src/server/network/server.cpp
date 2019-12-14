@@ -10,31 +10,6 @@ Server::Server()
 {
 }
 
-void Server::start(const ServerConfig &config, sf::Time timeout)
-{
-    NetworkHost::createAsServer(config.maxConnections);
-
-    // Start the main server loop
-    sf::Clock timeoutClock;
-    while (m_isRunning) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
-
-        NetworkHost::tick();
-        sendPackets();
-
-        if (NetworkHost::getConnectedPeerCount() == 0) {
-            if (timeoutClock.getElapsedTime() >= timeout) {
-                m_isRunning = false;
-            }
-        }
-        else {
-            timeoutClock.restart();
-        }
-    }
-
-    NetworkHost::destroy();
-}
-
 void Server::onPeerConnect(ENetPeer &peer)
 {
     int slot = emptySlot();

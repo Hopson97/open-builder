@@ -55,6 +55,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
     if (!gameplay.init(window.aspect)) {
         return EngineStatus::CouldNotConnect;
     }
+
     LOG("Client", "Starting game.");
     while (status == EngineStatus::Ok) {
         // Input
@@ -72,7 +73,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
         window.window.display();
 
         // Stats and stuff
-        // counter.update();
+        counter.update();
     }
     gameplay.endGame();
     return status;
