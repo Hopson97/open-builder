@@ -229,16 +229,16 @@ EngineStatus Gameplay::currentStatus() const
 //
 //      Network Related Code
 //
-void Gameplay::onPeerConnect(ENetPeer &peer)
+void Gameplay::onPeerConnect([[maybe_unused]]ENetPeer &peer)
 {
 }
 
-void Gameplay::onPeerDisconnect(ENetPeer &peer)
+void Gameplay::onPeerDisconnect([[maybe_unused]]ENetPeer &peer)
 {
     m_status = EngineStatus::ExitServerDisconnect;
 }
 
-void Gameplay::onPeerTimeout(ENetPeer &peer)
+void Gameplay::onPeerTimeout([[maybe_unused]]ENetPeer &peer)
 {
     m_status = EngineStatus::ExitServerTimeout;
 }
