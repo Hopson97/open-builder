@@ -46,12 +46,19 @@ class Gameplay final : public NetworkHost {
 
     gl::VertexArray m_chunk;
     gl::VertexArray m_cube;
-    gl::Shader m_shader;
     gl::Texture2d m_texture;
     gl::Texture2d m_grassTexture;
 
-    gl::UniformLocation m_modelLocation;
-    gl::UniformLocation m_projectionViewLocation;
+    struct {
+        gl::Shader program;
+        gl::UniformLocation modelLocation;
+        gl::UniformLocation projectionViewLocation;
+    } m_basicShader;
+
+    struct {
+        gl::Shader program;
+        gl::UniformLocation projectionViewLocation;
+    } m_chunkShader;
 
     std::array<Entity, 512> m_entities;
 

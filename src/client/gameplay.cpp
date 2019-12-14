@@ -62,17 +62,28 @@ Gameplay::Gameplay()
 bool Gameplay::init(float aspect)
 {
     // OpenGL stuff
-    m_cube = createCube(1);
+    m_cube = createCube(2);
 
-    m_shader.create("static", "static");
-    m_shader.bind();
-    m_modelLocation = m_shader.getUniformLocation("modelMatrix");
-    m_projectionViewLocation =
-        m_shader.getUniformLocation("projectionViewMatrix");
+    // Basic shader
+    m_basicShader.program.create("static", "static");
+    m_basicShader.program.bind();
+    m_basicShader.modelLocation =
+        m_basicShader.program.getUniformLocation("modelMatrix");
+    m_basicShader.projectionViewLocation =
+        m_basicShader.program.getUniformLocation("projectionViewMatrix");
 
+    // Chunk shader
+    m_chunkShader.program.create("chunk", "chunk");
+    m_chunkShader.program.bind();
+    m_chunkShader.projectionViewLocation =
+        m_chunkShader.program.getUniformLocation("projectionViewMatrix");
+
+
+    // Texture for the player model
     m_texture.create("player");
     m_texture.bind();
 
+    // Texture for grass
     m_grassTexture.create("grass");
     m_grassTexture.bind();
 
@@ -95,7 +106,6 @@ bool Gameplay::init(float aspect)
         }
     }
     m_chunk = makeChunkMesh(*m_testChunk);
-    
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
     return true;
@@ -168,11 +178,12 @@ void Gameplay::render()
     glm::mat4 viewMatrix{1.0f};
     glm::mat4 projectionViewMatrix{1.0f};
 
+    m_basicShader.program.bind();
     rotateMatrix(&viewMatrix, mp_player->rotation);
     translateMatrix(&viewMatrix, -mp_player->position);
 
     projectionViewMatrix = m_projectionMatrix * viewMatrix;
-    gl::loadUniform(m_projectionViewLocation, projectionViewMatrix);
+    gl::loadUniform(m_basicShader.projectionViewLocation, projectionViewMatrix);
 
     // Render all the players
     auto drawable = m_cube.getDrawable();
@@ -183,20 +194,15 @@ void Gameplay::render()
             glm::mat4 modelMatrix{1.0f};
             translateMatrix(&modelMatrix,
                             {p.position.x, p.position.y, p.position.z});
-            gl::loadUniform(m_modelLocation, modelMatrix);
+            gl::loadUniform(m_basicShader.modelLocation, modelMatrix);
             drawable.draw();
         }
     }
 
-    // Render the """"""""world"""""""""""
+    // Render the world
+    m_chunkShader.program.bind();
     m_grassTexture.bind();
-    glm::mat4 modelMatrix{1.0f};
-    translateMatrix(&modelMatrix, {0, 5, 0});
-    gl::loadUniform(m_modelLocation, modelMatrix);
-    drawable.draw();
-
-    glm::mat4 mm{1.0f};
-    gl::loadUniform(m_modelLocation, mm);
+    gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
     m_chunk.getDrawable().bindAndDraw();
 }
 
@@ -204,7 +210,9 @@ void Gameplay::endGame()
 {
     m_cube.destroy();
     m_texture.destroy();
-    m_shader.destroy();
+    m_basicShader.program.destroy();
+    m_chunkShader.program.destroy();
+    m_chunk.destroy();
 
     if (m_status == EngineStatus::Ok) {
         // Disconnect from the server
@@ -229,16 +237,16 @@ EngineStatus Gameplay::currentStatus() const
 //
 //      Network Related Code
 //
-void Gameplay::onPeerConnect([[maybe_unused]]ENetPeer &peer)
+void Gameplay::onPeerConnect([[maybe_unused]] ENetPeer &peer)
 {
 }
 
-void Gameplay::onPeerDisconnect([[maybe_unused]]ENetPeer &peer)
+void Gameplay::onPeerDisconnect([[maybe_unused]] ENetPeer &peer)
 {
     m_status = EngineStatus::ExitServerDisconnect;
 }
 
-void Gameplay::onPeerTimeout([[maybe_unused]]ENetPeer &peer)
+void Gameplay::onPeerTimeout([[maybe_unused]] ENetPeer &peer)
 {
     m_status = EngineStatus::ExitServerTimeout;
 }
