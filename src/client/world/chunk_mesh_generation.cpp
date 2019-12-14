@@ -9,7 +9,7 @@ struct ChunkMesh {
     std::vector<GLuint> indices;
 };
 
-using face = std::array <GLfloat, 12>;
+using face = std::array<GLfloat, 12>;
 
 const face FONT_FACE = {1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1};
 const face LEFT_FACE = {0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1};
@@ -21,5 +21,5 @@ const face BOTTOM_FACE = {0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1};
 
 gl::VertexArray makeChunkMesh(const Chunk &chunk)
 {
-    std::vector<float>
+
 }

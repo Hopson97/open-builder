@@ -10,6 +10,7 @@ add_library(ob-client
     core/client_engine.cpp
     core/window.cpp
     gameplay.cpp
+    world/chunk_mesh_generation.cpp
 )
 
 set_flags(ob-client)

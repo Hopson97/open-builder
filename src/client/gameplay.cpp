@@ -84,7 +84,7 @@ bool Gameplay::init(float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {0, 10, 0};
 
-    //Set up world
+    // Set up world
     m_testChunk = &m_chunks.addChunk({0, 0, 0});
     for (int y = 0; y < CHUNK_SIZE; y++) {
         for (int z = 0; z < CHUNK_SIZE; z++) {
