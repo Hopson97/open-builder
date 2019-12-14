@@ -12,24 +12,20 @@ ChunkPosition toChunkPosition(const BlockPosition &position)
     int x = position.x;
     int y = position.y;
     int z = position.z;
-    //@TODO Probably a better way to deal with negative coordinates? 
-    return 
-    {
-        x < 0 ? ((x - CHUNK_SIZE) / CHUNK_SIZE) : (x / CHUNK_SIZE), 
-        y < 0 ? ((y - CHUNK_SIZE) / CHUNK_SIZE) : (y / CHUNK_SIZE), 
-        z < 0 ? ((z - CHUNK_SIZE) / CHUNK_SIZE) : (z / CHUNK_SIZE), 
-    }; 
+    //@TODO Probably a better way to deal with negative coordinates?
+    return {
+        x < 0 ? ((x - CHUNK_SIZE) / CHUNK_SIZE) : (x / CHUNK_SIZE),
+        y < 0 ? ((y - CHUNK_SIZE) / CHUNK_SIZE) : (y / CHUNK_SIZE),
+        z < 0 ? ((z - CHUNK_SIZE) / CHUNK_SIZE) : (z / CHUNK_SIZE),
+    };
 }
 
 BlockPosition toLocalBlockPosition(const BlockPosition &position)
 {
-    //Deals with negative coordinates too
-    return 
-    {
-        (CHUNK_SIZE + (position.x % CHUNK_SIZE)) % CHUNK_SIZE, 
-        (CHUNK_SIZE + (position.y % CHUNK_SIZE)) % CHUNK_SIZE,
-        (CHUNK_SIZE + (position.z % CHUNK_SIZE)) % CHUNK_SIZE
-   };
+    // Deals with negative coordinates too
+    return {(CHUNK_SIZE + (position.x % CHUNK_SIZE)) % CHUNK_SIZE,
+            (CHUNK_SIZE + (position.y % CHUNK_SIZE)) % CHUNK_SIZE,
+            (CHUNK_SIZE + (position.z % CHUNK_SIZE)) % CHUNK_SIZE};
 }
 
 BlockPosition toGlobalBlockPosition(const BlockPosition &blockPosition,
@@ -43,6 +39,5 @@ BlockPosition toGlobalBlockPosition(const BlockPosition &blockPosition,
     int by = blockPosition.y;
     int bz = blockPosition.z;
 
-    return {cx * CHUNK_SIZE + bx, cy * CHUNK_SIZE + by,
-            cz * CHUNK_SIZE + bz};
+    return {cx * CHUNK_SIZE + bx, cy * CHUNK_SIZE + by, cz * CHUNK_SIZE + bz};
 }

@@ -12,7 +12,7 @@ using BlockArray = std::array<T, CHUNK_VOLUME>;
 
 struct Chunk {
   public:
-    Chunk(ChunkManager *manager, const ChunkPosition& position);
+    Chunk(ChunkManager *manager, const ChunkPosition &position);
 
     u8 qGetBlock(const BlockPosition &blockPosition) const;
     void qSetBlock(const BlockPosition &blockPosition, u8 block);

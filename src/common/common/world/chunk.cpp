@@ -24,7 +24,8 @@ u8 Chunk::getBlock(const BlockPosition &blockPosition) const
     if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
         blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE ||
         blockPosition.z < 0 || blockPosition.z >= CHUNK_SIZE) {
-        return mp_manager->getBlock(toGlobalBlockPosition(blockPosition, m_position));
+        return mp_manager->getBlock(
+            toGlobalBlockPosition(blockPosition, m_position));
     }
     return qGetBlock(blockPosition);
 }
@@ -33,7 +34,6 @@ const ChunkPosition &Chunk::getPosition() const
 {
     return m_position;
 }
-
 
 Chunk &ChunkManager::addChunk(const ChunkPosition &chunk)
 {
@@ -73,7 +73,7 @@ bool ChunkManager::hasChunk(const ChunkPosition &chunk) const
 
 bool ChunkManager::hasNeighbours(const ChunkPosition &chunkPosition) const
 {
-    const auto& cp = chunkPosition;
+    const auto &cp = chunkPosition;
     return hasChunk(chunkPosition) &&
            // Top
            hasChunk({cp.x, cp.y + 1, cp.z}) &&

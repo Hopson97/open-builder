@@ -1,7 +1,7 @@
 #pragma once
 
-#include <unordered_map>
 #include <SFML/System/Vector3.hpp>
+#include <unordered_map>
 
 using ChunkPosition = sf::Vector3i;
 using BlockPosition = sf::Vector3i;
@@ -18,7 +18,6 @@ struct ChunkPositionHash {
 template <typename T>
 using ChunkPositionMap =
     std::unordered_map<ChunkPosition, T, ChunkPositionHash>;
-
 
 int toLocalBlockIndex(const BlockPosition &position);
 

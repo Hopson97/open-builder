@@ -54,7 +54,7 @@ class NetworkHost {
 
     /**
      * @brief Disconnects all peers from this host
-    */
+     */
     void disconnectAllPeers();
 
     int getConnectedPeerCount() const;
