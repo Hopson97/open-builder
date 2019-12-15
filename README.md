@@ -6,7 +6,7 @@ Open source Minecraft-like voxel sandbox game with multiplayer support.
 
 Please see main article here:
 
-[Contributing](https://github.com/Hopson97/open-builder/blob/master/docs/Contributing.md)
+[Contributing](https://github.com/Hopson97/open-builder/wiki/Contributing)
 
 ## Building/ Compiling/ Running
 
@@ -16,7 +16,7 @@ By default, running the project will start a localhost server, and client that c
 
 Please see main article:
 
-[Building For Windows or Linux](https://github.com/Hopson97/open-builder/blob/master/docs/Building.md)
+[Building For Windows or Linux](https://github.com/Hopson97/open-builder/wiki/Building)
 
 ## Similar Projects
 

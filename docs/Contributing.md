@@ -1,14 +1,10 @@
 # Contributing
 
-## As the project is in very early stages
+## Preface
 
-As the project is in very early stages, the code is not exactly great (As I am mostly experimenting for now), and also it means a lot of things are not implemented yet.
+As this project is being created as part of a [series](TO DO PUT LINK HERE), there are certain things I would like to implement myself for it.
 
-As I am creating a "Lets Code" series for this, certain PRs and contributions will likely be rejected if they add very very major features, since I would like to do for them series and might not be in "original desing).
-
-For example, things like adding the terrain generation, a day night cycle, LUA scripting integration etc (Haven't done these as of yet) will be rejected (for now).
-
-However, things like refactoring code, improving systems, fixing spelling mistakes, improving efficiently, etc
+For a list of planned features for the series, please check the list [here]()
 
 ## Anyways
 
