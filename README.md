@@ -1,8 +1,14 @@
-# open-builder
+# Open Builder 
 
 Open source Minecraft-like voxel sandbox game with multiplayer support.
 
 More information about the project can be fouund in the **[Open Builder Wiki](https://github.com/Hopson97/open-builder/wiki)**
+
+## Screenshot
+
+Game is in uh very early stages
+
+[!player](https://i.imgur.com/RLqoqKw.png)
 
 ## Contributing
 
@@ -10,8 +16,9 @@ Please see main article here:
 
 **[Contributing](https://github.com/Hopson97/open-builder/wiki/Contributing)**
 
-## Building/ Compiling/ Running
+## Building/ Running
 
+Clone: `git clone https://github.com/Hopson97/open-builder.git`
 
 Please see main article here:
 
