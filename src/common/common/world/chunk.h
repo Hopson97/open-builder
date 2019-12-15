@@ -11,16 +11,20 @@ template <typename T> using BlockArray = std::array<T, CHUNK_VOLUME>;
 
 class Chunk {
   public:
+    using Blocks = BlockArray<block_t>;
+
     Chunk(ChunkManager *manager, const ChunkPosition &position);
 
-    u8 qGetBlock(const BlockPosition &blockPosition) const;
-    void qSetBlock(const BlockPosition &blockPosition, u8 block);
+    block_t qGetBlock(const BlockPosition &blockPosition) const;
+    void qSetBlock(const BlockPosition &blockPosition, block_t block);
 
-    u8 getBlock(const BlockPosition &blockPosition) const;
+    block_t getBlock(const BlockPosition &blockPosition) const;
 
     const ChunkPosition &getPosition() const;
 
-    BlockArray<u8> blocks{0};
+    Blocks blocks{0};
+
+
 
   private:
     ChunkManager *mp_manager;
@@ -30,9 +34,10 @@ class Chunk {
 class ChunkManager final {
   public:
     Chunk &addChunk(const ChunkPosition &chunk);
+    Chunk &addChunk(Chunk &&chunk);
 
-    u8 getBlock(const BlockPosition &blockPosition) const;
-    void setBlock(const BlockPosition &blockPosition, u8 block);
+    block_t getBlock(const BlockPosition &blockPosition) const;
+    void setBlock(const BlockPosition &blockPosition, block_t block);
 
     bool hasChunk(const ChunkPosition &chunk) const;
     bool hasNeighbours(const ChunkPosition &chunkPosition) const;

@@ -41,6 +41,7 @@ class Gameplay final : public NetworkHost {
     void onPlayerJoin(sf::Packet &packet);
     void onPlayerLeave(sf::Packet &packet);
     void onSnapshot(sf::Packet &packet);
+    void onChunkData(sf::Packet &packet);
 
     glm::mat4 m_projectionMatrix{1.0f};
 
@@ -66,8 +67,10 @@ class Gameplay final : public NetworkHost {
 
     EngineStatus m_status = EngineStatus::Ok;
 
-    ChunkManager m_chunks;
-    std::vector<gl::VertexArray> m_chunkRenders;
+    ChunkManager m_chunkManager;
+    ChunkPositionMap<gl::VertexArray> m_chunkRenders;
+    ChunkPositionMap<Chunk *> m_chunks;
+
 
     bool m_isMouseLocked = false;
 };

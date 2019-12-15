@@ -6,7 +6,7 @@
 
 TEST_CASE("Chunks should be able to be freely modified")
 {
-    u8 block = 10;
+    block_t block = 10;
 
     SECTION("Chunk blocks can be set and recieved correctly")
     {

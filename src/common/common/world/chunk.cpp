@@ -9,17 +9,17 @@ Chunk::Chunk(ChunkManager *manager, const ChunkPosition &position)
 {
 }
 
-u8 Chunk::qGetBlock(const BlockPosition &blockPosition) const
+block_t Chunk::qGetBlock(const BlockPosition &blockPosition) const
 {
     return blocks.at(toLocalBlockIndex(blockPosition));
 }
 
-void Chunk::qSetBlock(const BlockPosition &blockPosition, u8 block)
+void Chunk::qSetBlock(const BlockPosition &blockPosition, block_t block)
 {
     blocks.at(toLocalBlockIndex(blockPosition)) = block;
 }
 
-u8 Chunk::getBlock(const BlockPosition &blockPosition) const
+block_t Chunk::getBlock(const BlockPosition &blockPosition) const
 {
     if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
         blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE ||
@@ -47,7 +47,16 @@ Chunk &ChunkManager::addChunk(const ChunkPosition &chunk)
     return itr->second;
 }
 
-u8 ChunkManager::getBlock(const BlockPosition &blockPosition) const
+Chunk &ChunkManager::addChunk(Chunk &&chunk)
+{
+    auto itr = m_chunks.find(chunk.getPosition());
+    if (itr == m_chunks.cend()) {
+        return m_chunks.emplace(chunk.getPosition(), std::move(chunk)).first->second;
+    }
+    return itr->second;
+}
+
+block_t ChunkManager::getBlock(const BlockPosition &blockPosition) const
 {
     auto chunkPosition = toChunkPosition(blockPosition);
     auto itr = m_chunks.find(chunkPosition);
@@ -57,7 +66,7 @@ u8 ChunkManager::getBlock(const BlockPosition &blockPosition) const
     return itr->second.qGetBlock(toLocalBlockPosition(blockPosition));
 }
 
-void ChunkManager::setBlock(const BlockPosition &blockPosition, u8 block)
+void ChunkManager::setBlock(const BlockPosition &blockPosition, block_t block)
 {
     auto chunkPosition = toChunkPosition(blockPosition);
     auto itr = m_chunks.find(chunkPosition);

@@ -78,7 +78,6 @@ bool Gameplay::init(float aspect)
     m_chunkShader.projectionViewLocation =
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
 
-
     // Texture for the player model
     m_texture.create("player");
     m_texture.bind();
@@ -94,32 +93,24 @@ bool Gameplay::init(float aspect)
     }
     mp_serverPeer = *peer;
     mp_player = &m_entities[NetworkHost::getPeerId()];
-    mp_player->position = {0, 10, 0};
+    mp_player->position = {0, CHUNK_SIZE * 5, 0};
 
-    std::vector<Chunk *> chunks;
-
-    // Set up world
     for (int cy = 0; cy < 5; cy++) {
         for (int cz = 0; cz < 5; cz++) {
             for (int cx = 0; cx < 5; cx++) {
-                auto& chunk = m_chunks.addChunk({cx, cy, cz});
-                chunks.push_back(&chunk);
-                for (int y = 0; y < CHUNK_SIZE; y++) {
-                    for (int z = 0; z < CHUNK_SIZE; z++) {
-                        for (int x = 0; x < CHUNK_SIZE; x++) {
-                            chunk.qSetBlock({x, y, z}, 1);
-                        }
-                    }
-                }
+                ChunkPosition position(cx, cy, cz);
+                sf::Packet packet;
+                packet << ServerCommand::ChunkRequest
+                       << NetworkHost::getPeerId() << position.x << position.y
+                       << position.z;
+                NetworkHost::sendToPeer(*mp_serverPeer, packet, 0,
+                                        ENET_PACKET_FLAG_RELIABLE);
             }
         }
     }
 
-    for (auto &chunk : chunks) {
-        m_chunkRenders.push_back(makeChunkMesh(*chunk));
-    }
-
-    m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 10000.0f);
+    m_projectionMatrix =
+        glm::perspective(3.14f / 2.0f, aspect, 0.01f, 10000.0f);
     return true;
 }
 
@@ -138,7 +129,10 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
 
     // Handle keyboard input
-    const float PLAYER_SPEED = 0.05f;
+    float PLAYER_SPEED = 0.05f;
+    if (keyboard.isKeyDown(sf::Keyboard::LControl)) {
+        PLAYER_SPEED *= 10;
+    }
     float rads = (glm::radians(mp_player->rotation.y));
     float rads90 = (glm::radians(mp_player->rotation.y + 90));
     if (keyboard.isKeyDown(sf::Keyboard::W)) {
@@ -159,12 +153,20 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
 
     if (keyboard.isKeyDown(sf::Keyboard::Q)) {
-        mp_player->position.y += 0.1f;
+        mp_player->position.y += PLAYER_SPEED * 2;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::E)) {
-        mp_player->position.y -= 0.1f;
+        mp_player->position.y -= PLAYER_SPEED * 2;
+    }
+
+    if (mp_player->rotation.x < -80.0f) {
+        mp_player->rotation.x = -79.0f;
+    }
+    else if (mp_player->rotation.x > 85.0f) {
+        mp_player->rotation.x = 84.0f;
     }
 }
+
 
 void Gameplay::onKeyRelease(sf::Keyboard::Key key)
 {
@@ -180,6 +182,16 @@ void Gameplay::update()
            << mp_player->position.x << mp_player->position.y
            << mp_player->position.z;
     NetworkHost::sendToPeer(*mp_serverPeer, packet, 0, 0);
+
+    //Try create some chunk meshes
+
+    for (auto &[position, chunk] : m_chunks) {
+        if (m_chunkRenders.find(position) == m_chunkRenders.end()) {
+            if (m_chunkManager.hasNeighbours(position)) {
+                m_chunkRenders.emplace(position, makeChunkMesh(*chunk));
+            }
+        }
+    }
 
     NetworkHost::tick();
 }
@@ -215,7 +227,7 @@ void Gameplay::render()
     m_chunkShader.program.bind();
     m_grassTexture.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
-    for (auto &chunk : m_chunkRenders) {
+    for (auto &[_, chunk] : m_chunkRenders) {
         chunk.getDrawable().bindAndDraw();
     }
 }
@@ -227,7 +239,7 @@ void Gameplay::endGame()
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
     for (auto &chunk : m_chunkRenders) {
-        chunk.destroy();
+        chunk.second.destroy();
     }
 
     if (m_status == EngineStatus::Ok) {
@@ -282,6 +294,10 @@ void Gameplay::onCommandRecieve(sf::Packet &packet, command_t command)
             onSnapshot(packet);
             break;
 
+        case ClientCommand::ChunkData:
+            onChunkData(packet);
+            break;
+
         case ClientCommand::PeerId:
             break;
     }
@@ -319,4 +335,19 @@ void Gameplay::onSnapshot(sf::Packet &packet)
             p->active = true;
         }
     }
+}
+
+void Gameplay::onChunkData(sf::Packet &packet)
+{
+    ChunkPosition position;
+    Chunk::Blocks blocks;
+
+    packet >> position.x >> position.y >> position.z;
+    for (auto &block : blocks) {
+        packet >> block;
+    }
+
+    Chunk &chunk = m_chunkManager.addChunk(position);
+    chunk.blocks = std::move(blocks);
+    m_chunks.emplace(position, &chunk);
 }

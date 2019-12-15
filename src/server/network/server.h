@@ -4,6 +4,7 @@
 #include <array>
 #include <common/network/net_host.h>
 #include <common/world/chunk.h>
+#include <queue>
 #include <unordered_map>
 
 struct ServerConfig;
@@ -18,6 +19,17 @@ struct Peer {
     peer_id_t peerId;
 };
 
+struct ChunkRequest {
+    ChunkRequest(ChunkPosition& chunkPosition, peer_id_t peerId)
+        : position(chunkPosition)
+        , peer(peerId)
+    {
+    }
+
+    ChunkPosition position;
+    peer_id_t peer;
+};
+
 class Server final : public NetworkHost {
   public:
     Server();
@@ -25,6 +37,8 @@ class Server final : public NetworkHost {
     void sendPackets();
 
   private:
+    ENetPeer *findPeer(peer_id_t peerId);
+
     void onPeerConnect(ENetPeer &peer) override;
     void onPeerDisconnect(ENetPeer &peer) override;
     void onPeerTimeout(ENetPeer &peer) override;
@@ -32,10 +46,11 @@ class Server final : public NetworkHost {
 
     void handleCommandDisconnect(sf::Packet &packet);
     void handleCommandPlayerPosition(sf::Packet &packet);
+    void handleCommandChunkRequest(sf::Packet &packet);
 
     int emptySlot() const;
 
-    void addPeer(ENetPeer* peer, peer_id_t id);
+    void addPeer(ENetPeer *peer, peer_id_t id);
     void removePeer(u32 connectionId);
 
     std::array<ServerEntity, 512> m_entities;
@@ -43,6 +58,8 @@ class Server final : public NetworkHost {
     std::unordered_map<u32, Peer> m_peerIds;
 
     ChunkManager m_chunkManager;
+
+    std::queue<ChunkRequest> m_chunkRequests;
 
     bool m_isRunning = true;
 };

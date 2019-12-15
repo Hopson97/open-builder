@@ -10,6 +10,16 @@ Server::Server()
 {
 }
 
+ENetPeer *Server::findPeer(peer_id_t peerId)
+{
+    for (auto &[_, peer] : m_peerIds) {
+        if (peer.peerId == peerId) {
+            return peer.peer;
+        }
+    }
+    return nullptr;
+}
+
 void Server::onPeerConnect(ENetPeer &peer)
 {
     int slot = emptySlot();
@@ -52,6 +62,10 @@ void Server::onCommandRecieve(sf::Packet &packet, command_t command)
         case ServerCommand::Disconnect:
             handleCommandDisconnect(packet);
             break;
+
+        case ServerCommand::ChunkRequest:
+            handleCommandChunkRequest(packet);
+            break;
     }
 }
 
@@ -75,6 +89,16 @@ void Server::handleCommandPlayerPosition(sf::Packet &packet)
     packet >> m_entities[id].x >> m_entities[id].y >> m_entities[id].z;
 }
 
+void Server::handleCommandChunkRequest(sf::Packet &packet)
+{
+    peer_id_t id;
+    ChunkPosition position;
+    packet >> id >> position.x >> position.y >> position.z;
+
+    m_chunkRequests.emplace(position, id);
+
+}
+
 void Server::sendPackets()
 {
     // Player positions
@@ -92,9 +116,39 @@ void Server::sendPackets()
         broadcastToPeers(packet, 0, 0);
     }
 
-    // Chunks (Bad approach for now lol)
+    // Chunks
     {
-        sf::Packet packet;
+        //Send just 1 (for now?)
+        if (!m_chunkRequests.empty()) {
+
+            auto cr = m_chunkRequests.front();
+            m_chunkRequests.pop();
+
+            Chunk &chunk = m_chunkManager.addChunk(cr.position);
+            //TEMP Set the edge-chunk to be an air filled chunk
+            if (chunk.getPosition().y < 4 && chunk.getPosition().y > 0 &&
+                chunk.getPosition().x < 4 && chunk.getPosition().x > 0 &&
+                chunk.getPosition().z < 4 && chunk.getPosition().z > 0) {
+                for (int y = 0; y < CHUNK_SIZE; y++) {
+                    for (int z = 0; z < CHUNK_SIZE; z++) {
+                        for (int x = 0; x < CHUNK_SIZE; x++) {
+                            chunk.qSetBlock({x, y, z}, 1);
+                        }
+                    }
+                }
+            }
+
+            sf::Packet packet;
+            packet << ClientCommand::ChunkData << cr.position.x << cr.position.y
+                   << cr.position.z;
+            for (auto &block : chunk.blocks) {
+                packet << block;
+            }
+            //packet.append(chunk.blocks.data(), chunk.blocks.size());
+
+            auto peer = findPeer(cr.peer);
+            sendToPeer(*peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
+        }
     }
 }
 

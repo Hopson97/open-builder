@@ -2,9 +2,10 @@
 
 #include <SFML/System/Vector3.hpp>
 #include <unordered_map>
+#include "../types.h"
 
-using ChunkPosition = sf::Vector3i;
-using BlockPosition = sf::Vector3i;
+using ChunkPosition = sf::Vector3<i32>;
+using BlockPosition = sf::Vector3<i32>;
 
 struct ChunkPositionHash {
     // http://www.beosil.com/download/CollisionDetectionHashing_VMV03.pdf
