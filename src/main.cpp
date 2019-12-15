@@ -14,7 +14,7 @@
 
 #include <common/network/enet.h>
 
-/*
+
 //Enable nvidia
 #ifdef _WIN32
         #define WIN32_LEAN_AND_MEAN
@@ -23,7 +23,7 @@
                 _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
         }
 #endif
-*/
+
 
 namespace {
 enum class LaunchType {
@@ -186,7 +186,7 @@ int launchClient(const ClientConfig &config)
 int launchBoth(const Config &config)
 {
     std::thread serverThread(launchServer, config.serverOptions,
-                             sf::milliseconds(1500));
+                             sf::milliseconds(2500));
     int exit = launchClient(config.clientOptions);
     serverThread.join();
     return exit;

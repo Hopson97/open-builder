@@ -138,10 +138,13 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
     if (keyboard.isKeyDown(sf::Keyboard::W)) {
         mp_player->position.x -= glm::cos(rads90) * PLAYER_SPEED;
         mp_player->position.z -= glm::sin(rads90) * PLAYER_SPEED;
+        mp_player->position.y -= glm::tan(glm::radians(mp_player->rotation.x)) * PLAYER_SPEED;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::S)) {
         mp_player->position.x += glm::cos(rads90) * PLAYER_SPEED;
         mp_player->position.z += glm::sin(rads90) * PLAYER_SPEED;
+        mp_player->position.y +=
+            glm::tan(glm::radians(mp_player->rotation.x)) * PLAYER_SPEED;
     }
     if (keyboard.isKeyDown(sf::Keyboard::A)) {
         mp_player->position.x -= glm::cos(rads) * PLAYER_SPEED;

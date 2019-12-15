@@ -126,7 +126,7 @@ void Server::sendPackets()
 
             Chunk &chunk = m_chunkManager.addChunk(cr.position);
             makeFlatTerrain(&chunk);
-
+            //makeRandomTerrain(&chunk);
 
             // Create the chunk-data packet
             sf::Packet packet;
