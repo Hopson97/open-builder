@@ -8,18 +8,6 @@ Please see main article here:
 
 [Contributing](https://github.com/Hopson97/open-builder/blob/master/docs/Contributing.md)
 
-## History
-
-Originally, this was going to be a Zombie game, but I got very bored of that very quickly, and so changed the project to be a voxel game instead.
-
-As a result of this, the code was created for the zombie game, so when I decided to switch over, the code got messy very quickly.
-
-To combat this, I did a masive refactor in just over 2 weeks, re-creating the most the project.
-
-The before refactor can be found [here](https://github.com/Hopson97/open-builder/tree/a452dfd0a5d8fc94059f7e1ab8ecca03dd06ba3a)
-
-The commit that adds the refactored code can be found [here](https://github.com/Hopson97/open-builder/tree/9b6c7c83fb1331fa8740ad12d6df9390d5b31c0c)
-
 ## Building/ Compiling/ Running
 
 By default, running the project will start a localhost server, and client that connects to this.
@@ -28,7 +16,7 @@ By default, running the project will start a localhost server, and client that c
 
 Please see main article:
 
-[Building For Windows or Linux]()
+[Building For Windows or Linux](https://github.com/Hopson97/open-builder/blob/master/docs/Building.md)
 
 ## Similar Projects
 
@@ -59,4 +47,15 @@ Minecraft clone created by Fogleman in C.
 [GitHub](https://github.com/fogleman/Craft)
 
 
+## History
+
+Originally, this was going to be a Zombie game, but I got very bored of that very quickly, and so changed the project to be a voxel game instead.
+
+As a result of this, the code was created for the zombie game, so when I decided to switch over, the code got messy very quickly.
+
+To combat this, I did a masive refactor in just over 2 weeks, re-creating the most the project.
+
+The before refactor can be found [here](https://github.com/Hopson97/open-builder/tree/a452dfd0a5d8fc94059f7e1ab8ecca03dd06ba3a)
+
+The commit that adds the refactored code can be found [here](https://github.com/Hopson97/open-builder/tree/9b6c7c83fb1331fa8740ad12d6df9390d5b31c0c)
 
