@@ -2,6 +2,22 @@
 
 Open source Minecraft-like game with multiplayer support.
 
+## Inspirations
+
+This project was heavily inspired by the following projects:
+
+### Minetest
+
+Another open source voxel sandbox game, one of the original ones. Also created using C++, and also has multiplayer support.
+
+http://www.minetest.net
+
+### Terasolgy
+
+Open source multiplayer voxel sandbox game created using Java like the original minecraft.
+
+https://terasology.org
+
 ## Building and Running
 
 ### Libraries
