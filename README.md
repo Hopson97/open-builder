@@ -2,9 +2,27 @@
 
 Open source Minecraft-like voxel sandbox game with multiplayer support.
 
-## Inspirations
+## Contributing
 
-This project was heavily inspired by the following projects:
+Please see main article here:
+
+
+
+## History
+
+Originally, this was going to be a Zombie game, but I got very bored of that very quickly, and so changed the project to be a voxel game instead.
+
+As a result of this, the code was created for the zombie game, so when I decided to switch over, the code got messy very quickly.
+
+To combat this, I did a masive refactor in just over 2 weeks, re-creating the most the project.
+
+The before refactor can be found [here](https://github.com/Hopson97/open-builder/tree/a452dfd0a5d8fc94059f7e1ab8ecca03dd06ba3a)
+
+The commit that adds the refactored code can be found [here](https://github.com/Hopson97/open-builder/tree/9b6c7c83fb1331fa8740ad12d6df9390d5b31c0c)
+
+## Similar Projects
+
+This project was heavily influenced by the following projects:
 
 ### Minetest
 
@@ -22,7 +40,7 @@ Open source multiplayer voxel sandbox game created using Java like the original 
 
 [GitHub](https://github.com/MovingBlocks/Terasology)
 
-### Craft 
+### Craft
 
 Minecraft clone created by Fogleman in C.
 
@@ -30,35 +48,35 @@ Minecraft clone created by Fogleman in C.
 
 [GitHub](https://github.com/fogleman/Craft)
 
-## History
+## Building/ Compiling/ Running
 
-Originally, this was going to be a Zombie game, but I got very bored of that very quickly, and so changed the project to be a voxel game instead.
+By default, running the project will start a localhost server, and client that connects to this.
 
-As a result of this, the code was created for the zombie game, so when I decided to switch over, the code got messy very quickly.
+### Windows [Visual Studio]
 
-To combat this, I did a masive refactor in just over 2 weeks, re-creating the most the project.
+Please use the links below:
 
-The before refactor can be found [here](https://github.com/Hopson97/open-builder/tree/a452dfd0a5d8fc94059f7e1ab8ecca03dd06ba3a)
+[Build With Visual Studio](https://github.com/Hopson97/open-builder/blob/9b6c7c83fb1331fa8740ad12d6df9390d5b31c0c/docs/Build_With_Visual_Studio.md)
 
-## Building and Running
+[Running the Unit Tests With Visual Studio](https://github.com/Hopson97/open-builder/blob/9b6c7c83fb1331fa8740ad12d6df9390d5b31c0c/docs/Visual_Studio_Unit_Tests.md)
 
-### Libraries
+### Linux
 
-SFML and GLM are required.
+#### Download SFML and GLM
 
-These can be installed from your project manager. For example, on Debian/ Ubuntu:
+These are required for the project, and usually can be downloaded via your distrobutions
 
 ```sh
 sudo apt install libsfml-dev libglm-dev
 ```
 
-If this is not possible (eg windows), you can install these manually from their respective websites:
+If not, then you can download them from the website:
 
 [SFML Download](https://www.sfml-dev.org/download.php)
 
 [GLM Download](https://github.com/g-truc/glm/tags)
 
-### Linux
+#### Build and Run
 
 To build, at the root of the project:
 
@@ -69,9 +87,9 @@ sh scripts/build.sh
 To run, at the root of the project:
 
 ```sh
-sh scripts/run.sh               #Launches both client and server  
-sh scripts/run.sh -server 8     #Launches server only, allowing upto 8 connections
-sh scripts/run.sh -client       #Launches client
+sh scripts/run.sh               # Launches both client and server  
+sh scripts/run.sh -server 8     # Launches server only, allowing upto 8 connections
+sh scripts/run.sh -client xyz   # Launches client, with player name xyz
 ```
 
 To build and run in release mode, simply add the `release` suffix:
@@ -81,8 +99,10 @@ sh scripts/build.sh release
 sh scripts/run.sh release <args>
 ```
 
-You can also create a deployable build (that can be sent) by doing:
+#### Unit Tests
+
+The unit tests can be ran using
 
 ```sh
-sh scripts/deploy.sh
+sh scripts/tests.sh
 ```
