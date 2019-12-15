@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../types.h"
 #include <SFML/System/Vector3.hpp>
 #include <unordered_map>
-#include "../types.h"
 
 using ChunkPosition = sf::Vector3<i32>;
 using BlockPosition = sf::Vector3<i32>;

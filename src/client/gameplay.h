@@ -71,6 +71,5 @@ class Gameplay final : public NetworkHost {
     ChunkPositionMap<gl::VertexArray> m_chunkRenders;
     ChunkPositionMap<Chunk *> m_chunks;
 
-
     bool m_isMouseLocked = false;
 };

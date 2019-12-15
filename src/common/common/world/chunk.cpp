@@ -47,15 +47,6 @@ Chunk &ChunkManager::addChunk(const ChunkPosition &chunk)
     return itr->second;
 }
 
-Chunk &ChunkManager::addChunk(Chunk &&chunk)
-{
-    auto itr = m_chunks.find(chunk.getPosition());
-    if (itr == m_chunks.cend()) {
-        return m_chunks.emplace(chunk.getPosition(), std::move(chunk)).first->second;
-    }
-    return itr->second;
-}
-
 block_t ChunkManager::getBlock(const BlockPosition &blockPosition) const
 {
     auto chunkPosition = toChunkPosition(blockPosition);

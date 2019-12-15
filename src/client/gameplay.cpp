@@ -167,7 +167,6 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
 }
 
-
 void Gameplay::onKeyRelease(sf::Keyboard::Key key)
 {
     if (key == sf::Keyboard::L) {
@@ -183,7 +182,7 @@ void Gameplay::update()
            << mp_player->position.z;
     NetworkHost::sendToPeer(*mp_serverPeer, packet, 0, 0);
 
-    //Try create some chunk meshes
+    // Try create some chunk meshes
 
     for (auto &[position, chunk] : m_chunks) {
         if (m_chunkRenders.find(position) == m_chunkRenders.end()) {

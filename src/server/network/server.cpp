@@ -96,14 +96,12 @@ void Server::handleCommandChunkRequest(sf::Packet &packet)
     packet >> id >> position.x >> position.y >> position.z;
 
     m_chunkRequests.emplace(position, id);
-
 }
 
 void Server::sendPackets()
 {
     // Player positions
     {
-
         sf::Packet packet;
         u16 count = NetworkHost::getConnectedPeerCount();
         packet << ClientCommand::Snapshot << count;
@@ -118,14 +116,15 @@ void Server::sendPackets()
 
     // Chunks
     {
-        //Send just 1 (for now?)
+        // Add 1 per tick to the queue for now
         if (!m_chunkRequests.empty()) {
 
             auto cr = m_chunkRequests.front();
             m_chunkRequests.pop();
 
             Chunk &chunk = m_chunkManager.addChunk(cr.position);
-            //TEMP Set the edge-chunk to be an air filled chunk
+            // TEMP Set the edge-chunks to be air, so the chunks within actually
+            // get rendered Generate the block dta
             if (chunk.getPosition().y < 4 && chunk.getPosition().y > 0 &&
                 chunk.getPosition().x < 4 && chunk.getPosition().x > 0 &&
                 chunk.getPosition().z < 4 && chunk.getPosition().z > 0) {
@@ -138,16 +137,19 @@ void Server::sendPackets()
                 }
             }
 
+            // Create the chunk-data packet
             sf::Packet packet;
             packet << ClientCommand::ChunkData << cr.position.x << cr.position.y
                    << cr.position.z;
             for (auto &block : chunk.blocks) {
                 packet << block;
             }
-            //packet.append(chunk.blocks.data(), chunk.blocks.size());
+            packet.append(chunk.blocks.data(),
+                          chunk.blocks.size() * sizeof(chunk.blocks[0]));
 
+            // Send chunk data to client
             auto peer = findPeer(cr.peer);
-            sendToPeer(*peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
+            sendToPeer(*peer, packet, 1, ENET_PACKET_FLAG_RELIABLE);
         }
     }
 }

@@ -37,8 +37,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
     window.window.setMouseCursorVisible(false);
 
     // Setup OpenGL
-    if (!gladLoadGL())
-    {
+    if (!gladLoadGL()) {
         return EngineStatus::GLInitError;
     }
 

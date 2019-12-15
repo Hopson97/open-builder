@@ -20,7 +20,7 @@ struct Peer {
 };
 
 struct ChunkRequest {
-    ChunkRequest(ChunkPosition& chunkPosition, peer_id_t peerId)
+    ChunkRequest(ChunkPosition &chunkPosition, peer_id_t peerId)
         : position(chunkPosition)
         , peer(peerId)
     {
