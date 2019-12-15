@@ -18,11 +18,68 @@ Please see main article here:
 
 ## Building/ Running
 
-Clone: `git clone https://github.com/Hopson97/open-builder.git`
+### Windows [Visual Studio]
 
-Please see main article here:
+Please use the links below:
 
-**[Building For Windows or Linux](https://github.com/Hopson97/open-builder/wiki/Building)**
+[Build With Visual Studio](https://github.com/Hopson97/open-builder/wiki/Building-(Visual-Studio))
+
+[Running the Unit Tests With Visual Studio](https://github.com/Hopson97/open-builder/wiki/Unit-Tests-Setup-(Visual-Studio))
+
+### Linux
+
+#### Libraries
+
+These are required for the project, and usually can be downloaded via your distributions
+
+```sh
+sudo apt install libsfml-dev libglm-dev
+```
+
+If not, then you can download them from the website:
+
+[SFML Download](https://www.sfml-dev.org/download.php)
+
+[GLM Download](https://github.com/g-truc/glm/tags)
+
+#### Building
+
+First clone the project and `cd`:
+
+```sh
+git clone https://github.com/Hopson97/open-builder.git
+cd open-builder
+```
+
+To build, at the root of the project:
+
+```sh
+sh scripts/build.sh
+```
+
+To run, at the root of the project:
+
+```sh
+sh scripts/run.sh               # Launches both client and server  
+sh scripts/run.sh -server 8     # Launches server only, allowing upto 8 connections
+sh scripts/run.sh -client xyz   # Launches client, with player name xyz
+```
+
+To build and run in release mode, simply add the `release` suffix:
+
+```sh
+sh scripts/build.sh release
+sh scripts/run.sh release <args>
+```
+
+#### Unit Tests
+
+The unit tests can be ran using
+
+```sh
+sh scripts/tests.sh
+```
+
 
 ## Similar Projects
 
