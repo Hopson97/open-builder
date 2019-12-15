@@ -28,7 +28,7 @@ void Server::onPeerConnect(ENetPeer &peer)
                          ENET_PACKET_FLAG_RELIABLE |
                              ENET_PACKET_FLAG_NO_ALLOCATE);
 
-        addPeer(peer.connectID, id);
+        addPeer(&peer, id);
     }
 }
 
@@ -77,16 +77,25 @@ void Server::handleCommandPlayerPosition(sf::Packet &packet)
 
 void Server::sendPackets()
 {
-    sf::Packet packet;
-    u16 count = NetworkHost::getConnectedPeerCount();
-    packet << ClientCommand::Snapshot << count;
-    for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
-        if (m_peerConnected[i]) {
-            packet << static_cast<peer_id_t>(i) << m_entities[i].x
-                   << m_entities[i].y << m_entities[i].z;
+    // Player positions
+    {
+
+        sf::Packet packet;
+        u16 count = NetworkHost::getConnectedPeerCount();
+        packet << ClientCommand::Snapshot << count;
+        for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
+            if (m_peerConnected[i]) {
+                packet << static_cast<peer_id_t>(i) << m_entities[i].x
+                       << m_entities[i].y << m_entities[i].z;
+            }
         }
+        broadcastToPeers(packet, 0, 0);
     }
-    broadcastToPeers(packet, 0, 0);
+
+    // Chunks (Bad approach for now lol)
+    {
+        sf::Packet packet;
+    }
 }
 
 int Server::emptySlot() const
@@ -99,10 +108,10 @@ int Server::emptySlot() const
     return -1;
 }
 
-void Server::addPeer(u32 connectionId, peer_id_t id)
+void Server::addPeer(ENetPeer *peer, peer_id_t id)
 {
     LOGVAR("Server", "New Peer, Peer Id:", (int)id);
-    m_peerIds[connectionId] = id;
+    m_peerIds[peer->connectID] = {peer, id};
     m_peerConnected[id] = true;
 }
 
@@ -110,7 +119,7 @@ void Server::removePeer(u32 connectionId)
 {
     auto itr = m_peerIds.find(connectionId);
     if (itr != m_peerIds.end()) {
-        int id = m_peerIds[connectionId];
+        int id = m_peerIds[connectionId].peerId;
         LOGVAR("Server", "Peer disconnect, Peer Id:", id);
         m_peerConnected[id] = false;
         m_peerIds.erase(itr);
