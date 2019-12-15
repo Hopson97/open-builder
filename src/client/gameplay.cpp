@@ -96,18 +96,30 @@ bool Gameplay::init(float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {0, 10, 0};
 
+    std::vector<Chunk *> chunks;
+
     // Set up world
-    m_testChunk = &m_chunks.addChunk({0, 0, 0});
-    for (int y = 0; y < CHUNK_SIZE; y++) {
-        for (int z = 0; z < CHUNK_SIZE; z++) {
-            for (int x = 0; x < CHUNK_SIZE; x++) {
-                m_testChunk->qSetBlock({x, y, z}, 1);
+    for (int cy = 0; cy < 5; cy++) {
+        for (int cz = 0; cz < 5; cz++) {
+            for (int cx = 0; cx < 5; cx++) {
+                auto& chunk = m_chunks.addChunk({cx, cy, cz});
+                chunks.push_back(&chunk);
+                for (int y = 0; y < CHUNK_SIZE; y++) {
+                    for (int z = 0; z < CHUNK_SIZE; z++) {
+                        for (int x = 0; x < CHUNK_SIZE; x++) {
+                            chunk.qSetBlock({x, y, z}, 1);
+                        }
+                    }
+                }
             }
         }
     }
-    m_chunk = makeChunkMesh(*m_testChunk);
 
-    m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 100.0f);
+    for (auto &chunk : chunks) {
+        m_chunkRenders.push_back(makeChunkMesh(*chunk));
+    }
+
+    m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 10000.0f);
     return true;
 }
 
@@ -203,7 +215,9 @@ void Gameplay::render()
     m_chunkShader.program.bind();
     m_grassTexture.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
-    m_chunk.getDrawable().bindAndDraw();
+    for (auto &chunk : m_chunkRenders) {
+        chunk.getDrawable().bindAndDraw();
+    }
 }
 
 void Gameplay::endGame()
@@ -212,7 +226,9 @@ void Gameplay::endGame()
     m_texture.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
-    m_chunk.destroy();
+    for (auto &chunk : m_chunkRenders) {
+        chunk.destroy();
+    }
 
     if (m_status == EngineStatus::Ok) {
         // Disconnect from the server

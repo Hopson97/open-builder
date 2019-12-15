@@ -34,9 +34,11 @@ EngineStatus runClientEngine(const ClientConfig &config)
 {
     // Create the window
     Window window(config);
+    window.window.setMouseCursorVisible(false);
 
     // Setup OpenGL
-    if (!gladLoadGL()) {
+    if (!gladLoadGL())
+    {
         return EngineStatus::GLInitError;
     }
 
@@ -44,8 +46,8 @@ EngineStatus runClientEngine(const ClientConfig &config)
     glViewport(0, 0, window.width, window.height);
 
     glCheck(glEnable(GL_DEPTH_TEST));
-    glCheck(glEnable(GL_CULL_FACE));
-    glCheck(glCullFace(GL_BACK));
+    // glCheck(glEnable(GL_CULL_FACE));
+    // glCheck(glCullFace(GL_BACK));
 
     Gameplay gameplay;
     Keyboard keyboard;

@@ -44,7 +44,6 @@ class Gameplay final : public NetworkHost {
 
     glm::mat4 m_projectionMatrix{1.0f};
 
-    gl::VertexArray m_chunk;
     gl::VertexArray m_cube;
     gl::Texture2d m_texture;
     gl::Texture2d m_grassTexture;
@@ -68,7 +67,7 @@ class Gameplay final : public NetworkHost {
     EngineStatus m_status = EngineStatus::Ok;
 
     ChunkManager m_chunks;
-    Chunk *m_testChunk;
+    std::vector<gl::VertexArray> m_chunkRenders;
 
     bool m_isMouseLocked = false;
 };

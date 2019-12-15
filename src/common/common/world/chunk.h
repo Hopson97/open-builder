@@ -20,8 +20,9 @@ class Chunk {
 
     const ChunkPosition &getPosition() const;
 
-  private:
     BlockArray<u8> blocks{0};
+
+  private:
     ChunkManager *mp_manager;
     ChunkPosition m_position;
 };

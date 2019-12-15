@@ -114,7 +114,7 @@ gl::VertexArray makeChunkMesh(const Chunk &chunk)
     vao.addVertexBuffer(1, mesh.cardinalLights);
     vao.addIndexBuffer(mesh.indices);
 
-    std::cout << clock.getElapsedTime().asMilliseconds() << std::endl;
+    //std::cout << clock.getElapsedTime().asMilliseconds() << std::endl;
 
     return vao;
 }
