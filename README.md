@@ -8,7 +8,7 @@ More information about the project can be fouund in the **[Open Builder Wiki](ht
 
 Game is in uh very early stages
 
-[!player](https://i.imgur.com/RLqoqKw.png)
+![player](https://i.imgur.com/RLqoqKw.png)
 
 ## Contributing
 
