@@ -95,9 +95,9 @@ bool Gameplay::init(float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {0, CHUNK_SIZE * 5, 0};
 
-    for (int cy = 0; cy < 5; cy++) {
-        for (int cz = 0; cz < 5; cz++) {
-            for (int cx = 0; cx < 5; cx++) {
+    for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
+        for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
+            for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
                 ChunkPosition position(cx, cy, cz);
                 sf::Packet packet;
                 packet << ServerCommand::ChunkRequest
@@ -152,10 +152,10 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
         mp_player->position.z += glm::sin(rads) * PLAYER_SPEED;
     }
 
-    if (keyboard.isKeyDown(sf::Keyboard::Q)) {
+    if (keyboard.isKeyDown(sf::Keyboard::Space)) {
         mp_player->position.y += PLAYER_SPEED * 2;
     }
-    else if (keyboard.isKeyDown(sf::Keyboard::E)) {
+    else if (keyboard.isKeyDown(sf::Keyboard::LShift)) {
         mp_player->position.y -= PLAYER_SPEED * 2;
     }
 
@@ -184,14 +184,16 @@ void Gameplay::update()
 
     // Try create some chunk meshes
 
-    for (auto &[position, chunk] : m_chunks) {
+    for (auto itr = m_chunks.begin(); itr != m_chunks.end(); itr++) {
+        const auto &[position, chunk] = *itr;
         if (m_chunkRenders.find(position) == m_chunkRenders.end()) {
             if (m_chunkManager.hasNeighbours(position)) {
                 m_chunkRenders.emplace(position, makeChunkMesh(*chunk));
+                m_chunks.erase(itr);
+
             }
         }
     }
-
     NetworkHost::tick();
 }
 
@@ -345,7 +347,6 @@ void Gameplay::onChunkData(sf::Packet &packet)
     for (auto &block : blocks) {
         packet >> block;
     }
-
     Chunk &chunk = m_chunkManager.addChunk(position);
     chunk.blocks = std::move(blocks);
     m_chunks.emplace(position, &chunk);

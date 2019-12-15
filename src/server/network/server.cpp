@@ -5,6 +5,8 @@
 #include <common/debug.h>
 #include <thread>
 
+#include "../world/terrain_generation.h"
+
 Server::Server()
     : NetworkHost("Server")
 {
@@ -123,19 +125,8 @@ void Server::sendPackets()
             m_chunkRequests.pop();
 
             Chunk &chunk = m_chunkManager.addChunk(cr.position);
-            // TEMP Set the edge-chunks to be air, so the chunks within actually
-            // get rendered Generate the block dta
-            if (chunk.getPosition().y < 4 && chunk.getPosition().y > 0 &&
-                chunk.getPosition().x < 4 && chunk.getPosition().x > 0 &&
-                chunk.getPosition().z < 4 && chunk.getPosition().z > 0) {
-                for (int y = 0; y < CHUNK_SIZE; y++) {
-                    for (int z = 0; z < CHUNK_SIZE; z++) {
-                        for (int x = 0; x < CHUNK_SIZE; x++) {
-                            chunk.qSetBlock({x, y, z}, 1);
-                        }
-                    }
-                }
-            }
+            makeFlatTerrain(&chunk);
+
 
             // Create the chunk-data packet
             sf::Packet packet;
