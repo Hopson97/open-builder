@@ -10,11 +10,8 @@ Please see main article here:
 
 ## Building/ Compiling/ Running
 
-By default, running the project will start a localhost server, and client that connects to this.
 
-### Building
-
-Please see main article:
+Please see main article here:
 
 [Building For Windows or Linux](https://github.com/Hopson97/open-builder/wiki/Building)
 
