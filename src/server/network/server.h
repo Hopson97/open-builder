@@ -1,57 +1,65 @@
 #pragma once
 
-#include "../world/entity.h"
-#include "session.h"
-#include <SFML/Network/IpAddress.hpp>
-#include <SFML/Network/Packet.hpp>
-#include <SFML/Network/UdpSocket.hpp>
-#include <SFML/System/Clock.hpp>
-#include <common/network/commands.h>
-#include <common/network/endpoint.h>
-#include <common/network/packet.h>
-#include <common/network/packet_buffer.h>
+#include <SFML/System/Time.hpp>
+#include <array>
+#include <common/network/net_host.h>
+#include <common/world/chunk.h>
+#include <queue>
+#include <unordered_map>
 
-namespace server {
-    class Server final {
-      public:
-        Server(int maxConnections, port_t port, EntityArray &entities);
+struct ServerConfig;
 
-        void receivePackets();
-        void resendPackets();
-        void updatePlayers();
+struct ServerEntity {
+    float x = 0, y = 0, z = 0;
+    bool active = false;
+};
 
-        int connectedPlayes() const;
-        int maxConnections() const;
-        int findEmptySlot() const;
+struct Peer {
+    ENetPeer *peer;
+    peer_id_t peerId;
+};
 
-        bool sendToClient(peer_id_t id, Packet &packet);
-        void sendToAllClients(Packet &packet);
+struct ChunkRequest {
+    ChunkRequest(ChunkPosition &chunkPosition, peer_id_t peerId)
+        : position(chunkPosition)
+        , peer(peerId)
+    {
+    }
 
-        Packet createPacket(CommandToClient command,
-                            Packet::Flag flag = Packet::Flag::None);
+    ChunkPosition position;
+    peer_id_t peer;
+};
 
-      private:
-        bool send(Packet &packet, const Endpoint &endpoint);
+class Server final : public NetworkHost {
+  public:
+    Server();
 
-        void handleIncomingConnection(const Endpoint &endpoint);
-        void handleDisconnect(sf::Packet &packet);
-        void handleKeyInput(sf::Packet &packet);
-        void handleAckPacket(sf::Packet &packet);
+    void sendPackets();
 
-        std::vector<ClientSession> m_clientSessions;
-        std::vector<ClientStatus> m_clientStatuses;
-        std::vector<Endpoint> m_endpoints;
+  private:
+    ENetPeer *findPeer(peer_id_t peerId);
 
-        int m_maxConnections = 4;
-        int m_connections = 0;
-        int m_aliveEntities = 0;
+    void onPeerConnect(ENetPeer &peer) override;
+    void onPeerDisconnect(ENetPeer &peer) override;
+    void onPeerTimeout(ENetPeer &peer) override;
+    void onCommandRecieve(sf::Packet &packet, command_t command) override;
 
-        sf::UdpSocket m_socket;
+    void handleCommandDisconnect(sf::Packet &packet);
+    void handleCommandPlayerPosition(sf::Packet &packet);
+    void handleCommandChunkRequest(sf::Packet &packet);
 
-        PacketBuffer m_packetBuffer;
+    int emptySlot() const;
 
-        peer_id_t m_nodeId;
+    void addPeer(ENetPeer *peer, peer_id_t id);
+    void removePeer(u32 connectionId);
 
-        u32 m_sequenceNumber = 0;
-    };
-} // namespace server
+    std::array<ServerEntity, 512> m_entities;
+    std::array<bool, MAX_CONNECTIONS> m_peerConnected{false};
+    std::unordered_map<u32, Peer> m_peerIds;
+
+    ChunkManager m_chunkManager;
+
+    std::queue<ChunkRequest> m_chunkRequests;
+
+    bool m_isRunning = true;
+};

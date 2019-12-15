@@ -6,7 +6,6 @@ in vec2 passTexCoord;
 
 out vec4 outColour;
 
-uniform vec3 colour;
 uniform vec3 lightPosition;
 uniform sampler2D tex;
 
@@ -19,8 +18,5 @@ void main() {
     float difference = max(dot(passNormal, lightDirection), 0.2);
 
     //outColour = attenuation * difference * vec4(colour, 1.0) * texture(tex, passTexCoord);
-    outColour = vec4(colour, 1.0) * texture(tex, passTexCoord);
-    if (outColour.a == 0.0) {
-    //    discard;
-    }
+    outColour = texture(tex, passTexCoord);
 }

@@ -8,6 +8,10 @@
 
 open-builder/
 
+*.srctrlprj
+*.srctrldb
+*.srctrlbm
+
 #
 #   Linux
 #
@@ -21,6 +25,7 @@ bin/
 *.dll
 CMakeFiles/
 CMakeCache.txt
+*.exe
 
 # Visual Studio
 *.sln
@@ -31,4 +36,6 @@ CMakeCache.txt
 
 Debug/
 Release/
+UnitTests/
+open-builder-unit-tests/
 

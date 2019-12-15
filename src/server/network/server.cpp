@@ -1,146 +1,183 @@
 #include "server.h"
 
-#include <SFML/Network/Packet.hpp>
-
-#include <common/network/commands.h>
-#include <common/network/input_state.h>
-
-#include <ctime>
-#include <iostream>
-#include <random>
+#include "../server_config.h"
+#include <SFML/System/Clock.hpp>
+#include <common/debug.h>
 #include <thread>
 
-namespace server {
-    Server::Server(int maxConnections, port_t port, EntityArray &entities)
-        : m_clientSessions(maxConnections)
-        , m_clientStatuses(maxConnections)
-        , m_endpoints(maxConnections)
-    {
-        std::fill(m_clientStatuses.begin(), m_clientStatuses.end(),
-                  ClientStatus::Disconnected);
+Server::Server()
+    : NetworkHost("Server")
+{
+}
 
-        m_socket.setBlocking(false);
-        m_socket.bind(port);
-
-        for (int i = 0; i < m_maxConnections; i++) {
-            m_clientSessions[i].p_entity = &entities[i];
+ENetPeer *Server::findPeer(peer_id_t peerId)
+{
+    for (auto &[_, peer] : m_peerIds) {
+        if (peer.peerId == peerId) {
+            return peer.peer;
         }
     }
+    return nullptr;
+}
 
-    int Server::connectedPlayes() const
-    {
-        return m_connections;
+void Server::onPeerConnect(ENetPeer &peer)
+{
+    int slot = emptySlot();
+    if (slot >= 0) {
+        peer_id_t id = static_cast<peer_id_t>(slot);
+
+        // Send client back their id
+        sf::Packet packet;
+        packet << ClientCommand::PeerId << id;
+        NetworkHost::sendToPeer(peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
+
+        // Broadcast the connection event
+        sf::Packet announcement;
+        announcement << ClientCommand::PlayerJoin << id;
+        broadcastToPeers(announcement, 0,
+                         ENET_PACKET_FLAG_RELIABLE |
+                             ENET_PACKET_FLAG_NO_ALLOCATE);
+
+        addPeer(&peer, id);
     }
+}
 
-    int Server::maxConnections() const
-    {
-        return m_maxConnections;
+void Server::onPeerDisconnect(ENetPeer &peer)
+{
+    removePeer(peer.connectID);
+}
+
+void Server::onPeerTimeout(ENetPeer &peer)
+{
+    removePeer(peer.connectID);
+}
+
+void Server::onCommandRecieve(sf::Packet &packet, command_t command)
+{
+    switch (static_cast<ServerCommand>(command)) {
+        case ServerCommand::PlayerPosition:
+            handleCommandPlayerPosition(packet);
+            break;
+
+        case ServerCommand::Disconnect:
+            handleCommandDisconnect(packet);
+            break;
+
+        case ServerCommand::ChunkRequest:
+            handleCommandChunkRequest(packet);
+            break;
     }
+}
 
-    int Server::findEmptySlot() const
+void Server::handleCommandDisconnect(sf::Packet &packet)
+{
+    // Set connect flag to false for this client
+    peer_id_t id;
+    packet >> id;
+    m_peerConnected[id] = false;
+
+    // Broadcast the disconnection event
+    sf::Packet announcement;
+    announcement << ClientCommand::PlayerLeave << id;
+    broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);
+}
+
+void Server::handleCommandPlayerPosition(sf::Packet &packet)
+{
+    peer_id_t id;
+    packet >> id;
+    packet >> m_entities[id].x >> m_entities[id].y >> m_entities[id].z;
+}
+
+void Server::handleCommandChunkRequest(sf::Packet &packet)
+{
+    peer_id_t id;
+    ChunkPosition position;
+    packet >> id >> position.x >> position.y >> position.z;
+
+    m_chunkRequests.emplace(position, id);
+}
+
+void Server::sendPackets()
+{
+    // Player positions
     {
-        for (int i = 0; i < m_maxConnections; i++) {
-            if (m_clientStatuses[i] == ClientStatus::Disconnected) {
-                return i;
+        sf::Packet packet;
+        u16 count = NetworkHost::getConnectedPeerCount();
+        packet << ClientCommand::Snapshot << count;
+        for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
+            if (m_peerConnected[i]) {
+                packet << static_cast<peer_id_t>(i) << m_entities[i].x
+                       << m_entities[i].y << m_entities[i].z;
             }
         }
-        return -1;
+        broadcastToPeers(packet, 0, 0);
     }
 
-    void Server::receivePackets()
+    // Chunks
     {
-        Packet packet;
-        Endpoint endpoint;
-        while (receivePacket(m_socket, packet, endpoint)) {
-            switch (static_cast<CommandToServer>(packet.command)) {
-                case CommandToServer::PlayerInput:
-                    handleKeyInput(packet.payload);
-                    break;
+        // Add 1 per tick to the queue for now
+        if (!m_chunkRequests.empty()) {
 
-                case CommandToServer::Acknowledgment:
-                    handleAckPacket(packet.payload);
-                    break;
+            auto cr = m_chunkRequests.front();
+            m_chunkRequests.pop();
 
-                case CommandToServer::Connect:
-                    handleIncomingConnection(endpoint);
-                    break;
-
-                case CommandToServer::Disconnect:
-                    handleDisconnect(packet.payload);
-                    break;
-            }
-        }
-    }
-
-    void Server::resendPackets()
-    {
-        if (!m_packetBuffer.isEmpty()) {
-            auto &packet = m_packetBuffer.begin();
-            if (!packet.clients.empty()) {
-                auto itr = packet.clients.begin();
-                sendToClient(*itr, packet.packet);
-                packet.clients.erase(itr);
-            }
-        }
-    }
-
-    void Server::updatePlayers()
-    {
-        for (int i = 0; i < m_maxConnections; i++) {
-            if (m_clientStatuses[i] == ClientStatus::Connected) {
-                auto &player = *m_clientSessions[i].p_entity;
-                auto input = m_clientSessions[i].keyState;
-
-                auto isPressed = [input](auto key) {
-                    return (input & key) == key;
-                };
-
-                if (isPressed(PlayerInput::Forwards)) {
-                    player.moveForwards();
-                }
-                else if (isPressed(PlayerInput::Back)) {
-                    player.moveBackwards();
-                }
-                if (isPressed(PlayerInput::Left)) {
-                    player.moveLeft();
-                }
-                else if (isPressed(PlayerInput::Right)) {
-                    player.moveRight();
+            Chunk &chunk = m_chunkManager.addChunk(cr.position);
+            // TEMP Set the edge-chunks to be air, so the chunks within actually
+            // get rendered Generate the block dta
+            if (chunk.getPosition().y < 4 && chunk.getPosition().y > 0 &&
+                chunk.getPosition().x < 4 && chunk.getPosition().x > 0 &&
+                chunk.getPosition().z < 4 && chunk.getPosition().z > 0) {
+                for (int y = 0; y < CHUNK_SIZE; y++) {
+                    for (int z = 0; z < CHUNK_SIZE; z++) {
+                        for (int x = 0; x < CHUNK_SIZE; x++) {
+                            chunk.qSetBlock({x, y, z}, 1);
+                        }
+                    }
                 }
             }
+
+            // Create the chunk-data packet
+            sf::Packet packet;
+            packet << ClientCommand::ChunkData << cr.position.x << cr.position.y
+                   << cr.position.z;
+            for (auto &block : chunk.blocks) {
+                packet << block;
+            }
+            packet.append(chunk.blocks.data(),
+                          chunk.blocks.size() * sizeof(chunk.blocks[0]));
+
+            // Send chunk data to client
+            auto peer = findPeer(cr.peer);
+            sendToPeer(*peer, packet, 1, ENET_PACKET_FLAG_RELIABLE);
         }
     }
+}
 
-    bool Server::send(Packet &packet, const Endpoint &endpoint)
-    {
-        bool result = m_socket.send(packet.payload, endpoint.address,
-                                    endpoint.port) == sf::Socket::Done;
-        if (packet.hasFlag(Packet::Flag::Reliable)) {
-            m_packetBuffer.append(std::move(packet), endpoint.id);
-        }
-        return result;
-    }
-
-    bool Server::sendToClient(peer_id_t id, Packet &packet)
-    {
-        if (m_clientStatuses[id] == ClientStatus::Connected) {
-            auto &endpoint = m_endpoints[id];
-            return send(packet, endpoint);
-        }
-        return false;
-    }
-
-    void Server::sendToAllClients(Packet &packet)
-    {
-        for (int i = 0; i < m_maxConnections; i++) {
-            sendToClient(i, packet);
+int Server::emptySlot() const
+{
+    for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
+        if (!m_peerConnected[i]) {
+            return i;
         }
     }
+    return -1;
+}
 
-    Packet Server::createPacket(CommandToClient command, Packet::Flag flag)
-    {
-        return createCommandPacket(
-            command, flag,
-            flag == Packet::Flag::Reliable ? m_sequenceNumber++ : 0);
+void Server::addPeer(ENetPeer *peer, peer_id_t id)
+{
+    LOGVAR("Server", "New Peer, Peer Id:", (int)id);
+    m_peerIds[peer->connectID] = {peer, id};
+    m_peerConnected[id] = true;
+}
+
+void Server::removePeer(u32 connectionId)
+{
+    auto itr = m_peerIds.find(connectionId);
+    if (itr != m_peerIds.end()) {
+        int id = m_peerIds[connectionId].peerId;
+        LOGVAR("Server", "Peer disconnect, Peer Id:", id);
+        m_peerConnected[id] = false;
+        m_peerIds.erase(itr);
     }
-} // namespace server
+}

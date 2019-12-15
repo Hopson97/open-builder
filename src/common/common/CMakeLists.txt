@@ -1,10 +1,10 @@
 
 add_library(ob-common
-    coordinate_converion.cpp
-    network/packet.cpp
-    network/packet_buffer.cpp
+    file_io.cpp
     debug.cpp
-    util/file_io.cpp
+    network/net_host.cpp
+    world/chunk.cpp
+    world/coordinate.cpp
 )
 
 set_flags(ob-common)

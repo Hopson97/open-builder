@@ -1,6 +1,44 @@
 # open-builder
 
-Open source Minecraft-like game with multiplayer support.
+Open source Minecraft-like voxel sandbox game with multiplayer support.
+
+## Inspirations
+
+This project was heavily inspired by the following projects:
+
+### Minetest
+
+Another open source voxel sandbox game, one of the original ones. Also created using C++, and also has multiplayer support.
+
+[Website](http://www.minetest.net)
+
+[GitHub](https://github.com/minetest/minetest)
+
+### Terasolgy
+
+Open source multiplayer voxel sandbox game created using Java like the original minecraft.
+
+[Website](https://terasology.org)
+
+[GitHub](https://github.com/MovingBlocks/Terasology)
+
+### Craft 
+
+Minecraft clone created by Fogleman in C.
+
+[Website](https://www.michaelfogleman.com/projects/craft/)
+
+[GitHub](https://github.com/fogleman/Craft)
+
+## History
+
+Originally, this was going to be a Zombie game, but I got very bored of that very quickly, and so changed the project to be a voxel game instead.
+
+As a result of this, the code was created for the zombie game, so when I decided to switch over, the code got messy very quickly.
+
+To combat this, I did a masive refactor in just over 2 weeks, re-creating the most the project.
+
+The before refactor can be found [here](https://github.com/Hopson97/open-builder/tree/a452dfd0a5d8fc94059f7e1ab8ecca03dd06ba3a)
 
 ## Building and Running
 

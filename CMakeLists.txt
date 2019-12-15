@@ -31,7 +31,7 @@ function (set_flags target)
             -pedantic
             -Wshadow 
             -Wpointer-arith
-            -Werror 
+           # -Werror 
         )	
     endif()
 endfunction(set_flags)
@@ -43,6 +43,20 @@ function (include_dirs target)
         ${CMAKE_CURRENT_SOURCE_DIR}/src/common/
     )
 endfunction(include_dirs)
+
+#
+# Link an executables to all the libraries
+#
+function (link_exe target)
+    target_link_libraries(${target} 
+        ob-common
+        ob-client
+        ob-server
+        glad
+        enet
+        ${CMAKE_DL_LIBS}
+    )
+endfunction(link_exe)
 
 #Set module path
 set(
@@ -67,17 +81,31 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
 )
 
-set_flags(${PROJECT_NAME})
+target_include_directories(ob-common
+    PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/
+)
 
+set_flags(${PROJECT_NAME})
 include_dirs(${PROJECT_NAME})
 include_dirs(ob-client)
 include_dirs(ob-server)
+link_exe(${PROJECT_NAME})
 
-# Link executable to the libraries
-target_link_libraries(${PROJECT_NAME} 
-    ob-common
-    ob-client
-    ob-server
-    glad
-    ${CMAKE_DL_LIBS}
-)
+function (do_tests)
+    #Create the unit test executable
+    add_executable(tests
+        tests/tests.cpp
+    )
+    
+    include_dirs(tests)
+    target_include_directories(tests
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/
+    )
+    
+    
+    link_exe(tests)
+endfunction(do_tests)
+
+do_tests()
