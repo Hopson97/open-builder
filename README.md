@@ -2,18 +2,20 @@
 
 Open source Minecraft-like voxel sandbox game with multiplayer support.
 
+More information about the project can be fouund in the **[Open Builder Wiki](https://github.com/Hopson97/open-builder/wiki)**
+
 ## Contributing
 
 Please see main article here:
 
-[Contributing](https://github.com/Hopson97/open-builder/wiki/Contributing)
+**[Contributing](https://github.com/Hopson97/open-builder/wiki/Contributing)**
 
 ## Building/ Compiling/ Running
 
 
 Please see main article here:
 
-[Building For Windows or Linux](https://github.com/Hopson97/open-builder/wiki/Building)
+**[Building For Windows or Linux](https://github.com/Hopson97/open-builder/wiki/Building)**
 
 ## Similar Projects
 
