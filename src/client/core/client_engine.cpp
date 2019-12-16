@@ -48,6 +48,8 @@ EngineStatus runClientEngine(const ClientConfig &config)
     glCheck(glEnable(GL_CULL_FACE));
     glCheck(glCullFace(GL_BACK));
 
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     Gameplay gameplay;
     Keyboard keyboard;
     EngineStatus status = EngineStatus::Ok;
