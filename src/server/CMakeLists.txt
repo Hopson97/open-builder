@@ -2,6 +2,7 @@
 add_library(ob-server
     server_engine.cpp
     network/server.cpp
+    world/terrain_generation.cpp
 )
 
 set_flags(ob-server)
