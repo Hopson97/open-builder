@@ -12,14 +12,22 @@ void makeFlatTerrain(Chunk *chunk)
         chunk->getPosition().z < TEMP_WORLD_SIZE - 1 &&
         chunk->getPosition().z > 0) {
 
-        int height = chunk->getPosition().x + chunk->getPosition().z;
-        for (int y = 0; y < CHUNK_SIZE; y++) {
-            int ry = y + chunk->getPosition().y * CHUNK_SIZE;
-            if (height > chunk->getPosition().y) {
-                for (int z = 0; z < CHUNK_SIZE; z++) {
-                    for (int x = 0; x < CHUNK_SIZE; x++) {
-                        chunk->qSetBlock({x, y, z}, 1);
-                    }
+        chunk->blocks.fill(1);
+    }
+}
+
+void makeStepTerrain(Chunk *chunk)
+{
+
+    for (int y = 0; y < CHUNK_SIZE; y++) {
+        int realY = y + chunk->getPosition().y * CHUNK_SIZE;
+        for (int z = 0; z < CHUNK_SIZE; z++) {
+            for (int x = 0; x < CHUNK_SIZE; x++) {
+
+                int height = chunk->getPosition().x * CHUNK_SIZE + x +
+                             chunk->getPosition().z * CHUNK_SIZE + z;
+                if (height > realY) {
+                    chunk->qSetBlock({x, y, z}, 1);
                 }
             }
         }
