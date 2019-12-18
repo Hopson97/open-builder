@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../input/keyboard.h"
+#include "input/keyboard.h"
 #include "client_engine.h"
 #include <SFML/Window/Window.hpp>
 #include <common/types.h>

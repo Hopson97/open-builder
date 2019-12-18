@@ -1,7 +1,7 @@
 #include "client_engine.h"
 
-#include "../gameplay.h"
-#include "../gl/gl_errors.h"
+#include "gameplay.h"
+#include "gl/gl_errors.h"
 #include "window.h"
 #include <common/debug.h>
 #include <glad/glad.h>

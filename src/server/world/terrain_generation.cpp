@@ -18,7 +18,6 @@ void makeFlatTerrain(Chunk *chunk)
 
 void makeStepTerrain(Chunk *chunk)
 {
-
     for (int y = 0; y < CHUNK_SIZE; y++) {
         int realY = y + chunk->getPosition().y * CHUNK_SIZE;
         for (int z = 0; z < CHUNK_SIZE; z++) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/client_engine.h"
+#include "client_engine.h"
 #include "gl/gl_object.h"
 #include "maths.h"
 #include <SFML/Network/Packet.hpp>
