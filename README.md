@@ -12,6 +12,15 @@ Game is in uh very early stages
 
 ![player](https://i.imgur.com/RLqoqKw.png)
 
+## Project Structure
+
+A quick overview of the code and project structure can be found in the wiki artle:
+
+
+**[Project Structure](https://github.com/Hopson97/open-builder/wiki/Project-Structure)**
+
+
+
 ## Contributing
 
 Please see main article here:
