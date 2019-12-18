@@ -87,7 +87,7 @@ bool Gameplay::init(float aspect)
     m_grassTexture.bind();
 
     // Set up the server connection
-    auto peer = NetworkHost::connectToServer(LOCAL_HOST);
+    auto peer = NetworkHost::createAsClient(LOCAL_HOST);
     if (!peer) {
         return false;
     }

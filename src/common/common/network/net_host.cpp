@@ -67,7 +67,7 @@ NetworkHost::NetworkHost(std::string &&name)
 {
 }
 
-std::optional<ENetPeer *> NetworkHost::connectToServer(const std::string &ip)
+std::optional<ENetPeer *> NetworkHost::createAsClient(const std::string &ip)
 {
     mp_host = createHost(0, 1);
     if (!mp_host) {

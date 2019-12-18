@@ -28,13 +28,13 @@ class NetworkHost {
     void destroy();
 
     /**
-     * @brief Connects the host to a server
+     * @brief Creates as a client, and connects the host to a server
      *
      * @param ip The IP address of the server
      * @return std::optional<ENetPeer *> The server peer, might not be
      * successful connection hence optional
      */
-    std::optional<ENetPeer *> connectToServer(const std::string &ip);
+    std::optional<ENetPeer *> createAsClient(const std::string &ip);
 
     /**
      * @brief Sets up the host to be a server
