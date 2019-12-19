@@ -97,6 +97,7 @@ bool Gameplay::init(float aspect)
     mp_player = &m_clientState.entities[clientId];
     mp_player->position = {0, CHUNK_SIZE * 5, 0};
 
+    // Get world from server
     for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
         for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
             for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
@@ -135,7 +136,8 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
     if (keyboard.isKeyDown(sf::Keyboard::W)) {
         mp_player->position.x -= glm::cos(rads90) * PLAYER_SPEED;
         mp_player->position.z -= glm::sin(rads90) * PLAYER_SPEED;
-        mp_player->position.y -= glm::tan(glm::radians(mp_player->rotation.x)) * PLAYER_SPEED;
+        mp_player->position.y -=
+            glm::tan(glm::radians(mp_player->rotation.x)) * PLAYER_SPEED;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::S)) {
         mp_player->position.x += glm::cos(rads90) * PLAYER_SPEED;
@@ -187,7 +189,6 @@ void Gameplay::update()
             if (chunkMgr.hasNeighbours(position)) {
                 m_chunkRenders.emplace(position, makeChunkMesh(*chunk));
                 chunks.erase(itr);
-
             }
         }
     }
