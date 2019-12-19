@@ -39,6 +39,8 @@ class Server final : public NetworkHost {
   private:
     ENetPeer *findPeer(peer_id_t peerId);
 
+    void sendChunk(peer_id_t peerId, const Chunk &chunk);
+
     void onPeerConnect(ENetPeer &peer) override;
     void onPeerDisconnect(ENetPeer &peer) override;
     void onPeerTimeout(ENetPeer &peer) override;
@@ -55,9 +57,10 @@ class Server final : public NetworkHost {
 
     std::array<ServerEntity, 512> m_entities;
     std::array<bool, MAX_CONNECTIONS> m_peerConnected{false};
-    std::unordered_map<u32, Peer> m_peerIds;
+    std::unordered_map<u32, Peer> m_peers;
 
     ChunkManager m_chunkManager;
+    Chunk *m_spawn;
 
     std::queue<ChunkRequest> m_chunkRequests;
 
