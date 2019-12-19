@@ -60,6 +60,12 @@ int getPeerIdFromServer(ENetHost *host)
     }
     return id;
 }
+
+ENetPacket* createPacket(sf::Packet &packet, u32 flags)
+{
+    return enet_packet_create(packet.getData(), packet.getDataSize(),
+                                         flags);
+}
 } // namespace
 
 NetworkHost::NetworkHost(std::string &&name)
@@ -166,19 +172,17 @@ int NetworkHost::getMaxConnections() const
 bool NetworkHost::sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel,
                              u32 flags)
 {
-    auto enetPacket =
-        enet_packet_create(packet.getData(), packet.getDataSize(), flags);
-    int result = enet_peer_send(&peer, channel, enetPacket);
+    ENetPacket *pkt = createPacket(packet, flags);
+    int result = enet_peer_send(&peer, channel, pkt);
     flush();
     return result == 0;
 }
 
 void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
 {
-    ENetPacket *broadcast =
-        enet_packet_create(packet.getData(), packet.getDataSize(), flags);
-    enet_host_broadcast(mp_host, channel, broadcast);
-    enet_host_flush(mp_host);
+    ENetPacket *pkt = createPacket(packet, flags);
+    enet_host_broadcast(mp_host, channel, pkt);
+    flush();
 }
 
 void NetworkHost::destroy()
