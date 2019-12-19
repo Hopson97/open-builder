@@ -2,6 +2,25 @@
 
 #include <common/world/chunk.h>
 #include <cstdlib>
+#include <iostream>
+
+void makeWaveTerrain(Chunk *chunk)
+{
+    for (int y = 0; y < CHUNK_SIZE; y++) {
+        int realY = y + chunk->getPosition().y * CHUNK_SIZE;
+        for (int z = 0; z < CHUNK_SIZE; z++) {
+            for (int x = 0; x < CHUNK_SIZE; x++) {
+
+                
+                int height = std::abs(std::sin(chunk->getPosition().x * CHUNK_SIZE + x +
+                             chunk->getPosition().z * CHUNK_SIZE + z)) * 10;
+                if (height < realY) {
+                    chunk->qSetBlock({x, y, z}, 1);
+                }
+            }
+        }
+    }
+}
 
 void makeFlatTerrain(Chunk *chunk)
 {

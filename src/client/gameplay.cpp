@@ -93,7 +93,8 @@ bool Gameplay::init(float aspect)
         return false;
     }
 
-    mp_player = &m_clientState.entities[*id];
+    auto clientId = *id;
+    mp_player = &m_clientState.entities[clientId];
     mp_player->position = {0, CHUNK_SIZE * 5, 0};
 
     for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
@@ -207,15 +208,15 @@ void Gameplay::render()
     projectionViewMatrix = m_projectionMatrix * viewMatrix;
     gl::loadUniform(m_basicShader.projectionViewLocation, projectionViewMatrix);
 
-    // Render all the players
+    // Render all the entities
     auto drawable = m_cube.getDrawable();
     drawable.bind();
     m_texture.bind();
-    for (auto &p : m_clientState.entities) {
-        if (p.active && &p != mp_player) {
+    for (auto &entity : m_clientState.entities) {
+        if (entity.active && &entity != mp_player) {
             glm::mat4 modelMatrix{1.0f};
-            translateMatrix(&modelMatrix,
-                            {p.position.x, p.position.y, p.position.z});
+            translateMatrix(&modelMatrix, {entity.position.x, entity.position.y,
+                                           entity.position.z});
             gl::loadUniform(m_basicShader.modelLocation, modelMatrix);
             drawable.draw();
         }
@@ -243,11 +244,7 @@ void Gameplay::endGame()
     if (m_clientState.status == EngineStatus::Ok) {
         m_netClient.sendDisconnectRequest();
         // Disconnect from the server
-
-
-
     }
-
 }
 
 EngineStatus Gameplay::currentStatus() const

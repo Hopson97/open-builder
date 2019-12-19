@@ -10,16 +10,37 @@
 Server::Server()
     : NetworkHost("Server")
 {
+    //Create "spawn"
+    m_spawn = &m_chunkManager.addChunk({0, 0, 0});
+    makeFlatTerrain(m_spawn);
 }
 
 ENetPeer *Server::findPeer(peer_id_t peerId)
 {
-    for (auto &[_, peer] : m_peerIds) {
+    for (auto &[_, peer] : m_peers) {
         if (peer.peerId == peerId) {
             return peer.peer;
         }
     }
     return nullptr;
+}
+
+void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
+{
+    // Create the chunk-data packet
+    sf::Packet packet;
+    packet << ClientCommand::ChunkData << chunk.getPosition().x
+           << chunk.getPosition().y << chunk.getPosition().z;
+
+    for (auto &block : chunk.blocks) {
+        packet << block;
+    }
+    packet.append(chunk.blocks.data(),
+                  chunk.blocks.size() * sizeof(chunk.blocks[0]));
+
+    // Send chunk data to client
+    auto peer = findPeer(peerId);
+    sendToPeer(*peer, packet, 1, ENET_PACKET_FLAG_RELIABLE);
 }
 
 void Server::onPeerConnect(ENetPeer &peer)
@@ -125,22 +146,10 @@ void Server::sendPackets()
             m_chunkRequests.pop();
 
             Chunk &chunk = m_chunkManager.addChunk(cr.position);
-            makeStepTerrain(&chunk);
-            //makeRandomTerrain(&chunk);
+            makeFlatTerrain(&chunk);
 
             // Create the chunk-data packet
-            sf::Packet packet;
-            packet << ClientCommand::ChunkData << cr.position.x << cr.position.y
-                   << cr.position.z;
-            for (auto &block : chunk.blocks) {
-                packet << block;
-            }
-            packet.append(chunk.blocks.data(),
-                          chunk.blocks.size() * sizeof(chunk.blocks[0]));
-
-            // Send chunk data to client
-            auto peer = findPeer(cr.peer);
-            sendToPeer(*peer, packet, 1, ENET_PACKET_FLAG_RELIABLE);
+            sendChunk(cr.peer, chunk);
         }
     }
 }
@@ -158,17 +167,17 @@ int Server::emptySlot() const
 void Server::addPeer(ENetPeer *peer, peer_id_t id)
 {
     LOGVAR("Server", "New Peer, Peer Id:", (int)id);
-    m_peerIds[peer->connectID] = {peer, id};
+    m_peers[peer->connectID] = {peer, id};
     m_peerConnected[id] = true;
 }
 
 void Server::removePeer(u32 connectionId)
 {
-    auto itr = m_peerIds.find(connectionId);
-    if (itr != m_peerIds.end()) {
-        int id = m_peerIds[connectionId].peerId;
+    auto itr = m_peers.find(connectionId);
+    if (itr != m_peers.end()) {
+        int id = m_peers[connectionId].peerId;
         LOGVAR("Server", "Peer disconnect, Peer Id:", id);
         m_peerConnected[id] = false;
-        m_peerIds.erase(itr);
+        m_peers.erase(itr);
     }
 }
