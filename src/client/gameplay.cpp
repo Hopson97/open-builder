@@ -55,7 +55,7 @@ gl::VertexArray createCube(float height = 1)
 } // namespace
 
 Gameplay::Gameplay()
-    : NetworkHost("Client")
+    : m_netClient(m_clientState)
 {
 }
 
@@ -87,24 +87,20 @@ bool Gameplay::init(float aspect)
     m_grassTexture.bind();
 
     // Set up the server connection
-    auto peer = NetworkHost::createAsClient(LOCAL_HOST);
-    if (!peer) {
+
+    auto id = m_netClient.connectTo(LOCAL_HOST);
+    if (!id) {
         return false;
     }
-    mp_serverPeer = *peer;
-    mp_player = &m_entities[NetworkHost::getPeerId()];
+
+    mp_player = &m_clientState.entities[*id];
     mp_player->position = {0, CHUNK_SIZE * 5, 0};
 
     for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
         for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
             for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
                 ChunkPosition position(cx, cy, cz);
-                sf::Packet packet;
-                packet << ServerCommand::ChunkRequest
-                       << NetworkHost::getPeerId() << position.x << position.y
-                       << position.z;
-                NetworkHost::sendToPeer(*mp_serverPeer, packet, 0,
-                                        ENET_PACKET_FLAG_RELIABLE);
+                m_netClient.sendChunkRequest({cx, cy, cz});
             }
         }
     }
@@ -179,25 +175,23 @@ void Gameplay::onKeyRelease(sf::Keyboard::Key key)
 
 void Gameplay::update()
 {
-    sf::Packet packet;
-    packet << ServerCommand::PlayerPosition << NetworkHost::getPeerId()
-           << mp_player->position.x << mp_player->position.y
-           << mp_player->position.z;
-    NetworkHost::sendToPeer(*mp_serverPeer, packet, 0, 0);
+    m_netClient.sendPlayerPosition(mp_player->position);
 
     // Try create some chunk meshes
-
-    for (auto itr = m_chunks.begin(); itr != m_chunks.end(); itr++) {
+    auto &chunks = m_clientState.chunks;
+    auto &chunkMgr = m_clientState.chunkManager;
+    for (auto itr = chunks.begin(); itr != chunks.end(); itr++) {
         const auto &[position, chunk] = *itr;
         if (m_chunkRenders.find(position) == m_chunkRenders.end()) {
-            if (m_chunkManager.hasNeighbours(position)) {
+            if (chunkMgr.hasNeighbours(position)) {
                 m_chunkRenders.emplace(position, makeChunkMesh(*chunk));
-                m_chunks.erase(itr);
+                chunks.erase(itr);
 
             }
         }
     }
-    NetworkHost::tick();
+
+    m_netClient.tick();
 }
 
 void Gameplay::render()
@@ -217,7 +211,7 @@ void Gameplay::render()
     auto drawable = m_cube.getDrawable();
     drawable.bind();
     m_texture.bind();
-    for (auto &p : m_entities) {
+    for (auto &p : m_clientState.entities) {
         if (p.active && &p != mp_player) {
             glm::mat4 modelMatrix{1.0f};
             translateMatrix(&modelMatrix,
@@ -246,111 +240,17 @@ void Gameplay::endGame()
         chunk.second.destroy();
     }
 
-    if (m_status == EngineStatus::Ok) {
+    if (m_clientState.status == EngineStatus::Ok) {
+        m_netClient.sendDisconnectRequest();
         // Disconnect from the server
-        sf::Packet packet;
-        packet << ServerCommand::Disconnect << NetworkHost::getPeerId();
-        if (!sendToPeer(*mp_serverPeer, packet, 0, ENET_PACKET_FLAG_RELIABLE)) {
-            LOG("Client", "Failed to send disconnect packet");
-        }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(64));
 
-        NetworkHost::disconnectFromPeer(*mp_serverPeer);
+
     }
-    NetworkHost::destroy();
+
 }
 
 EngineStatus Gameplay::currentStatus() const
 {
-    return m_status;
-}
-
-//
-//      Network Related Code
-//
-void Gameplay::onPeerConnect([[maybe_unused]] ENetPeer &peer)
-{
-}
-
-void Gameplay::onPeerDisconnect([[maybe_unused]] ENetPeer &peer)
-{
-    m_status = EngineStatus::ExitServerDisconnect;
-}
-
-void Gameplay::onPeerTimeout([[maybe_unused]] ENetPeer &peer)
-{
-    m_status = EngineStatus::ExitServerTimeout;
-}
-
-void Gameplay::onCommandRecieve(sf::Packet &packet, command_t command)
-{
-    switch (static_cast<ClientCommand>(command)) {
-        case ClientCommand::PlayerJoin:
-            onPlayerJoin(packet);
-            break;
-
-        case ClientCommand::PlayerLeave:
-            onPlayerLeave(packet);
-            break;
-
-        case ClientCommand::Snapshot:
-            onSnapshot(packet);
-            break;
-
-        case ClientCommand::ChunkData:
-            onChunkData(packet);
-            break;
-
-        case ClientCommand::PeerId:
-            break;
-    }
-}
-
-void Gameplay::onPlayerJoin(sf::Packet &packet)
-{
-    peer_id_t id;
-    packet >> id;
-    m_entities[id].active = true;
-
-    LOGVAR("Client", "Player joined, client id: ", (int)id);
-}
-
-void Gameplay::onPlayerLeave(sf::Packet &packet)
-{
-    peer_id_t id;
-    packet >> id;
-    m_entities[id].active = false;
-
-    LOGVAR("Client", "Player left, client id: ", (int)id);
-}
-
-void Gameplay::onSnapshot(sf::Packet &packet)
-{
-    u16 updateEntityCount = 0;
-    packet >> updateEntityCount;
-    for (u16 i = 0; i < updateEntityCount; i++) {
-        peer_id_t id = 0;
-        float x, y, z;
-        packet >> id >> x >> y >> z;
-        if (id != NetworkHost::getPeerId()) {
-            auto *p = &m_entities[id];
-            p->position = {x, y, z};
-            p->active = true;
-        }
-    }
-}
-
-void Gameplay::onChunkData(sf::Packet &packet)
-{
-    ChunkPosition position;
-    Chunk::Blocks blocks;
-
-    packet >> position.x >> position.y >> position.z;
-    for (auto &block : blocks) {
-        packet >> block;
-    }
-    Chunk &chunk = m_chunkManager.addChunk(position);
-    chunk.blocks = std::move(blocks);
-    m_chunks.emplace(position, &chunk);
+    return m_clientState.status;
 }
