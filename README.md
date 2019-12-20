@@ -45,6 +45,7 @@ These are required for the project, and usually can be downloaded via your distr
 
 ```sh
 sudo apt install libsfml-dev libglm-dev
+sudo apt install build-essential cmake
 ```
 
 If not, then you can download them from the website:
@@ -53,6 +54,7 @@ If not, then you can download them from the website:
 
 [GLM Download](https://github.com/g-truc/glm/tags)
 
+[CMake](https://cmake.org/download)
 #### Building
 
 First clone the project and `cd`:
