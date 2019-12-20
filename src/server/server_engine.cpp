@@ -22,7 +22,8 @@ void runServerEngine(const ServerConfig &config, sf::Time timeout)
         while (serverRunning) {
             std::cout << "> ";
             std::getline(std::cin, line);
-            if (line == "exit") {
+
+            if (std::cin.eof() || line == "exit") {
                 serverRunning = false;
                 serverConsoleRunning = false;
                 return;
