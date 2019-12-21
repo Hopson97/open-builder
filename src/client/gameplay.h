@@ -20,7 +20,9 @@ class Gameplay final {
 
     bool init(float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
-    void onKeyRelease(sf::Keyboard::Key key);
+    void onKeyRelease(sf::Window &window, sf::Keyboard::Key key);
+    void updateMouseActive(sf::Window &window);
+    bool isMouseInWindow(const sf::Window &window);
 
     void update();
     void render();
@@ -54,4 +56,5 @@ class Gameplay final {
     ChunkPositionMap<gl::VertexArray> m_chunkRenders;
 
     bool m_isMouseLocked = false;
+    bool m_isMouseActive = true;
 };

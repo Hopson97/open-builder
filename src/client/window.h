@@ -14,8 +14,8 @@ class Window {
   public:
     Window(const ClientConfig &config);
 
-    template <typename F>
-    EngineStatus pollEvents(Keyboard &keyboard, F onKeyRelease);
+    template <typename F, typename F2>
+    EngineStatus pollEvents(Keyboard &keyboard, F onKeyRelease, F2 onFocusChange);
 
     sf::Window window;
     unsigned width;
@@ -26,8 +26,8 @@ class Window {
     void create(const sf::VideoMode &mode, u32 style);
 };
 
-template <typename F>
-EngineStatus Window::pollEvents(Keyboard &keyboard, F onKeyRelease)
+template <typename F, typename F2>
+EngineStatus Window::pollEvents(Keyboard &keyboard, F onKeyRelease, F2 onFocusChange)
 {
     auto status = EngineStatus::Ok;
     sf::Event e;
@@ -40,8 +40,11 @@ EngineStatus Window::pollEvents(Keyboard &keyboard, F onKeyRelease)
                 status = EngineStatus::Exit;
             }
         }
+        else if (e.type == sf::Event::GainedFocus || e.type == sf::Event::LostFocus) {
+            onFocusChange(window);
+        }
         else if (e.type == sf::Event::KeyReleased) {
-            onKeyRelease(e.key.code);
+            onKeyRelease(window, e.key.code);
         }
         else if (e.type == sf::Event::Closed) {
             status = EngineStatus::Exit;
