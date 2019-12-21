@@ -114,17 +114,17 @@ bool Gameplay::init(float aspect)
 
 void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
 {
-    static auto lastMousepositionition = sf::Mouse::getPosition(window);
+    static auto lastMouseposition = sf::Mouse::getPosition(window);
 
     // Handle mouse input
     if (!m_isMouseLocked && window.hasFocus() && isMouseInWindow(window)) {
-        auto change = sf::Mouse::getPosition(window) - lastMousepositionition;
+        auto change = sf::Mouse::getPosition(window) - lastMouseposition;
         mp_player->rotation.x += static_cast<float>(change.y / 8.0f);
         mp_player->rotation.y += static_cast<float>(change.x / 8.0f);
         sf::Mouse::setPosition(
             {(int)window.getSize().x / 2, (int)window.getSize().y / 2}, window);
     }
-    lastMousepositionition = sf::Mouse::getPosition(window);
+    lastMouseposition = sf::Mouse::getPosition(window);
 
     // Handle keyboard input
     float PLAYER_SPEED = 0.05f;
