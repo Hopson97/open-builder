@@ -183,13 +183,14 @@ void Gameplay::update()
     // Try create some chunk meshes
     auto &chunks = m_clientState.chunks;
     auto &chunkMgr = m_clientState.chunkManager;
-    for (auto itr = chunks.begin(); itr != chunks.end(); itr++) {
+    for (auto itr = chunks.begin(); itr != chunks.end();) {
         const auto &[position, chunk] = *itr;
-        if (m_chunkRenders.find(position) == m_chunkRenders.end()) {
-            if (chunkMgr.hasNeighbours(position)) {
-                m_chunkRenders.emplace(position, makeChunkMesh(*chunk));
-                chunks.erase(itr);
-            }
+        if (m_chunkRenders.find(position) == m_chunkRenders.end() && chunkMgr.hasNeighbours(position)) {
+            m_chunkRenders.emplace(position, makeChunkMesh(*chunk));
+            itr = chunks.erase(itr);
+        }
+        else {
+            itr++
         }
     }
 
