@@ -21,6 +21,8 @@ class Gameplay final {
     bool init(float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
+    
+    bool isMouseInWindow(const sf::Window &window);
 
     void update();
     void render();
