@@ -187,7 +187,7 @@ void Gameplay::update()
         const auto &[position, chunk] = *itr;
         if (m_chunkRenders.find(position) == m_chunkRenders.end() && chunkMgr.hasNeighbours(position)) {
             m_chunkRenders.emplace(position, makeChunkMesh(*chunk));
-            chunks.erase(itr++);
+            itr = chunks.erase(itr);
         }
         else {
             itr++
