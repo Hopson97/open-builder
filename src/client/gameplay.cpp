@@ -190,7 +190,7 @@ void Gameplay::update()
             itr = chunks.erase(itr);
         }
         else {
-            itr++
+            itr++;
         }
     }
 
