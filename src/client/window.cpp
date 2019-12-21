@@ -34,3 +34,10 @@ void Window::create(const sf::VideoMode &mode, u32 style)
 
     window.create(mode, "Open Builder", style, settings);
 }
+
+bool Window::isMouseInWindow(const sf::Window &window) {
+        return (sf::Mouse::getPosition(window).x >= 0
+            && sf::Mouse::getPosition(window).y >= 0
+            && sf::Mouse::getPosition(window).x < (int)window.getSize().x
+            && sf::Mouse::getPosition(window).y < (int)window.getSize().y);
+}

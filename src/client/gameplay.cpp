@@ -117,7 +117,7 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
     static auto lastMouseposition = sf::Mouse::getPosition(window);
 
     // Handle mouse input
-    if (!m_isMouseLocked && window.hasFocus() && isMouseInWindow(window)) {
+    if (!m_isMouseLocked && window.hasFocus() && Window::isMouseInWindow(window)) {
         auto change = sf::Mouse::getPosition(window) - lastMouseposition;
         mp_player->rotation.x += static_cast<float>(change.y / 8.0f);
         mp_player->rotation.y += static_cast<float>(change.x / 8.0f);
@@ -174,13 +174,6 @@ void Gameplay::onKeyRelease(sf::Keyboard::Key key)
     if (key == sf::Keyboard::L) {
         m_isMouseLocked = !m_isMouseLocked;
     }
-}
-
-bool Gameplay::isMouseInWindow(const sf::Window &window) {
-    return (sf::Mouse::getPosition(window).x >= 0
-        && sf::Mouse::getPosition(window).y >= 0
-        && sf::Mouse::getPosition(window).x < (int)window.getSize().x
-        && sf::Mouse::getPosition(window).y < (int)window.getSize().y);
 }
 
 void Gameplay::update()

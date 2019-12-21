@@ -6,6 +6,7 @@
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
+#include "window.h"
 #include <common/network/enet.h>
 #include <common/network/net_types.h>
 #include "client_state.h"
@@ -22,8 +23,6 @@ class Gameplay final {
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
     
-    bool isMouseInWindow(const sf::Window &window);
-
     void update();
     void render();
     void endGame();

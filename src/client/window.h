@@ -17,6 +17,8 @@ class Window {
     template <typename F>
     EngineStatus pollEvents(Keyboard &keyboard, F onKeyRelease);
 
+    static bool isMouseInWindow(const sf::Window &window);
+
     sf::Window window;
     unsigned width;
     unsigned height;
