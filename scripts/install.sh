@@ -58,10 +58,6 @@ else
         echo "No supported package manager found!"
         exit 1
     fi
-    function back {
-        cd ..
-    }
-    back
     if sh scripts/build.sh; then
         echo "Built the project. Execute it by running 'sh scripts/run.sh'. Enjoy!"
     else
