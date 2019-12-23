@@ -44,7 +44,7 @@ Please use the links below:
 We offer an automated installer for a bunch of different Linux distributions including Debian, Arch/Manjaro and Fedora. It can be ran via
 
 ```sh
-sudo sh scripts/install.sh
+sudo bash scripts/install.sh
 ```
 
 from the project root directory. If you are interested in the manual way of installation, check below instructions. To then finally run the application see [Running](https://github.com/Hopson97/open-builder#running) below.
