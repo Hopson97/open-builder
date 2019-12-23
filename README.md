@@ -134,6 +134,10 @@ Minecraft clone created by Fogleman in C.
 
 **[Website](https://www.michaelfogleman.com/projects/craft/)** - **[GitHub](https://github.com/fogleman/Craft)**
 
+## Special Thanks
+
+[DS3PI](https://github.com/D3PSI) - Added GitHub actions, and created the install.sh file to automate the installation process on Linux systems
+
 ## History
 
 Originally, this was going to be a Zombie game, but I got very bored of that very quickly, and so changed the project to be a voxel game instead.
@@ -145,3 +149,5 @@ To combat this, I did a masive refactor in just over 2 weeks, re-creating the mo
 The before refactor can be found **[here](https://github.com/Hopson97/open-builder/tree/a452dfd0a5d8fc94059f7e1ab8ecca03dd06ba3a)**
 
 The commit that adds the refactored code can be found **[here](https://github.com/Hopson97/open-builder/tree/9b6c7c83fb1331fa8740ad12d6df9390d5b31c0c)**
+
+
