@@ -13,5 +13,5 @@ jobs:
       steps:
         - uses: actions/checkout@master
         - run: |
-            sh scripts/install.sh
+            sudo sh scripts/install.sh
             sh scripts/tests.sh
