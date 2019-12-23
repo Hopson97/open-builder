@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
+cmake_policy(VERSION 3.12...3.16)
 
 #Set up project
 project(open-builder 
@@ -21,7 +22,7 @@ function (set_flags target)
         target_compile_options(${target} 
             PRIVATE 
             /W4 
-            /WX
+#            /WX
         )
     else()
         target_compile_options(${target} 
@@ -85,6 +86,8 @@ target_include_directories(ob-common
     PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/deps/
 )
+
+# TODO: Automatically copy assets and libraries (like shaders and the SFML dll's) to the executable directory
 
 set_flags(${PROJECT_NAME})
 include_dirs(${PROJECT_NAME})

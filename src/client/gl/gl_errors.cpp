@@ -1,7 +1,7 @@
-#include "gl_errors.h"
-
-#include <glad/glad.h>
 #include <iostream>
+#include <string>
+#include <glad/glad.h>
+#include "gl_errors.h"
 
 void glCheckError(const char *file, unsigned int line, const char *expression)
 {

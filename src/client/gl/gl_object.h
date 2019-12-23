@@ -1,11 +1,14 @@
 #pragma once
 
-#include <array>
-#include <glad/glad.h>
+#pragma warning(push, 0) // MSVC compiler option to ignore warnings in the included files
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#pragma warning(pop)
+
+#include <array>
 #include <string>
 #include <vector>
+#include <glad/glad.h>
 
 namespace gl {
 

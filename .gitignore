@@ -40,3 +40,6 @@ Release/
 UnitTests/
 open-builder-unit-tests/
 
+# Clion
+.idea
+cmake-build*

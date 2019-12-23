@@ -53,16 +53,16 @@ void Client::sendChunkRequest(const ChunkPosition &position)
                             ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Client::onPeerConnect(ENetPeer &peer)
+void Client::onPeerConnect(ENetPeer &peer) // FIXME: unreferenced formal parameter warning in MSVC
 {
 }
 
-void Client::onPeerDisconnect(ENetPeer &peer)
+void Client::onPeerDisconnect(ENetPeer &peer) // FIXME: unreferenced formal parameter warning in MSVC
 {
     mp_clientState->status = EngineStatus::ExitServerDisconnect;
 }
 
-void Client::onPeerTimeout(ENetPeer &peer)
+void Client::onPeerTimeout(ENetPeer &peer) // FIXME: unreferenced formal parameter warning in MSVC
 {
     mp_clientState->status = EngineStatus::ExitServerTimeout;
 }

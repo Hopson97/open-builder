@@ -156,7 +156,7 @@ void NetworkHost::disconnectAllPeers()
 
 int NetworkHost::getConnectedPeerCount() const
 {
-    return mp_host->connectedPeers;
+    return static_cast<int>(mp_host->connectedPeers);
 }
 
 peer_id_t NetworkHost::getPeerId() const

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "client_engine.h"
-#include "gl/gl_object.h"
 #include "maths.h"
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Window/Keyboard.hpp>
@@ -11,6 +10,7 @@
 #include "client_state.h"
 #include "network/client.h"
 #include <common/world/chunk.h>
+#include "gl/gl_object.h" // This included last so that glad.h doesn't redefine a windows.h macro and cause warnings
 
 class Keyboard;
 

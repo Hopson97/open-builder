@@ -126,7 +126,7 @@ void Server::sendPackets()
     // Player positions
     {
         sf::Packet packet;
-        u16 count = NetworkHost::getConnectedPeerCount();
+        u16 count = static_cast<u16>(NetworkHost::getConnectedPeerCount());
         packet << ClientCommand::Snapshot << count;
         for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
             if (m_peerConnected[i]) {
