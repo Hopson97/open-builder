@@ -67,7 +67,7 @@ void Client::onPeerTimeout(ENetPeer &peer)
     mp_clientState->status = EngineStatus::ExitServerTimeout;
 }
 
-void Client::onCommandRecieve(sf::Packet &packet, command_t command)
+void Client::onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command)
 {
     switch (static_cast<ClientCommand>(command)) {
         case ClientCommand::PlayerJoin:

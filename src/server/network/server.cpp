@@ -77,7 +77,7 @@ void Server::onPeerTimeout(ENetPeer &peer)
     removePeer(peer.connectID);
 }
 
-void Server::onCommandRecieve(sf::Packet &packet, command_t command)
+void Server::onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command)
 {
     switch (static_cast<ServerCommand>(command)) {
         case ServerCommand::PlayerPosition:

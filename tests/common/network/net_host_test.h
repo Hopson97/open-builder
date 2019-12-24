@@ -29,7 +29,7 @@ class TestServer : public NetworkHost {
     {
     }
 
-    void onCommandRecieve(sf::Packet &packet, command_t command) override
+    void onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command) override
     {
     }
 };
@@ -54,7 +54,7 @@ class TestClient : public NetworkHost {
     {
     }
 
-    void onCommandRecieve(sf::Packet &packet, command_t command) override
+    void onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command) override
     {
     }
 };

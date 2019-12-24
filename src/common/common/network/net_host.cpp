@@ -200,7 +200,7 @@ void NetworkHost::tick()
                 break;
 
             case ENET_EVENT_TYPE_RECEIVE:
-                onCommandRecieve(*event.packet);
+                onCommandRecieve(event.peer, *event.packet);
                 enet_packet_destroy(event.packet);
                 break;
 
@@ -218,13 +218,13 @@ void NetworkHost::tick()
     }
 }
 
-void NetworkHost::onCommandRecieve(const ENetPacket &enetPacket)
+void NetworkHost::onCommandRecieve(ENetPeer* peer, const ENetPacket &enetPacket)
 {
     sf::Packet packet;
     packet.append(enetPacket.data, enetPacket.dataLength);
     command_t command;
     packet >> command;
-    onCommandRecieve(packet, command);
+    onCommandRecieve(peer, packet, command);
 }
 
 void NetworkHost::flush()

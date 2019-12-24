@@ -21,7 +21,7 @@ class Client : public NetworkHost {
     void onPeerConnect(ENetPeer &peer) override;
     void onPeerDisconnect(ENetPeer &peer) override;
     void onPeerTimeout(ENetPeer &peer) override;
-    void onCommandRecieve(sf::Packet &packet, command_t command) override;
+    void onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command) override;
 
     void onPlayerJoin(sf::Packet &packet);
     void onPlayerLeave(sf::Packet &packet);
