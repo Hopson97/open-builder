@@ -179,24 +179,26 @@ void Gameplay::onKeyRelease(sf::Keyboard::Key key)
 
 void Gameplay::update()
 {
+    m_netClient.tick();
     m_netClient.sendPlayerPosition(mp_player->position);
 
     // Try create some chunk meshes
     auto &chunks = m_clientState.chunks;
     auto &chunkMgr = m_clientState.chunkManager;
+
     for (auto itr = chunks.begin(); itr != chunks.end();) {
         const auto &[position, chunk] = *itr;
-        if (m_chunkRenders.find(position) == m_chunkRenders.end() &&
+
+        if (findChunkDrawable(position) == -1 &&
             chunkMgr.hasNeighbours(position)) {
-            m_chunkRenders.emplace(position, makeChunkMesh(*chunk));
+            m_chunkRenderables.positions.push_back(position);
+            m_chunkRenderables.drawables.push_back(makeChunkMesh(*chunk));
             itr = chunks.erase(itr);
         }
         else {
             itr++;
         }
     }
-
-    m_netClient.tick();
 }
 
 void Gameplay::render()
@@ -230,7 +232,7 @@ void Gameplay::render()
     m_chunkShader.program.bind();
     m_grassTexture.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
-    for (auto &[_, chunk] : m_chunkRenders) {
+    for (auto &chunk : m_chunkRenderables.drawables) {
         chunk.getDrawable().bindAndDraw();
     }
 }
@@ -241,8 +243,8 @@ void Gameplay::endGame()
     m_texture.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
-    for (auto &chunk : m_chunkRenders) {
-        chunk.second.destroy();
+    for (auto &chunk : m_chunkRenderables.drawables) {
+        chunk.destroy();
     }
 
     if (m_clientState.status == EngineStatus::Ok) {
@@ -254,4 +256,15 @@ void Gameplay::endGame()
 EngineStatus Gameplay::currentStatus() const
 {
     return m_clientState.status;
+}
+
+int Gameplay::findChunkDrawable(const ChunkPosition &position)
+{
+    for (int i = 0; i < static_cast<int>(m_chunkRenderables.positions.size());
+         i++) {
+        if (m_chunkRenderables.positions[i] == position) {
+            return i;
+        }
+    }
+    return -1;
 }

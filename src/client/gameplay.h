@@ -29,6 +29,7 @@ class Gameplay final {
     EngineStatus currentStatus() const;
 
   private:
+    int findChunkDrawable(const ChunkPosition &position);
     glm::mat4 m_projectionMatrix{1.0f};
 
     gl::VertexArray m_cube;
@@ -50,8 +51,10 @@ class Gameplay final {
     Client m_netClient;
 
     Entity *mp_player = nullptr;
-
-    ChunkPositionMap<gl::VertexArray> m_chunkRenders;
+    struct {
+        std::vector<ChunkPosition> positions;
+        std::vector<gl::VertexArray> drawables;
+    } m_chunkRenderables;
 
     bool m_isMouseLocked = false;
 };
