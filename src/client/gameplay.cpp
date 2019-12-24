@@ -98,9 +98,9 @@ bool Gameplay::init(float aspect)
     mp_player->position = {0, CHUNK_SIZE * 5, 0};
 
     // Get world from server
-    for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
-        for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
-            for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
+    for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {
+        for (int cz = 0; cz < TEMP_WORLD_WIDTH; cz++) {
+            for (int cx = 0; cx < TEMP_WORLD_WIDTH; cx++) {
                 ChunkPosition position(cx, cy, cz);
                 m_netClient.sendChunkRequest({cx, cy, cz});
             }

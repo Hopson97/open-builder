@@ -137,7 +137,7 @@ void Server::sendPackets()
             m_chunkRequests.pop();
 
             Chunk &chunk = m_chunkManager.addChunk(cr.position);
-            makeStepTerrain(&chunk);
+            makeFlatTerrain(&chunk);
 
             // Create the chunk-data packet
             sendChunk(cr.peer, chunk);
