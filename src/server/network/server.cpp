@@ -40,6 +40,9 @@ void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
 
     // Send chunk data to client
     auto peer = findPeer(peerId);
+    if (!peer) {
+        return;
+    }
     sendToPeer(*peer, packet, 1, ENET_PACKET_FLAG_RELIABLE);
 }
 
@@ -58,8 +61,7 @@ void Server::onPeerConnect(ENetPeer &peer)
         sf::Packet announcement;
         announcement << ClientCommand::PlayerJoin << id;
         broadcastToPeers(announcement, 0,
-                         ENET_PACKET_FLAG_RELIABLE |
-                             ENET_PACKET_FLAG_NO_ALLOCATE);
+                         ENET_PACKET_FLAG_RELIABLE);
 
         addPeer(&peer, id);
     }
