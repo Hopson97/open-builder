@@ -191,8 +191,7 @@ void Gameplay::update()
 
         if (findChunkDrawable(position) == -1 &&
             chunkMgr.hasNeighbours(position)) {
-            m_chunkRenderables.positions.push_back(position);
-            m_chunkRenderables.drawables.push_back(makeChunkMesh(*chunk));
+            m_chunkRenderables.bufferables.push_back(makeChunkMesh(*chunk));
             itr = chunks.erase(itr);
         }
         else {
@@ -228,7 +227,18 @@ void Gameplay::render()
         }
     }
 
-    // Render the world
+    //
+    //  Render the world
+    //
+
+    // Buffer any chunk meshes
+    for (auto &chunk : m_chunkRenderables.bufferables) {
+        m_chunkRenderables.drawables.push_back(chunk.createBuffer());
+        m_chunkRenderables.positions.push_back(chunk.position);
+    }
+    m_chunkRenderables.bufferables.clear();
+
+    // Render chunks
     m_chunkShader.program.bind();
     m_grassTexture.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);

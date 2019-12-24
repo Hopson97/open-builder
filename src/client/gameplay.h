@@ -5,6 +5,7 @@
 #include "gl/gl_object.h"
 #include "maths.h"
 #include "network/client.h"
+#include "world/chunk_mesh.h"
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
@@ -52,6 +53,7 @@ class Gameplay final {
 
     Entity *mp_player = nullptr;
     struct {
+        std::vector<ChunkMesh> bufferables;
         std::vector<ChunkPosition> positions;
         std::vector<gl::VertexArray> drawables;
     } m_chunkRenderables;

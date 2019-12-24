@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../gl/gl_object.h"
+#include "chunk_mesh.h"
 
 class Chunk;
 
-gl::VertexArray makeChunkMesh(const Chunk &chunk);
+ChunkMesh makeChunkMesh(const Chunk &chunk);
