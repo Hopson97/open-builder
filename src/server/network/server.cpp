@@ -10,7 +10,7 @@
 Server::Server()
     : NetworkHost("Server")
 {
-    //Create "spawn"
+    // Create "spawn"
     m_spawn = &m_chunkManager.addChunk({0, 0, 0});
     makeFlatTerrain(m_spawn);
 }
@@ -60,8 +60,7 @@ void Server::onPeerConnect(ENetPeer *peer)
         // Broadcast the connection event
         sf::Packet announcement;
         announcement << ClientCommand::PlayerJoin << id;
-        broadcastToPeers(announcement, 0,
-                         ENET_PACKET_FLAG_RELIABLE);
+        broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);
 
         addPeer(peer, id);
     }
@@ -77,7 +76,8 @@ void Server::onPeerTimeout(ENetPeer *peer)
     removePeer(peer->connectID);
 }
 
-void Server::onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command)
+void Server::onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
+                              command_t command)
 {
     switch (static_cast<ServerCommand>(command)) {
         case ServerCommand::PlayerPosition:

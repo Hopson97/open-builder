@@ -61,10 +61,9 @@ int getPeerIdFromServer(ENetHost *host)
     return id;
 }
 
-ENetPacket* createPacket(sf::Packet &packet, u32 flags)
+ENetPacket *createPacket(sf::Packet &packet, u32 flags)
 {
-    return enet_packet_create(packet.getData(), packet.getDataSize(),
-                                         flags);
+    return enet_packet_create(packet.getData(), packet.getDataSize(), flags);
 }
 } // namespace
 
@@ -218,7 +217,7 @@ void NetworkHost::tick()
     }
 }
 
-void NetworkHost::onCommandRecieve(ENetPeer* peer, const ENetPacket &enetPacket)
+void NetworkHost::onCommandRecieve(ENetPeer *peer, const ENetPacket &enetPacket)
 {
     sf::Packet packet;
     packet.append(enetPacket.data, enetPacket.dataLength);

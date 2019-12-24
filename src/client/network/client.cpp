@@ -2,14 +2,13 @@
 
 #include "../client_state.h"
 
-#include <thread>
 #include <common/debug.h>
+#include <thread>
 
 Client::Client(ClientState &state)
     : NetworkHost("Client")
     , mp_clientState(&state)
 {
-
 }
 
 std::optional<peer_id_t> Client::connectTo(const std::string &ipAddress)
@@ -39,8 +38,7 @@ void Client::sendPlayerPosition(const glm::vec3 &position)
 {
     sf::Packet packet;
     packet << ServerCommand::PlayerPosition << NetworkHost::getPeerId()
-           << position.x << position.y
-           << position.z;
+           << position.x << position.y << position.z;
     NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
 }
 
@@ -67,7 +65,8 @@ void Client::onPeerTimeout(ENetPeer *peer)
     mp_clientState->status = EngineStatus::ExitServerTimeout;
 }
 
-void Client::onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command)
+void Client::onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
+                              command_t command)
 {
     switch (static_cast<ClientCommand>(command)) {
         case ClientCommand::PlayerJoin:
@@ -138,4 +137,3 @@ void Client::onChunkData(sf::Packet &packet)
     chunk.blocks = std::move(blocks);
     mp_clientState->chunks.emplace(position, &chunk);
 }
-

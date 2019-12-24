@@ -87,9 +87,10 @@ class NetworkHost {
     virtual void onPeerConnect(ENetPeer *peer) = 0;
     virtual void onPeerDisconnect(ENetPeer *peer) = 0;
     virtual void onPeerTimeout(ENetPeer *peer) = 0;
-    virtual void onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command) = 0;
+    virtual void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
+                                  command_t command) = 0;
 
-    void onCommandRecieve(ENetPeer* peer, const ENetPacket &packet);
+    void onCommandRecieve(ENetPeer *peer, const ENetPacket &packet);
 
     void flush();
 
