@@ -15,18 +15,11 @@ Server::Server()
     makeFlatTerrain(m_spawn);
 }
 
-ENetPeer *Server::findPeer(peer_id_t peerId)
-{
-    for (auto &[_, peer] : m_peers) {
-        if (peer.peerId == peerId) {
-            return peer.peer;
-        }
-    }
-    return nullptr;
-}
-
 void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
 {
+    if (!m_peerConnected[peerId]) {
+        return;
+    }
     // Create the chunk-data packet
     sf::Packet packet;
     packet << ClientCommand::ChunkData << chunk.getPosition().x
@@ -39,11 +32,7 @@ void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
                   chunk.blocks.size() * sizeof(chunk.blocks[0]));
 
     // Send chunk data to client
-    auto peer = findPeer(peerId);
-    if (!peer) {
-        return;
-    }
-    sendToPeer(peer, packet, 1, ENET_PACKET_FLAG_RELIABLE);
+    sendToPeer(m_peers[peerId].peer, packet, 1, ENET_PACKET_FLAG_RELIABLE);
 }
 
 void Server::onPeerConnect(ENetPeer *peer)
@@ -169,17 +158,20 @@ int Server::emptySlot() const
 void Server::addPeer(ENetPeer *peer, peer_id_t id)
 {
     LOGVAR("Server", "New Peer, Peer Id:", (int)id);
-    m_peers[peer->connectID] = {peer, id};
+    m_peers[id].peer = peer;
+    m_peers[id].id = peer->connectID;
     m_peerConnected[id] = true;
 }
 
 void Server::removePeer(u32 connectionId)
 {
-    auto itr = m_peers.find(connectionId);
-    if (itr != m_peers.end()) {
-        int id = m_peers[connectionId].peerId;
-        LOGVAR("Server", "Peer disconnect, Peer Id:", id);
-        m_peerConnected[id] = false;
-        m_peers.erase(itr);
+    for (int i = 0; i < MAX_CONNECTIONS; i++) {
+        if (m_peers[i].id == connectionId) {
+            m_peerConnected[i] = false;
+            m_peers[i].peer = nullptr;
+            m_peers[i].id = 0;
+            LOGVAR("Server", "Peer exited, Peer Id:", i);
+            return;
+        }
     }
 }

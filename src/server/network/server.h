@@ -15,8 +15,8 @@ struct ServerEntity {
 };
 
 struct Peer {
-    ENetPeer *peer;
-    peer_id_t peerId;
+    u32 id = 0;
+    ENetPeer *peer = nullptr;
 };
 
 struct ChunkRequest {
@@ -37,8 +37,6 @@ class Server final : public NetworkHost {
     void sendPackets();
 
   private:
-    ENetPeer *findPeer(peer_id_t peerId);
-
     void sendChunk(peer_id_t peerId, const Chunk &chunk);
 
     void onPeerConnect(ENetPeer *peer) override;
@@ -57,8 +55,8 @@ class Server final : public NetworkHost {
     void removePeer(u32 connectionId);
 
     std::array<ServerEntity, 512> m_entities;
+    std::array<Peer, MAX_CONNECTIONS> m_peers{};
     std::array<bool, MAX_CONNECTIONS> m_peerConnected{false};
-    std::unordered_map<u32, Peer> m_peers;
 
     ChunkManager m_chunkManager;
     Chunk *m_spawn;
