@@ -19,7 +19,7 @@ const MeshFace TOP_FACE = {{1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1}, 1.0f};
 const MeshFace BOTTOM_FACE = {{0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1}, 0.4f};
 
 struct ChunkMesh {
-    std::vector<float> verticies;
+    std::vector<float> vertices;
     std::vector<GLfloat> textureCoords;
     std::vector<GLuint> indices;
     std::vector<GLfloat> cardinalLights;
@@ -35,11 +35,11 @@ void ChunkMesh::addFace(const MeshFace &face,
 {
     int index = 0;
     for (int i = 0; i < 4; i++) {
-        verticies.push_back(face.verticies[index++] +
+        vertices.push_back(face.verticies[index++] +
                             chunkPosition.x * CHUNK_SIZE + blockPosition.x);
-        verticies.push_back(face.verticies[index++] +
+        vertices.push_back(face.verticies[index++] +
                             chunkPosition.y * CHUNK_SIZE + blockPosition.y);
-        verticies.push_back(face.verticies[index++] +
+        vertices.push_back(face.verticies[index++] +
                             chunkPosition.z * CHUNK_SIZE + blockPosition.z);
         cardinalLights.push_back(face.lightLevel);
     }
@@ -60,7 +60,7 @@ gl::VertexArray makeChunkMesh(const Chunk &chunk)
 {
     sf::Clock clock;
     ChunkMesh mesh;
-    mesh.verticies.reserve(CHUNK_VOLUME * 2);
+    mesh.vertices.reserve(CHUNK_VOLUME * 2);
     mesh.textureCoords.reserve(CHUNK_VOLUME * 2);
     mesh.indices.reserve(CHUNK_VOLUME * 2);
     mesh.cardinalLights.reserve(CHUNK_VOLUME * 2);
@@ -109,7 +109,7 @@ gl::VertexArray makeChunkMesh(const Chunk &chunk)
     gl::VertexArray vao;
     vao.create();
     vao.bind();
-    vao.addVertexBuffer(3, mesh.verticies);
+    vao.addVertexBuffer(3, mesh.vertices);
     vao.addVertexBuffer(2, mesh.textureCoords);
     vao.addVertexBuffer(1, mesh.cardinalLights);
     vao.addIndexBuffer(mesh.indices);
