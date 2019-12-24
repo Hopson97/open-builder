@@ -117,7 +117,8 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
     static auto lastMousepositionition = sf::Mouse::getPosition(window);
 
     // Handle mouse input
-    if (!m_isMouseLocked && window.hasFocus() && sf::Mouse::getPosition(window).y >= 0) {
+    if (!m_isMouseLocked && window.hasFocus() &&
+        sf::Mouse::getPosition(window).y >= 0) {
         auto change = sf::Mouse::getPosition(window) - lastMousepositionition;
         mp_player->rotation.x += static_cast<float>(change.y / 8.0f);
         mp_player->rotation.y += static_cast<float>(change.x / 8.0f);
@@ -185,7 +186,8 @@ void Gameplay::update()
     auto &chunkMgr = m_clientState.chunkManager;
     for (auto itr = chunks.begin(); itr != chunks.end();) {
         const auto &[position, chunk] = *itr;
-        if (m_chunkRenders.find(position) == m_chunkRenders.end() && chunkMgr.hasNeighbours(position)) {
+        if (m_chunkRenders.find(position) == m_chunkRenders.end() &&
+            chunkMgr.hasNeighbours(position)) {
             m_chunkRenders.emplace(position, makeChunkMesh(*chunk));
             itr = chunks.erase(itr);
         }

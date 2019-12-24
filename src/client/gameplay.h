@@ -1,15 +1,15 @@
 #pragma once
 
 #include "client_engine.h"
+#include "client_state.h"
 #include "gl/gl_object.h"
 #include "maths.h"
+#include "network/client.h"
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/network/enet.h>
 #include <common/network/net_types.h>
-#include "client_state.h"
-#include "network/client.h"
 #include <common/world/chunk.h>
 
 class Keyboard;
@@ -48,7 +48,7 @@ class Gameplay final {
 
     ClientState m_clientState;
     Client m_netClient;
-    
+
     Entity *mp_player = nullptr;
 
     ChunkPositionMap<gl::VertexArray> m_chunkRenders;

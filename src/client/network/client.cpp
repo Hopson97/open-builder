@@ -2,14 +2,13 @@
 
 #include "../client_state.h"
 
-#include <thread>
 #include <common/debug.h>
+#include <thread>
 
 Client::Client(ClientState &state)
     : NetworkHost("Client")
     , mp_clientState(&state)
 {
-
 }
 
 std::optional<peer_id_t> Client::connectTo(const std::string &ipAddress)
@@ -26,12 +25,12 @@ void Client::sendDisconnectRequest()
 {
     sf::Packet packet;
     packet << ServerCommand::Disconnect << NetworkHost::getPeerId();
-    if (!sendToPeer(*mp_serverPeer, packet, 0, ENET_PACKET_FLAG_RELIABLE)) {
+    if (!sendToPeer(mp_serverPeer, packet, 0, ENET_PACKET_FLAG_RELIABLE)) {
         LOG("Client", "Failed to send disconnect packet");
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(64));
 
-    NetworkHost::disconnectFromPeer(*mp_serverPeer);
+    NetworkHost::disconnectFromPeer(mp_serverPeer);
     NetworkHost::destroy();
 }
 
@@ -39,9 +38,8 @@ void Client::sendPlayerPosition(const glm::vec3 &position)
 {
     sf::Packet packet;
     packet << ServerCommand::PlayerPosition << NetworkHost::getPeerId()
-           << position.x << position.y
-           << position.z;
-    NetworkHost::sendToPeer(*mp_serverPeer, packet, 0, 0);
+           << position.x << position.y << position.z;
+    NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
 }
 
 void Client::sendChunkRequest(const ChunkPosition &position)
@@ -49,25 +47,26 @@ void Client::sendChunkRequest(const ChunkPosition &position)
     sf::Packet packet;
     packet << ServerCommand::ChunkRequest << NetworkHost::getPeerId()
            << position.x << position.y << position.z;
-    NetworkHost::sendToPeer(*mp_serverPeer, packet, 0,
+    NetworkHost::sendToPeer(mp_serverPeer, packet, 0,
                             ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Client::onPeerConnect(ENetPeer &peer)
+void Client::onPeerConnect(ENetPeer *peer)
 {
 }
 
-void Client::onPeerDisconnect(ENetPeer &peer)
+void Client::onPeerDisconnect(ENetPeer *peer)
 {
     mp_clientState->status = EngineStatus::ExitServerDisconnect;
 }
 
-void Client::onPeerTimeout(ENetPeer &peer)
+void Client::onPeerTimeout(ENetPeer *peer)
 {
     mp_clientState->status = EngineStatus::ExitServerTimeout;
 }
 
-void Client::onCommandRecieve(sf::Packet &packet, command_t command)
+void Client::onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
+                              command_t command)
 {
     switch (static_cast<ClientCommand>(command)) {
         case ClientCommand::PlayerJoin:
@@ -138,4 +137,3 @@ void Client::onChunkData(sf::Packet &packet)
     chunk.blocks = std::move(blocks);
     mp_clientState->chunks.emplace(position, &chunk);
 }
-
