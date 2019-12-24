@@ -26,12 +26,12 @@ void Client::sendDisconnectRequest()
 {
     sf::Packet packet;
     packet << ServerCommand::Disconnect << NetworkHost::getPeerId();
-    if (!sendToPeer(*mp_serverPeer, packet, 0, ENET_PACKET_FLAG_RELIABLE)) {
+    if (!sendToPeer(mp_serverPeer, packet, 0, ENET_PACKET_FLAG_RELIABLE)) {
         LOG("Client", "Failed to send disconnect packet");
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(64));
 
-    NetworkHost::disconnectFromPeer(*mp_serverPeer);
+    NetworkHost::disconnectFromPeer(mp_serverPeer);
     NetworkHost::destroy();
 }
 
@@ -41,7 +41,7 @@ void Client::sendPlayerPosition(const glm::vec3 &position)
     packet << ServerCommand::PlayerPosition << NetworkHost::getPeerId()
            << position.x << position.y
            << position.z;
-    NetworkHost::sendToPeer(*mp_serverPeer, packet, 0, 0);
+    NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
 }
 
 void Client::sendChunkRequest(const ChunkPosition &position)
@@ -49,20 +49,20 @@ void Client::sendChunkRequest(const ChunkPosition &position)
     sf::Packet packet;
     packet << ServerCommand::ChunkRequest << NetworkHost::getPeerId()
            << position.x << position.y << position.z;
-    NetworkHost::sendToPeer(*mp_serverPeer, packet, 0,
+    NetworkHost::sendToPeer(mp_serverPeer, packet, 0,
                             ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Client::onPeerConnect(ENetPeer &peer)
+void Client::onPeerConnect(ENetPeer *peer)
 {
 }
 
-void Client::onPeerDisconnect(ENetPeer &peer)
+void Client::onPeerDisconnect(ENetPeer *peer)
 {
     mp_clientState->status = EngineStatus::ExitServerDisconnect;
 }
 
-void Client::onPeerTimeout(ENetPeer &peer)
+void Client::onPeerTimeout(ENetPeer *peer)
 {
     mp_clientState->status = EngineStatus::ExitServerTimeout;
 }

@@ -107,9 +107,9 @@ bool NetworkHost::createAsServer(int maxConnections)
     return mp_host;
 }
 
-void NetworkHost::disconnectFromPeer(ENetPeer &peer)
+void NetworkHost::disconnectFromPeer(ENetPeer *peer)
 {
-    enet_peer_disconnect(&peer, static_cast<u32>(m_peerId));
+    enet_peer_disconnect(peer, static_cast<u32>(m_peerId));
     ENetEvent event;
     while (enet_host_service(mp_host, &event, 3000) > 0) {
         switch (event.type) {
@@ -125,7 +125,7 @@ void NetworkHost::disconnectFromPeer(ENetPeer &peer)
                 break;
         }
     }
-    enet_peer_reset(&peer);
+    enet_peer_reset(peer);
 }
 
 void NetworkHost::disconnectAllPeers()
@@ -169,11 +169,11 @@ int NetworkHost::getMaxConnections() const
     return m_maxConnections;
 }
 
-bool NetworkHost::sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel,
+bool NetworkHost::sendToPeer(ENetPeer *peer, sf::Packet &packet, u8 channel,
                              u32 flags)
 {
     ENetPacket *pkt = createPacket(packet, flags);
-    int result = enet_peer_send(&peer, channel, pkt);
+    int result = enet_peer_send(peer, channel, pkt);
     flush();
     return result == 0;
 }
@@ -196,7 +196,7 @@ void NetworkHost::tick()
     while (enet_host_service(mp_host, &event, 0) > 0) {
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
-                onPeerConnect(*event.peer);
+                onPeerConnect(event.peer);
                 break;
 
             case ENET_EVENT_TYPE_RECEIVE:
@@ -205,11 +205,11 @@ void NetworkHost::tick()
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
-                onPeerDisconnect(*event.peer);
+                onPeerDisconnect(event.peer);
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
-                onPeerTimeout(*event.peer);
+                onPeerTimeout(event.peer);
                 break;
 
             case ENET_EVENT_TYPE_NONE:

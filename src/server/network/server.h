@@ -41,9 +41,9 @@ class Server final : public NetworkHost {
 
     void sendChunk(peer_id_t peerId, const Chunk &chunk);
 
-    void onPeerConnect(ENetPeer &peer) override;
-    void onPeerDisconnect(ENetPeer &peer) override;
-    void onPeerTimeout(ENetPeer &peer) override;
+    void onPeerConnect(ENetPeer *peer) override;
+    void onPeerDisconnect(ENetPeer *peer) override;
+    void onPeerTimeout(ENetPeer *peer) override;
     void onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command) override;
 
     void handleCommandDisconnect(sf::Packet &packet);

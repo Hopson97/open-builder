@@ -18,9 +18,9 @@ class Client : public NetworkHost {
     void sendChunkRequest(const ChunkPosition& position);
 
   private:
-    void onPeerConnect(ENetPeer &peer) override;
-    void onPeerDisconnect(ENetPeer &peer) override;
-    void onPeerTimeout(ENetPeer &peer) override;
+    void onPeerConnect(ENetPeer *peer) override;
+    void onPeerDisconnect(ENetPeer *peer) override;
+    void onPeerTimeout(ENetPeer *peer) override;
     void onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command) override;
 
     void onPlayerJoin(sf::Packet &packet);

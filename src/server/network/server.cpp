@@ -43,10 +43,10 @@ void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
     if (!peer) {
         return;
     }
-    sendToPeer(*peer, packet, 1, ENET_PACKET_FLAG_RELIABLE);
+    sendToPeer(peer, packet, 1, ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Server::onPeerConnect(ENetPeer &peer)
+void Server::onPeerConnect(ENetPeer *peer)
 {
     int slot = emptySlot();
     if (slot >= 0) {
@@ -63,18 +63,18 @@ void Server::onPeerConnect(ENetPeer &peer)
         broadcastToPeers(announcement, 0,
                          ENET_PACKET_FLAG_RELIABLE);
 
-        addPeer(&peer, id);
+        addPeer(peer, id);
     }
 }
 
-void Server::onPeerDisconnect(ENetPeer &peer)
+void Server::onPeerDisconnect(ENetPeer *peer)
 {
-    removePeer(peer.connectID);
+    removePeer(peer->connectID);
 }
 
-void Server::onPeerTimeout(ENetPeer &peer)
+void Server::onPeerTimeout(ENetPeer *peer)
 {
-    removePeer(peer.connectID);
+    removePeer(peer->connectID);
 }
 
 void Server::onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command)
