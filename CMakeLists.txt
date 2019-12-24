@@ -68,7 +68,6 @@ set(
 # Find libraries
 find_package(Threads)
 find_package(SFML REQUIRED audio network graphics window system)
-find_package(glm REQUIRED)
 
 # Add local libraries
 add_subdirectory(deps)
@@ -82,9 +81,16 @@ add_executable(${PROJECT_NAME}
 )
 
 target_include_directories(ob-common
-    PRIVATE 
+    PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/deps/
 )
+
+# Add GLM include directory
+target_include_directories(ob-common
+    PUBLIC 
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/glm
+)
+
 
 set_flags(${PROJECT_NAME})
 include_dirs(${PROJECT_NAME})
