@@ -53,16 +53,16 @@ void Client::sendChunkRequest(const ChunkPosition &position)
                             ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Client::onPeerConnect(ENetPeer &peer) // FIXME: unreferenced formal parameter warning in MSVC
+void Client::onPeerConnect([[maybe_unused]] ENetPeer &peer) 
 {
 }
 
-void Client::onPeerDisconnect(ENetPeer &peer) // FIXME: unreferenced formal parameter warning in MSVC
+void Client::onPeerDisconnect([[maybe_unused]] ENetPeer &peer) // FIXME: unreferenced formal parameter warning in MSVC
 {
     mp_clientState->status = EngineStatus::ExitServerDisconnect;
 }
 
-void Client::onPeerTimeout(ENetPeer &peer) // FIXME: unreferenced formal parameter warning in MSVC
+void Client::onPeerTimeout([[maybe_unused]] ENetPeer &peer) // FIXME: unreferenced formal parameter warning in MSVC
 {
     mp_clientState->status = EngineStatus::ExitServerTimeout;
 }
@@ -138,4 +138,3 @@ void Client::onChunkData(sf::Packet &packet)
     chunk.blocks = std::move(blocks);
     mp_clientState->chunks.emplace(position, &chunk);
 }
-
