@@ -5,6 +5,7 @@
 #include "gl/gl_object.h"
 #include "maths.h"
 #include "network/client.h"
+#include "world/chunk_mesh.h"
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
@@ -29,7 +30,6 @@ class Gameplay final {
     EngineStatus currentStatus() const;
 
   private:
-    int findChunkDrawable(const ChunkPosition &position);
     glm::mat4 m_projectionMatrix{1.0f};
 
     gl::VertexArray m_cube;
@@ -51,10 +51,6 @@ class Gameplay final {
     Client m_netClient;
 
     Entity *mp_player = nullptr;
-    struct {
-        std::vector<ChunkPosition> positions;
-        std::vector<gl::VertexArray> drawables;
-    } m_chunkRenderables;
 
     bool m_isMouseLocked = false;
 };

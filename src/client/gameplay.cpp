@@ -95,12 +95,12 @@ bool Gameplay::init(float aspect)
 
     auto clientId = *id;
     mp_player = &m_clientState.entities[clientId];
-    mp_player->position = {0, CHUNK_SIZE * 5, 0};
+    mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
     // Get world from server
-    for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
-        for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
-            for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
+    for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {
+        for (int cz = 0; cz < TEMP_WORLD_WIDTH; cz++) {
+            for (int cx = 0; cx < TEMP_WORLD_WIDTH; cx++) {
                 ChunkPosition position(cx, cy, cz);
                 m_netClient.sendChunkRequest({cx, cy, cz});
             }
@@ -182,23 +182,7 @@ void Gameplay::update()
     m_netClient.tick();
     m_netClient.sendPlayerPosition(mp_player->position);
 
-    // Try create some chunk meshes
-    auto &chunks = m_clientState.chunks;
-    auto &chunkMgr = m_clientState.chunkManager;
-
-    for (auto itr = chunks.begin(); itr != chunks.end();) {
-        const auto &[position, chunk] = *itr;
-
-        if (findChunkDrawable(position) == -1 &&
-            chunkMgr.hasNeighbours(position)) {
-            m_chunkRenderables.positions.push_back(position);
-            m_chunkRenderables.drawables.push_back(makeChunkMesh(*chunk));
-            itr = chunks.erase(itr);
-        }
-        else {
-            itr++;
-        }
-    }
+    m_clientState.chunkManager.updateMeshes();
 }
 
 void Gameplay::render()
@@ -228,13 +212,17 @@ void Gameplay::render()
         }
     }
 
-    // Render the world
+    //
+    //  Render the world
+    //
+
+    // Buffer any chunk meshes
+
+    // Render chunks
     m_chunkShader.program.bind();
     m_grassTexture.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
-    for (auto &chunk : m_chunkRenderables.drawables) {
-        chunk.getDrawable().bindAndDraw();
-    }
+    m_clientState.chunkManager.renderChunks();
 }
 
 void Gameplay::endGame()
@@ -243,9 +231,7 @@ void Gameplay::endGame()
     m_texture.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
-    for (auto &chunk : m_chunkRenderables.drawables) {
-        chunk.destroy();
-    }
+    m_clientState.chunkManager.destroyAllMeshes();
 
     if (m_clientState.status == EngineStatus::Ok) {
         m_netClient.sendDisconnectRequest();
@@ -256,15 +242,4 @@ void Gameplay::endGame()
 EngineStatus Gameplay::currentStatus() const
 {
     return m_clientState.status;
-}
-
-int Gameplay::findChunkDrawable(const ChunkPosition &position)
-{
-    for (int i = 0; i < static_cast<int>(m_chunkRenderables.positions.size());
-         i++) {
-        if (m_chunkRenderables.positions[i] == position) {
-            return i;
-        }
-    }
-    return -1;
 }

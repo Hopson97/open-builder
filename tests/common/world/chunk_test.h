@@ -2,7 +2,7 @@
 
 #include <catch2/catch.hpp>
 #include <common/debug.h>
-#include <common/world/chunk.h>
+#include <common/world/chunk_manager.h>
 
 TEST_CASE("Chunks should be able to be freely modified")
 {
