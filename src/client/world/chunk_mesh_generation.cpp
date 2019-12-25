@@ -7,7 +7,7 @@
 namespace {
 
 struct MeshFace {
-    std::array<GLfloat, 12> verticies;
+    std::array<GLfloat, 12> vertices;
     GLfloat lightLevel;
 };
 
@@ -35,11 +35,11 @@ void ChunkMesh::addFace(const MeshFace &face,
 {
     int index = 0;
     for (int i = 0; i < 4; i++) {
-        vertices.push_back(face.verticies[index++] +
+        vertices.push_back(face.vertices[index++] +
                            chunkPosition.x * CHUNK_SIZE + blockPosition.x);
-        vertices.push_back(face.verticies[index++] +
+        vertices.push_back(face.vertices[index++] +
                            chunkPosition.y * CHUNK_SIZE + blockPosition.y);
-        vertices.push_back(face.verticies[index++] +
+        vertices.push_back(face.vertices[index++] +
                            chunkPosition.z * CHUNK_SIZE + blockPosition.z);
         cardinalLights.push_back(face.lightLevel);
     }
