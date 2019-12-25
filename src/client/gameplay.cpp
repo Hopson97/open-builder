@@ -95,7 +95,7 @@ bool Gameplay::init(float aspect)
 
     auto clientId = *id;
     mp_player = &m_clientState.entities[clientId];
-    mp_player->position = {0, CHUNK_SIZE * 5, 0};
+    mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
     // Get world from server
     for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {
