@@ -133,7 +133,5 @@ void Client::onChunkData(sf::Packet &packet)
     for (auto &block : blocks) {
         packet >> block;
     }
-    Chunk &chunk = mp_clientState->chunkManager.addChunk(position);
-    chunk.blocks = std::move(blocks);
-    mp_clientState->chunkUpdates.insert(position);
+    mp_clientState->chunkManager.addChunk(position, std::move(blocks));
 }

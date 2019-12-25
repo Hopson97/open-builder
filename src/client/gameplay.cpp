@@ -182,22 +182,7 @@ void Gameplay::update()
     m_netClient.tick();
     m_netClient.sendPlayerPosition(mp_player->position);
 
-    // Try create some chunk meshes
-    auto &chunkUpdates = m_clientState.chunkUpdates;
-    auto &chunkManager = m_clientState.chunkManager;
-
-    for (auto itr = chunkUpdates.begin(); itr != chunkUpdates.end();) {
-        auto &position = *itr;
-        if (findChunkDrawable(position) == -1 &&
-            chunkManager.hasNeighbours(position)) {
-            m_chunkRenderables.bufferables.push_back(
-                makeChunkMesh(chunkManager.getChunk(position)));
-            itr = chunkUpdates.erase(itr);
-        }
-        else {
-            itr++;
-        }
-    }
+    m_clientState.chunkManager.updateMeshes();
 }
 
 void Gameplay::render()
@@ -232,19 +217,12 @@ void Gameplay::render()
     //
 
     // Buffer any chunk meshes
-    for (auto &chunk : m_chunkRenderables.bufferables) {
-        m_chunkRenderables.drawables.push_back(chunk.createBuffer());
-        m_chunkRenderables.positions.push_back(chunk.position);
-    }
-    m_chunkRenderables.bufferables.clear();
 
     // Render chunks
     m_chunkShader.program.bind();
     m_grassTexture.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
-    for (auto &chunk : m_chunkRenderables.drawables) {
-        chunk.getDrawable().bindAndDraw();
-    }
+    m_clientState.chunkManager.renderChunks();
 }
 
 void Gameplay::endGame()
@@ -253,9 +231,7 @@ void Gameplay::endGame()
     m_texture.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
-    for (auto &chunk : m_chunkRenderables.drawables) {
-        chunk.destroy();
-    }
+    m_clientState.chunkManager.destroyAllMeshes();
 
     if (m_clientState.status == EngineStatus::Ok) {
         m_netClient.sendDisconnectRequest();
@@ -266,15 +242,4 @@ void Gameplay::endGame()
 EngineStatus Gameplay::currentStatus() const
 {
     return m_clientState.status;
-}
-
-int Gameplay::findChunkDrawable(const ChunkPosition &position)
-{
-    for (int i = 0; i < static_cast<int>(m_chunkRenderables.positions.size());
-         i++) {
-        if (m_chunkRenderables.positions[i] == position) {
-            return i;
-        }
-    }
-    return -1;
 }
