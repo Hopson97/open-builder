@@ -3,7 +3,7 @@
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/network/net_host.h>
-#include <common/world/chunk.h>
+#include <common/world/chunk_manager.h>
 #include <queue>
 #include <unordered_map>
 

@@ -3,7 +3,7 @@
 #include "engine_status.h"
 #include "maths.h"
 #include <array>
-#include <common/world/chunk.h>
+#include <common/world/chunk_manager.h>
 #include <unordered_set>
 
 struct Entity final {
