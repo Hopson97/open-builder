@@ -135,5 +135,5 @@ void Client::onChunkData(sf::Packet &packet)
     }
     Chunk &chunk = mp_clientState->chunkManager.addChunk(position);
     chunk.blocks = std::move(blocks);
-    mp_clientState->chunks.emplace(position, &chunk);
+    mp_clientState->chunkUpdates.insert(position);
 }

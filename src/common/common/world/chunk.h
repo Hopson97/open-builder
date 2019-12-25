@@ -69,6 +69,8 @@ class ChunkManager final {
      */
     Chunk &addChunk(const ChunkPosition &chunk);
 
+    const Chunk &getChunk(const ChunkPosition &chunk);
+
     block_t getBlock(const BlockPosition &blockPosition) const;
     void setBlock(const BlockPosition &blockPosition, block_t block);
 

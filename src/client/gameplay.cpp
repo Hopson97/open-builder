@@ -183,16 +183,16 @@ void Gameplay::update()
     m_netClient.sendPlayerPosition(mp_player->position);
 
     // Try create some chunk meshes
-    auto &chunks = m_clientState.chunks;
-    auto &chunkMgr = m_clientState.chunkManager;
+    auto &chunkUpdates = m_clientState.chunkUpdates;
+    auto &chunkManager = m_clientState.chunkManager;
 
-    for (auto itr = chunks.begin(); itr != chunks.end();) {
-        const auto &[position, chunk] = *itr;
-
+    for (auto itr = chunkUpdates.begin(); itr != chunkUpdates.end();) {
+        auto &position = *itr;
         if (findChunkDrawable(position) == -1 &&
-            chunkMgr.hasNeighbours(position)) {
-            m_chunkRenderables.bufferables.push_back(makeChunkMesh(*chunk));
-            itr = chunks.erase(itr);
+            chunkManager.hasNeighbours(position)) {
+            m_chunkRenderables.bufferables.push_back(
+                makeChunkMesh(chunkManager.getChunk(position)));
+            itr = chunkUpdates.erase(itr);
         }
         else {
             itr++;
