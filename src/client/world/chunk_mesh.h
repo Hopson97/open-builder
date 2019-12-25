@@ -4,7 +4,7 @@
 #include <common/world/coordinate.h>
 
 struct MeshFace {
-    std::array<GLfloat, 12> verticies;
+    std::array<GLfloat, 12> vertices;
     GLfloat lightLevel;
 };
 

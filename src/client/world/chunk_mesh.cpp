@@ -7,11 +7,11 @@ void ChunkMesh::addFace(const MeshFace &face,
 {
     int index = 0;
     for (int i = 0; i < 4; i++) {
-        vertices.push_back(face.verticies[index++] + position.x * CHUNK_SIZE +
+        vertices.push_back(face.vertices[index++] + position.x * CHUNK_SIZE +
                            blockPosition.x);
-        vertices.push_back(face.verticies[index++] + position.y * CHUNK_SIZE +
+        vertices.push_back(face.vertices[index++] + position.y * CHUNK_SIZE +
                            blockPosition.y);
-        vertices.push_back(face.verticies[index++] + position.z * CHUNK_SIZE +
+        vertices.push_back(face.vertices[index++] + position.z * CHUNK_SIZE +
                            blockPosition.z);
         cardinalLights.push_back(face.lightLevel);
     }
