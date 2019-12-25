@@ -17,7 +17,7 @@ Server::Server()
 
 void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
 {
-    if (!m_peerConnected[peerId]) {
+    if (!m_peers[peerId].isActive) {
         return;
     }
     // Create the chunk-data packet
@@ -88,7 +88,7 @@ void Server::handleCommandDisconnect(sf::Packet &packet)
     // Set connect flag to false for this client
     peer_id_t id;
     packet >> id;
-    m_peerConnected[id] = false;
+    m_peers[id].isActive = false;
 
     // Broadcast the disconnection event
     sf::Packet announcement;
@@ -120,7 +120,7 @@ void Server::sendPackets()
         u16 count = NetworkHost::getConnectedPeerCount();
         packet << ClientCommand::Snapshot << count;
         for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
-            if (m_peerConnected[i]) {
+            if (m_peers[i].isActive) {
                 packet << static_cast<peer_id_t>(i) << m_entities[i].x
                        << m_entities[i].y << m_entities[i].z;
             }
@@ -148,7 +148,7 @@ void Server::sendPackets()
 int Server::emptySlot() const
 {
     for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
-        if (!m_peerConnected[i]) {
+        if (!m_peers[i].isActive) {
             return i;
         }
     }
@@ -160,14 +160,14 @@ void Server::addPeer(ENetPeer *peer, peer_id_t id)
     LOGVAR("Server", "New Peer, Peer Id:", (int)id);
     m_peers[id].peer = peer;
     m_peers[id].id = peer->connectID;
-    m_peerConnected[id] = true;
+    m_peers[id].isActive = true;
 }
 
 void Server::removePeer(u32 connectionId)
 {
     for (int i = 0; i < MAX_CONNECTIONS; i++) {
         if (m_peers[i].id == connectionId) {
-            m_peerConnected[i] = false;
+            m_peers[i].isActive = false;
             m_peers[i].peer = nullptr;
             m_peers[i].id = 0;
             LOGVAR("Server", "Peer exited, Peer Id:", i);
