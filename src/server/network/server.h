@@ -14,10 +14,10 @@ struct ServerEntity {
     bool active = false;
 };
 
-struct Peer {
-    u32 id = 0;
+struct ConnectedClient {
+    u32 interalEnetId = 0;
     ENetPeer *peer = nullptr;
-    bool isActive = false;
+    bool connected = false;
 };
 
 struct ChunkRequest {
@@ -56,7 +56,7 @@ class Server final : public NetworkHost {
     void removePeer(u32 connectionId);
 
     std::array<ServerEntity, 512> m_entities;
-    std::array<Peer, MAX_CONNECTIONS> m_peers{};
+    std::array<ConnectedClient, MAX_CONNECTIONS> m_connectedClients{};
 
     ChunkManager m_chunkManager;
     Chunk *m_spawn;
