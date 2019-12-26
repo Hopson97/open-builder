@@ -245,10 +245,7 @@ void Client::endGame()
     for (auto &chunk : m_chunks.drawables) {
         chunk.destroy();
     }
-    if (m_status == EngineStatus::Ok) {
-        sendDisconnectRequest();
-        // Disconnect from the server
-    }
+    NetworkHost::disconnectFromPeer(mp_serverPeer);
 }
 
 EngineStatus Client::currentStatus() const

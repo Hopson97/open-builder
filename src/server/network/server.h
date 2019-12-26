@@ -14,10 +14,10 @@ struct ServerEntity {
     bool active = false;
 };
 
-struct Peer {
-    u32 id = 0;
+struct ConnectedClient {
     ENetPeer *peer = nullptr;
-    bool isActive = false;
+    peer_id_t entityId;
+    bool connected = false;
 };
 
 struct ChunkRequest {
@@ -46,17 +46,16 @@ class Server final : public NetworkHost {
     void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
                           command_t command) override;
 
-    void handleCommandDisconnect(sf::Packet &packet);
     void handleCommandPlayerPosition(sf::Packet &packet);
     void handleCommandChunkRequest(sf::Packet &packet);
 
-    int emptySlot() const;
+    int findEmptySlot() const;
 
     void addPeer(ENetPeer *peer, peer_id_t id);
     void removePeer(u32 connectionId);
 
     std::array<ServerEntity, 512> m_entities;
-    std::array<Peer, MAX_CONNECTIONS> m_peers{};
+    std::array<ConnectedClient, MAX_CONNECTIONS> m_connectedClients{};
 
     ChunkManager m_chunkManager;
     Chunk *m_spawn;
