@@ -87,15 +87,6 @@ void Server::onCommandRecieve([[maybe_unused]]ENetPeer *peer, sf::Packet &packet
 
 void Server::handleCommandDisconnect(sf::Packet &packet)
 {
-    // Set connect flag to false for this client
-    peer_id_t id;
-    packet >> id;
-    m_connectedClients[id].connected = false;
-
-    // Broadcast the disconnection event
-    sf::Packet announcement;
-    announcement << ClientCommand::PlayerLeave << id;
-    broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);
 }
 
 void Server::handleCommandPlayerPosition(sf::Packet &packet)
@@ -161,8 +152,8 @@ void Server::addPeer(ENetPeer *peer, peer_id_t id)
 {
     LOGVAR("Server", "New Peer, Peer Id:", (int)id);
     m_connectedClients[id].peer = peer;
-    m_connectedClients[id].interalEnetId = peer->connectID;
     m_connectedClients[id].connected = true;
+    m_connectedClients[id].entityId = id;
 }
 
 void Server::removePeer(u32 connectionId)
@@ -170,13 +161,22 @@ void Server::removePeer(u32 connectionId)
     auto itr =
         std::find_if(m_connectedClients.begin(), m_connectedClients.end(),
                      [this, &connectionId](auto &conn) {
-                         return conn.interalEnetId == connectionId;
+                         return conn.peer && conn.peer->connectID == connectionId;
                      });
 
+    assert(itr != m_connectedClients.end());
     if (itr != m_connectedClients.end()) {
-        LOGVAR("Server", "Peer disconnected, Peer Id:", itr->interalEnetId);
+        LOGVAR("Server", "Client disconnected, Peer Id:", (int)itr->entityId);
+        m_entities[itr->entityId].active = false;
         itr->connected = false;
         itr->peer = nullptr;
-        itr->interalEnetId = 0;
+
+
+         // Broadcast the disconnection event
+        sf::Packet announcement;
+        announcement << ClientCommand::PlayerLeave << itr->entityId;
+        broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);
+
+        itr->entityId = 0;
     }
 }

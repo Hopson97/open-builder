@@ -15,8 +15,8 @@ struct ServerEntity {
 };
 
 struct ConnectedClient {
-    u32 interalEnetId = 0;
     ENetPeer *peer = nullptr;
+    peer_id_t entityId;
     bool connected = false;
 };
 
