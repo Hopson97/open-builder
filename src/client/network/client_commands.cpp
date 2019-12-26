@@ -34,21 +34,21 @@ void Client::sendChunkRequest(const ChunkPosition &position)
                             ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Client::onPeerConnect(ENetPeer *peer)
+void Client::onPeerConnect([[maybe_unused]] ENetPeer *peer)
 {
 }
 
-void Client::onPeerDisconnect(ENetPeer *peer)
+void Client::onPeerDisconnect([[maybe_unused]] ENetPeer *peer)
 {
     m_status = EngineStatus::ExitServerDisconnect;
 }
 
-void Client::onPeerTimeout(ENetPeer *peer)
+void Client::onPeerTimeout([[maybe_unused]] ENetPeer *peer)
 {
     m_status = EngineStatus::ExitServerTimeout;
 }
 
-void Client::onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
+void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer, sf::Packet &packet,
                               command_t command)
 {
     switch (static_cast<ClientCommand>(command)) {

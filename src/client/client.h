@@ -49,8 +49,10 @@ class Client final : public NetworkHost {
     void onSnapshot(sf::Packet &packet);
     void onChunkData(sf::Packet &packet);
 
+    // Network
     ENetPeer *mp_serverPeer = nullptr;
 
+    // Rendering/ OpenGL stuff
     glm::mat4 m_projectionMatrix{1.0f};
 
     gl::VertexArray m_cube;
@@ -68,12 +70,13 @@ class Client final : public NetworkHost {
         gl::UniformLocation projectionViewLocation;
     } m_chunkShader;
 
+    // Gameplay/ World 
     std::array<Entity, 512> m_entities;
     ClientChunkManager m_chunkManager;
 
     Entity *mp_player = nullptr;
 
+    // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
-
     bool m_isMouseLocked = false;
 };
