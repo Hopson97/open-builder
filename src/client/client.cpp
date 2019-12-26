@@ -184,7 +184,7 @@ void Client::update()
 
     for (auto itr = m_chunks.updates.begin(); itr != m_chunks.updates.end();) {
         auto &position = *itr;
-        if (findChunkDrawable(position) == -1 &&
+        if (findChunkDrawableIndex(position) == -1 &&
             m_chunks.manager.hasNeighbours(position)) {
 
             m_chunks.bufferables.push_back(
@@ -263,7 +263,7 @@ EngineStatus Client::currentStatus() const
     return m_status;
 }
 
-int Client::findChunkDrawable(const ChunkPosition &position)
+int Client::findChunkDrawableIndex(const ChunkPosition &position)
 {
     for (int i = 0; i < static_cast<int>(m_chunks.positions.size()); i++) {
         if (m_chunks.positions[i] == position) {

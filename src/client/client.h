@@ -35,6 +35,7 @@ class Client final : public NetworkHost {
     EngineStatus currentStatus() const;
 
   private:
+    // Network functions; defined in the src/client/network/ directory
     void sendDisconnectRequest();
     void sendPlayerPosition(const glm::vec3 &position);
     void sendChunkRequest(const ChunkPosition &position);
@@ -49,8 +50,9 @@ class Client final : public NetworkHost {
     void onPlayerLeave(sf::Packet &packet);
     void onSnapshot(sf::Packet &packet);
     void onChunkData(sf::Packet &packet);
+    // End of network functions
 
-    int findChunkDrawable(const ChunkPosition &position);
+    int findChunkDrawableIndex(const ChunkPosition &position);
 
     // Network
     ENetPeer *mp_serverPeer = nullptr;
