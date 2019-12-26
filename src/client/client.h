@@ -10,8 +10,8 @@
 #include <common/network/enet.h>
 #include <common/network/net_host.h>
 #include <common/network/net_types.h>
-#include <unordered_set>
 #include <common/world/chunk_manager.h>
+#include <unordered_set>
 
 class Keyboard;
 
