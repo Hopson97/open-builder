@@ -1,6 +1,6 @@
 #include "client_engine.h"
 
-#include "gameplay.h"
+#include "client.h"
 #include "gl/gl_errors.h"
 #include "window.h"
 #include <common/debug.h>
@@ -50,12 +50,12 @@ EngineStatus runClientEngine(const ClientConfig &config)
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    Gameplay gameplay;
+    Client Client;
     Keyboard keyboard;
     EngineStatus status = EngineStatus::Ok;
     FPSCounter counter;
 
-    if (!gameplay.init(window.aspect)) {
+    if (!Client.init(window.aspect)) {
         return EngineStatus::CouldNotConnect;
     }
 
@@ -63,25 +63,25 @@ EngineStatus runClientEngine(const ClientConfig &config)
     while (status == EngineStatus::Ok) {
         // Input
         status = window.pollEvents(
-            keyboard, [&gameplay](auto key) { gameplay.onKeyRelease(key); });
+            keyboard, [&Client](auto key) { Client.onKeyRelease(key); });
 
-        gameplay.handleInput(window.window, keyboard);
+        Client.handleInput(window.window, keyboard);
 
         // Update
-        gameplay.update();
+        Client.update();
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        gameplay.render();
+        Client.render();
         window.window.display();
 
         // Stats and stuff
         counter.update();
         if (status == EngineStatus::Ok) {
-            status = gameplay.currentStatus();
+            status = Client.currentStatus();
         }
     }
     window.window.close();
-    gameplay.endGame();
+    Client.endGame();
     return status;
 }

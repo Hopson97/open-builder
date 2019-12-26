@@ -1,4 +1,4 @@
-#include "gameplay.h"
+#include "client.h"
 
 #include "input/keyboard.h"
 #include "world/chunk_mesh_generation.h"
@@ -54,12 +54,12 @@ gl::VertexArray createCube(float height = 1)
 }
 } // namespace
 
-Gameplay::Gameplay()
-    : m_netClient(m_clientState)
+Client::Client()
+    :   NetworkHost("Client")
 {
 }
 
-bool Gameplay::init(float aspect)
+bool Client::init(float aspect)
 {
     // OpenGL stuff
     m_cube = createCube(2);
@@ -87,14 +87,14 @@ bool Gameplay::init(float aspect)
     m_grassTexture.bind();
 
     // Set up the server connection
-
-    auto id = m_netClient.connectTo(LOCAL_HOST);
-    if (!id) {
+    auto peer = NetworkHost::createAsClient(LOCAL_HOST);
+    if (!peer) {
         return false;
     }
+    mp_serverPeer = *peer;
 
-    auto clientId = *id;
-    mp_player = &m_clientState.entities[clientId];
+    //Set player stuff
+    mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
     // Get world from server
@@ -102,7 +102,7 @@ bool Gameplay::init(float aspect)
         for (int cz = 0; cz < TEMP_WORLD_WIDTH; cz++) {
             for (int cx = 0; cx < TEMP_WORLD_WIDTH; cx++) {
                 ChunkPosition position(cx, cy, cz);
-                m_netClient.sendChunkRequest({cx, cy, cz});
+                sendChunkRequest({cx, cy, cz});
             }
         }
     }
@@ -112,7 +112,7 @@ bool Gameplay::init(float aspect)
     return true;
 }
 
-void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
+void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
 {
     static auto lastMousePosition = sf::Mouse::getPosition(window);
 
@@ -124,7 +124,7 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
         mp_player->rotation.y += static_cast<float>(change.x / 8.0f);
         sf::Mouse::setPosition(
             {(int)window.getSize().x / 2, (int)window.getSize().y / 2}, window);
-		lastMousePosition = sf::Mouse::getPosition(window);
+        lastMousePosition = sf::Mouse::getPosition(window);
     }
 
     // Handle keyboard input
@@ -170,22 +170,22 @@ void Gameplay::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
 }
 
-void Gameplay::onKeyRelease(sf::Keyboard::Key key)
+void Client::onKeyRelease(sf::Keyboard::Key key)
 {
     if (key == sf::Keyboard::L) {
         m_isMouseLocked = !m_isMouseLocked;
     }
 }
 
-void Gameplay::update()
+void Client::update()
 {
-    m_netClient.tick();
-    m_netClient.sendPlayerPosition(mp_player->position);
+    NetworkHost::tick();
+    sendPlayerPosition(mp_player->position);
 
-    m_clientState.chunkManager.updateMeshes();
+    m_chunkManager.updateMeshes();
 }
 
-void Gameplay::render()
+void Client::render()
 {
     // Setup matrices
     glm::mat4 viewMatrix{1.0f};
@@ -202,7 +202,7 @@ void Gameplay::render()
     auto drawable = m_cube.getDrawable();
     drawable.bind();
     m_texture.bind();
-    for (auto &entity : m_clientState.entities) {
+    for (auto &entity : m_entities) {
         if (entity.active && &entity != mp_player) {
             glm::mat4 modelMatrix{1.0f};
             translateMatrix(&modelMatrix, {entity.position.x, entity.position.y,
@@ -222,24 +222,24 @@ void Gameplay::render()
     m_chunkShader.program.bind();
     m_grassTexture.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
-    m_clientState.chunkManager.renderChunks();
+    m_chunkManager.renderChunks();
 }
 
-void Gameplay::endGame()
+void Client::endGame()
 {
     m_cube.destroy();
     m_texture.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
-    m_clientState.chunkManager.destroyAllMeshes();
+    m_chunkManager.destroyAllMeshes();
 
-    if (m_clientState.status == EngineStatus::Ok) {
-        m_netClient.sendDisconnectRequest();
+    if (m_status == EngineStatus::Ok) {
+        sendDisconnectRequest();
         // Disconnect from the server
     }
 }
 
-EngineStatus Gameplay::currentStatus() const
+EngineStatus Client::currentStatus() const
 {
-    return m_clientState.status;
+    return m_status;
 }
