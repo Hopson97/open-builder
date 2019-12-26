@@ -6,7 +6,7 @@ Chunk &ChunkManager::addChunk(const ChunkPosition &chunk)
     if (itr == m_chunks.cend()) {
         return m_chunks
             .emplace(std::piecewise_construct, std::forward_as_tuple(chunk),
-                     std::forward_as_tuple(this, chunk))
+                     std::forward_as_tuple(*this, chunk))
             .first->second;
     }
     return itr->second;
@@ -16,7 +16,7 @@ const Chunk &ChunkManager::getChunk(const ChunkPosition &chunk)
 {
     auto itr = m_chunks.find(chunk);
     if (itr == m_chunks.cend()) {
-        static Chunk errorChunk(this, {0, 0, 0});
+        static Chunk errorChunk(*this, {0, 0, 0});
         return errorChunk;
     }
     return itr->second;

@@ -197,8 +197,8 @@ void Client::render()
     glm::mat4 projectionViewMatrix{1.0f};
 
     m_basicShader.program.bind();
-    rotateMatrix(&viewMatrix, mp_player->rotation);
-    translateMatrix(&viewMatrix, -mp_player->position);
+    rotateMatrix(viewMatrix, mp_player->rotation);
+    translateMatrix(viewMatrix, -mp_player->position);
 
     projectionViewMatrix = m_projectionMatrix * viewMatrix;
     gl::loadUniform(m_basicShader.projectionViewLocation, projectionViewMatrix);
@@ -207,11 +207,11 @@ void Client::render()
     auto drawable = m_cube.getDrawable();
     drawable.bind();
     m_texture.bind();
-    for (auto &entity : m_entities) {
-        if (entity.active && &entity != mp_player) {
+    for (auto &ent : m_entities) {
+        if (ent.active && &ent != mp_player) {
             glm::mat4 modelMatrix{1.0f};
-            translateMatrix(&modelMatrix, {entity.position.x, entity.position.y,
-                                           entity.position.z});
+            translateMatrix(modelMatrix,
+                            {ent.position.x, ent.position.y, ent.position.z});
             gl::loadUniform(m_basicShader.modelLocation, modelMatrix);
             drawable.draw();
         }

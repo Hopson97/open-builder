@@ -18,7 +18,7 @@ class Chunk {
   public:
     using Blocks = BlockArray<block_t>;
 
-    Chunk(ChunkManager *manager, const ChunkPosition &position);
+    Chunk(ChunkManager &manager, const ChunkPosition &position);
 
     /**
      * @brief Quick get block - Gets a block at the local block position without
@@ -51,6 +51,6 @@ class Chunk {
     Blocks blocks{0};
 
   private:
-    ChunkManager *mp_manager;
+    ChunkManager &mp_manager;
     ChunkPosition m_position;
 };
