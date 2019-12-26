@@ -67,8 +67,8 @@ void Server::onPeerTimeout(ENetPeer *peer)
     removePeer(peer->connectID);
 }
 
-void Server::onCommandRecieve([[maybe_unused]]ENetPeer *peer, sf::Packet &packet,
-                              command_t command)
+void Server::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
+                              sf::Packet &packet, command_t command)
 {
     switch (static_cast<ServerCommand>(command)) {
         case ServerCommand::PlayerPosition:
@@ -150,11 +150,11 @@ void Server::addPeer(ENetPeer *peer, peer_id_t id)
 
 void Server::removePeer(u32 connectionId)
 {
-    auto itr =
-        std::find_if(m_connectedClients.begin(), m_connectedClients.end(),
-                     [this, &connectionId](auto &conn) {
-                         return conn.peer && conn.peer->connectID == connectionId;
-                     });
+    auto itr = std::find_if(
+        m_connectedClients.begin(), m_connectedClients.end(),
+        [this, &connectionId](auto &conn) {
+            return conn.peer && conn.peer->connectID == connectionId;
+        });
 
     assert(itr != m_connectedClients.end());
     if (itr != m_connectedClients.end()) {
@@ -163,8 +163,7 @@ void Server::removePeer(u32 connectionId)
         itr->connected = false;
         itr->peer = nullptr;
 
-
-         // Broadcast the disconnection event
+        // Broadcast the disconnection event
         sf::Packet announcement;
         announcement << ClientCommand::PlayerLeave << itr->entityId;
         broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);

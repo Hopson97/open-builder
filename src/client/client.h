@@ -35,7 +35,8 @@ class Client final : public NetworkHost {
     EngineStatus currentStatus() const;
 
   private:
-    // Network functions; defined in the src/client/network/client_command.cpp directory
+    // Network functions; defined in the src/client/network/client_command.cpp
+    // directory
     void sendPlayerPosition(const glm::vec3 &position);
     void sendChunkRequest(const ChunkPosition &position);
 
