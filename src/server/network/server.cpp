@@ -39,7 +39,7 @@ void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
 
 void Server::onPeerConnect(ENetPeer *peer)
 {
-    int slot = emptySlot();
+    int slot = findEmptySlot();
     if (slot >= 0) {
         peer_id_t id = static_cast<peer_id_t>(slot);
 
@@ -130,7 +130,7 @@ void Server::sendPackets()
     }
 }
 
-int Server::emptySlot() const
+int Server::findEmptySlot() const
 {
     for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
         if (!m_connectedClients[i].connected) {

@@ -49,7 +49,7 @@ class Server final : public NetworkHost {
     void handleCommandPlayerPosition(sf::Packet &packet);
     void handleCommandChunkRequest(sf::Packet &packet);
 
-    int emptySlot() const;
+    int findEmptySlot() const;
 
     void addPeer(ENetPeer *peer, peer_id_t id);
     void removePeer(u32 connectionId);
