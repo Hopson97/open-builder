@@ -50,12 +50,12 @@ EngineStatus runClientEngine(const ClientConfig &config)
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    Client Client;
+    Client gameClient;
     Keyboard keyboard;
     EngineStatus status = EngineStatus::Ok;
     FPSCounter counter;
 
-    if (!Client.init(window.aspect)) {
+    if (!gameClient.init(window.aspect)) {
         return EngineStatus::CouldNotConnect;
     }
 
@@ -63,25 +63,25 @@ EngineStatus runClientEngine(const ClientConfig &config)
     while (status == EngineStatus::Ok) {
         // Input
         status = window.pollEvents(
-            keyboard, [&Client](auto key) { Client.onKeyRelease(key); });
+            keyboard, [&gameClient](auto key) { gameClient.onKeyRelease(key); });
 
-        Client.handleInput(window.window, keyboard);
+        gameClient.handleInput(window.window, keyboard);
 
         // Update
-        Client.update();
+        gameClient.update();
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Client.render();
+        gameClient.render();
         window.window.display();
 
         // Stats and stuff
         counter.update();
         if (status == EngineStatus::Ok) {
-            status = Client.currentStatus();
+            status = gameClient.currentStatus();
         }
     }
     window.window.close();
-    Client.endGame();
+    gameClient.endGame();
     return status;
 }
