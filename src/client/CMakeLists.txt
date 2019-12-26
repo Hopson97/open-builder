@@ -12,7 +12,6 @@ add_library(ob-client
     client_engine.cpp
     window.cpp
     world/chunk_mesh_generation.cpp
-    world/client_chunk_manager.cpp
     world/chunk_mesh.cpp
 )
 

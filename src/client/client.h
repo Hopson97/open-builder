@@ -4,13 +4,14 @@
 #include "gl/gl_object.h"
 #include "maths.h"
 #include "world/chunk_mesh.h"
-#include "world/client_chunk_manager.h"
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/network/enet.h>
 #include <common/network/net_host.h>
 #include <common/network/net_types.h>
+#include <unordered_set>
+#include <common/world/chunk_manager.h>
 
 class Keyboard;
 
@@ -49,6 +50,8 @@ class Client final : public NetworkHost {
     void onSnapshot(sf::Packet &packet);
     void onChunkData(sf::Packet &packet);
 
+    int findChunkDrawable(const ChunkPosition &position);
+
     // Network
     ENetPeer *mp_serverPeer = nullptr;
 
@@ -70,11 +73,18 @@ class Client final : public NetworkHost {
         gl::UniformLocation projectionViewLocation;
     } m_chunkShader;
 
-    // Gameplay/ World 
+    // Gameplay/ World
     std::array<Entity, 512> m_entities;
-    ClientChunkManager m_chunkManager;
 
     Entity *mp_player = nullptr;
+
+    struct {
+        std::vector<ChunkMesh> bufferables;
+        std::vector<ChunkPosition> positions;
+        std::vector<gl::VertexArray> drawables;
+        ChunkManager manager;
+        std::unordered_set<ChunkPosition, ChunkPositionHash> updates;
+    } m_chunks;
 
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;

@@ -182,7 +182,19 @@ void Client::update()
     NetworkHost::tick();
     sendPlayerPosition(mp_player->position);
 
-    m_chunkManager.updateMeshes();
+    for (auto itr = m_chunks.updates.begin(); itr != m_chunks.updates.end();) {
+        auto &position = *itr;
+        if (findChunkDrawable(position) == -1 &&
+            m_chunks.manager.hasNeighbours(position)) {
+
+            m_chunks.bufferables.push_back(
+                makeChunkMesh(m_chunks.manager.getChunk(position)));
+            itr = m_chunks.updates.erase(itr);
+        }
+        else {
+            itr++;
+        }
+    }
 }
 
 void Client::render()
@@ -212,17 +224,22 @@ void Client::render()
         }
     }
 
-    //
-    //  Render the world
-    //
-
-    // Buffer any chunk meshes
-
     // Render chunks
     m_chunkShader.program.bind();
     m_grassTexture.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
-    m_chunkManager.renderChunks();
+
+    // Buffer chunks
+    for (auto &chunk : m_chunks.bufferables) {
+        m_chunks.drawables.push_back(chunk.createBuffer());
+        m_chunks.positions.push_back(chunk.position);
+    }
+    m_chunks.bufferables.clear();
+
+    // Render them
+    for (auto &chunk : m_chunks.drawables) {
+        chunk.getDrawable().bindAndDraw();
+    }
 }
 
 void Client::endGame()
@@ -231,8 +248,10 @@ void Client::endGame()
     m_texture.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
-    m_chunkManager.destroyAllMeshes();
 
+    for (auto &chunk : m_chunks.drawables) {
+        chunk.destroy();
+    }
     if (m_status == EngineStatus::Ok) {
         sendDisconnectRequest();
         // Disconnect from the server
@@ -242,4 +261,14 @@ void Client::endGame()
 EngineStatus Client::currentStatus() const
 {
     return m_status;
+}
+
+int Client::findChunkDrawable(const ChunkPosition &position)
+{
+    for (int i = 0; i < static_cast<int>(m_chunks.positions.size()); i++) {
+        if (m_chunks.positions[i] == position) {
+            return i;
+        }
+    }
+    return -1;
 }

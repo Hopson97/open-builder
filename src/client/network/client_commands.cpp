@@ -48,8 +48,8 @@ void Client::onPeerTimeout([[maybe_unused]] ENetPeer *peer)
     m_status = EngineStatus::ExitServerTimeout;
 }
 
-void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer, sf::Packet &packet,
-                              command_t command)
+void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
+                              sf::Packet &packet, command_t command)
 {
     switch (static_cast<ClientCommand>(command)) {
         case ClientCommand::PlayerJoin:
@@ -116,5 +116,8 @@ void Client::onChunkData(sf::Packet &packet)
     for (auto &block : blocks) {
         packet >> block;
     }
-    m_chunkManager.addChunk(position, std::move(blocks));
+
+    Chunk &chunk = m_chunks.manager.addChunk(position);
+    chunk.blocks = std::move(blocks);
+    m_chunks.updates.insert(position);
 }
