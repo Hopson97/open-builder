@@ -1,19 +1,24 @@
 #pragma once
 
+#include "../macros.h"
 #include "enet.h"
 #include "net_command.h"
 #include "net_constants.h"
 #include <SFML/Network/Packet.hpp>
+#include <array>
 #include <optional>
 
 /**
  * @brief Base class for network hosts (clients/ servers)
  */
 class NetworkHost {
+    NON_COPYABLE(NetworkHost)
+    NON_MOVEABLE(NetworkHost)
+
   public:
     NetworkHost(std::string &&name);
 
-    virtual ~NetworkHost() = default;
+    virtual ~NetworkHost();
 
     /**
      * @brief Does 1 tick of the host, must be called once per frame.
@@ -21,11 +26,6 @@ class NetworkHost {
      * commands
      */
     void tick();
-
-    /**
-     * @brief Deletes the internal ENetHost object
-     */
-    void destroy();
 
     /**
      * @brief Creates as a client, and connects the host to a server

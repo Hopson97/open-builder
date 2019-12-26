@@ -69,7 +69,6 @@ TEST_CASE("The server works")
         REQUIRE(server.getMaxConnections() == 4);
         REQUIRE(server.getConnectedPeerCount() == 0);
     }
-    server.destroy();
 }
 
 TEST_CASE("The client can interact with the server.")
@@ -94,7 +93,6 @@ TEST_CASE("The client can interact with the server.")
         REQUIRE(client.getConnectedPeerCount() == 1);
 
         control = false;
-        client.destroy();
 
         serverThread.join();
     }
@@ -116,11 +114,7 @@ TEST_CASE("The client can interact with the server.")
         REQUIRE(client.getConnectedPeerCount() == 0);
 
         control = false;
-        client.destroy();
 
         serverThread.join();
     }
-    
-
-    server.destroy();
 }

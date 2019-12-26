@@ -72,6 +72,11 @@ NetworkHost::NetworkHost(std::string &&name)
 {
 }
 
+NetworkHost::~NetworkHost()
+{
+    enet_host_destroy(mp_host);
+}
+
 std::optional<ENetPeer *> NetworkHost::createAsClient(const std::string &ip)
 {
     mp_host = createHost(0, 1);
@@ -182,11 +187,6 @@ void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
     ENetPacket *pkt = createPacket(packet, flags);
     enet_host_broadcast(mp_host, channel, pkt);
     flush();
-}
-
-void NetworkHost::destroy()
-{
-    enet_host_destroy(mp_host);
 }
 
 void NetworkHost::tick()

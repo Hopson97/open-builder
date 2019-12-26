@@ -14,7 +14,6 @@ void Client::sendDisconnectRequest()
     std::this_thread::sleep_for(std::chrono::milliseconds(64));
 
     NetworkHost::disconnectFromPeer(mp_serverPeer);
-    NetworkHost::destroy();
 }
 
 void Client::sendPlayerPosition(const glm::vec3 &position)
