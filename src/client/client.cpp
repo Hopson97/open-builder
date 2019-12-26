@@ -132,41 +132,34 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     if (keyboard.isKeyDown(sf::Keyboard::LControl)) {
         PLAYER_SPEED *= 10;
     }
-    float rads = (glm::radians(mp_player->rotation.y));
-    float rads90 = (glm::radians(mp_player->rotation.y + 90));
+
+    auto &rotation = mp_player->rotation;
+    auto &position = mp_player->position;
     if (keyboard.isKeyDown(sf::Keyboard::W)) {
-        mp_player->position.x -= glm::cos(rads90) * PLAYER_SPEED;
-        mp_player->position.z -= glm::sin(rads90) * PLAYER_SPEED;
-        mp_player->position.y -=
-            glm::tan(glm::radians(mp_player->rotation.x)) * PLAYER_SPEED;
+        position += forwardsVector(rotation) * PLAYER_SPEED;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::S)) {
-        mp_player->position.x += glm::cos(rads90) * PLAYER_SPEED;
-        mp_player->position.z += glm::sin(rads90) * PLAYER_SPEED;
-        mp_player->position.y +=
-            glm::tan(glm::radians(mp_player->rotation.x)) * PLAYER_SPEED;
+        position += backwardsVector(rotation) * PLAYER_SPEED;
     }
     if (keyboard.isKeyDown(sf::Keyboard::A)) {
-        mp_player->position.x -= glm::cos(rads) * PLAYER_SPEED;
-        mp_player->position.z -= glm::sin(rads) * PLAYER_SPEED;
+        position += leftVector(rotation) * PLAYER_SPEED;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::D)) {
-        mp_player->position.x += glm::cos(rads) * PLAYER_SPEED;
-        mp_player->position.z += glm::sin(rads) * PLAYER_SPEED;
+        position += rightVector(rotation) * PLAYER_SPEED;
     }
 
     if (keyboard.isKeyDown(sf::Keyboard::Space)) {
-        mp_player->position.y += PLAYER_SPEED * 2;
+        position.y += PLAYER_SPEED * 2;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::LShift)) {
-        mp_player->position.y -= PLAYER_SPEED * 2;
+        position.y -= PLAYER_SPEED * 2;
     }
 
-    if (mp_player->rotation.x < -80.0f) {
-        mp_player->rotation.x = -79.0f;
+    if (rotation.x < -80.0f) {
+        rotation.x = -79.0f;
     }
-    else if (mp_player->rotation.x > 85.0f) {
-        mp_player->rotation.x = 84.0f;
+    else if (rotation.x > 85.0f) {
+        rotation.x = 84.0f;
     }
 }
 
@@ -184,7 +177,7 @@ void Client::update()
 
     for (auto itr = m_chunks.updates.begin(); itr != m_chunks.updates.end();) {
         auto &position = *itr;
-        if (findChunkDrawable(position) == -1 &&
+        if (findChunkDrawableIndex(position) == -1 &&
             m_chunks.manager.hasNeighbours(position)) {
 
             m_chunks.bufferables.push_back(
@@ -263,7 +256,7 @@ EngineStatus Client::currentStatus() const
     return m_status;
 }
 
-int Client::findChunkDrawable(const ChunkPosition &position)
+int Client::findChunkDrawableIndex(const ChunkPosition &position)
 {
     for (int i = 0; i < static_cast<int>(m_chunks.positions.size()); i++) {
         if (m_chunks.positions[i] == position) {
