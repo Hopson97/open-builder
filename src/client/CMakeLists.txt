@@ -6,13 +6,12 @@ add_library(ob-client
     gl/gl_shader.cpp
     gl/gl_textures.cpp
     gl/gl_errors.cpp
-    network/client.cpp
+    network/client_commands.cpp
+    client.cpp
     maths.cpp
     client_engine.cpp
     window.cpp
-    gameplay.cpp
     world/chunk_mesh_generation.cpp
-    world/client_chunk_manager.cpp
     world/chunk_mesh.cpp
 )
 

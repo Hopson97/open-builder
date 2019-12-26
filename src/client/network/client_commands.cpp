@@ -1,25 +1,8 @@
-#include "client.h"
-
-#include "../client_state.h"
+#include "../client.h"
 
 #include <common/debug.h>
+#include <common/world/chunk.h>
 #include <thread>
-
-Client::Client(ClientState &state)
-    : NetworkHost("Client")
-    , mp_clientState(&state)
-{
-}
-
-std::optional<peer_id_t> Client::connectTo(const std::string &ipAddress)
-{
-    auto peer = NetworkHost::createAsClient(ipAddress);
-    if (!peer) {
-        return {};
-    }
-    mp_serverPeer = *peer;
-    return NetworkHost::getPeerId();
-}
 
 void Client::sendDisconnectRequest()
 {
@@ -51,22 +34,22 @@ void Client::sendChunkRequest(const ChunkPosition &position)
                             ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Client::onPeerConnect(ENetPeer *peer)
+void Client::onPeerConnect([[maybe_unused]] ENetPeer *peer)
 {
 }
 
-void Client::onPeerDisconnect(ENetPeer *peer)
+void Client::onPeerDisconnect([[maybe_unused]] ENetPeer *peer)
 {
-    mp_clientState->status = EngineStatus::ExitServerDisconnect;
+    m_status = EngineStatus::ExitServerDisconnect;
 }
 
-void Client::onPeerTimeout(ENetPeer *peer)
+void Client::onPeerTimeout([[maybe_unused]] ENetPeer *peer)
 {
-    mp_clientState->status = EngineStatus::ExitServerTimeout;
+    m_status = EngineStatus::ExitServerTimeout;
 }
 
-void Client::onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
-                              command_t command)
+void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
+                              sf::Packet &packet, command_t command)
 {
     switch (static_cast<ClientCommand>(command)) {
         case ClientCommand::PlayerJoin:
@@ -94,7 +77,7 @@ void Client::onPlayerJoin(sf::Packet &packet)
 {
     peer_id_t id;
     packet >> id;
-    mp_clientState->entities[id].active = true;
+    m_entities[id].active = true;
 
     LOGVAR("Client", "Player joined, client id: ", (int)id);
 }
@@ -103,7 +86,7 @@ void Client::onPlayerLeave(sf::Packet &packet)
 {
     peer_id_t id;
     packet >> id;
-    mp_clientState->entities[id].active = false;
+    m_entities[id].active = false;
 
     LOGVAR("Client", "Player left, client id: ", (int)id);
 }
@@ -117,7 +100,7 @@ void Client::onSnapshot(sf::Packet &packet)
         float x, y, z;
         packet >> id >> x >> y >> z;
         if (id != NetworkHost::getPeerId()) {
-            auto *p = &mp_clientState->entities[id];
+            auto *p = &m_entities[id];
             p->position = {x, y, z};
             p->active = true;
         }
@@ -133,5 +116,8 @@ void Client::onChunkData(sf::Packet &packet)
     for (auto &block : blocks) {
         packet >> block;
     }
-    mp_clientState->chunkManager.addChunk(position, std::move(blocks));
+
+    Chunk &chunk = m_chunks.manager.addChunk(position);
+    chunk.blocks = std::move(blocks);
+    m_chunks.updates.insert(position);
 }
