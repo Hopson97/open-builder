@@ -4,18 +4,6 @@
 #include <common/world/chunk.h>
 #include <thread>
 
-void Client::sendDisconnectRequest()
-{
-    sf::Packet packet;
-    packet << ServerCommand::Disconnect << NetworkHost::getPeerId();
-    if (!sendToPeer(mp_serverPeer, packet, 0, ENET_PACKET_FLAG_RELIABLE)) {
-        LOG("Client", "Failed to send disconnect packet");
-    }
-    std::this_thread::sleep_for(std::chrono::milliseconds(64));
-
-    NetworkHost::disconnectFromPeer(mp_serverPeer);
-}
-
 void Client::sendPlayerPosition(const glm::vec3 &position)
 {
     sf::Packet packet;

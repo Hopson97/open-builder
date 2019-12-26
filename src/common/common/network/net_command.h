@@ -41,11 +41,6 @@ enum class ClientCommand : command_t {
         Commands to be sent to server
 */
 enum class ServerCommand : command_t {
-    // Command to connect to a server
-    // Data:
-    // peer_id_t: The ID of the player trying to leave
-    Disconnect,
-
     // Command to tell server the position of a player
     // Data:
     // peer_id_t: The player which position is being sent

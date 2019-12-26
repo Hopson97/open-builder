@@ -46,7 +46,6 @@ class Server final : public NetworkHost {
     void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
                           command_t command) override;
 
-    void handleCommandDisconnect(sf::Packet &packet);
     void handleCommandPlayerPosition(sf::Packet &packet);
     void handleCommandChunkRequest(sf::Packet &packet);
 

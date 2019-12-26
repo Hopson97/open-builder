@@ -75,18 +75,10 @@ void Server::onCommandRecieve([[maybe_unused]]ENetPeer *peer, sf::Packet &packet
             handleCommandPlayerPosition(packet);
             break;
 
-        case ServerCommand::Disconnect:
-            handleCommandDisconnect(packet);
-            break;
-
         case ServerCommand::ChunkRequest:
             handleCommandChunkRequest(packet);
             break;
     }
-}
-
-void Server::handleCommandDisconnect(sf::Packet &packet)
-{
 }
 
 void Server::handleCommandPlayerPosition(sf::Packet &packet)
