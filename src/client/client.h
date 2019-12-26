@@ -1,19 +1,23 @@
 #pragma once
 
 #include "client_engine.h"
-#include "client_state.h"
 #include "gl/gl_object.h"
 #include "maths.h"
 #include "world/chunk_mesh.h"
+#include "world/client_chunk_manager.h"
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/network/enet.h>
 #include <common/network/net_host.h>
 #include <common/network/net_types.h>
-#include <common/world/chunk.h>
 
 class Keyboard;
+
+struct Entity final {
+    glm::vec3 position{0.0f, 0.0f, 12.0f}, rotation{0.0f};
+    bool active = false;
+};
 
 class Client final : public NetworkHost {
   public:
@@ -63,8 +67,6 @@ class Client final : public NetworkHost {
         gl::Shader program;
         gl::UniformLocation projectionViewLocation;
     } m_chunkShader;
-
-
 
     std::array<Entity, 512> m_entities;
     ClientChunkManager m_chunkManager;

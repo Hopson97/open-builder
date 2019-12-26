@@ -55,7 +55,7 @@ gl::VertexArray createCube(float height = 1)
 } // namespace
 
 Client::Client()
-    :   NetworkHost("Client")
+    : NetworkHost("Client")
 {
 }
 
@@ -93,7 +93,7 @@ bool Client::init(float aspect)
     }
     mp_serverPeer = *peer;
 
-    //Set player stuff
+    // Set player stuff
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 

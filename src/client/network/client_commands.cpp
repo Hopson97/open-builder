@@ -1,8 +1,7 @@
 #include "../client.h"
 
-#include "../client_state.h"
-
 #include <common/debug.h>
+#include <common/world/chunk.h>
 #include <thread>
 
 void Client::sendDisconnectRequest()
