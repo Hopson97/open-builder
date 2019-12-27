@@ -48,7 +48,6 @@ void runServerEngine(const ServerConfig &config, sf::Time timeout)
         }
     }
     engine.disconnectAllPeers();
-    engine.destroy();
     if (serverConsoleRunning) {
         std::cout
             << "Server console is still active.\nPlease type anything to exit."

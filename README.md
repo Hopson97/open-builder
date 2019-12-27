@@ -1,4 +1,6 @@
-# Open Builder 
+# Open Builder
+
+[![C++ CI](https://github.com/Hopson97/open-builder/workflows/C++%20CI/badge.svg)](https://github.com/Hopson97/open-builder/actions?query=workflow%3A"C%2B%2B+CI")
 
 Open source Minecraft-like voxel sandbox game with multiplayer support.
 
@@ -16,10 +18,7 @@ Game is in uh very early stages
 
 A quick overview of the code and project structure can be found in the wiki artle:
 
-
 **[Project Structure](https://github.com/Hopson97/open-builder/wiki/Project-Structure)**
-
-
 
 ## Contributing
 
@@ -27,7 +26,7 @@ Please see main article here:
 
 **[Contributing](https://github.com/Hopson97/open-builder/wiki/Contributing)**
 
-## Building/ Running
+## Installing, Building and Running
 
 ### Windows [Visual Studio]
 
@@ -39,7 +38,17 @@ Please use the links below:
 
 ### Linux
 
-#### Libraries
+We offer an automated installer for a bunch of different Linux distributions including Debian, Arch/Manjaro and Fedora. It can be ran via
+
+```sh
+sudo bash scripts/install.sh
+```
+
+from the project root directory. If you are interested in the manual way of installation, check below instructions. To then finally run the application see [Running](https://github.com/Hopson97/open-builder#running) below.
+
+#### Manual Installation
+
+##### Libraries
 
 These are required for the project, and usually can be downloaded via your distributions
 
@@ -53,15 +62,13 @@ If not, then you can download them from the website:
 
 [GLM Download](https://github.com/g-truc/glm/tags)
 
-#### Building
+##### Building
 
 This project uses CMake to create the build files. You can install using your package manager eg
 
 ```sh
 sudo apt install cmake
 ```
-
-
 
 First clone the project and `cd`:
 
@@ -75,6 +82,8 @@ To build, at the root of the project:
 ```sh
 sh scripts/build.sh
 ```
+
+#### Running
 
 To run, at the root of the project:
 
@@ -99,7 +108,6 @@ The unit tests can be ran using
 sh scripts/tests.sh
 ```
 
-
 ## Similar Projects
 
 This project was heavily influenced by the following projects:
@@ -121,6 +129,10 @@ Open source multiplayer voxel sandbox game created using Java like the original 
 Minecraft clone created by Fogleman in C.
 
 **[Website](https://www.michaelfogleman.com/projects/craft/)** - **[GitHub](https://github.com/fogleman/Craft)**
+
+## Special Thanks
+
+[D3PSI](https://github.com/D3PSI) - Added GitHub actions, and created the install.sh file to automate the installation process on Linux systems
 
 ## History
 

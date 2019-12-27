@@ -14,16 +14,14 @@
 
 #include <common/network/enet.h>
 
-
-//Enable nvidia
+// Enable nvidia
 #ifdef _WIN32
-        #define WIN32_LEAN_AND_MEAN
-        #include <Windows.h>
-        extern "C" {
-                _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
-        }
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+extern "C" {
+_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
 #endif
-
 
 namespace {
 enum class LaunchType {

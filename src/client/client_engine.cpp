@@ -1,6 +1,6 @@
 #include "client_engine.h"
 
-#include "gameplay.h"
+#include "client.h"
 #include "gl/gl_errors.h"
 #include "window.h"
 #include <common/debug.h>
@@ -45,17 +45,17 @@ EngineStatus runClientEngine(const ClientConfig &config)
     glViewport(0, 0, window.width, window.height);
 
     glCheck(glEnable(GL_DEPTH_TEST));
-    glCheck(glEnable(GL_CULL_FACE));
-    glCheck(glCullFace(GL_BACK));
+    // glCheck(glEnable(GL_CULL_FACE));
+    // glCheck(glCullFace(GL_BACK));
 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    Gameplay gameplay;
+    Client gameClient;
     Keyboard keyboard;
     EngineStatus status = EngineStatus::Ok;
     FPSCounter counter;
 
-    if (!gameplay.init(window.aspect)) {
+    if (!gameClient.init(window.aspect)) {
         return EngineStatus::CouldNotConnect;
     }
 
@@ -63,25 +63,28 @@ EngineStatus runClientEngine(const ClientConfig &config)
     while (status == EngineStatus::Ok) {
         // Input
         status = window.pollEvents(
-            keyboard, [&gameplay](auto key) { gameplay.onKeyRelease(key); });
+            keyboard, [&gameClient](auto key) { gameClient.onKeyRelease(key); },
+            [&gameClient](auto button, int x, int y) {
+                gameClient.onMouseRelease(button, x, y);
+            });
 
-        gameplay.handleInput(window.window, keyboard);
+        gameClient.handleInput(window.window, keyboard);
 
         // Update
-        gameplay.update();
+        gameClient.update();
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        gameplay.render();
+        gameClient.render();
         window.window.display();
 
         // Stats and stuff
         counter.update();
         if (status == EngineStatus::Ok) {
-            status = gameplay.currentStatus();
+            status = gameClient.currentStatus();
         }
     }
     window.window.close();
-    gameplay.endGame();
+    gameClient.endGame();
     return status;
 }

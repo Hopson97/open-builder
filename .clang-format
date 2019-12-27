@@ -10,3 +10,5 @@ NamespaceIndentation: None
 BreakConstructorInitializersBeforeComma: true
 
 AllowShortFunctionsOnASingleLine: None
+
+ColumnLimit: 80

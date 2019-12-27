@@ -4,6 +4,7 @@ add_library(ob-common
     debug.cpp
     network/net_host.cpp
     world/chunk.cpp
+    world/chunk_manager.cpp
     world/coordinate.cpp
 )
 
