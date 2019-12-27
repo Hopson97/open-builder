@@ -173,6 +173,7 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
 void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
                             [[maybe_unused]] int y)
 {
+    // Handle block removal/ block placing events
     Ray ray(mp_player->position, mp_player->rotation);
     for (; ray.getLength() < 8; ray.step()) {
         auto blockPosition = toBlockPosition(ray.getEndpoint());
@@ -194,6 +195,7 @@ void Client::update()
     NetworkHost::tick();
     sendPlayerPosition(mp_player->position);
 
+    // Update blocks
     for (auto &blockUpdate : m_chunks.blockUpdates) {
         auto chunkPosition = toChunkPosition(blockUpdate.position);
         m_chunks.manager.ensureNeighbours(chunkPosition);
@@ -202,6 +204,7 @@ void Client::update()
     }
     m_chunks.blockUpdates.clear();
 
+    // Update chunk meshes
     for (auto itr = m_chunks.updates.begin(); itr != m_chunks.updates.end();) {
         auto pos = *itr;
         if (m_chunks.manager.hasNeighbours(pos)) {
