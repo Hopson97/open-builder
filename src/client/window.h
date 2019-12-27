@@ -14,8 +14,9 @@ class Window {
   public:
     Window(const ClientConfig &config);
 
-    template <typename F>
-    EngineStatus pollEvents(Keyboard &keyboard, F onKeyRelease);
+    template <typename F, typename MouseRelease>
+    EngineStatus pollEvents(Keyboard &keyboard, F onKeyRelease,
+                            MouseRelease onMouseRelease);
 
     sf::Window window;
     unsigned width;
@@ -26,8 +27,9 @@ class Window {
     void create(const sf::VideoMode &mode, u32 style);
 };
 
-template <typename F>
-EngineStatus Window::pollEvents(Keyboard &keyboard, F onKeyRelease)
+template <typename F, typename MouseRelease>
+EngineStatus Window::pollEvents(Keyboard &keyboard, F onKeyRelease,
+                                MouseRelease onMouseRelease)
 {
     auto status = EngineStatus::Ok;
     sf::Event e;
@@ -35,16 +37,28 @@ EngineStatus Window::pollEvents(Keyboard &keyboard, F onKeyRelease)
         if (window.hasFocus()) {
             keyboard.update(e);
         }
-        if (e.type == sf::Event::KeyPressed) {
-            if (e.key.code == sf::Keyboard::Escape) {
+
+        switch (e.type) {
+            case sf::Event::KeyPressed:
+                if (e.key.code == sf::Keyboard::Escape) {
+                    status = EngineStatus::Exit;
+                }
+                break;
+
+            case sf::Event::KeyReleased:
+                onKeyRelease(e.key.code);
+                break;
+
+            case sf::Event::MouseButtonReleased:
+                onMouseRelease(e.mouseButton.x, e.mouseButton.y);
+                break;
+
+            case sf::Event::Closed:
                 status = EngineStatus::Exit;
-            }
-        }
-        else if (e.type == sf::Event::KeyReleased) {
-            onKeyRelease(e.key.code);
-        }
-        else if (e.type == sf::Event::Closed) {
-            status = EngineStatus::Exit;
+                break;
+
+            default:
+                break;
         }
     }
     return status;

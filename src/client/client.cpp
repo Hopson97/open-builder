@@ -161,42 +161,42 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     else if (rotation.x > 85.0f) {
         rotation.x = 84.0f;
     }
-
-    static bool rel = false;
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !rel) {
-        Ray ray;
-        rel = true;
-        ray.end = mp_player->position;
-        ray.direction = mp_player->rotation;
-        for (float i = 0; i < 100; i += 0.25f) {
-            auto blockPosition = toBlockPosition(ray.end);
-            if (m_chunks.manager.getBlock(blockPosition) == 1) {
-                //std::cout << "Updating a chunk\n";
-                //m_chunks.manager.setBlock(position, 0);
-                //auto& chunk = m_chunks.manager.getChunk(toChunkPosition(position));
-
-               // auto buff = makeChunkMesh(chunk);
-                //m_chunks.bufferables.push_back(std::move(buff));
-
-                auto chunkPosition = toChunkPosition(blockPosition);
-                auto idx = findChunkDrawableIndex(chunkPosition);
-
-                m_chunks.drawables[idx].destroy();
-                m_chunks.drawables.erase(m_chunks.drawables.begin() + idx);
-                m_chunks.positions.erase(m_chunks.positions.begin() + idx);
-                break;
-            }
-            else {
-                ray.step();
-            }
-        }
-    }
 }
 
 void Client::onKeyRelease(sf::Keyboard::Key key)
 {
     if (key == sf::Keyboard::L) {
         m_isMouseLocked = !m_isMouseLocked;
+    }
+}
+
+void Client::onMouseRelease([[maybe_unused]]int x, [[maybe_unused]]int y)
+{
+    Ray ray;
+    ray.end = mp_player->position;
+    ray.direction = mp_player->rotation;
+    for (float i = 0; i < 100; i += 0.1) {
+        auto blockPosition = toBlockPosition(ray.end);
+        if (m_chunks.manager.getBlock(blockPosition) == 1) {
+
+            m_chunks.manager.setBlock(blockPosition, 0);
+            auto &chunk =
+                m_chunks.manager.getChunk(toChunkPosition(blockPosition));
+
+            auto buff = makeChunkMesh(chunk);
+            m_chunks.bufferables.push_back(std::move(buff));
+
+            auto chunkPosition = toChunkPosition(blockPosition);
+            auto idx = findChunkDrawableIndex(chunkPosition);
+
+            m_chunks.drawables[idx].destroy();
+            m_chunks.drawables.erase(m_chunks.drawables.begin() + idx);
+            m_chunks.positions.erase(m_chunks.positions.begin() + idx);
+            break;
+        }
+        else {
+            ray.step();
+        }
     }
 }
 
@@ -256,7 +256,7 @@ void Client::render()
     for (auto &chunk : m_chunks.bufferables) {
         m_chunks.drawables.push_back(chunk.createBuffer());
         m_chunks.positions.push_back(chunk.position);
-       // std::cout << "Buffered me a new one" << std::endl;
+        // std::cout << "Buffered me a new one" << std::endl;
     }
     m_chunks.bufferables.clear();
 

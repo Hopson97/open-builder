@@ -27,6 +27,7 @@ class Client final : public NetworkHost {
     bool init(float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
+    void onMouseRelease(int x, int y);
 
     void update();
     void render();
