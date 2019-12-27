@@ -11,10 +11,13 @@ glm::vec3 leftVector(const glm::vec3 &rotation);
 glm::vec3 rightVector(const glm::vec3 &rotation);
 
 struct Ray {
-    glm::vec3 end;
-    glm::vec3 direction;
+    glm::vec3 end{0.0f};
+    glm::vec3 lastPosition{0.0f};
+    glm::vec3 direction{0.0f};
+
     void step()
     {
+        lastPosition = end;
         end += forwardsVector(direction);
     }
 };

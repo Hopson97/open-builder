@@ -64,7 +64,9 @@ EngineStatus runClientEngine(const ClientConfig &config)
         // Input
         status = window.pollEvents(
             keyboard, [&gameClient](auto key) { gameClient.onKeyRelease(key); },
-            [&gameClient](int x, int y) { gameClient.onMouseRelease(x, y); });
+            [&gameClient](auto button, int x, int y) {
+                gameClient.onMouseRelease(button, x, y);
+            });
 
         gameClient.handleInput(window.window, keyboard);
 

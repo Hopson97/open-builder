@@ -50,7 +50,8 @@ EngineStatus Window::pollEvents(Keyboard &keyboard, F onKeyRelease,
                 break;
 
             case sf::Event::MouseButtonReleased:
-                onMouseRelease(e.mouseButton.x, e.mouseButton.y);
+                onMouseRelease(e.mouseButton.button, e.mouseButton.x,
+                               e.mouseButton.y);
                 break;
 
             case sf::Event::Closed:

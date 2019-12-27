@@ -170,18 +170,27 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
     }
 }
 
-void Client::onMouseRelease([[maybe_unused]]int x, [[maybe_unused]]int y)
+void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
+                            [[maybe_unused]] int y)
 {
     Ray ray;
     ray.end = mp_player->position;
+    ray.lastPosition = ray.end;
     ray.direction = mp_player->rotation;
     for (float i = 0; i < 100; i += 0.1) {
         auto blockPosition = toBlockPosition(ray.end);
         if (m_chunks.manager.getBlock(blockPosition) == 1) {
 
-            m_chunks.manager.setBlock(blockPosition, 0);
+            if (button == sf::Mouse::Button::Left) {
+                m_chunks.manager.setBlock(blockPosition, 0);
+            }
+            else {
+                blockPosition = toBlockPosition(ray.lastPosition);
+                m_chunks.manager.setBlock(blockPosition, 1);
+            }
+
             auto &chunk =
-                m_chunks.manager.getChunk(toChunkPosition(blockPosition));
+                m_chunks.manager.addChunk(toChunkPosition(blockPosition));
 
             auto buff = makeChunkMesh(chunk);
             m_chunks.bufferables.push_back(std::move(buff));

@@ -6,6 +6,7 @@
 #include "world/chunk_mesh.h"
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/network/enet.h>
 #include <common/network/net_host.h>
@@ -27,7 +28,7 @@ class Client final : public NetworkHost {
     bool init(float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
-    void onMouseRelease(int x, int y);
+    void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
     void update();
     void render();
