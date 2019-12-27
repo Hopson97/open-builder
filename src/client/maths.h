@@ -9,3 +9,12 @@ glm::vec3 forwardsVector(const glm::vec3 &rotation);
 glm::vec3 backwardsVector(const glm::vec3 &rotation);
 glm::vec3 leftVector(const glm::vec3 &rotation);
 glm::vec3 rightVector(const glm::vec3 &rotation);
+
+struct Ray {
+    glm::vec3 end;
+    glm::vec3 direction;
+    void step()
+    {
+        end += forwardsVector(direction);
+    }
+};

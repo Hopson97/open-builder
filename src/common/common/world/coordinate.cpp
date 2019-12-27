@@ -35,3 +35,9 @@ BlockPosition toGlobalBlockPosition(const BlockPosition &blockPosition,
             localChunkPosition.y * CHUNK_SIZE + blockPosition.y,
             localChunkPosition.z * CHUNK_SIZE + blockPosition.z};
 }
+
+BlockPosition toBlockPosition(const glm::vec3 &vec)
+{
+    return {static_cast<i32>(vec.x), static_cast<i32>(vec.y),
+            static_cast<i32>(vec.z)};
+}

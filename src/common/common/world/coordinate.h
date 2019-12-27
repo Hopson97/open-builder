@@ -2,6 +2,7 @@
 
 #include "../types.h"
 #include <SFML/System/Vector3.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <unordered_map>
 
 using ChunkPosition = sf::Vector3<i32>;
@@ -26,3 +27,4 @@ ChunkPosition toChunkPosition(const BlockPosition &position);
 BlockPosition toLocalBlockPosition(const BlockPosition &position);
 BlockPosition toGlobalBlockPosition(const BlockPosition &blockPosition,
                                     const ChunkPosition &localChunkPosition);
+BlockPosition toBlockPosition(const glm::vec3 &vec);
