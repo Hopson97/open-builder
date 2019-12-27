@@ -86,7 +86,13 @@ target_include_directories(ob-common
     ${CMAKE_CURRENT_SOURCE_DIR}/deps/
 )
 
-# TODO: Automatically copy assets and libraries (like shaders and the SFML dll's) to the executable directory
+# Automatically copy assets to the executable directory TODO: SFML DLL's in Windows
+add_custom_command( TARGET ${PROJECT_NAME} PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res
+)
 
 set_flags(${PROJECT_NAME})
 include_dirs(${PROJECT_NAME})
