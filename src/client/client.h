@@ -16,6 +16,11 @@
 
 class Keyboard;
 
+struct BlockUpdate {
+    BlockPosition position;
+    block_t block;
+};
+
 struct Entity final {
     glm::vec3 position{0.0f, 0.0f, 12.0f}, rotation{0.0f};
     bool active = false;
@@ -89,6 +94,7 @@ class Client final : public NetworkHost {
         std::vector<gl::VertexArray> drawables;
         ChunkManager manager;
         std::unordered_set<ChunkPosition, ChunkPositionHash> updates;
+        std::vector<BlockUpdate> blockUpdates;
     } m_chunks;
 
     // Engine-y stuff

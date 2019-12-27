@@ -181,23 +181,12 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
         auto blockPosition = toBlockPosition(ray.end);
         if (m_chunks.manager.getBlock(blockPosition) == 1) {
 
-            if (button == sf::Mouse::Button::Left) {
-                m_chunks.manager.setBlock(blockPosition, 0);
-            }
-            else {
-                blockPosition = toBlockPosition(ray.lastPosition);
-                m_chunks.manager.ensureNeighbours(
-                    toChunkPosition(blockPosition));
-                m_chunks.manager.setBlock(blockPosition, 1);
-            }
-
-            auto &chunk =
-                m_chunks.manager.addChunk(toChunkPosition(blockPosition));
-
-            auto buff = makeChunkMesh(chunk);
-            m_chunks.bufferables.push_back(std::move(buff));
-
-            deleteChunkRenderable(toChunkPosition(blockPosition));
+            BlockUpdate blockUpdate;
+            blockUpdate.block = button == sf::Mouse::Left ? 0 : 1;
+            blockUpdate.position = button == sf::Mouse::Left
+                                       ? blockPosition
+                                       : toBlockPosition(ray.lastPosition);
+            m_chunks.blockUpdates.push_back(blockUpdate);
             break;
         }
         else {
@@ -211,13 +200,21 @@ void Client::update()
     NetworkHost::tick();
     sendPlayerPosition(mp_player->position);
 
+    for (auto &blockUpdate : m_chunks.blockUpdates) {
+        auto chunkPosition = toChunkPosition(blockUpdate.position);
+        m_chunks.manager.ensureNeighbours(chunkPosition);
+        m_chunks.manager.setBlock(blockUpdate.position, blockUpdate.block);
+        m_chunks.updates.emplace(chunkPosition);
+    }
+    m_chunks.blockUpdates.clear();
+
     for (auto itr = m_chunks.updates.begin(); itr != m_chunks.updates.end();) {
-        auto &position = *itr;
-        if (findChunkDrawableIndex(position) == -1 &&
-            m_chunks.manager.hasNeighbours(position)) {
-            auto &chunk = m_chunks.manager.getChunk(position);
-            auto buff = makeChunkMesh(chunk);
-            m_chunks.bufferables.push_back(std::move(buff));
+        auto pos = *itr;
+        if (m_chunks.manager.hasNeighbours(pos)) {
+            auto &chunk = m_chunks.manager.getChunk(pos);
+            auto buffer = makeChunkMesh(chunk);
+            m_chunks.bufferables.push_back(buffer);
+            deleteChunkRenderable(pos);
             itr = m_chunks.updates.erase(itr);
         }
         else {
