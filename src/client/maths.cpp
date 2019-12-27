@@ -34,3 +34,33 @@ glm::vec3 rightVector(const glm::vec3 &rotation)
 {
     return -leftVector(rotation);
 }
+
+Ray::Ray(const glm::vec3 &startPosition, const glm::vec3 &direction)
+    : m_start(startPosition)
+    , m_previous(startPosition)
+    , m_end(startPosition)
+    , m_direction(direction)
+
+{
+}
+
+void Ray::step()
+{
+    m_previous = m_end;
+    m_end += forwardsVector(m_direction) / 4.0f;
+}
+
+float Ray::getLength() const
+{
+    return glm::length(m_end - m_start);
+}
+
+const glm::vec3 &Ray::getEndpoint() const
+{
+    return m_end;
+}
+
+const glm::vec3 &Ray::getLastPoint() const
+{
+    return m_previous;
+}

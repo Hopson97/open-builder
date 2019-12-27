@@ -10,14 +10,19 @@ glm::vec3 backwardsVector(const glm::vec3 &rotation);
 glm::vec3 leftVector(const glm::vec3 &rotation);
 glm::vec3 rightVector(const glm::vec3 &rotation);
 
-struct Ray {
-    glm::vec3 end{0.0f};
-    glm::vec3 lastPosition{0.0f};
-    glm::vec3 direction{0.0f};
+class Ray {
+  public:
+    Ray(const glm::vec3 &startPosition, const glm::vec3 &direction);
 
-    void step()
-    {
-        lastPosition = end;
-        end += forwardsVector(direction);
-    }
+    void step();
+    float getLength() const;
+
+    const glm::vec3 &getEndpoint() const;
+    const glm::vec3 &getLastPoint() const;
+
+  private:
+    glm::vec3 m_start;
+    glm::vec3 m_previous;
+    glm::vec3 m_end;
+    glm::vec3 m_direction;
 };

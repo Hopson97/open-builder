@@ -173,24 +173,18 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
 void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
                             [[maybe_unused]] int y)
 {
-    Ray ray;
-    ray.end = mp_player->position;
-    ray.lastPosition = ray.end;
-    ray.direction = mp_player->rotation;
-    for (float i = 0; i < 10; i += 0.01) {
-        auto blockPosition = toBlockPosition(ray.end);
+    Ray ray(mp_player->position, mp_player->rotation);
+    for (; ray.getLength() < 8; ray.step()) {
+        auto blockPosition = toBlockPosition(ray.getEndpoint());
         if (m_chunks.manager.getBlock(blockPosition) == 1) {
 
             BlockUpdate blockUpdate;
             blockUpdate.block = button == sf::Mouse::Left ? 0 : 1;
             blockUpdate.position = button == sf::Mouse::Left
                                        ? blockPosition
-                                       : toBlockPosition(ray.lastPosition);
+                                       : toBlockPosition(ray.getLastPoint());
             m_chunks.blockUpdates.push_back(blockUpdate);
             break;
-        }
-        else {
-            ray.step();
         }
     }
 }
