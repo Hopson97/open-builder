@@ -14,9 +14,11 @@ void translateMatrix(glm::mat4 &matrix, const glm::vec3 &offset)
 
 glm::vec3 forwardsVector(const glm::vec3 &rotation)
 {
-    float yRotation = glm::radians(rotation.y + 90);
-    float xRotation = glm::radians(rotation.x);
-    return {-glm::cos(yRotation), -glm::tan(xRotation), -glm::sin(yRotation)};
+    float yaw = glm::radians(rotation.y + 90);
+    float pitch = glm::radians(rotation.x);
+
+    return {-(glm::cos(yaw) * glm::cos(pitch)), -glm::sin(pitch),
+            -(glm::cos(pitch) * glm::sin(yaw))};
 }
 
 glm::vec3 backwardsVector(const glm::vec3 &rotation)
