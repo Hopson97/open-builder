@@ -55,6 +55,7 @@ class Client final : public NetworkHost {
     // End of network functions
 
     int findChunkDrawableIndex(const ChunkPosition &position);
+    void deleteChunkRenderable(const ChunkPosition &position);
 
     // Network
     ENetPeer *mp_serverPeer = nullptr;
