@@ -39,6 +39,7 @@ void ChunkManager::setBlock(const BlockPosition &blockPosition, block_t block)
     if (itr != m_chunks.cend()) {
         itr->second.qSetBlock(toLocalBlockPosition(blockPosition), block);
     }
+    assert(itr != m_chunks.end());
 }
 
 bool ChunkManager::hasChunk(const ChunkPosition &chunk) const
@@ -62,4 +63,16 @@ bool ChunkManager::hasNeighbours(const ChunkPosition &chunkPosition) const
            hasChunk({cp.x, cp.y, cp.z - 1}) &&
            // Back
            hasChunk({cp.x, cp.y, cp.z + 1});
+}
+
+void ChunkManager::ensureNeighbours(const ChunkPosition &chunkPosition)
+{
+    const auto &cp = chunkPosition;
+    addChunk(cp);
+    addChunk({cp.x, cp.y + 1, cp.z});
+    addChunk({cp.x, cp.y - 1, cp.z});
+    addChunk({cp.x - 1, cp.y, cp.z});
+    addChunk({cp.x + 1, cp.y, cp.z});
+    addChunk({cp.x, cp.y, cp.z - 1});
+    addChunk({cp.x, cp.y, cp.z + 1});
 }

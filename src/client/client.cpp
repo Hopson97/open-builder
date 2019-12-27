@@ -177,7 +177,7 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
     ray.end = mp_player->position;
     ray.lastPosition = ray.end;
     ray.direction = mp_player->rotation;
-    for (float i = 0; i < 100; i += 0.1) {
+    for (float i = 0; i < 10; i += 0.01) {
         auto blockPosition = toBlockPosition(ray.end);
         if (m_chunks.manager.getBlock(blockPosition) == 1) {
 
@@ -186,6 +186,8 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
             }
             else {
                 blockPosition = toBlockPosition(ray.lastPosition);
+                m_chunks.manager.ensureNeighbours(
+                    toChunkPosition(blockPosition));
                 m_chunks.manager.setBlock(blockPosition, 1);
             }
 
@@ -304,11 +306,13 @@ void Client::deleteChunkRenderable(const ChunkPosition &position)
     if (index > -1) {
         m_chunks.drawables[index].destroy();
 
-        //As the chunk renders need not be a sorted array, "swap and pop"
-        //can be used
-        //More efficent (and maybe safer) than normal deletion
-        std::iter_swap(m_chunks.drawables.begin() + index, m_chunks.drawables.end() - 1);
-        std::iter_swap(m_chunks.positions.begin() + index, m_chunks.positions.end() - 1);
+        // As the chunk renders need not be a sorted array, "swap and pop"
+        // can be used
+        // More efficent (and maybe safer) than normal deletion
+        std::iter_swap(m_chunks.drawables.begin() + index,
+                       m_chunks.drawables.end() - 1);
+        std::iter_swap(m_chunks.positions.begin() + index,
+                       m_chunks.positions.end() - 1);
         m_chunks.drawables.pop_back();
         m_chunks.positions.pop_back();
     }
