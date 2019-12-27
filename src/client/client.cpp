@@ -155,12 +155,14 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
         position.y -= PLAYER_SPEED * 2;
     }
 
-    if (rotation.x < -80.0f) {
-        rotation.x = -79.0f;
-    }
-    else if (rotation.x > 85.0f) {
-        rotation.x = 84.0f;
-    }
+    /*
+        if (rotation.x < -80.0f) {
+            rotation.x = -79.0f;
+        }
+        else if (rotation.x > 85.0f) {
+            rotation.x = 84.0f;
+        }
+    */
 }
 
 void Client::onKeyRelease(sf::Keyboard::Key key)
@@ -185,7 +187,7 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
                                        ? blockPosition
                                        : toBlockPosition(ray.getLastPoint());
             m_chunks.blockUpdates.push_back(blockUpdate);
-            break;
+            // break;
         }
     }
 }
