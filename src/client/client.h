@@ -6,6 +6,7 @@
 #include "world/chunk_mesh.h"
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/network/enet.h>
 #include <common/network/net_host.h>
@@ -14,6 +15,11 @@
 #include <unordered_set>
 
 class Keyboard;
+
+struct BlockUpdate {
+    BlockPosition position;
+    block_t block;
+};
 
 struct Entity final {
     glm::vec3 position{0.0f, 0.0f, 12.0f}, rotation{0.0f};
@@ -27,6 +33,7 @@ class Client final : public NetworkHost {
     bool init(float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
+    void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
     void update();
     void render();
@@ -53,6 +60,7 @@ class Client final : public NetworkHost {
     // End of network functions
 
     int findChunkDrawableIndex(const ChunkPosition &position);
+    void deleteChunkRenderable(const ChunkPosition &position);
 
     // Network
     ENetPeer *mp_serverPeer = nullptr;
@@ -86,6 +94,7 @@ class Client final : public NetworkHost {
         std::vector<gl::VertexArray> drawables;
         ChunkManager manager;
         std::unordered_set<ChunkPosition, ChunkPositionHash> updates;
+        std::vector<BlockUpdate> blockUpdates;
     } m_chunks;
 
     // Engine-y stuff

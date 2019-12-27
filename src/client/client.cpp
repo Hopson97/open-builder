@@ -155,12 +155,14 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
         position.y -= PLAYER_SPEED * 2;
     }
 
-    if (rotation.x < -80.0f) {
-        rotation.x = -79.0f;
-    }
-    else if (rotation.x > 85.0f) {
-        rotation.x = 84.0f;
-    }
+    /*
+        if (rotation.x < -80.0f) {
+            rotation.x = -79.0f;
+        }
+        else if (rotation.x > 85.0f) {
+            rotation.x = 84.0f;
+        }
+    */
 }
 
 void Client::onKeyRelease(sf::Keyboard::Key key)
@@ -170,18 +172,54 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
     }
 }
 
+void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
+                            [[maybe_unused]] int y)
+{
+    // Handle block removal/ block placing events
+    Ray ray(mp_player->position, mp_player->rotation);
+    for (; ray.getLength() < 8; ray.step()) {
+        auto blockPosition = toBlockPosition(ray.getEndpoint());
+        if (m_chunks.manager.getBlock(blockPosition) == 1) {
+
+            BlockUpdate blockUpdate;
+            blockUpdate.block = button == sf::Mouse::Left ? 0 : 1;
+            blockUpdate.position = button == sf::Mouse::Left
+                                       ? blockPosition
+                                       : toBlockPosition(ray.getLastPoint());
+            m_chunks.blockUpdates.push_back(blockUpdate);
+            break;
+        }
+    }
+}
+
+sf::Clock test;
+int radius = 0;
+
 void Client::update()
 {
+    if (test.getElapsedTime().asSeconds() > 2) {
+    }
+
     NetworkHost::tick();
     sendPlayerPosition(mp_player->position);
 
-    for (auto itr = m_chunks.updates.begin(); itr != m_chunks.updates.end();) {
-        auto &position = *itr;
-        if (findChunkDrawableIndex(position) == -1 &&
-            m_chunks.manager.hasNeighbours(position)) {
+    // Update blocks
+    for (auto &blockUpdate : m_chunks.blockUpdates) {
+        auto chunkPosition = toChunkPosition(blockUpdate.position);
+        m_chunks.manager.ensureNeighbours(chunkPosition);
+        m_chunks.manager.setBlock(blockUpdate.position, blockUpdate.block);
+        m_chunks.updates.emplace(chunkPosition);
+    }
+    m_chunks.blockUpdates.clear();
 
-            m_chunks.bufferables.push_back(
-                makeChunkMesh(m_chunks.manager.getChunk(position)));
+    // Update chunk meshes
+    for (auto itr = m_chunks.updates.begin(); itr != m_chunks.updates.end();) {
+        auto pos = *itr;
+        if (m_chunks.manager.hasNeighbours(pos)) {
+            auto &chunk = m_chunks.manager.getChunk(pos);
+            auto buffer = makeChunkMesh(chunk);
+            m_chunks.bufferables.push_back(buffer);
+            deleteChunkRenderable(pos);
             itr = m_chunks.updates.erase(itr);
         }
         else {
@@ -226,6 +264,7 @@ void Client::render()
     for (auto &chunk : m_chunks.bufferables) {
         m_chunks.drawables.push_back(chunk.createBuffer());
         m_chunks.positions.push_back(chunk.position);
+        // std::cout << "Buffered me a new one" << std::endl;
     }
     m_chunks.bufferables.clear();
 
@@ -261,4 +300,22 @@ int Client::findChunkDrawableIndex(const ChunkPosition &position)
         }
     }
     return -1;
+}
+
+void Client::deleteChunkRenderable(const ChunkPosition &position)
+{
+    auto index = findChunkDrawableIndex(position);
+    if (index > -1) {
+        m_chunks.drawables[index].destroy();
+
+        // As the chunk renders need not be a sorted array, "swap and pop"
+        // can be used
+        // More efficent (and maybe safer) than normal deletion
+        std::iter_swap(m_chunks.drawables.begin() + index,
+                       m_chunks.drawables.end() - 1);
+        std::iter_swap(m_chunks.positions.begin() + index,
+                       m_chunks.positions.end() - 1);
+        m_chunks.drawables.pop_back();
+        m_chunks.positions.pop_back();
+    }
 }

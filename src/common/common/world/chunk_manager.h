@@ -39,6 +39,13 @@ class ChunkManager final {
      */
     bool hasNeighbours(const ChunkPosition &chunkPosition) const;
 
+    /**
+     * @brief Makes sure a particular chunk has neighbouring chunks
+     *
+     * @param chunkPosition The chunk to ensure neighbours for
+     */
+    void ensureNeighbours(const ChunkPosition &chunkPosition);
+
   private:
     ChunkPositionMap<Chunk> m_chunks;
 };

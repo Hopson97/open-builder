@@ -101,4 +101,11 @@ TEST_CASE("Chunks should be able to be freely modified")
         REQUIRE(manager.hasNeighbours({1, 1, 1}) == true);
         REQUIRE(manager.hasNeighbours({1, 2, 1}) == false);
     }
+
+    SECTION("The chunk manager can ensure a chunk has neighbours")
+    {
+        ChunkManager manager;
+        manager.ensureNeighbours({0, 0, 0});
+        REQUIRE(manager.hasNeighbours({0, 0, 0}) == true);
+    }
 }
