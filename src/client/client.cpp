@@ -187,7 +187,7 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
                                        ? blockPosition
                                        : toBlockPosition(ray.getLastPoint());
             m_chunks.blockUpdates.push_back(blockUpdate);
-            // break;
+            break;
         }
     }
 }
