@@ -7,6 +7,15 @@ int toLocalBlockIndex(const BlockPosition &position)
     return position.y * (CHUNK_AREA) + position.z * CHUNK_SIZE + position.x;
 }
 
+ChunkPosition worldToChunkPosition(const glm::vec3 &position)
+{
+    float x = static_cast<i32>(position.x);
+    float y = static_cast<i32>(position.y);
+    float z = static_cast<i32>(position.z);
+
+    return toChunkPosition({x, y, z});
+}
+
 ChunkPosition toChunkPosition(const BlockPosition &position)
 {
     int x = position.x;
