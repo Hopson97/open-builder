@@ -195,12 +195,16 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
             auto buff = makeChunkMesh(chunk);
             m_chunks.bufferables.push_back(std::move(buff));
 
+            //Removes drawable if it exists
             auto chunkPosition = toChunkPosition(blockPosition);
             auto idx = findChunkDrawableIndex(chunkPosition);
-
-            m_chunks.drawables[idx].destroy();
-            m_chunks.drawables.erase(m_chunks.drawables.begin() + idx);
-            m_chunks.positions.erase(m_chunks.positions.begin() + idx);
+            if (idx > -1) {
+                m_chunks.drawables[idx].destroy();
+                std::iter_swap(m_chunks.drawables.begin() + idx, m_chunks.drawables.end() - 1);
+                std::iter_swap(m_chunks.positions.begin() + idx, m_chunks.positions.end() - 1);
+                m_chunks.drawables.pop_back();
+                m_chunks.positions.pop_back();
+            }
             break;
         }
         else {
