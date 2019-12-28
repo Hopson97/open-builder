@@ -11,9 +11,6 @@
 Server::Server()
     : NetworkHost("Server")
 {
-    // Create "spawn"
-    m_spawn = &m_chunkManager.addChunk({0, 0, 0});
-    makeFlatTerrain(m_spawn);
 }
 
 void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
@@ -54,6 +51,19 @@ void Server::onPeerConnect(ENetPeer *peer)
         broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);
 
         addPeer(peer, id);
+
+        //Send the "spawn"
+        for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {
+            for (int cz = 0; cz < 3; cz++) {
+                for (int cx = 0; cx < 3; cx++) {
+                    Chunk &chunk = m_chunkManager.addChunk({cx, cy, cz});
+                    makeFlatTerrain(&chunk);
+
+                    // Create the chunk-data packet
+                    sendChunk(id, chunk);
+                }
+            }
+        }
 
         // Send the inital world to the client
         for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {

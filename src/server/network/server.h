@@ -36,7 +36,7 @@ class Server final : public NetworkHost {
                           command_t command) override;
 
     void handleCommandPlayerPosition(sf::Packet &packet);
-    
+
     int findEmptySlot() const;
 
     void addPeer(ENetPeer *peer, peer_id_t id);
@@ -46,7 +46,6 @@ class Server final : public NetworkHost {
     std::array<ConnectedClient, MAX_CONNECTIONS> m_connectedClients{};
 
     ChunkManager m_chunkManager;
-    Chunk *m_spawn;
 
     bool m_isRunning = true;
 };
