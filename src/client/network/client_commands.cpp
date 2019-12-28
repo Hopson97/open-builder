@@ -46,6 +46,9 @@ void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
             onChunkData(packet);
             break;
 
+        case ClientCommand::SpawnPoint:
+            onSpawnPoint(packet);
+
         case ClientCommand::PeerId:
             break;
     }
@@ -98,4 +101,13 @@ void Client::onChunkData(sf::Packet &packet)
     Chunk &chunk = m_chunks.manager.addChunk(position);
     chunk.blocks = std::move(blocks);
     m_chunks.updates.insert(position);
+}
+
+void Client::onSpawnPoint(sf::Packet &packet)
+{
+    assert(mp_player);
+    if (mp_player) {
+        packet >> mp_player->position.x >> mp_player->position.y >>
+            mp_player->position.z;
+    }
 }

@@ -45,7 +45,8 @@ class Server final : public NetworkHost {
     std::array<ServerEntity, 512> m_entities;
     std::array<ConnectedClient, MAX_CONNECTIONS> m_connectedClients{};
 
-    ChunkManager m_chunkManager;
-
+    struct {
+        ChunkManager chunks;
+    } m_world;
     bool m_isRunning = true;
 };

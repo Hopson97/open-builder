@@ -34,7 +34,13 @@ enum class ClientCommand : command_t {
     // Data:
     // i32[3] The position of the chunk
     // block[CHUNK_VOLUME] The block data
-    ChunkData
+    ChunkData,
+
+    // Position for player when they spawn
+    // Data:
+    // float[3]: The X, Y, Z position of the entity
+    SpawnPoint,
+
 };
 
 /**

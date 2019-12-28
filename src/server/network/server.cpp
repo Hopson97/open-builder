@@ -11,6 +11,15 @@
 Server::Server()
     : NetworkHost("Server")
 {
+    // Create spawn area
+    for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
+        for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
+            for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
+                Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
+                makeFlatTerrain(&chunk);
+            }
+        }
+    }
 }
 
 void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
@@ -52,11 +61,24 @@ void Server::onPeerConnect(ENetPeer *peer)
 
         addPeer(peer, id);
 
-        //Send the "spawn"
-        for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {
-            for (int cz = 0; cz < 3; cz++) {
-                for (int cx = 0; cx < 3; cx++) {
-                    Chunk &chunk = m_chunkManager.addChunk({cx, cy, cz});
+        // Send the spawn position
+        // TODO: Actually calculate a position rather than use hardcoded numbers
+        sf::Packet spawn;
+        m_entities[id].x = 122;
+        m_entities[id].y = 225;
+        m_entities[id].z = 122;
+        spawn << ClientCommand::SpawnPoint << m_entities[id].x
+              << m_entities[id].y << m_entities[id].z;
+        sendToPeer(peer, spawn, 0, ENET_PACKET_FLAG_RELIABLE);
+
+        auto cp = worldToChunkPosition(
+            {m_entities[id].x, m_entities[id].y, m_entities[id].z});
+
+        // Send the "spawn"
+        for (int cy = cp.y - 2; cy <= cp.y + 2; cy++) {
+            for (int cz = cp.z - 2; cz <= cp.z + 2; cz++) {
+                for (int cx = cp.x - 2; cx <= cp.x + 2; cx++) {
+                    Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
                     makeFlatTerrain(&chunk);
 
                     // Create the chunk-data packet
@@ -66,10 +88,10 @@ void Server::onPeerConnect(ENetPeer *peer)
         }
 
         // Send the inital world to the client
-        for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {
-            for (int cz = 0; cz < TEMP_WORLD_WIDTH; cz++) {
-                for (int cx = 0; cx < TEMP_WORLD_WIDTH; cx++) {
-                    Chunk &chunk = m_chunkManager.addChunk({cx, cy, cz});
+        for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
+            for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
+                for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
+                    Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
                     makeFlatTerrain(&chunk);
 
                     // Create the chunk-data packet

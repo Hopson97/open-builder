@@ -10,8 +10,7 @@ class ChunkManager;
 template <typename T> using BlockArray = std::array<T, CHUNK_VOLUME>;
 
 /**
- * @brief Represents a little slice of the world, holding the blocks that make
- * it up
+ * @brief Data structure for a "chunk" of blocks of the game
  *
  */
 class Chunk {

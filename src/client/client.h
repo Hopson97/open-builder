@@ -56,6 +56,7 @@ class Client final : public NetworkHost {
     void onPlayerLeave(sf::Packet &packet);
     void onSnapshot(sf::Packet &packet);
     void onChunkData(sf::Packet &packet);
+    void onSpawnPoint(sf::Packet &packet);
     // End of network functions
 
     int findChunkDrawableIndex(const ChunkPosition &position);
