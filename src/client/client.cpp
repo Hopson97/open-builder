@@ -158,24 +158,39 @@ void Client::update()
     m_chunks.blockUpdates.clear();
 
     // Update chunk meshes
-    for (auto itr = m_chunks.updates.begin(); itr != m_chunks.updates.end();) {
-        auto pos = *itr;
-        if (m_chunks.manager.hasNeighbours(pos)) {
-            auto &chunk = m_chunks.manager.getChunk(pos);
-            auto buffer = makeChunkMesh(chunk);
-            m_chunks.bufferables.push_back(buffer);
-            deleteChunkRenderable(pos);
-            itr = m_chunks.updates.erase(itr);
-
-            // TODO: This break means one chunk is created per frame
-            // Ideally, this should all just be done on a different thread so
-            // that the frame rate is uneffected
-            break;
-        }
-        else {
+    // Find chunk update closest to the player
+    if (!m_chunks.updates.empty()) {
+        auto closest = m_chunks.updates.begin();
+        auto playerChunk = worldToChunkPosition(mp_player->position);
+        auto distance = [&playerChunk](const ChunkPosition& chunkPosition) {
+            auto dx = glm::abs(playerChunk.x - chunkPosition.x);
+            auto dy = glm::abs(playerChunk.y - chunkPosition.y);
+            auto dz = glm::abs(playerChunk.z - chunkPosition.z);
+            return dx + dy + dz;
+        };
+        int currentDistance = distance(*closest);
+        for (auto itr = m_chunks.updates.begin(); itr != m_chunks.updates.end();) {
+            int dist = distance(*itr);
+            if (dist < currentDistance && m_chunks.manager.hasNeighbours(*itr)) {
+                closest = itr;
+                currentDistance = dist;
+            }
             itr++;
         }
+
+        //Build it
+        if (m_chunks.manager.hasNeighbours(*closest)) {
+            auto &chunk = m_chunks.manager.getChunk(*closest);
+            auto buffer = makeChunkMesh(chunk);
+            m_chunks.bufferables.push_back(buffer);
+            deleteChunkRenderable(*closest);
+            m_chunks.updates.erase(closest);
+        }
+
+
+
     }
+    
 }
 
 void Client::render()
