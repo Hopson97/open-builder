@@ -4,6 +4,7 @@
 #include "coordinate.h"
 #include "world_constants.h"
 #include <array>
+#include <vector>
 
 class ChunkManager;
 
@@ -16,6 +17,7 @@ template <typename T> using BlockArray = std::array<T, CHUNK_VOLUME>;
 class Chunk {
   public:
     using Blocks = BlockArray<block_t>;
+    using CompressedBlocks = std::vector<std::pair<block_t, u32>>;
 
     Chunk(ChunkManager &manager, const ChunkPosition &position);
 
@@ -46,6 +48,9 @@ class Chunk {
      */
     block_t getBlock(const BlockPosition &blockPosition) const;
     const ChunkPosition &getPosition() const;
+
+    CompressedBlocks compress() const;
+    void decompress(const CompressedBlocks &blocks);
 
     Blocks blocks{0};
 

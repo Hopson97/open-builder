@@ -82,7 +82,6 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     auto &position = mp_player->position;
     if (keyboard.isKeyDown(sf::Keyboard::W)) {
         position += forwardsVector(rotation) * PLAYER_SPEED;
-        std::cout << position << std::endl;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::S)) {
         position += backwardsVector(rotation) * PLAYER_SPEED;
@@ -167,6 +166,10 @@ void Client::update()
             m_chunks.bufferables.push_back(buffer);
             deleteChunkRenderable(pos);
             itr = m_chunks.updates.erase(itr);
+
+            //TODO: This break means one chunk is created per frame
+            // Ideally, this should all just be done on a different thread so that the frame rate is uneffected
+            break; 
         }
         else {
             itr++;

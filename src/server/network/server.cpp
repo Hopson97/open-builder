@@ -32,11 +32,18 @@ void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
     packet << ClientCommand::ChunkData << chunk.getPosition().x
            << chunk.getPosition().y << chunk.getPosition().z;
 
-    for (auto &block : chunk.blocks) {
-        packet << block;
-    }
+    // "Old Style" - Send entire chunk
+    /*
     packet.append(chunk.blocks.data(),
                   chunk.blocks.size() * sizeof(chunk.blocks[0]));
+    */
+
+    // "New Style" - Compress the chunk before sending
+    auto compressedChunk = chunk.compress();
+    packet << static_cast<u32>(compressedChunk.size());
+    for (auto &block : compressedChunk) {
+        packet << block.first << block.second;
+    }
 
     // Send chunk data to client
     sendToPeer(m_connectedClients[peerId].peer, packet, 1,

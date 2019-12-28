@@ -94,12 +94,29 @@ void Client::onChunkData(sf::Packet &packet)
     Chunk::Blocks blocks;
 
     packet >> position.x >> position.y >> position.z;
+    Chunk &chunk = m_chunks.manager.addChunk(position);
+
+    // "Old Style" - Receive entire chunk
+    /*
     for (auto &block : blocks) {
         packet >> block;
     }
-
-    Chunk &chunk = m_chunks.manager.addChunk(position);
     chunk.blocks = std::move(blocks);
+    */
+
+    // "New Style" - Receive a compressed chunk
+    u32 size;
+    Chunk::CompressedBlocks compressed;
+    packet >> size;
+    for (u32 i = 0; i < size; i++) {
+        block_t type;
+        u32 count;
+        packet >> type >> count;
+        compressed.emplace_back(type, count);
+    }
+
+    chunk.decompress(compressed);
+
     m_chunks.updates.insert(position);
 }
 
