@@ -194,6 +194,10 @@ void Client::update()
                 m_chunks.bufferables.push_back(buffer);
                 deleteChunkRenderable(*itr);
                 m_chunks.updates.erase(itr);
+
+                //Break so that the game still runs while world is being built
+                // TODO: Work out a way to make this concurrent (aka run seperate from rest of application)
+                break;
             }
             else {
                 itr++;
