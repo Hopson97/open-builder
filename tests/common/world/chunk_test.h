@@ -87,13 +87,16 @@ TEST_CASE("Chunk can be compressed and uncompressed")
 
             // Ensure all blocks are there in the chunk (to avoid flakiness due
             // to random)
-            int ptr = 0;
             for (int i = 0; i < n; i++) {
-                chunk.blocks[ptr++] = i;
+                chunk.blocks[i] = i;
             }
 
             for (unsigned i = n + 1; i < chunk.blocks.size(); i++) {
+                chunk.blocks[i] = blockType(rng);
             }
+
+            auto compressed = chunk.compress();
+            // yeah no clue how to test this lol
         }
     }
 }
