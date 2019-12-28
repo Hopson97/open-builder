@@ -42,7 +42,7 @@ Chunk::CompressedBlocks Chunk::compress() const
     block_t current = blocks[0];
     u32 count = 1;
 
-    for (int i = 1; i < blocks.size(); i++) {
+    for (unsigned i = 1; i < blocks.size(); i++) {
         if (blocks[i] == current) {
             count++;
         }
@@ -63,7 +63,7 @@ void Chunk::decompress(const Chunk::CompressedBlocks &comp)
         block_t type = block.first;
         u32 count = block.second;
 
-        for (int i = 0; i < count; i++) {
+        for (u32 i = 0; i < count; i++) {
             blocks[pointer++] = type;
         }
     }

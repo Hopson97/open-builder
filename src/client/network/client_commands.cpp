@@ -91,13 +91,13 @@ void Client::onSnapshot(sf::Packet &packet)
 void Client::onChunkData(sf::Packet &packet)
 {
     ChunkPosition position;
-    Chunk::Blocks blocks;
 
     packet >> position.x >> position.y >> position.z;
     Chunk &chunk = m_chunks.manager.addChunk(position);
 
     // "Old Style" - Receive entire chunk
     /*
+    Chunk::Blocks blocks;
     for (auto &block : blocks) {
         packet >> block;
     }
