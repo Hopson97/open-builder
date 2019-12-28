@@ -6,6 +6,7 @@ add_library(ob-client
     gl/gl_shader.cpp
     gl/gl_textures.cpp
     gl/gl_errors.cpp
+    gl/primitive.cpp
     network/client_commands.cpp
     client.cpp
     maths.cpp

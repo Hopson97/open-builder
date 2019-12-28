@@ -1,5 +1,6 @@
 #include "client.h"
 
+#include "gl/primitive.h"
 #include "input/keyboard.h"
 #include "world/chunk_mesh_generation.h"
 #include <SFML/Window/Mouse.hpp>
@@ -7,52 +8,6 @@
 #include <common/network/net_command.h>
 #include <common/network/net_constants.h>
 #include <thread>
-
-namespace {
-gl::VertexArray createCube(float height = 1)
-{
-    std::vector<GLfloat> vertices = {
-        // Front
-        1, height, 1, 0, height, 1, 0, 0, 1, 1, 0, 1,
-        // Left
-        0, height, 1, 0, height, 0, 0, 0, 0, 0, 0, 1,
-        // Back
-        0, height, 0, 1, height, 0, 1, 0, 0, 0, 0, 0,
-        // Right
-        1, height, 0, 1, height, 1, 1, 0, 1, 1, 0, 0,
-        // Top
-        1, height, 0, 0, height, 0, 0, height, 1, 1, height, 1,
-        // Bottom
-        0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1,
-        // this just stops clang format from making the array long
-    };
-    std::vector<GLuint> indices;
-    for (int itr = 0, i = 0; itr < 6; itr++) {
-        indices.push_back(i);
-        indices.push_back(i + 1);
-        indices.push_back(i + 2);
-        indices.push_back(i + 2);
-        indices.push_back(i + 3);
-        indices.push_back(i);
-        i += 4;
-    }
-    std::vector<GLfloat> textureCoords;
-
-    for (int i = 0; i < 6; i++) {
-        textureCoords.insert(textureCoords.end(),
-                             {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f});
-    }
-
-    gl::VertexArray vao;
-    vao.create();
-    vao.bind();
-    vao.addVertexBuffer(3, vertices);
-    vao.addVertexBuffer(2, textureCoords);
-    vao.addIndexBuffer(indices);
-
-    return vao;
-}
-} // namespace
 
 Client::Client()
     : NetworkHost("Client")
@@ -62,7 +17,7 @@ Client::Client()
 bool Client::init(float aspect)
 {
     // OpenGL stuff
-    m_cube = createCube(2);
+    m_cube = makeCubeVertexArray(1, 2, 1);
 
     // Basic shader
     m_basicShader.program.create("static", "static");
