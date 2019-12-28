@@ -29,7 +29,8 @@ class TestServer : public NetworkHost {
     {
     }
 
-    void onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command) override
+    void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
+                          command_t command) override
     {
     }
 };
@@ -54,11 +55,11 @@ class TestClient : public NetworkHost {
     {
     }
 
-    void onCommandRecieve(ENetPeer* peer, sf::Packet &packet, command_t command) override
+    void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
+                          command_t command) override
     {
     }
 };
-
 
 TEST_CASE("The server works")
 {
@@ -96,7 +97,7 @@ TEST_CASE("The client can interact with the server.")
 
         serverThread.join();
     }
-    
+
     SECTION("The client can disconnect from the server")
     {
         std::atomic<bool> control = true;

@@ -3,6 +3,8 @@
 #include <catch2/catch.hpp>
 #include <common/debug.h>
 #include <common/world/chunk_manager.h>
+#include <ctime>
+#include <random>
 
 TEST_CASE("Chunks can get and set blocks")
 {
@@ -45,5 +47,53 @@ TEST_CASE("Chunks can get and set blocks")
         REQUIRE(rightChunk.qGetBlock(setPosition) == block);
         REQUIRE(rightChunk.getBlock(setPosition) == block);
         REQUIRE(manager.getBlock(setPosition) == block);
+    }
+}
+
+TEST_CASE("Chunk can be compressed and uncompressed")
+{
+
+    SECTION("The chunk can compress blocks")
+    {
+        ChunkManager manager;
+        Chunk &chunk = manager.addChunk({0, 0, 0});
+
+        SECTION(
+            "By default, a chunk is just air, so there is just one block type")
+        {
+            auto compressed = chunk.compress();
+            REQUIRE(compressed.size() == 1);
+            REQUIRE(compressed[0].second == chunk.blocks.size());
+        }
+
+        SECTION("Two block types")
+        {
+            chunk.qSetBlock({0, 0, 0}, 1);
+            auto compressed = chunk.compress();
+            REQUIRE(compressed.size() == 2);
+            REQUIRE(compressed[0].second == 1);
+            REQUIRE(compressed[1].second == chunk.blocks.size() - 1);
+        }
+
+        SECTION("N block types")
+        {
+            std::mt19937 rng;
+            rng.seed(std::time(nullptr));
+            std::uniform_int_distribution<> blockTypeCount(20, 200);
+
+            int n = blockTypeCount(rng);
+
+            std::uniform_int_distribution<> blockType(0, n);
+
+            // Ensure all blocks are there in the chunk (to avoid flakiness due
+            // to random)
+            int ptr = 0;
+            for (int i = 0; i < n; i++) {
+                chunk.blocks[ptr++] = i;
+            }
+
+            for (unsigned i = n + 1; i < chunk.blocks.size(); i++) {
+            }
+        }
     }
 }

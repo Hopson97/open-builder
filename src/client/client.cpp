@@ -167,9 +167,10 @@ void Client::update()
             deleteChunkRenderable(pos);
             itr = m_chunks.updates.erase(itr);
 
-            //TODO: This break means one chunk is created per frame
-            // Ideally, this should all just be done on a different thread so that the frame rate is uneffected
-            break; 
+            // TODO: This break means one chunk is created per frame
+            // Ideally, this should all just be done on a different thread so
+            // that the frame rate is uneffected
+            break;
         }
         else {
             itr++;
