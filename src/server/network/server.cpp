@@ -54,6 +54,19 @@ void Server::onPeerConnect(ENetPeer *peer)
         broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);
 
         addPeer(peer, id);
+
+        // Send the inital world to the client
+        for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {
+            for (int cz = 0; cz < TEMP_WORLD_WIDTH; cz++) {
+                for (int cx = 0; cx < TEMP_WORLD_WIDTH; cx++) {
+                    Chunk &chunk = m_chunkManager.addChunk({cx, cy, cz});
+                    makeFlatTerrain(&chunk);
+
+                    // Create the chunk-data packet
+                    sendChunk(id, chunk);
+                }
+            }
+        }
     }
 }
 
@@ -74,10 +87,6 @@ void Server::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
         case ServerCommand::PlayerPosition:
             handleCommandPlayerPosition(packet);
             break;
-
-        case ServerCommand::ChunkRequest:
-            handleCommandChunkRequest(packet);
-            break;
     }
 }
 
@@ -86,15 +95,6 @@ void Server::handleCommandPlayerPosition(sf::Packet &packet)
     peer_id_t id;
     packet >> id;
     packet >> m_entities[id].x >> m_entities[id].y >> m_entities[id].z;
-}
-
-void Server::handleCommandChunkRequest(sf::Packet &packet)
-{
-    peer_id_t id;
-    ChunkPosition position;
-    packet >> id >> position.x >> position.y >> position.z;
-
-    m_chunkRequests.emplace(position, id);
 }
 
 void Server::sendPackets()
@@ -111,22 +111,6 @@ void Server::sendPackets()
             }
         }
         broadcastToPeers(packet, 0, 0);
-    }
-
-    // Chunks
-    {
-        // Add 1 per tick to the queue for now
-        if (!m_chunkRequests.empty()) {
-
-            auto cr = m_chunkRequests.front();
-            m_chunkRequests.pop();
-
-            Chunk &chunk = m_chunkManager.addChunk(cr.position);
-            makeFlatTerrain(&chunk);
-
-            // Create the chunk-data packet
-            sendChunk(cr.peer, chunk);
-        }
     }
 }
 

@@ -52,16 +52,17 @@ bool Client::init(float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
-    // Get world from server
-    for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {
-        for (int cz = 0; cz < TEMP_WORLD_WIDTH; cz++) {
-            for (int cx = 0; cx < TEMP_WORLD_WIDTH; cx++) {
-                ChunkPosition position(cx, cy, cz);
-                sendChunkRequest({cx, cy, cz});
+    /*
+        // Get world from server
+        for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {
+            for (int cz = 0; cz < TEMP_WORLD_WIDTH; cz++) {
+                for (int cx = 0; cx < TEMP_WORLD_WIDTH; cx++) {
+                    ChunkPosition position(cx, cy, cz);
+                    sendChunkRequest({cx, cy, cz});
+                }
             }
         }
-    }
-
+    */
     m_projectionMatrix =
         glm::perspective(3.14f / 2.0f, aspect, 0.01f, 10000.0f);
     return true;

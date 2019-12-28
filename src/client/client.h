@@ -45,7 +45,6 @@ class Client final : public NetworkHost {
     // Network functions; defined in the src/client/network/client_command.cpp
     // directory
     void sendPlayerPosition(const glm::vec3 &position);
-    void sendChunkRequest(const ChunkPosition &position);
 
     void onPeerConnect(ENetPeer *peer) override;
     void onPeerDisconnect(ENetPeer *peer) override;

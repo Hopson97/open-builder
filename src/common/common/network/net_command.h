@@ -46,12 +46,6 @@ enum class ServerCommand : command_t {
     // peer_id_t: The player which position is being sent
     // float[3]: The x, y, z position of the player
     PlayerPosition,
-
-    // Client is requesting some data about world
-    // Data:
-    // peer_id_t: The peer requesting the chunk data
-    // i32[3] The position of the chunk
-    ChunkRequest,
 };
 
 template <typename CommandType>

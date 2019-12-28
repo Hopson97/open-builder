@@ -12,15 +12,6 @@ void Client::sendPlayerPosition(const glm::vec3 &position)
     NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
 }
 
-void Client::sendChunkRequest(const ChunkPosition &position)
-{
-    sf::Packet packet;
-    packet << ServerCommand::ChunkRequest << NetworkHost::getPeerId()
-           << position.x << position.y << position.z;
-    NetworkHost::sendToPeer(mp_serverPeer, packet, 0,
-                            ENET_PACKET_FLAG_RELIABLE);
-}
-
 void Client::onPeerConnect([[maybe_unused]] ENetPeer *peer)
 {
 }

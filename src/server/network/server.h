@@ -20,17 +20,6 @@ struct ConnectedClient {
     bool connected = false;
 };
 
-struct ChunkRequest {
-    ChunkRequest(ChunkPosition &chunkPosition, peer_id_t peerId)
-        : position(chunkPosition)
-        , peer(peerId)
-    {
-    }
-
-    ChunkPosition position;
-    peer_id_t peer;
-};
-
 class Server final : public NetworkHost {
   public:
     Server();
@@ -47,8 +36,7 @@ class Server final : public NetworkHost {
                           command_t command) override;
 
     void handleCommandPlayerPosition(sf::Packet &packet);
-    void handleCommandChunkRequest(sf::Packet &packet);
-
+    
     int findEmptySlot() const;
 
     void addPeer(ENetPeer *peer, peer_id_t id);
@@ -59,8 +47,6 @@ class Server final : public NetworkHost {
 
     ChunkManager m_chunkManager;
     Chunk *m_spawn;
-
-    std::queue<ChunkRequest> m_chunkRequests;
 
     bool m_isRunning = true;
 };
