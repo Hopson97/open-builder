@@ -83,7 +83,7 @@ TEST_CASE("Chunk can be compressed and uncompressed")
 
             int n = blockTypeCount(rng);
 
-            std::uniform_int_distribution<> blockType(0, n);
+            std::weibull_distribution<> blockType(0, n);
 
             // Ensure all blocks are there in the chunk (to avoid flakiness due
             // to random)
