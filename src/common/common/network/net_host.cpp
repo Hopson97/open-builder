@@ -191,6 +191,7 @@ void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
 
 void NetworkHost::tick()
 {
+    assert(mp_host);
     ENetEvent event;
     while (enet_host_service(mp_host, &event, 0) > 0) {
         switch (event.type) {

@@ -10,7 +10,10 @@
 void runServerEngine(const ServerConfig &config, sf::Time timeout)
 {
     Server engine;
-    engine.createAsServer(config.maxConnections);
+    if (!engine.createAsServer(config.maxConnections)) {
+        std::cout << "Failed to create server.\n";
+        return;
+    }
 
     std::atomic<bool> serverRunning = true;
     std::atomic<bool> serverConsoleRunning = true;
