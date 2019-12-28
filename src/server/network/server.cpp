@@ -71,9 +71,9 @@ void Server::onPeerConnect(ENetPeer *peer)
         // Send the spawn position
         // TODO: Actually calculate a position rather than use hardcoded numbers
         sf::Packet spawn;
-        m_entities[id].x = 122;
+        m_entities[id].x = TEMP_WORLD_SIZE / 2 * CHUNK_SIZE;
         m_entities[id].y = TEMP_WORLD_HEIGHT * CHUNK_SIZE;
-        m_entities[id].z = 122;
+        m_entities[id].z = TEMP_WORLD_SIZE / 2 * CHUNK_SIZE;
         spawn << ClientCommand::SpawnPoint << m_entities[id].x
               << m_entities[id].y << m_entities[id].z;
         sendToPeer(peer, spawn, 0, ENET_PACKET_FLAG_RELIABLE);

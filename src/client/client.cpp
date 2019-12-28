@@ -153,44 +153,53 @@ void Client::update()
         auto chunkPosition = toChunkPosition(blockUpdate.position);
         m_chunks.manager.ensureNeighbours(chunkPosition);
         m_chunks.manager.setBlock(blockUpdate.position, blockUpdate.block);
-        m_chunks.updates.emplace(chunkPosition);
+        m_chunks.updates.push_back(chunkPosition);
     }
     m_chunks.blockUpdates.clear();
 
-    // Update chunk meshes
-    // Find chunk update closest to the player
+    auto playerChunk = worldToChunkPosition(mp_player->position);
+    auto distanceToPlayer = [&playerChunk](const ChunkPosition &chunkPosition) {
+        return glm::abs(playerChunk.x - chunkPosition.x) +
+               glm::abs(playerChunk.y - chunkPosition.y) +
+               glm::abs(playerChunk.z - chunkPosition.z);
+    };
+
     if (!m_chunks.updates.empty()) {
-        auto closest = m_chunks.updates.begin();
-        auto playerChunk = worldToChunkPosition(mp_player->position);
-        auto distance = [&playerChunk](const ChunkPosition& chunkPosition) {
-            auto dx = glm::abs(playerChunk.x - chunkPosition.x);
-            auto dy = glm::abs(playerChunk.y - chunkPosition.y);
-            auto dz = glm::abs(playerChunk.z - chunkPosition.z);
-            return dx + dy + dz;
-        };
-        int currentDistance = distance(*closest);
-        for (auto itr = m_chunks.updates.begin(); itr != m_chunks.updates.end();) {
-            int dist = distance(*itr);
-            if (dist < currentDistance && m_chunks.manager.hasNeighbours(*itr)) {
-                closest = itr;
-                currentDistance = dist;
+        //Sort chunk updates by distance if the update vector is not sorted already
+        if (!std::is_sorted(m_chunks.updates.begin(), m_chunks.updates.end(),
+                            [&](const auto &a, const auto &b) {
+                                return distanceToPlayer(a) <
+                                       distanceToPlayer(b);
+                            })) {
+            // Remove unique elements
+            std::unordered_set<ChunkPosition, ChunkPositionHash> updates;
+            for (auto &update : m_chunks.updates) {
+                updates.insert(update);
             }
-            itr++;
+            m_chunks.updates.assign(updates.cbegin(), updates.cend());
+
+            // Sort it to find chunk mesh cloest to the player
+            std::sort(m_chunks.updates.begin(), m_chunks.updates.end(),
+                      [&](const auto &a, const auto &b) {
+                          return distanceToPlayer(a) < distanceToPlayer(b);
+                      });
         }
 
-        //Build it
-        if (m_chunks.manager.hasNeighbours(*closest)) {
-            auto &chunk = m_chunks.manager.getChunk(*closest);
-            auto buffer = makeChunkMesh(chunk);
-            m_chunks.bufferables.push_back(buffer);
-            deleteChunkRenderable(*closest);
-            m_chunks.updates.erase(closest);
+        // Find first "meshable" chunk
+        for (auto itr = m_chunks.updates.begin();
+             itr != m_chunks.updates.end();) {
+            if (m_chunks.manager.hasNeighbours(*itr)) {
+                auto &chunk = m_chunks.manager.getChunk(*itr);
+                auto buffer = makeChunkMesh(chunk);
+                m_chunks.bufferables.push_back(buffer);
+                deleteChunkRenderable(*itr);
+                m_chunks.updates.erase(itr);
+            }
+            else {
+                itr++;
+            }
         }
-
-
-
     }
-    
 }
 
 void Client::render()

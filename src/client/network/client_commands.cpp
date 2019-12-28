@@ -117,7 +117,7 @@ void Client::onChunkData(sf::Packet &packet)
 
     chunk.decompress(compressed);
 
-    m_chunks.updates.insert(position);
+    m_chunks.updates.push_back(position);
 }
 
 void Client::onSpawnPoint(sf::Packet &packet)
