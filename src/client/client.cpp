@@ -137,17 +137,10 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
     }
 }
 
-sf::Clock test;
-int radius = 0;
-
 void Client::update()
 {
-    if (test.getElapsedTime().asSeconds() > 2) {
-    }
-
     NetworkHost::tick();
     sendPlayerPosition(mp_player->position);
-
     // Update blocks
     for (auto &blockUpdate : m_chunks.blockUpdates) {
         auto chunkPosition = toChunkPosition(blockUpdate.position);
