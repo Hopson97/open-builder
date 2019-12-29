@@ -61,9 +61,9 @@ void Chunk::decompress(const Chunk::CompressedBlocks &comp)
     int pointer = 0;
     for (auto &block : comp) {
         block_t type = block.first;
-        u32 count = block.second;
+        auto count = block.second;
 
-        for (u32 i = 0; i < count; i++) {
+        for (u16 i = 0; i < count; i++) {
             blocks[pointer++] = type;
         }
     }

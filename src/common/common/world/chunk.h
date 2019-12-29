@@ -25,7 +25,7 @@ class Chunk {
      * 3, 3, 3, 2, 1] Would get compressed to: [0, 4, 1, 4, 0, 2, 1, 4, 3, 7, 2,
      * 1]
      */
-    using CompressedBlocks = std::vector<std::pair<block_t, u32>>;
+    using CompressedBlocks = std::vector<std::pair<block_t, u16>>;
 
     Chunk(ChunkManager &manager, const ChunkPosition &position);
 

@@ -110,7 +110,7 @@ void Client::onChunkData(sf::Packet &packet)
     packet >> size;
     for (u32 i = 0; i < size; i++) {
         block_t type;
-        u32 count;
+        u16 count;
         packet >> type >> count;
         compressed.emplace_back(type, count);
     }
