@@ -32,18 +32,25 @@ void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
     packet << ClientCommand::ChunkData << chunk.getPosition().x
            << chunk.getPosition().y << chunk.getPosition().z;
 
+#ifdef OB_CHUNK_PACKET_OLD_STYLE
     // "Old Style" - Send entire chunk
-    /*
+
+    for (auto &block : chunk.blocks) {
+        packet << block;
+    }
+/*
     packet.append(chunk.blocks.data(),
                   chunk.blocks.size() * sizeof(chunk.blocks[0]));
-    */
-
+*/
+#else
     // "New Style" - Compress the chunk before sending
     auto compressedChunk = chunk.compress();
     packet << static_cast<u32>(compressedChunk.size());
     for (auto &block : compressedChunk) {
         packet << block.first << block.second;
     }
+
+#endif
 
     // Send chunk data to client
     sendToPeer(m_connectedClients[peerId].peer, packet, 1,
@@ -71,9 +78,9 @@ void Server::onPeerConnect(ENetPeer *peer)
         // Send the spawn position
         // TODO: Actually calculate a position rather than use hardcoded numbers
         sf::Packet spawn;
-        m_entities[id].x = TEMP_WORLD_SIZE / 2 * CHUNK_SIZE;
-        m_entities[id].y = TEMP_WORLD_HEIGHT * CHUNK_SIZE;
-        m_entities[id].z = TEMP_WORLD_SIZE / 2 * CHUNK_SIZE;
+        m_entities[id].x = 200;
+        m_entities[id].y = 130;
+        m_entities[id].z = 200;
         spawn << ClientCommand::SpawnPoint << m_entities[id].x
               << m_entities[id].y << m_entities[id].z;
         sendToPeer(peer, spawn, 0, ENET_PACKET_FLAG_RELIABLE);
@@ -82,13 +89,11 @@ void Server::onPeerConnect(ENetPeer *peer)
             {m_entities[id].x, m_entities[id].y, m_entities[id].z});
 
         // Send the chunks at the "spawn"
-        for (int cy = cp.y - 2; cy <= cp.y + 2; cy++) {
-            for (int cz = cp.z - 2; cz <= cp.z + 2; cz++) {
-                for (int cx = cp.x - 2; cx <= cp.x + 2; cx++) {
+        int radius = 1;
+        for (int cy = cp.y - radius; cy <= cp.y + radius; cy++) {
+            for (int cz = cp.z - radius; cz <= cp.z + radius; cz++) {
+                for (int cx = cp.x - radius; cx <= cp.x + radius; cx++) {
                     Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
-                    makeFlatTerrain(&chunk);
-
-                    // Create the chunk-data packet
                     sendChunk(id, chunk);
                 }
             }
@@ -100,8 +105,6 @@ void Server::onPeerConnect(ENetPeer *peer)
                 for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {
                     Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
                     makeFlatTerrain(&chunk);
-
-                    // Create the chunk-data packet
                     sendChunk(id, chunk);
                 }
             }

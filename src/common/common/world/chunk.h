@@ -6,6 +6,8 @@
 #include <array>
 #include <vector>
 
+//#define OB_CHUNK_PACKET_OLD_STYLE
+
 class ChunkManager;
 
 template <typename T> using BlockArray = std::array<T, CHUNK_VOLUME>;

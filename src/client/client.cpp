@@ -73,7 +73,7 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
 
     // Handle keyboard input
-    float PLAYER_SPEED = 0.05f;
+    float PLAYER_SPEED = 0.075f;
     if (keyboard.isKeyDown(sf::Keyboard::LControl)) {
         PLAYER_SPEED *= 10;
     }
@@ -98,6 +98,7 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
     else if (keyboard.isKeyDown(sf::Keyboard::LShift)) {
         position.y -= PLAYER_SPEED * 2;
+        // std::cout << position << std::endl;
     }
 
     /*
@@ -158,7 +159,8 @@ void Client::update()
     };
 
     if (!m_chunks.updates.empty()) {
-        //Sort chunk updates by distance if the update vector is not sorted already
+        // Sort chunk updates by distance if the update vector is not sorted
+        // already
         if (!std::is_sorted(m_chunks.updates.begin(), m_chunks.updates.end(),
                             [&](const auto &a, const auto &b) {
                                 return distanceToPlayer(a) <
@@ -169,6 +171,7 @@ void Client::update()
             for (auto &update : m_chunks.updates) {
                 updates.insert(update);
             }
+
             m_chunks.updates.assign(updates.cbegin(), updates.cend());
 
             // Sort it to find chunk mesh cloest to the player
@@ -188,8 +191,9 @@ void Client::update()
                 deleteChunkRenderable(*itr);
                 m_chunks.updates.erase(itr);
 
-                //Break so that the game still runs while world is being built
-                // TODO: Work out a way to make this concurrent (aka run seperate from rest of application)
+                // Break so that the game still runs while world is being built
+                // TODO: Work out a way to make this concurrent (aka run
+                // seperate from rest of application)
                 break;
             }
             else {
