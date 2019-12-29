@@ -12,7 +12,7 @@ Server::Server()
     : NetworkHost("Server")
 {
     // Create spawn area
-    for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {
+    for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
         for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
             for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
                 Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
@@ -34,14 +34,8 @@ void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
 
 #ifdef OB_CHUNK_PACKET_OLD_STYLE
     // "Old Style" - Send entire chunk
-
-    for (auto &block : chunk.blocks) {
-        packet << block;
-    }
-/*
     packet.append(chunk.blocks.data(),
                   chunk.blocks.size() * sizeof(chunk.blocks[0]));
-*/
 #else
     // "New Style" - Compress the chunk before sending
     auto compressedChunk = chunk.compress();
@@ -49,7 +43,6 @@ void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
     for (auto &block : compressedChunk) {
         packet << block.first << block.second;
     }
-
 #endif
 
     // Send chunk data to client
@@ -79,7 +72,7 @@ void Server::onPeerConnect(ENetPeer *peer)
         // TODO: Actually calculate a position rather than use hardcoded numbers
         sf::Packet spawn;
         m_entities[id].x = 200;
-        m_entities[id].y = 130;
+        m_entities[id].y = CHUNK_SIZE * TEMP_WORLD_SIZE + 10;
         m_entities[id].z = 200;
         spawn << ClientCommand::SpawnPoint << m_entities[id].x
               << m_entities[id].y << m_entities[id].z;
@@ -102,7 +95,7 @@ void Server::onPeerConnect(ENetPeer *peer)
         // Send the inital world to the client
         for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
             for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
-                for (int cy = 0; cy < TEMP_WORLD_HEIGHT; cy++) {
+                for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
                     Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
                     makeFlatTerrain(&chunk);
                     sendChunk(id, chunk);

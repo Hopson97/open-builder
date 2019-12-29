@@ -11,7 +11,7 @@ void makeFlatTerrain(Chunk *chunk)
     auto cy = cp.y;
     auto cz = cp.z;
 
-    if (cy < TEMP_WORLD_HEIGHT - 1 && cy > 0 && cx < TEMP_WORLD_SIZE - 1 &&
+    if (cy < TEMP_WORLD_SIZE - 1 && cy > 0 && cx < TEMP_WORLD_SIZE - 1 &&
         cx > 0 && cz < TEMP_WORLD_SIZE - 1 && cz > 0) {
         chunk->blocks.fill(1);
     }

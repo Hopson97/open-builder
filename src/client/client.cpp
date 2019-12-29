@@ -73,7 +73,7 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
 
     // Handle keyboard input
-    float PLAYER_SPEED = 0.075f;
+    float PLAYER_SPEED = 0.2f;
     if (keyboard.isKeyDown(sf::Keyboard::LControl)) {
         PLAYER_SPEED *= 10;
     }
