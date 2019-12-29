@@ -1,5 +1,3 @@
-#pragma once
-
 #include <catch2/catch.hpp>
 #include <common/debug.h>
 #include <common/world/chunk_manager.h>

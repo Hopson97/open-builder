@@ -1,5 +1,3 @@
-#pragma once
-
 #include <atomic>
 #include <catch2/catch.hpp>
 #include <common/network/net_host.h>

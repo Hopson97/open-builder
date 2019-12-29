@@ -1,5 +1,3 @@
-#pragma once
-
 #include <catch2/catch.hpp>
 #include <common/world/coordinate.h>
 #include <common/world/world_constants.h>

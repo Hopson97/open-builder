@@ -96,6 +96,10 @@ function (do_tests)
     #Create the unit test executable
     add_executable(tests
         tests/tests.cpp
+        tests/common/world/chunk_manager_test.cpp
+        tests/common/world/coordinate_test.cpp
+        tests/common/world/chunk_test.cpp
+        tests/common/network/net_host_test.cpp
     )
     
     include_dirs(tests)

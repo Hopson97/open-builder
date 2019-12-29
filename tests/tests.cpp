@@ -4,11 +4,6 @@
 #include <SFML/Window/Window.hpp>
 #include <glad/glad.h>
 
-#include "common/network/net_host_test.h"
-#include "common/world/chunk_manager_test.h"
-#include "common/world/chunk_test.h"
-#include "common/world/coordinate_test.h"
-
 // ENet causes a bunch compiler warnings eg unused vars so these are here to
 // hide that
 #ifdef __GNUC__
