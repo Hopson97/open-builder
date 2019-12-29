@@ -99,4 +99,31 @@ TEST_CASE("Chunk can be compressed and uncompressed")
             // yeah no clue how to test this lol
         }
     }
+
+    SECTION("Chunks can correctly de-compress chunks")
+    {
+        block_t blockA = 5;
+        block_t blockB = 45;
+        block_t blockC = 123;
+
+        ChunkPosition positionA(0, 20, 12);
+        ChunkPosition positionB(12, 2, 4);
+        ChunkPosition positionC(1, 30, 8);
+
+        ChunkManager manager;
+        Chunk &chunk = manager.addChunk({0, 0, 0});
+
+        chunk.qSetBlock(positionA, blockA);
+        chunk.qSetBlock(positionB, blockB);
+        chunk.qSetBlock(positionC, blockC);
+
+        auto compressed = chunk.compress();
+
+        Chunk& decompressor = manager.addChunk({1, 1, 1});
+        decompressor.decompress(compressed);
+
+        REQUIRE(decompressor.getBlock(positionA) == blockA);
+        REQUIRE(decompressor.getBlock(positionB) == blockB);
+        REQUIRE(decompressor.getBlock(positionC) == blockC);
+    }
 }

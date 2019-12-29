@@ -108,4 +108,4 @@ function (do_tests)
     link_exe(tests)
 endfunction(do_tests)
 
-#do_tests()
+do_tests()
