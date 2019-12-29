@@ -22,7 +22,6 @@ TEST_CASE("Coordinate systems can be correctly converted between")
         position = {-1, CHUNK_SIZE, CHUNK_SIZE};
         converted = {-1, 1, 1};
         REQUIRE(toChunkPosition(position).x == converted.x);
-
     }
 
     SECTION("Block positions can be correctly converted to an array index")

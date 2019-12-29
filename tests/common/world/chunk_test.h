@@ -3,8 +3,10 @@
 #include <catch2/catch.hpp>
 #include <common/debug.h>
 #include <common/world/chunk_manager.h>
+#include <ctime>
+#include <random>
 
-TEST_CASE("Chunks should be able to be freely modified")
+TEST_CASE("Chunks can get and set blocks")
 {
     block_t block = 10;
 
@@ -16,45 +18,6 @@ TEST_CASE("Chunks should be able to be freely modified")
 
         chunk.qSetBlock(blockPosition, block);
         REQUIRE(chunk.qGetBlock(blockPosition) == block);
-    }
-
-    SECTION("The chunk manager will correctly set and get neighbouring blocks")
-    {
-        ChunkPosition left(-1, 0, 0);
-        ChunkPosition middle(0, 0, 0);
-        ChunkPosition right(1, 0, 0);
-
-        ChunkManager manager;
-        Chunk &leftChunk = manager.addChunk(left);
-        Chunk &middleChunk = manager.addChunk(middle);
-        Chunk &rightChunk = manager.addChunk(right);
-
-        BlockPosition setPosition;
-        BlockPosition correctedPosition;
-
-        setPosition = {CHUNK_SIZE, 0, 0};
-        correctedPosition = {0, 0, 0};
-        manager.setBlock(setPosition, block);
-        REQUIRE(rightChunk.qGetBlock(correctedPosition) == block);
-        REQUIRE(manager.getBlock(setPosition) == block);
-
-        setPosition = {-1, 20, 0};
-        correctedPosition = {CHUNK_SIZE - 1, 20, 0};
-        manager.setBlock(setPosition, block);
-        REQUIRE(leftChunk.qGetBlock(correctedPosition) == block);
-        REQUIRE(manager.getBlock(setPosition) == block);
-
-        setPosition = {-10, 0, 0};
-        correctedPosition = {CHUNK_SIZE - 10, 0, 0};
-        manager.setBlock(setPosition, block);
-        REQUIRE(leftChunk.qGetBlock(correctedPosition) == block);
-        REQUIRE(manager.getBlock(setPosition) == block);
-
-        setPosition = {5, 10, 20};
-        correctedPosition = {5, 10, 20};
-        manager.setBlock(setPosition, block);
-        REQUIRE(middleChunk.qGetBlock(correctedPosition) == block);
-        REQUIRE(manager.getBlock(setPosition) == block);
     }
 
     SECTION("The chunk is able to get neighbour blocks")
@@ -85,27 +48,82 @@ TEST_CASE("Chunks should be able to be freely modified")
         REQUIRE(rightChunk.getBlock(setPosition) == block);
         REQUIRE(manager.getBlock(setPosition) == block);
     }
+}
 
-    SECTION("The chunk manager correctly identifies it has neighbours for a "
-            "given chunk")
+TEST_CASE("Chunk can be compressed and uncompressed")
+{
+
+    SECTION("The chunk can compress blocks")
     {
         ChunkManager manager;
-        for (int y = 0; y < 3; y++) {
-            for (int z = 0; z < 3; z++) {
-                for (int x = 0; x < 3; x++) {
-                    manager.addChunk({x, y, z});
-                }
-            }
+        Chunk &chunk = manager.addChunk({0, 0, 0});
+
+        SECTION(
+            "By default, a chunk is just air, so there is just one block type")
+        {
+            auto compressed = chunk.compress();
+            REQUIRE(compressed.size() == 1);
+            REQUIRE(compressed[0].second == chunk.blocks.size());
         }
 
-        REQUIRE(manager.hasNeighbours({1, 1, 1}) == true);
-        REQUIRE(manager.hasNeighbours({1, 2, 1}) == false);
+        SECTION("Two block types")
+        {
+            chunk.qSetBlock({0, 0, 0}, 1);
+            auto compressed = chunk.compress();
+            REQUIRE(compressed.size() == 2);
+            REQUIRE(compressed[0].second == 1);
+            REQUIRE(compressed[1].second == chunk.blocks.size() - 1);
+        }
+
+        SECTION("N block types")
+        {
+            std::mt19937 rng;
+            rng.seed(std::time(nullptr));
+            std::uniform_int_distribution<> blockTypeCount(20, 200);
+
+            int n = blockTypeCount(rng);
+
+            std::weibull_distribution<> blockType(0, n);
+
+            // Ensure all blocks are there in the chunk (to avoid flakiness due
+            // to random)
+            for (int i = 0; i < n; i++) {
+                chunk.blocks[i] = i;
+            }
+
+            for (unsigned i = n + 1; i < chunk.blocks.size(); i++) {
+                chunk.blocks[i] = blockType(rng);
+            }
+
+            auto compressed = chunk.compress();
+            // yeah no clue how to test this lol
+        }
     }
 
-    SECTION("The chunk manager can ensure a chunk has neighbours")
+    SECTION("Chunks can correctly de-compress chunks")
     {
+        block_t blockA = 5;
+        block_t blockB = 45;
+        block_t blockC = 123;
+
+        ChunkPosition positionA(0, 20, 12);
+        ChunkPosition positionB(12, 2, 4);
+        ChunkPosition positionC(1, 30, 8);
+
         ChunkManager manager;
-        manager.ensureNeighbours({0, 0, 0});
-        REQUIRE(manager.hasNeighbours({0, 0, 0}) == true);
+        Chunk &chunk = manager.addChunk({0, 0, 0});
+
+        chunk.qSetBlock(positionA, blockA);
+        chunk.qSetBlock(positionB, blockB);
+        chunk.qSetBlock(positionC, blockC);
+
+        auto compressed = chunk.compress();
+
+        Chunk& decompressor = manager.addChunk({1, 1, 1});
+        decompressor.decompress(compressed);
+
+        REQUIRE(decompressor.getBlock(positionA) == blockA);
+        REQUIRE(decompressor.getBlock(positionB) == blockB);
+        REQUIRE(decompressor.getBlock(positionC) == blockC);
     }
 }

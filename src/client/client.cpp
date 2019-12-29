@@ -73,7 +73,7 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
 
     // Handle keyboard input
-    float PLAYER_SPEED = 0.05f;
+    float PLAYER_SPEED = 0.075f;
     if (keyboard.isKeyDown(sf::Keyboard::LControl)) {
         PLAYER_SPEED *= 10;
     }
@@ -82,7 +82,6 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     auto &position = mp_player->position;
     if (keyboard.isKeyDown(sf::Keyboard::W)) {
         position += forwardsVector(rotation) * PLAYER_SPEED;
-        std::cout << position << std::endl;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::S)) {
         position += backwardsVector(rotation) * PLAYER_SPEED;
@@ -99,6 +98,7 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
     else if (keyboard.isKeyDown(sf::Keyboard::LShift)) {
         position.y -= PLAYER_SPEED * 2;
+        // std::cout << position << std::endl;
     }
 
     /*
@@ -138,38 +138,67 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
     }
 }
 
-sf::Clock test;
-int radius = 0;
-
 void Client::update()
 {
-    if (test.getElapsedTime().asSeconds() > 2) {
-    }
-
     NetworkHost::tick();
     sendPlayerPosition(mp_player->position);
-
     // Update blocks
     for (auto &blockUpdate : m_chunks.blockUpdates) {
         auto chunkPosition = toChunkPosition(blockUpdate.position);
         m_chunks.manager.ensureNeighbours(chunkPosition);
         m_chunks.manager.setBlock(blockUpdate.position, blockUpdate.block);
-        m_chunks.updates.emplace(chunkPosition);
+        m_chunks.updates.push_back(chunkPosition);
     }
     m_chunks.blockUpdates.clear();
 
-    // Update chunk meshes
-    for (auto itr = m_chunks.updates.begin(); itr != m_chunks.updates.end();) {
-        auto pos = *itr;
-        if (m_chunks.manager.hasNeighbours(pos)) {
-            auto &chunk = m_chunks.manager.getChunk(pos);
-            auto buffer = makeChunkMesh(chunk);
-            m_chunks.bufferables.push_back(buffer);
-            deleteChunkRenderable(pos);
-            itr = m_chunks.updates.erase(itr);
+    auto playerChunk = worldToChunkPosition(mp_player->position);
+    auto distanceToPlayer = [&playerChunk](const ChunkPosition &chunkPosition) {
+        return glm::abs(playerChunk.x - chunkPosition.x) +
+               glm::abs(playerChunk.y - chunkPosition.y) +
+               glm::abs(playerChunk.z - chunkPosition.z);
+    };
+
+    if (!m_chunks.updates.empty()) {
+        // Sort chunk updates by distance if the update vector is not sorted
+        // already
+        if (!std::is_sorted(m_chunks.updates.begin(), m_chunks.updates.end(),
+                            [&](const auto &a, const auto &b) {
+                                return distanceToPlayer(a) <
+                                       distanceToPlayer(b);
+                            })) {
+            // Remove unique elements
+            std::unordered_set<ChunkPosition, ChunkPositionHash> updates;
+            for (auto &update : m_chunks.updates) {
+                updates.insert(update);
+            }
+
+            m_chunks.updates.assign(updates.cbegin(), updates.cend());
+
+            // Sort it to find chunk mesh cloest to the player
+            std::sort(m_chunks.updates.begin(), m_chunks.updates.end(),
+                      [&](const auto &a, const auto &b) {
+                          return distanceToPlayer(a) < distanceToPlayer(b);
+                      });
         }
-        else {
-            itr++;
+
+        // Find first "meshable" chunk
+        for (auto itr = m_chunks.updates.begin();
+             itr != m_chunks.updates.end();) {
+            if (m_chunks.manager.hasNeighbours(*itr)) {
+                auto &chunk = m_chunks.manager.getChunk(*itr);
+                auto buffer = makeChunkMesh(chunk);
+                m_chunks.bufferables.push_back(buffer);
+                deleteChunkRenderable(*itr);
+                m_chunks.updates.erase(itr);
+
+                // Break so that the game still runs while world is being built
+                // TODO: Work out a way to make this concurrent (aka run
+                // seperate from rest of application)
+                break;
+            }
+            else {
+                itr++;
+            }
         }
     }
 }

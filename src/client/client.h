@@ -93,7 +93,7 @@ class Client final : public NetworkHost {
         std::vector<ChunkPosition> positions;
         std::vector<gl::VertexArray> drawables;
         ChunkManager manager;
-        std::unordered_set<ChunkPosition, ChunkPositionHash> updates;
+        std::vector<ChunkPosition> updates;
         std::vector<BlockUpdate> blockUpdates;
     } m_chunks;
 
