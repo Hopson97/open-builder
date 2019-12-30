@@ -7,7 +7,6 @@
 //      General vector and matricies helpers
 //
 // ===============================================
-
 void rotateMatrix(glm::mat4 &matrix, const glm::vec3 &degrees)
 {
     matrix = glm::rotate(matrix, glm::radians(degrees.x), {1, 0, 0});
@@ -56,7 +55,6 @@ glm::vec3 rightVector(const glm::vec3 &rotation)
 //                  Ray casts
 //
 // ===============================================
-
 Ray::Ray(const glm::vec3 &startPosition, const glm::vec3 &direction)
     : m_start(startPosition)
     , m_previous(startPosition)
@@ -92,7 +90,6 @@ const glm::vec3 &Ray::getLastPoint() const
 //           Frustum/ Frustum Culling
 //
 // ===============================================
-
 enum Planes {
     Near,
     Far,
