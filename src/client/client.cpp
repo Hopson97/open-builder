@@ -236,10 +236,11 @@ void Client::render()
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
 
     // Buffer chunks
-    for (auto &chunk : m_chunks.bufferables) {
-        m_chunks.drawables.push_back(chunk.createBuffer());
-        m_chunks.positions.push_back(chunk.position);
-        // std::cout << "Buffered me a new one" << std::endl;
+    for (auto &chunkMesh : m_chunks.bufferables) {
+        if (chunkMesh.indicesCount > 0) {
+            m_chunks.drawables.push_back(chunkMesh.createBuffer());
+            m_chunks.positions.push_back(chunkMesh.position);
+        }
     }
     m_chunks.bufferables.clear();
 
