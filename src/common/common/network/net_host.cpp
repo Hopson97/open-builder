@@ -177,20 +177,63 @@ bool NetworkHost::sendToPeer(ENetPeer *peer, sf::Packet &packet, u8 channel,
                              u32 flags)
 {
     ENetPacket *pkt = createPacket(packet, flags);
-    int result = enet_peer_send(peer, channel, pkt);
-    flush();
-    return result == 0;
+
+    QueuedPacket qp;
+    qp.packet = pkt;
+    qp.peer = peer;
+    qp.style = QueuedPacket::Style::Broadcast;
+    qp.channel = channel;
+
+    m_queue.push_back(qp);
+    return true;
+    /*
+        ENetPacket *pkt = createPacket(packet, flags);
+        int result = enet_peer_send(peer, channel, pkt);
+        flush();
+        return result == 0;
+    */
 }
 
 void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
 {
     ENetPacket *pkt = createPacket(packet, flags);
-    enet_host_broadcast(mp_host, channel, pkt);
-    flush();
+    // enet_host_broadcast(mp_host, channel, pkt);
+    // flush();
+
+    QueuedPacket qp;
+    qp.packet = pkt;
+    qp.style = QueuedPacket::Style::One;
+    qp.channel = channel;
 }
 
 void NetworkHost::tick()
 {
+    int sent = 0;
+    while (!m_queue.empty()) {
+        auto qp = m_queue.front();
+        m_queue.pop_front();
+        sent += qp.packet->dataLength;
+
+        switch (qp.style)
+        {
+        case QueuedPacket::Style::Broadcast:
+            enet_host_broadcast(mp_host, qp.channel, qp.packet);
+            break;
+
+        case QueuedPacket::Style::One:
+            enet_peer_send(qp.peer, qp.channel, qp.packet);
+            break;
+        
+        default:
+            break;
+        }
+
+        flush();
+        if (sent > 1024) {
+            break;
+        }
+    }
+
     assert(mp_host);
     ENetEvent event;
     while (enet_host_service(mp_host, &event, 0) > 0) {
@@ -205,10 +248,26 @@ void NetworkHost::tick()
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
+                for (auto itr = m_queue.begin(); itr != m_queue.end();) {
+                    if (itr->peer->connectID == event.peer->connectID) {
+                        itr = m_queue.erase(itr);
+                    }
+                    else {
+                        itr++;
+                    }
+                }
                 onPeerDisconnect(event.peer);
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
+                for (auto itr = m_queue.begin(); itr != m_queue.end();) {
+                    if (itr->peer->connectID == event.peer->connectID) {
+                        itr = m_queue.erase(itr);
+                    }
+                    else {
+                        itr++;
+                    }
+                }
                 onPeerTimeout(event.peer);
                 break;
 

@@ -184,8 +184,7 @@ void Client::update()
         // Find first "meshable" chunk
         for (auto itr = m_chunks.updates.begin();
              itr != m_chunks.updates.end();) {
-            if (m_chunks.manager.hasNeighbours(*itr) &&
-                m_frustum.chunkIsInFrustum(*itr)) {
+            if (m_chunks.manager.hasNeighbours(*itr)) {
                 auto &chunk = m_chunks.manager.getChunk(*itr);
                 auto buffer = makeChunkMesh(chunk);
                 m_chunks.bufferables.push_back(buffer);

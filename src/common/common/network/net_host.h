@@ -7,6 +7,18 @@
 #include <SFML/Network/Packet.hpp>
 #include <array>
 #include <optional>
+#include <deque>
+
+struct QueuedPacket {
+    enum class Style {
+        One,
+        Broadcast,
+    };
+    ENetPeer *peer = nullptr;
+    ENetPacket *packet = nullptr;
+    Style style;
+    u8 channel = 0;
+};
 
 /**
  * @brief Base class for network hosts (clients/ servers)
@@ -93,6 +105,8 @@ class NetworkHost {
     void onCommandRecieve(ENetPeer *peer, const ENetPacket &packet);
 
     void flush();
+
+    std::deque<QueuedPacket> m_queue;
 
     ENetHost *mp_host = nullptr;
     const std::string m_name;

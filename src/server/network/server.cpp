@@ -72,7 +72,7 @@ void Server::onPeerConnect(ENetPeer *peer)
         // TODO: Actually calculate a position rather than use hardcoded numbers
         sf::Packet spawn;
         m_entities[id].x = 200;
-        m_entities[id].y = CHUNK_SIZE * TEMP_WORLD_SIZE + 10;
+        m_entities[id].y = CHUNK_SIZE * TEMP_WORLD_SIZE - CHUNK_SIZE + 2;
         m_entities[id].z = 200;
         spawn << ClientCommand::SpawnPoint << m_entities[id].x
               << m_entities[id].y << m_entities[id].z;
@@ -82,7 +82,7 @@ void Server::onPeerConnect(ENetPeer *peer)
             {m_entities[id].x, m_entities[id].y, m_entities[id].z});
 
         // Send the chunks at the "spawn"
-        int radius = 1;
+        int radius = 2;
         for (int cy = cp.y - radius; cy <= cp.y + radius; cy++) {
             for (int cz = cp.z - radius; cz <= cp.z + radius; cz++) {
                 for (int cx = cp.x - radius; cx <= cp.x + radius; cx++) {
@@ -93,12 +93,19 @@ void Server::onPeerConnect(ENetPeer *peer)
         }
 
         // Send the inital world to the client
-        for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
-            for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
-                for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
-                    Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
-                    makeFlatTerrain(&chunk);
-                    sendChunk(id, chunk);
+        for (int cy = TEMP_WORLD_SIZE - 1; cy >= 0; cy--) {
+            for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
+                for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
+
+                    if (m_world.chunks.hasChunk({cx, cy, cz})) {
+                        auto &chunk = m_world.chunks.getChunk({cx, cy, cz});
+                        sendChunk(id, chunk);
+                    }
+                    else {
+                        Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
+                        makeFlatTerrain(&chunk);
+                        sendChunk(id, chunk);
+                    }
                 }
             }
         }
