@@ -45,8 +45,8 @@ EngineStatus runClientEngine(const ClientConfig &config)
     glViewport(0, 0, window.width, window.height);
 
     glCheck(glEnable(GL_DEPTH_TEST));
-    // glCheck(glEnable(GL_CULL_FACE));
-    // glCheck(glCullFace(GL_BACK));
+    glCheck(glEnable(GL_CULL_FACE));
+    glCheck(glCullFace(GL_BACK));
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
