@@ -15,7 +15,6 @@
 #include <unordered_set>
 
 class Keyboard;
-
 struct BlockUpdate {
     BlockPosition position;
     block_t block;
@@ -100,4 +99,6 @@ class Client final : public NetworkHost {
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
     bool m_isMouseLocked = false;
+
+    ViewFrustum m_frustum;
 };

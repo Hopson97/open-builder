@@ -184,7 +184,8 @@ void Client::update()
         // Find first "meshable" chunk
         for (auto itr = m_chunks.updates.begin();
              itr != m_chunks.updates.end();) {
-            if (m_chunks.manager.hasNeighbours(*itr)) {
+            if (m_chunks.manager.hasNeighbours(*itr) &&
+                m_frustum.chunkIsInFrustum(*itr)) {
                 auto &chunk = m_chunks.manager.getChunk(*itr);
                 auto buffer = makeChunkMesh(chunk);
                 m_chunks.bufferables.push_back(buffer);
@@ -216,6 +217,8 @@ void Client::render()
     projectionViewMatrix = m_projectionMatrix * viewMatrix;
     gl::loadUniform(m_basicShader.projectionViewLocation, projectionViewMatrix);
 
+    m_frustum.update(projectionViewMatrix);
+
     // Render all the entities
     auto drawable = m_cube.getDrawable();
     drawable.bind();
@@ -244,9 +247,12 @@ void Client::render()
     }
     m_chunks.bufferables.clear();
 
-    // Render them
-    for (auto &chunk : m_chunks.drawables) {
-        chunk.getDrawable().bindAndDraw();
+    // Render them (if in view)
+    assert(m_chunks.drawables.size() == m_chunks.positions.size());
+    for (unsigned i = 0; i < m_chunks.drawables.size(); i++) {
+        if (m_frustum.chunkIsInFrustum(m_chunks.positions[i])) {
+            m_chunks.drawables[i].getDrawable().bindAndDraw();
+        }
     }
 }
 

@@ -2,6 +2,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <common/world/coordinate.h>
+
 /**
  * @brief Rotate a matrix
  *
@@ -86,4 +88,21 @@ class Ray {
     glm::vec3 m_previous;
     glm::vec3 m_end;
     glm::vec3 m_direction;
+};
+
+class ViewFrustum {
+    struct Plane {
+        float distanceToPoint(const glm::vec3 &point) const;
+
+        float distanceToOrigin;
+        glm::vec3 normal;
+    };
+
+  public:
+    void update(const glm::mat4 &projViewMatrix) noexcept;
+
+    bool chunkIsInFrustum(ChunkPosition position) const noexcept;
+
+  private:
+    std::array<Plane, 6> m_planes;
 };
