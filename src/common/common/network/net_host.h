@@ -6,8 +6,8 @@
 #include "net_constants.h"
 #include <SFML/Network/Packet.hpp>
 #include <array>
-#include <optional>
 #include <deque>
+#include <optional>
 
 struct QueuedPacket {
     enum class Style {
@@ -96,6 +96,7 @@ class NetworkHost {
     void broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags);
 
   private:
+    void removePeerFromPacketQueue(ENetPeer *peer);
     virtual void onPeerConnect(ENetPeer *peer) = 0;
     virtual void onPeerDisconnect(ENetPeer *peer) = 0;
     virtual void onPeerTimeout(ENetPeer *peer) = 0;

@@ -209,28 +209,29 @@ void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
 
 void NetworkHost::tick()
 {
-    int sent = 0;
+    const int MAX__SEND_LIMIT = 1024;
+    // 'Send' the queued packets, but not too many at once
+    int bytesSent = 0;
     while (!m_queue.empty()) {
         auto qp = m_queue.front();
         m_queue.pop_front();
-        sent += qp.packet->dataLength;
+        bytesSent += qp.packet->dataLength;
 
-        switch (qp.style)
-        {
-        case QueuedPacket::Style::Broadcast:
-            enet_host_broadcast(mp_host, qp.channel, qp.packet);
-            break;
+        switch (qp.style) {
+            case QueuedPacket::Style::Broadcast:
+                enet_host_broadcast(mp_host, qp.channel, qp.packet);
+                break;
 
-        case QueuedPacket::Style::One:
-            enet_peer_send(qp.peer, qp.channel, qp.packet);
-            break;
-        
-        default:
-            break;
+            case QueuedPacket::Style::One:
+                enet_peer_send(qp.peer, qp.channel, qp.packet);
+                break;
+
+            default:
+                break;
         }
 
         flush();
-        if (sent > 1024) {
+        if (bytesSent > MAX__SEND_LIMIT) {
             break;
         }
     }
@@ -249,26 +250,12 @@ void NetworkHost::tick()
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
-                for (auto itr = m_queue.begin(); itr != m_queue.end();) {
-                    if (itr->peer->connectID == event.peer->connectID) {
-                        itr = m_queue.erase(itr);
-                    }
-                    else {
-                        itr++;
-                    }
-                }
+                removePeerFromPacketQueue(event.peer);
                 onPeerDisconnect(event.peer);
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
-                for (auto itr = m_queue.begin(); itr != m_queue.end();) {
-                    if (itr->peer->connectID == event.peer->connectID) {
-                        itr = m_queue.erase(itr);
-                    }
-                    else {
-                        itr++;
-                    }
-                }
+                removePeerFromPacketQueue(event.peer);
                 onPeerTimeout(event.peer);
                 break;
 
@@ -290,4 +277,18 @@ void NetworkHost::onCommandRecieve(ENetPeer *peer, const ENetPacket &enetPacket)
 void NetworkHost::flush()
 {
     enet_host_flush(mp_host);
+}
+
+void NetworkHost::removePeerFromPacketQueue(ENetPeer *peer)
+{
+    for (auto itr = m_queue.begin(); itr != m_queue.end();) {
+
+        if (itr->style == QueuedPacket::Style::One &&
+            itr->peer->connectID == peer->connectID) {
+            itr = m_queue.erase(itr);
+        }
+        else {
+            itr++;
+        }
+    }
 }
