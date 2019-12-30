@@ -181,7 +181,7 @@ bool NetworkHost::sendToPeer(ENetPeer *peer, sf::Packet &packet, u8 channel,
     QueuedPacket qp;
     qp.packet = pkt;
     qp.peer = peer;
-    qp.style = QueuedPacket::Style::Broadcast;
+    qp.style = QueuedPacket::Style::One;
     qp.channel = channel;
 
     m_queue.push_back(qp);
@@ -202,8 +202,9 @@ void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
 
     QueuedPacket qp;
     qp.packet = pkt;
-    qp.style = QueuedPacket::Style::One;
+    qp.style = QueuedPacket::Style::Broadcast;
     qp.channel = channel;
+    m_queue.push_back(qp);
 }
 
 void NetworkHost::tick()
