@@ -73,31 +73,31 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
 
     // Handle keyboard input
-    float PLAYER_SPEED = 0.2f;
+    float PLAYER_SPEED = 2.0f;
     if (keyboard.isKeyDown(sf::Keyboard::LControl)) {
         PLAYER_SPEED *= 10;
     }
 
     auto &rotation = mp_player->rotation;
-    auto &position = mp_player->position;
+    auto &velocity = mp_player->velocity;
     if (keyboard.isKeyDown(sf::Keyboard::W)) {
-        position += forwardsVector(rotation) * PLAYER_SPEED;
+        velocity += forwardsVector(rotation) * PLAYER_SPEED;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::S)) {
-        position += backwardsVector(rotation) * PLAYER_SPEED;
+        velocity += backwardsVector(rotation) * PLAYER_SPEED;
     }
     if (keyboard.isKeyDown(sf::Keyboard::A)) {
-        position += leftVector(rotation) * PLAYER_SPEED;
+        velocity += leftVector(rotation) * PLAYER_SPEED;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::D)) {
-        position += rightVector(rotation) * PLAYER_SPEED;
+        velocity += rightVector(rotation) * PLAYER_SPEED;
     }
 
     if (keyboard.isKeyDown(sf::Keyboard::Space)) {
-        position.y += PLAYER_SPEED * 2;
+        velocity.y += PLAYER_SPEED * 2;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::LShift)) {
-        position.y -= PLAYER_SPEED * 2;
+        velocity.y -= PLAYER_SPEED * 2;
         // std::cout << position << std::endl;
     }
 
@@ -138,8 +138,10 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
     }
 }
 
-void Client::update()
+void Client::update(float dt)
 {
+    mp_player->position += mp_player->velocity * dt;
+    mp_player->velocity *= 0.99 * dt;
     NetworkHost::tick();
     sendPlayerPosition(mp_player->position);
     // Update blocks

@@ -5,6 +5,7 @@
 #include "window.h"
 #include <common/debug.h>
 #include <glad/glad.h>
+#include <SFML/System/Clock.hpp>
 #include <iostream>
 
 namespace {
@@ -41,7 +42,8 @@ EngineStatus runClientEngine(const ClientConfig &config)
         return EngineStatus::GLInitError;
     }
 
-    glClearColor(0.25, 0.75, 1.0, 1.0);
+    //glClearColor(0.25, 0.75, 1.0, 1.0);
+    glClearColor(0.1, 0.1, 0.1, 1.0);
     glViewport(0, 0, window.width, window.height);
 
     glCheck(glEnable(GL_DEPTH_TEST));
@@ -60,6 +62,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
     }
 
     LOG("Client", "Starting game.");
+    sf::Clock clock;
     while (status == EngineStatus::Ok) {
         // Input
         status = window.pollEvents(
@@ -71,7 +74,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
         gameClient.handleInput(window.window, keyboard);
 
         // Update
-        gameClient.update();
+        gameClient.update(clock.restart().asSeconds());
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

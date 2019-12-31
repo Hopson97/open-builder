@@ -21,7 +21,9 @@ struct BlockUpdate {
 };
 
 struct Entity final {
-    glm::vec3 position{0.0f, 0.0f, 12.0f}, rotation{0.0f};
+    glm::vec3 position{0.0f};
+    glm::vec3 rotation{0.0f};
+    glm::vec3 velocity{0.0f};
     bool active = false;
 };
 
@@ -34,7 +36,7 @@ class Client final : public NetworkHost {
     void onKeyRelease(sf::Keyboard::Key key);
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
-    void update();
+    void update(float dt);
     void render();
     void endGame();
 
