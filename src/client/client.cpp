@@ -183,23 +183,36 @@ void Client::update(float dt)
                       });
         }
 
-        // Find first "meshable" chunk
-        for (auto itr = m_chunks.updates.cbegin();
-             itr != m_chunks.updates.cend();) {
-            if (m_chunks.manager.hasNeighbours(*itr)) {
-                auto &chunk = m_chunks.manager.getChunk(*itr);
-                auto buffer = makeChunkMesh(chunk);
-                m_chunks.bufferables.push_back(buffer);
-                deleteChunkRenderable(*itr);
-                m_chunks.updates.erase(itr);
+        if (m_noMeshingCount != m_chunks.updates.size()) {
+            m_blockMeshing = false;
+        }
 
-                // Break so that the game still runs while world is being built
-                // TODO: Work out a way to make this concurrent (aka run
-                // seperate from rest of application)
-                break;
+        // Find first "meshable" chunk
+
+        if (!m_blockMeshing) {
+            m_noMeshingCount = 0;
+            for (auto itr = m_chunks.updates.cbegin();
+                 itr != m_chunks.updates.cend();) {
+                if (m_chunks.manager.hasNeighbours(*itr)) {
+                    auto &chunk = m_chunks.manager.getChunk(*itr);
+                    auto buffer = makeChunkMesh(chunk);
+                    m_chunks.bufferables.push_back(buffer);
+                    deleteChunkRenderable(*itr);
+                    m_chunks.updates.erase(itr);
+
+                    // Break so that the game still runs while world is being
+                    // built
+                    // TODO: Work out a way to make this concurrent (aka run
+                    // seperate from rest of application)
+                    break;
+                }
+                else {
+                    m_noMeshingCount++;
+                    itr++;
+                }
             }
-            else {
-                itr++;
+            if (m_noMeshingCount == m_chunks.updates.size()) {
+                m_blockMeshing = true;
             }
         }
     }

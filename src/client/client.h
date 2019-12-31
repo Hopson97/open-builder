@@ -103,4 +103,7 @@ class Client final : public NetworkHost {
     bool m_isMouseLocked = false;
 
     ViewFrustum m_frustum;
+
+    unsigned m_noMeshingCount = 0;
+    bool m_blockMeshing = false;
 };

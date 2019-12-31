@@ -7,7 +7,18 @@
 #include <SFML/Network/Packet.hpp>
 #include <array>
 #include <deque>
+#include <iostream>
 #include <optional>
+
+#include <SFML/System/Clock.hpp>
+
+template <typename T> void bench(const char *n, T f)
+{
+    sf::Clock c;
+    f();
+    float t = c.restart().asSeconds() * 1000;
+    std::cout << n << ": " << t << '\n';
+}
 
 struct QueuedPacket {
     enum class Style {

@@ -11,11 +11,11 @@
 Server::Server()
     : NetworkHost("Server")
 {
-    int size = TEMP_WORLD_SIZE / 2;
+    int size = TEMP_WORLD_SIZE;
     // Create spawn area
-    for (int cy = -size; cy < size; cy++) {
-        for (int cz = -size; cz < size; cz++) {
-            for (int cx = -size; cx < size; cx++) {
+    for (int cy = 0; cy < size; cy++) {
+        for (int cz = 0; cz < size; cz++) {
+            for (int cx = 0; cx < size; cx++) {
                 Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
                 makeNaturalTerrain(&chunk);
             }
