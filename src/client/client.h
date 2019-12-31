@@ -27,6 +27,11 @@ struct Entity final {
     bool active = false;
 };
 
+struct ChunkDrawable {
+    ChunkPosition position;
+    gl::VertexArray vao;
+};
+
 class Client final : public NetworkHost {
   public:
     Client();
@@ -91,8 +96,7 @@ class Client final : public NetworkHost {
 
     struct {
         std::vector<ChunkMesh> bufferables;
-        std::vector<ChunkPosition> positions;
-        std::vector<gl::VertexArray> drawables;
+        std::vector<ChunkDrawable> drawables;
         ChunkManager manager;
         std::vector<ChunkPosition> updates;
         std::vector<BlockUpdate> blockUpdates;
