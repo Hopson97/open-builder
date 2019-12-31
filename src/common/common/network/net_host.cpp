@@ -281,8 +281,7 @@ void NetworkHost::flush()
 
 void NetworkHost::removePeerFromPacketQueue(ENetPeer *peer)
 {
-    for (auto itr = m_queue.begin(); itr != m_queue.end();) {
-
+    for (auto itr = m_queue.cbegin(); itr != m_queue.cend();) {
         if (itr->style == QueuedPacket::Style::One &&
             itr->peer->connectID == peer->connectID) {
             itr = m_queue.erase(itr);

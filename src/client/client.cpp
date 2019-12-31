@@ -73,7 +73,7 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
 
     // Handle keyboard input
-    float PLAYER_SPEED = 2.0f;
+    float PLAYER_SPEED = 5.0f;
     if (keyboard.isKeyDown(sf::Keyboard::LControl)) {
         PLAYER_SPEED *= 10;
     }
@@ -184,8 +184,8 @@ void Client::update(float dt)
         }
 
         // Find first "meshable" chunk
-        for (auto itr = m_chunks.updates.begin();
-             itr != m_chunks.updates.end();) {
+        for (auto itr = m_chunks.updates.cbegin();
+             itr != m_chunks.updates.cend();) {
             if (m_chunks.manager.hasNeighbours(*itr)) {
                 auto &chunk = m_chunks.manager.getChunk(*itr);
                 auto buffer = makeChunkMesh(chunk);

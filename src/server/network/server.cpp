@@ -182,8 +182,8 @@ void Server::removePeer(u32 connectionId)
             return conn.peer && conn.peer->connectID == connectionId;
         });
 
-    assert(itr != m_connectedClients.end());
-    if (itr != m_connectedClients.end()) {
+    assert(itr != m_connectedClients.cend());
+    if (itr != m_connectedClients.cend()) {
         LOGVAR("Server", "Client disconnected, Peer Id:", (int)itr->entityId);
         m_entities[itr->entityId].active = false;
         itr->connected = false;

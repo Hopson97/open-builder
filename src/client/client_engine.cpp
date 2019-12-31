@@ -3,9 +3,9 @@
 #include "client.h"
 #include "gl/gl_errors.h"
 #include "window.h"
+#include <SFML/System/Clock.hpp>
 #include <common/debug.h>
 #include <glad/glad.h>
-#include <SFML/System/Clock.hpp>
 #include <iostream>
 
 namespace {
@@ -42,7 +42,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
         return EngineStatus::GLInitError;
     }
 
-    //glClearColor(0.25, 0.75, 1.0, 1.0);
+    // glClearColor(0.25, 0.75, 1.0, 1.0);
     glClearColor(0.1, 0.1, 0.1, 1.0);
     glViewport(0, 0, window.width, window.height);
 
