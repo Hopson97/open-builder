@@ -137,14 +137,8 @@ void makeFlatTerrain(Chunk *chunk)
     auto cy = cp.y;
     auto cz = cp.z;
 
-    /*
-        if (cy < TEMP_WORLD_SIZE - 1 && cy > 0 && cx < TEMP_WORLD_SIZE - 1 &&
-            cx > 0 && cz < TEMP_WORLD_SIZE - 1 && cz > 0) {
-            chunk->blocks.fill(1);
-        }
-        */
-
-    if (cy < TEMP_WORLD_SIZE - 1) {
+    if (cy < TEMP_WORLD_SIZE - 1 && cy > 0 && cx < TEMP_WORLD_SIZE - 1 &&
+        cx > 0 && cz < TEMP_WORLD_SIZE - 1 && cz > 0) {
         chunk->blocks.fill(1);
     }
 }
@@ -179,104 +173,107 @@ void makeRandomTerrain(Chunk *chunk)
 
 void makeNaturalTerrain(Chunk *chunk)
 {
-    NoiseParameters params;
-    params.octaves = 5;
-    params.amplitude = 85;
-    params.smoothness = 235;
-    params.heightOffset = 0;
-    params.roughness = 0.54;
-
-    NoiseGenerator gen(std::time(nullptr));
-    gen.setParameters(params);
-
     auto cp = chunk->getPosition();
-    auto cx = cp.x + TEMP_WORLD_SIZE * CHUNK_SIZE;
+    auto cx = cp.x;
     auto cy = cp.y;
-    auto cz = cp.z + TEMP_WORLD_SIZE * CHUNK_SIZE;
-    std::array<int, CHUNK_AREA> heightMap;
+    auto cz = cp.z;
 
-    auto smoothstep = [](float edge0, float edge1, float x) {
-        // Scale, bias and saturate x to 0..1 range
-        x = x * x * (3 - 2 * x);
-        // Evaluate polynomial
-        return (edge0 * x) + (edge1 * (1 - x));
-    };
+    if (cy < TEMP_WORLD_SIZE - 1 && cy > 0 && cx < TEMP_WORLD_SIZE - 1 &&
+        cx > 0 && cz < TEMP_WORLD_SIZE - 1 && cz > 0) {
+        NoiseParameters params;
+        params.octaves = 5;
+        params.amplitude = 285;
+        params.smoothness = 300;
+        params.heightOffset = -200;
+        params.roughness = 0.54;
 
-    auto smoothInterpolation = [smoothstep](float bottomLeft, float topLeft,
-                                            float bottomRight, float topRight,
-                                            float xMin, float xMax, float zMin,
-                                            float zMax, float x, float z) {
-        float width = xMax - xMin, height = zMax - zMin;
-        float xValue = 1 - (x - xMin) / width;
-        float zValue = 1 - (z - zMin) / height;
+        NoiseGenerator gen(std::time(nullptr));
+        gen.setParameters(params);
+        std::array<int, CHUNK_AREA> heightMap;
 
-        // std::cout << xValue << std::endl;
-
-        float a = smoothstep(bottomLeft, bottomRight, xValue);
-        float b = smoothstep(topLeft, topRight, xValue);
-        return smoothstep(a, b, zValue);
-    };
-
-    auto getHeightIn = [&](int xMin, int zMin, int xMax, int zMax) {
-        auto getHeightAt = [&](int x, int z) {
-            return gen.getHeight(x, z, cx, cz);
+        auto smoothstep = [](float edge0, float edge1, float x) {
+            // Scale, bias and saturate x to 0..1 range
+            x = x * x * (3 - 2 * x);
+            // Evaluate polynomial
+            return (edge0 * x) + (edge1 * (1 - x));
         };
 
-        float bottomLeft = static_cast<float>(getHeightAt(xMin, zMin));
-        float bottomRight = static_cast<float>(getHeightAt(xMax, zMin));
-        float topLeft = static_cast<float>(getHeightAt(xMin, zMax));
-        float topRight = static_cast<float>(getHeightAt(xMax, zMax));
+        auto smoothInterpolation =
+            [smoothstep](float bottomLeft, float topLeft, float bottomRight,
+                         float topRight, float xMin, float xMax, float zMin,
+                         float zMax, float x, float z) {
+                float width = xMax - xMin, height = zMax - zMin;
+                float xValue = 1 - (x - xMin) / width;
+                float zValue = 1 - (z - zMin) / height;
 
-        for (int z = zMin; z < zMax; ++z) {
-            for (int x = xMin; x < xMax; ++x) {
+                // std::cout << xValue << std::endl;
 
-                if (x == CHUNK_SIZE)
-                    continue;
-                if (z == CHUNK_SIZE)
-                    continue;
+                float a = smoothstep(bottomLeft, bottomRight, xValue);
+                float b = smoothstep(topLeft, topRight, xValue);
+                return smoothstep(a, b, zValue);
+            };
 
-                float h = smoothInterpolation(
-                    bottomLeft, topLeft, bottomRight, topRight,
-                    static_cast<float>(xMin), static_cast<float>(xMax),
-                    static_cast<float>(zMin), static_cast<float>(zMax),
-                    static_cast<float>(x), static_cast<float>(z));
+        auto getHeightIn = [&](int xMin, int zMin, int xMax, int zMax) {
+            auto getHeightAt = [&](int x, int z) {
+                return gen.getHeight(x, z, cx, cz);
+            };
 
-                heightMap[x + z * CHUNK_SIZE] = static_cast<int>(h);
+            float bottomLeft = static_cast<float>(getHeightAt(xMin, zMin));
+            float bottomRight = static_cast<float>(getHeightAt(xMax, zMin));
+            float topLeft = static_cast<float>(getHeightAt(xMin, zMax));
+            float topRight = static_cast<float>(getHeightAt(xMax, zMax));
+
+            for (int z = zMin; z < zMax; ++z) {
+                for (int x = xMin; x < xMax; ++x) {
+
+                    if (x == CHUNK_SIZE)
+                        continue;
+                    if (z == CHUNK_SIZE)
+                        continue;
+
+                    float h = smoothInterpolation(
+                        bottomLeft, topLeft, bottomRight, topRight,
+                        static_cast<float>(xMin), static_cast<float>(xMax),
+                        static_cast<float>(zMin), static_cast<float>(zMax),
+                        static_cast<float>(x), static_cast<float>(z));
+
+                    heightMap[x + z * CHUNK_SIZE] = static_cast<int>(h);
+                }
             }
-        }
-    };
+        };
 
-    constexpr static auto H = CHUNK_SIZE / 2;
-    constexpr static auto Q = CHUNK_SIZE / 4;
-    constexpr static auto F = CHUNK_SIZE;
+        constexpr static auto H = CHUNK_SIZE / 2;
+        constexpr static auto Q = CHUNK_SIZE / 4;
+        constexpr static auto F = CHUNK_SIZE;
 
-    // Top left
-    getHeightIn(0, 0, Q, Q);
-    getHeightIn(Q, 0, H, Q);
-    getHeightIn(H, 0, Q * 3, Q);
-    getHeightIn(Q * 3, 0, F, Q);
+        // Top left
+        getHeightIn(0, 0, Q, Q);
+        getHeightIn(Q, 0, H, Q);
+        getHeightIn(H, 0, Q * 3, Q);
+        getHeightIn(Q * 3, 0, F, Q);
 
-    getHeightIn(0, Q, Q, H);
-    getHeightIn(Q, Q, H, H);
-    getHeightIn(H, Q, Q * 3, H);
-    getHeightIn(Q * 3, Q, F, H);
+        getHeightIn(0, Q, Q, H);
+        getHeightIn(Q, Q, H, H);
+        getHeightIn(H, Q, Q * 3, H);
+        getHeightIn(Q * 3, Q, F, H);
 
-    getHeightIn(0, H, Q, Q * 3);
-    getHeightIn(Q, H, H, Q * 3);
-    getHeightIn(H, H, Q * 3, Q * 3);
-    getHeightIn(Q * 3, H, F, Q * 3);
+        getHeightIn(0, H, Q, Q * 3);
+        getHeightIn(Q, H, H, Q * 3);
+        getHeightIn(H, H, Q * 3, Q * 3);
+        getHeightIn(Q * 3, H, F, Q * 3);
 
-    getHeightIn(0, Q * 3, Q, F);
-    getHeightIn(Q, Q * 3, H, F);
-    getHeightIn(H, Q * 3, Q * 3, F);
-    getHeightIn(Q * 3, Q * 3, F, F);
+        getHeightIn(0, Q * 3, Q, F);
+        getHeightIn(Q, Q * 3, H, F);
+        getHeightIn(H, Q * 3, Q * 3, F);
+        getHeightIn(Q * 3, Q * 3, F, F);
 
-    for (int z = 0; z < CHUNK_SIZE; z++) {
-        for (int x = 0; x < CHUNK_SIZE; x++) {
-            int height = heightMap[x + z * CHUNK_SIZE];
-            for (int y = 0; y < CHUNK_SIZE; y++) {
-                if ((y + CHUNK_SIZE * cy) < height) {
-                    chunk->qSetBlock({x, y, z}, 1);
+        for (int z = 0; z < CHUNK_SIZE; z++) {
+            for (int x = 0; x < CHUNK_SIZE; x++) {
+                int height = heightMap[x + z * CHUNK_SIZE];
+                for (int y = 0; y < CHUNK_SIZE; y++) {
+                    if ((y + CHUNK_SIZE * cy) < height) {
+                        chunk->qSetBlock({x, y, z}, 1);
+                    }
                 }
             }
         }

@@ -7,10 +7,12 @@
 #include <queue>
 #include <unordered_map>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 struct ServerConfig;
 
 struct ServerEntity {
-    float x = 0, y = 0, z = 0;
+    glm::vec3 position{0.0f};
     bool active = false;
 };
 
@@ -27,7 +29,9 @@ class Server final : public NetworkHost {
     void sendPackets();
 
   private:
-    void sendChunk(peer_id_t peerId, const Chunk &chunk);
+    glm::vec3 findPlayerSpawnPosition();
+
+    void sendChunk(peer_id_t peerId, const ChunkPosition &chunk);
 
     void onPeerConnect(ENetPeer *peer) override;
     void onPeerDisconnect(ENetPeer *peer) override;
