@@ -2,6 +2,27 @@
 #include "gl_object.h"
 #include <iostream>
 
+namespace {
+GLuint genVbo()
+{
+    GLuint vertexBuffer;
+    glCheck(glGenBuffers(1, &vertexBuffer));
+    glCheck(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
+    return vertexBuffer;
+}
+
+template <typename T> void bufferData(const std::vector<T> &data)
+{
+    glCheck(glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(T), data.data(),
+                         GL_STATIC_DRAW));
+}
+
+void vertexAttribPointer(GLuint index, GLint mag, GLenum type)
+{
+    glCheck(glVertexAttribPointer(index, mag, type, GL_FALSE, 0, (GLvoid *)0));
+}
+} // namespace
+
 namespace gl {
 Drawable::Drawable(GLuint vao, GLsizei indices)
     : m_handle(vao)
@@ -51,22 +72,25 @@ Drawable VertexArray::getDrawable() const
 }
 
 void VertexArray::addVertexBuffer(int magnitude,
+                                  const std::vector<GLuint> &data)
+{
+    bind();
+    GLuint vertexBuffer = genVbo();
+    bufferData(data);
+    vertexAttribPointer(m_bufferObjects.size(), magnitude, GL_UNSIGNED_INT);
+    glCheck(glEnableVertexAttribArray(m_bufferObjects.size()));
+    m_bufferObjects.push_back(vertexBuffer);
+}
+
+void VertexArray::addVertexBuffer(int magnitude,
                                   const std::vector<GLfloat> &data)
 {
     bind();
-
-    GLuint vertexBuffer;
-    glCheck(glGenBuffers(1, &vertexBuffer));
-    glCheck(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
-
-    glCheck(glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(GLfloat),
-                         data.data(), GL_STATIC_DRAW));
-
-    glCheck(glVertexAttribPointer(m_bufferObjects.size(), magnitude, GL_FLOAT,
-                                  GL_FALSE, 0, (GLvoid *)0));
-
+    bind();
+    GLuint vertexBuffer = genVbo();
+    bufferData(data);
+    vertexAttribPointer(m_bufferObjects.size(), magnitude, GL_FLOAT);
     glCheck(glEnableVertexAttribArray(m_bufferObjects.size()));
-
     m_bufferObjects.push_back(vertexBuffer);
 }
 
