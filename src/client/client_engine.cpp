@@ -22,8 +22,8 @@ struct FPSCounter final {
             float fps = frameCount / time.asSeconds();
             float frameTime = time.asMilliseconds() / frameCount;
 
-            std::cout << "==============\nAverage Current Performance\nFPS: "
-                      << fps << "\nFrame time: " << frameTime << "ms\n\n";
+            std::cout << "FPS: " << fps << "\nFrame time: " << frameTime
+                      << "ms\n\n";
             frameCount = 0;
             timer.restart();
         }

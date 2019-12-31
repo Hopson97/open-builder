@@ -11,15 +11,17 @@
 Server::Server()
     : NetworkHost("Server")
 {
+    int size = TEMP_WORLD_SIZE / 2;
     // Create spawn area
-    for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
-        for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
-            for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
+    for (int cy = -size; cy < size; cy++) {
+        for (int cz = -size; cz < size; cz++) {
+            for (int cx = -size; cx < size; cx++) {
                 Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
-                makeFlatTerrain(&chunk);
+                makeNaturalTerrain(&chunk);
             }
         }
     }
+    std::cout << "done\n";
 }
 
 void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
@@ -103,7 +105,7 @@ void Server::onPeerConnect(ENetPeer *peer)
                     }
                     else {
                         Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
-                        makeFlatTerrain(&chunk);
+                        makeNaturalTerrain(&chunk);
                         sendChunk(id, chunk);
                     }
                 }
