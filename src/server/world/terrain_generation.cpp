@@ -21,16 +21,14 @@ struct NoiseParameters {
 float getHeight(int x, int z, int chunkX, int chunkZ,
                 const NoiseParameters &noiseParams, int seed) noexcept
 {
-    double newX = static_cast<double>(x) +
-                  static_cast<double>(chunkX) * static_cast<double>(CHUNK_SIZE);
-    double newZ = static_cast<double>(z) +
-                  static_cast<double>(chunkZ) * static_cast<double>(CHUNK_SIZE);
+    float newX = static_cast<float>(x + chunkX * CHUNK_SIZE);
+    float newZ = static_cast<float>(z + chunkZ * CHUNK_SIZE);
 
-    double totalValue = 0.0;
+    float totalValue = 0.0;
 
     for (auto octave = 0; octave < noiseParams.octaves - 1; octave++) {
-        double frequency = glm::pow(2.0, octave);
-        double amplitude = glm::pow(noiseParams.roughness, octave);
+        float frequency = glm::pow(2.0f, octave);
+        float amplitude = glm::pow(noiseParams.roughness, octave);
         totalValue +=
             glm::simplex(glm::vec2{newX * frequency / noiseParams.smoothness,
                                    newZ * frequency / noiseParams.smoothness}) *
