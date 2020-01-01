@@ -262,9 +262,9 @@ void Client::render()
     m_chunks.bufferables.clear();
 
     // Render them (if in view)
-    for (const auto &drawable : m_chunks.drawables) {
-        if (m_frustum.chunkIsInFrustum(drawable.position)) {
-            drawable.vao.getDrawable().bindAndDraw();
+    for (const auto &chunk : m_chunks.drawables) {
+        if (m_frustum.chunkIsInFrustum(chunk.position)) {
+            chunk.vao.getDrawable().bindAndDraw();
         }
     }
 }
