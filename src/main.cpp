@@ -187,7 +187,7 @@ int launchBoth(const Config &config)
                              sf::milliseconds(5000));
 
     // Allows some time for the server to set up etc
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
     int exit = launchClient(config.clientOptions);
     serverThread.join();
     return exit;
@@ -201,6 +201,7 @@ int main(int argc, char **argv)
     if (enet_initialize() != 0) {
         return exitFailure("Failed to initialise enet");
     }
+
 
     std::vector<std::pair<std::string, std::string>> args;
     for (int i = 1; i < argc; i++) {

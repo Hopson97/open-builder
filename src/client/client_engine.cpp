@@ -42,8 +42,8 @@ EngineStatus runClientEngine(const ClientConfig &config)
         return EngineStatus::GLInitError;
     }
 
-    // glClearColor(0.25, 0.75, 1.0, 1.0);
-    glClearColor(0.1, 0.1, 0.1, 1.0);
+    glClearColor(0.25f, 0.75f, 1.0f, 1.0f);
+    //glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glViewport(0, 0, window.width, window.height);
 
     glCheck(glEnable(GL_DEPTH_TEST));

@@ -10,10 +10,10 @@
 namespace {
 // temp
 struct NoiseParameters {
-    int octaves;
-    int amplitude;
-    int smoothness;
-    int heightOffset;
+    float octaves;
+    float amplitude;
+    float smoothness;
+    float heightOffset;
 
     float roughness;
 };
@@ -21,24 +21,26 @@ struct NoiseParameters {
 float getHeight(int x, int z, int chunkX, int chunkZ,
                 const NoiseParameters &noiseParams, int seed) noexcept
 {
-    float newX = (x + (chunkX * CHUNK_SIZE));
-    float newZ = (z + (chunkZ * CHUNK_SIZE));
+    double newX = static_cast<double>(x) +
+                  static_cast<double>(chunkX) * static_cast<double>(CHUNK_SIZE);
+    double newZ = static_cast<double>(z) +
+                  static_cast<double>(chunkZ) * static_cast<double>(CHUNK_SIZE);
 
-    auto totalValue = 0.0;
+    double totalValue = 0.0;
 
     for (auto octave = 0; octave < noiseParams.octaves - 1; octave++) {
-        auto frequency = glm::pow(2.0, octave);
-        auto amplitude = glm::pow(noiseParams.roughness, octave);
+        double frequency = glm::pow(2.0, octave);
+        double amplitude = glm::pow(noiseParams.roughness, octave);
         totalValue +=
             glm::simplex(glm::vec2{newX * frequency / noiseParams.smoothness,
                                    newZ * frequency / noiseParams.smoothness}) *
             amplitude;
     }
 
-    auto val = (((totalValue / 2.1) + 1.2) * noiseParams.amplitude) +
+    auto val = (((totalValue / 2.1f) + 1.2f) * noiseParams.amplitude) +
                noiseParams.heightOffset;
 
-    return val > 0 ? val : 10;
+    return static_cast<float>(val > 0 ? val : 10.0f);
 }
 
 } // namespace
@@ -98,7 +100,7 @@ void makeNaturalTerrain(Chunk *chunk)
         params.amplitude = 75;
         params.smoothness = 300;
         params.heightOffset = 10;
-        params.roughness = 0.45;
+        params.roughness = 0.45f;
         std::array<int, CHUNK_AREA> heightMap;
 
         auto smoothstep = [](float edge0, float edge1, float x) {
@@ -122,7 +124,7 @@ void makeNaturalTerrain(Chunk *chunk)
         auto getHeightIn = [&heightMap, cx, cz, &params, smoothInterpolation](
                                int xMin, int zMin, int xMax, int zMax) {
             auto getHeightAt = [cx, cz, &params](int x, int z) {
-                return getHeight(x, z, cx, cz, params, std::time(nullptr));
+                return getHeight(x, z, cx, cz, params, 0);
             };
 
             float bottomLeft = static_cast<float>(getHeightAt(xMin, zMin));
