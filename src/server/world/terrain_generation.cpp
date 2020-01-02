@@ -181,17 +181,13 @@ void makeNaturalTerrain(Chunk* chunk, const std::array<int, CHUNK_AREA>& heightM
     auto cy = cp.y;
     auto cz = cp.z;
 
-
-
     if (cy < TEMP_WORLD_SIZE - 1 && cy > 0 && cx < TEMP_WORLD_SIZE - 1 &&
         cx > 0 && cz < TEMP_WORLD_SIZE - 1 && cz > 0) {
-        
-
         for (int z = 0; z < CHUNK_SIZE; z++) {
             for (int x = 0; x < CHUNK_SIZE; x++) {
                 int height = heightMap[x + z * CHUNK_SIZE];
                 for (int y = 0; y < CHUNK_SIZE; y++) {
-                    if ((y + CHUNK_SIZE * cy) < height) {
+                    if ((y + CHUNK_SIZE * cy) <= height) {
                         chunk->qSetBlock({x, y, z}, 1);
                     }
                 }
