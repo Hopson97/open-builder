@@ -91,11 +91,11 @@ std::array<int, CHUNK_AREA> makeHeightMap(const ChunkPosition &location)
     auto cz = location.z;
 
     NoiseParameters params;
-    params.octaves = 4;
+    params.octaves = 8;
     params.amplitude = 75;
     params.smoothness = 300;
-    params.heightOffset = 10;
-    params.roughness = 0.45f;
+    params.heightOffset = 0;
+    params.roughness = 0.49f;
     std::array<int, CHUNK_AREA> heightMap;
 
     auto smoothstep = [](float edge0, float edge1, float x) {
@@ -187,7 +187,8 @@ void makeNaturalTerrain(Chunk* chunk, const std::array<int, CHUNK_AREA>& heightM
             for (int x = 0; x < CHUNK_SIZE; x++) {
                 int height = heightMap[x + z * CHUNK_SIZE];
                 for (int y = 0; y < CHUNK_SIZE; y++) {
-                    if ((y + CHUNK_SIZE * cy) <= height) {
+                    int blockY = (y + CHUNK_SIZE * cy);
+                    if (blockY <= height || blockY < 80) {
                         chunk->qSetBlock({x, y, z}, 1);
                     }
                 }
