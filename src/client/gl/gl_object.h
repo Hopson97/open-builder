@@ -86,6 +86,7 @@ class VertexArray final {
 
     Drawable getDrawable() const;
 
+    void addVertexBuffer(int magnitude, const std::vector<GLuint> &data);
     void addVertexBuffer(int magnitude, const std::vector<GLfloat> &data);
     void addIndexBuffer(const std::vector<GLuint> &indices);
 

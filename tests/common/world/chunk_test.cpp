@@ -104,9 +104,9 @@ TEST_CASE("Chunk can be compressed and uncompressed")
         block_t blockB = 45;
         block_t blockC = 123;
 
-        ChunkPosition positionA(0, 20, 12);
-        ChunkPosition positionB(12, 2, 4);
-        ChunkPosition positionC(1, 30, 8);
+        BlockPosition positionA(0, 20, 12);
+        BlockPosition positionB(12, 2, 4);
+        BlockPosition positionC(1, 30, 8);
 
         ChunkManager manager;
         Chunk &chunk = manager.addChunk({0, 0, 0});

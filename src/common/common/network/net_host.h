@@ -7,7 +7,18 @@
 #include <SFML/Network/Packet.hpp>
 #include <array>
 #include <deque>
+#include <iostream>
 #include <optional>
+
+#include <SFML/System/Clock.hpp>
+
+template <typename T> void bench(const char *n, T f)
+{
+    sf::Clock c;
+    f();
+    float t = c.restart().asSeconds() * 1000;
+    std::cout << n << ": " << t << '\n';
+}
 
 struct QueuedPacket {
     enum class Style {
@@ -16,7 +27,7 @@ struct QueuedPacket {
     };
     ENetPeer *peer = nullptr;
     ENetPacket *packet = nullptr;
-    Style style;
+    Style style = Style::Broadcast;
     u8 channel = 0;
 };
 
@@ -113,5 +124,5 @@ class NetworkHost {
     const std::string m_name;
 
     peer_id_t m_peerId = 0;
-    int m_maxConnections;
+    int m_maxConnections = 0;
 };

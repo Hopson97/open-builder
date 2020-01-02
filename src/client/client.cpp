@@ -183,23 +183,36 @@ void Client::update(float dt)
                       });
         }
 
-        // Find first "meshable" chunk
-        for (auto itr = m_chunks.updates.cbegin();
-             itr != m_chunks.updates.cend();) {
-            if (m_chunks.manager.hasNeighbours(*itr)) {
-                auto &chunk = m_chunks.manager.getChunk(*itr);
-                auto buffer = makeChunkMesh(chunk);
-                m_chunks.bufferables.push_back(buffer);
-                deleteChunkRenderable(*itr);
-                m_chunks.updates.erase(itr);
+        if (m_noMeshingCount != m_chunks.updates.size()) {
+            m_blockMeshing = false;
+        }
 
-                // Break so that the game still runs while world is being built
-                // TODO: Work out a way to make this concurrent (aka run
-                // seperate from rest of application)
-                break;
+        // Find first "meshable" chunk
+
+        if (!m_blockMeshing) {
+            m_noMeshingCount = 0;
+            for (auto itr = m_chunks.updates.cbegin();
+                 itr != m_chunks.updates.cend();) {
+                if (m_chunks.manager.hasNeighbours(*itr)) {
+                    auto &chunk = m_chunks.manager.getChunk(*itr);
+                    auto buffer = makeChunkMesh(chunk);
+                    m_chunks.bufferables.push_back(buffer);
+                    deleteChunkRenderable(*itr);
+                    m_chunks.updates.erase(itr);
+
+                    // Break so that the game still runs while world is being
+                    // built
+                    // TODO: Work out a way to make this concurrent (aka run
+                    // seperate from rest of application)
+                    break;
+                }
+                else {
+                    m_noMeshingCount++;
+                    itr++;
+                }
             }
-            else {
-                itr++;
+            if (m_noMeshingCount == m_chunks.updates.size()) {
+                m_blockMeshing = true;
             }
         }
     }
@@ -242,17 +255,16 @@ void Client::render()
     // Buffer chunks
     for (auto &chunkMesh : m_chunks.bufferables) {
         if (chunkMesh.indicesCount > 0) {
-            m_chunks.drawables.push_back(chunkMesh.createBuffer());
-            m_chunks.positions.push_back(chunkMesh.position);
+            m_chunks.drawables.push_back(
+                {chunkMesh.position, chunkMesh.createBuffer()});
         }
     }
     m_chunks.bufferables.clear();
 
     // Render them (if in view)
-    assert(m_chunks.drawables.size() == m_chunks.positions.size());
-    for (unsigned i = 0; i < m_chunks.drawables.size(); i++) {
-        if (m_frustum.chunkIsInFrustum(m_chunks.positions[i])) {
-            m_chunks.drawables[i].getDrawable().bindAndDraw();
+    for (const auto &chunk : m_chunks.drawables) {
+        if (m_frustum.chunkIsInFrustum(chunk.position)) {
+            chunk.vao.getDrawable().bindAndDraw();
         }
     }
 }
@@ -265,7 +277,7 @@ void Client::endGame()
     m_chunkShader.program.destroy();
 
     for (auto &chunk : m_chunks.drawables) {
-        chunk.destroy();
+        chunk.vao.destroy();
     }
     NetworkHost::disconnectFromPeer(mp_serverPeer);
 }
@@ -277,8 +289,8 @@ EngineStatus Client::currentStatus() const
 
 int Client::findChunkDrawableIndex(const ChunkPosition &position)
 {
-    for (int i = 0; i < static_cast<int>(m_chunks.positions.size()); i++) {
-        if (m_chunks.positions[i] == position) {
+    for (int i = 0; i < static_cast<int>(m_chunks.drawables.size()); i++) {
+        if (m_chunks.drawables[i].position == position) {
             return i;
         }
     }
@@ -289,16 +301,13 @@ void Client::deleteChunkRenderable(const ChunkPosition &position)
 {
     auto index = findChunkDrawableIndex(position);
     if (index > -1) {
-        m_chunks.drawables[index].destroy();
+        m_chunks.drawables[index].vao.destroy();
 
         // As the chunk renders need not be a sorted array, "swap and pop"
         // can be used
         // More efficent (and maybe safer) than normal deletion
         std::iter_swap(m_chunks.drawables.begin() + index,
                        m_chunks.drawables.end() - 1);
-        std::iter_swap(m_chunks.positions.begin() + index,
-                       m_chunks.positions.end() - 1);
         m_chunks.drawables.pop_back();
-        m_chunks.positions.pop_back();
     }
 }

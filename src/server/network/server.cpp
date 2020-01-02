@@ -11,22 +11,38 @@
 Server::Server()
     : NetworkHost("Server")
 {
+    int size = TEMP_WORLD_SIZE;
+
     // Create spawn area
-    for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
-        for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
-            for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
-                Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
-                makeFlatTerrain(&chunk);
-            }
+    for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
+        for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
+                std::array<int, CHUNK_AREA> heightMap = makeHeightMap({cx, 0, cz});
+
+                for (int cy = 0; cy < 5; cy++) {
+                    Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
+                    makeNaturalTerrain(&chunk, heightMap);
+                }
         }
     }
+    std::cout << "done\n";
 }
 
-void Server::sendChunk(peer_id_t peerId, const Chunk &chunk)
+void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
 {
     if (!m_connectedClients[peerId].connected) {
         return;
     }
+
+    const Chunk &chunk = [this, &position]() {
+        if (m_world.chunks.hasChunk(position)) {
+            return m_world.chunks.getChunk(position);
+        }
+        else {
+            Chunk &c = m_world.chunks.addChunk(position);
+            return c;
+        }
+    }();
+
     // Create the chunk-data packet
     sf::Packet packet;
     packet << ClientCommand::ChunkData << chunk.getPosition().x
@@ -69,43 +85,30 @@ void Server::onPeerConnect(ENetPeer *peer)
         addPeer(peer, id);
 
         // Send the spawn position
-        // TODO: Actually calculate a position rather than use hardcoded numbers
         sf::Packet spawn;
-        m_entities[id].x = 200;
-        m_entities[id].y = CHUNK_SIZE * TEMP_WORLD_SIZE - CHUNK_SIZE + 2;
-        m_entities[id].z = 200;
-        spawn << ClientCommand::SpawnPoint << m_entities[id].x
-              << m_entities[id].y << m_entities[id].z;
+        auto &player = m_entities[id];
+        player.position = findPlayerSpawnPosition();
+        spawn << ClientCommand::SpawnPoint << player.position.x
+              << player.position.y << player.position.z;
         sendToPeer(peer, spawn, 0, ENET_PACKET_FLAG_RELIABLE);
 
-        auto cp = worldToChunkPosition(
-            {m_entities[id].x, m_entities[id].y, m_entities[id].z});
-
-        // Send the chunks at the "spawn"
-        int radius = 2;
-        for (int cy = cp.y - radius; cy <= cp.y + radius; cy++) {
-            for (int cz = cp.z - radius; cz <= cp.z + radius; cz++) {
-                for (int cx = cp.x - radius; cx <= cp.x + radius; cx++) {
-                    Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
-                    sendChunk(id, chunk);
+        // Send chunks around the player to the client (Spawn chunks)
+        // "Radius" and "player chunk" position
+        int r = 2;
+        ChunkPosition pc = worldToChunkPosition(player.position);
+        for (int cy = pc.y - r; cy <= pc.y + r; cy++) {
+            for (int cz = pc.z - r; cz < pc.z + r; cz++) {
+                for (int cx = pc.x - r; cx < pc.z + r; cx++) {
+                    sendChunk(id, {cx, cy, cz});
                 }
             }
         }
 
         // Send the inital world to the client
-        for (int cy = TEMP_WORLD_SIZE - 1; cy >= 0; cy--) {
+        for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
             for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
                 for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
-
-                    if (m_world.chunks.hasChunk({cx, cy, cz})) {
-                        auto &chunk = m_world.chunks.getChunk({cx, cy, cz});
-                        sendChunk(id, chunk);
-                    }
-                    else {
-                        Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
-                        makeFlatTerrain(&chunk);
-                        sendChunk(id, chunk);
-                    }
+                    sendChunk(id, {cx, cy, cz});
                 }
             }
         }
@@ -136,7 +139,8 @@ void Server::handleCommandPlayerPosition(sf::Packet &packet)
 {
     peer_id_t id;
     packet >> id;
-    packet >> m_entities[id].x >> m_entities[id].y >> m_entities[id].z;
+    packet >> m_entities[id].position.x >> m_entities[id].position.y >>
+        m_entities[id].position.z;
 }
 
 void Server::sendPackets()
@@ -148,8 +152,8 @@ void Server::sendPackets()
         packet << ClientCommand::Snapshot << count;
         for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
             if (m_connectedClients[i].connected) {
-                packet << static_cast<peer_id_t>(i) << m_entities[i].x
-                       << m_entities[i].y << m_entities[i].z;
+                packet << static_cast<peer_id_t>(i) << m_entities[i].position.x
+                       << m_entities[i].position.y << m_entities[i].position.z;
             }
         }
         broadcastToPeers(packet, 0, 0);
@@ -196,4 +200,26 @@ void Server::removePeer(u32 connectionId)
 
         itr->entityId = 0;
     }
+}
+
+glm::vec3 Server::findPlayerSpawnPosition()
+{
+    int x = (CHUNK_SIZE * TEMP_WORLD_SIZE) / 2;
+    int z = (CHUNK_SIZE * TEMP_WORLD_SIZE) / 2;
+
+    for (int chunkY = TEMP_WORLD_SIZE - 1; chunkY >= 0; chunkY--) {
+        auto chunkPosition = worldToChunkPosition({x, 0, z});
+        chunkPosition.y = chunkY;
+        auto &spawn = m_world.chunks.getChunk(chunkPosition);
+
+        for (int blockY = CHUNK_SIZE - 1; blockY >= 0; blockY--) {
+            auto blockPosition = toLocalBlockPosition({x, 0, z});
+            blockPosition.y = blockY;
+            if (spawn.qGetBlock(blockPosition) > 0) {
+                auto worldY = chunkY * CHUNK_SIZE + blockY + 3;
+                return {x, worldY, z};
+            }
+        }
+    }
+    return {x, CHUNK_SIZE * TEMP_WORLD_SIZE, z};
 }

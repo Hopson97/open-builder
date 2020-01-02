@@ -185,7 +185,9 @@ int launchBoth(const Config &config)
 {
     std::thread serverThread(launchServer, config.serverOptions,
                              sf::milliseconds(5000));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    // Allows some time for the server to set up etc
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
     int exit = launchClient(config.clientOptions);
     serverThread.join();
     return exit;
