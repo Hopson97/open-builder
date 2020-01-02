@@ -43,7 +43,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
     }
 
     glClearColor(0.25f, 0.75f, 1.0f, 1.0f);
-    //glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    // glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glViewport(0, 0, window.width, window.height);
 
     glCheck(glEnable(GL_DEPTH_TEST));

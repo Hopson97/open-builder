@@ -202,7 +202,6 @@ int main(int argc, char **argv)
         return exitFailure("Failed to initialise enet");
     }
 
-
     std::vector<std::pair<std::string, std::string>> args;
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-' && argc > i + 1) {
