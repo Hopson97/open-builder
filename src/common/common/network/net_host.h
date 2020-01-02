@@ -27,7 +27,7 @@ struct QueuedPacket {
     };
     ENetPeer *peer = nullptr;
     ENetPacket *packet = nullptr;
-    Style style;
+    Style style = Style::Broadcast;
     u8 channel = 0;
 };
 
@@ -124,5 +124,5 @@ class NetworkHost {
     const std::string m_name;
 
     peer_id_t m_peerId = 0;
-    int m_maxConnections;
+    int m_maxConnections = 0;
 };
