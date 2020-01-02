@@ -177,7 +177,7 @@ bool NetworkHost::sendToPeer(ENetPeer *peer, sf::Packet &packet, u8 channel,
                              u32 flags)
 {
     ENetPacket *pkt = createPacket(packet, flags);
-
+#ifndef OLD_STYLE_NETWORK
     QueuedPacket qp;
     qp.packet = pkt;
     qp.peer = peer;
@@ -186,25 +186,27 @@ bool NetworkHost::sendToPeer(ENetPeer *peer, sf::Packet &packet, u8 channel,
 
     m_queue.push_back(qp);
     return true;
-    /*
-        ENetPacket *pkt = createPacket(packet, flags);
-        int result = enet_peer_send(peer, channel, pkt);
-        flush();
-        return result == 0;
-    */
+#else
+    int result = enet_peer_send(peer, channel, pkt);
+    flush();
+    return result == 0;
+#endif
 }
 
 void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
 {
     ENetPacket *pkt = createPacket(packet, flags);
-    // enet_host_broadcast(mp_host, channel, pkt);
-    // flush();
 
+#ifndef OLD_STYLE_NETWORK
     QueuedPacket qp;
     qp.packet = pkt;
     qp.style = QueuedPacket::Style::Broadcast;
     qp.channel = channel;
     m_queue.push_back(qp);
+#else 
+    enet_host_broadcast(mp_host, channel, pkt);
+    flush();
+#endif
 }
 
 void NetworkHost::tick()
@@ -212,6 +214,7 @@ void NetworkHost::tick()
     const int MAX__SEND_LIMIT = 1024;
     // 'Send' the queued packets, but not too many at once
     int bytesSent = 0;
+#ifndef OLD_STYLE_NETWORK
     while (!m_queue.empty()) {
         auto qp = m_queue.front();
         m_queue.pop_front();
@@ -235,6 +238,7 @@ void NetworkHost::tick()
             break;
         }
     }
+#endif
 
     assert(mp_host);
     ENetEvent event;

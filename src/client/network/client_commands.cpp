@@ -96,7 +96,7 @@ void Client::onChunkData(sf::Packet &packet)
     Chunk &chunk = m_chunks.manager.addChunk(position);
 
     // "Old Style" - Receive entire chunk
-#ifdef OB_CHUNK_PACKET_OLD_STYLE
+#ifdef OLD_STYLE_NETWORK
     Chunk::Blocks blocks;
     for (auto &block : blocks) {
         packet >> block;

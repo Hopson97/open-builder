@@ -12,6 +12,8 @@
 
 #include <SFML/System/Clock.hpp>
 
+#define OLD_STYLE_NETWORK
+
 template <typename T> void bench(const char *n, T f)
 {
     sf::Clock c;

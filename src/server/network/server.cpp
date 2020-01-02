@@ -16,11 +16,12 @@ Server::Server()
     // Create spawn area
     for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
         for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
-                std::array<int, CHUNK_AREA> heightMap = makeHeightMap({cx, 0, cz});
+                //std::array<int, CHUNK_AREA> heightMap = makeHeightMap({cx, 0, cz});
 
                 for (int cy = 0; cy < 5; cy++) {
                     Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
-                    makeNaturalTerrain(&chunk, heightMap);
+                    makeFlatTerrain(&chunk);
+                    //makeNaturalTerrain(&chunk, heightMap);
                 }
         }
     }
@@ -48,7 +49,7 @@ void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
     packet << ClientCommand::ChunkData << chunk.getPosition().x
            << chunk.getPosition().y << chunk.getPosition().z;
 
-#ifdef OB_CHUNK_PACKET_OLD_STYLE
+#ifdef OLD_STYLE_NETWORK
     // "Old Style" - Send entire chunk
     packet.append(chunk.blocks.data(),
                   chunk.blocks.size() * sizeof(chunk.blocks[0]));
