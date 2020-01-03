@@ -30,7 +30,12 @@ class Shader final {
 };
 
 // Functons for shaders
+void loadUniform(UniformLocation location, const glm::ivec3 &vector);
 void loadUniform(UniformLocation location, const glm::vec3 &vector);
 void loadUniform(UniformLocation location, const glm::mat4 &matrix);
+
+void loadUniform(UniformLocation location, GLint value);
+void loadUniform(UniformLocation location, GLuint value);
+void loadUniform(UniformLocation location, GLfloat value);
 
 } // namespace gl

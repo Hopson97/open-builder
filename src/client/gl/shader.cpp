@@ -95,10 +95,30 @@ void loadUniform(UniformLocation location, const glm::vec3 &vector)
     glCheck(glUniform3fv(location.ptr, 1, glm::value_ptr(vector)));
 }
 
+void loadUniform(UniformLocation location, const glm::ivec3 &vector)
+{
+    glCheck(glUniform3iv(location.ptr, 1, glm::value_ptr(vector)));
+}
+
 void loadUniform(UniformLocation location, const glm::mat4 &matrix)
 {
     glCheck(
         glUniformMatrix4fv(location.ptr, 1, GL_FALSE, glm::value_ptr(matrix)));
+}
+
+void loadUniform(UniformLocation location, GLint value)
+{
+    glCheck(glUniform1i(location.ptr, value));
+}
+
+void loadUniform(UniformLocation location, GLuint value)
+{
+    glCheck(glUniform1ui(location.ptr, value));
+}
+
+void loadUniform(UniformLocation location, GLfloat value)
+{
+    glCheck(glUniform1f(location.ptr, value));
 }
 
 } // namespace gl
