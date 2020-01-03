@@ -2,7 +2,6 @@
 add_library(ob-client
     input/keyboard.cpp
     gl/vertex_array.cpp
-    gl/texture_atlas.cpp
     gl/shader.cpp
     gl/gl_textures.cpp
     gl/gl_errors.cpp
