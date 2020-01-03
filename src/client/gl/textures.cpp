@@ -1,5 +1,5 @@
+#include "textures.h"
 #include "gl_errors.h"
-#include "gl_object.h"
 #include <SFML/Graphics/Image.hpp>
 #include <common/debug.h>
 #include <iostream>

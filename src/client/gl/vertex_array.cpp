@@ -1,5 +1,5 @@
+#include "vertex_array.h"
 #include "gl_errors.h"
-#include "gl_object.h"
 #include <iostream>
 
 namespace {
@@ -85,7 +85,6 @@ void VertexArray::addVertexBuffer(int magnitude,
 void VertexArray::addVertexBuffer(int magnitude,
                                   const std::vector<GLfloat> &data)
 {
-    bind();
     bind();
     GLuint vertexBuffer = genVbo();
     bufferData(data);
