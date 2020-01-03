@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../gl/gl_object.h"
+#include "../gl/vertex_array.h"
 #include <common/world/coordinate.h>
 
 struct MeshFace {

@@ -2,6 +2,7 @@
 
 #include "client_engine.h"
 #include "gl/gl_object.h"
+#include "gl/vertex_array.h"
 #include "maths.h"
 #include "world/chunk_mesh.h"
 #include <SFML/Network/Packet.hpp>

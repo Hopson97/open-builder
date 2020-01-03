@@ -57,45 +57,6 @@ class Texture2d final {
     GLuint m_handle = 0;
 };
 
-/**
- * @brief Minimal information for drawing with glDrawElements
- *
- */
-class Drawable final {
-  public:
-    Drawable(GLuint vao, GLsizei indices);
-
-    void bindAndDraw() const;
-
-    void bind() const;
-    void draw() const;
-
-  private:
-    const GLuint m_handle = 0;
-    const GLsizei m_indicesCount = 0;
-};
-
-/**
- * @brief Wrapper for an OpenGL vertex array object (aka VAO)
- */
-class VertexArray final {
-  public:
-    void create();
-    void destroy();
-    void bind() const;
-
-    Drawable getDrawable() const;
-
-    void addVertexBuffer(int magnitude, const std::vector<GLuint> &data);
-    void addVertexBuffer(int magnitude, const std::vector<GLfloat> &data);
-    void addIndexBuffer(const std::vector<GLuint> &indices);
-
-    // private:
-    std::vector<GLuint> m_bufferObjects;
-    GLuint m_handle = 0;
-    GLsizei m_indicesCount = 0;
-};
-
 // Functons for shaders
 void loadUniform(UniformLocation location, const glm::vec3 &vector);
 void loadUniform(UniformLocation location, const glm::mat4 &matrix);

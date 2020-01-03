@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gl_object.h"
+#include "vertex_array.h"
 
 gl::VertexArray makeCubeVertexArray(GLfloat width, GLfloat height,
                                     GLfloat depth);
