@@ -2,6 +2,7 @@
 
 #include "client_engine.h"
 #include "gl/gl_object.h"
+#include "gl/shader.h"
 #include "gl/vertex_array.h"
 #include "maths.h"
 #include "world/chunk_mesh.h"

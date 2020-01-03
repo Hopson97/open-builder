@@ -1,10 +1,9 @@
 #pragma once
 
-#include <vector>
 #include <glad/glad.h>
+#include <vector>
 
-namespace gl
-{
+namespace gl {
 
 /**
  * @brief Minimal information for drawing with glDrawElements

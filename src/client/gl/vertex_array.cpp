@@ -1,5 +1,5 @@
-#include "gl_errors.h"
 #include "vertex_array.h"
+#include "gl_errors.h"
 #include <iostream>
 
 namespace {

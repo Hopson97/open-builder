@@ -174,7 +174,8 @@ std::array<int, CHUNK_AREA> makeHeightMap(const ChunkPosition &location)
     return heightMap;
 }
 
-void makeNaturalTerrain(Chunk* chunk, const std::array<int, CHUNK_AREA>& heightMap)
+void makeNaturalTerrain(Chunk *chunk,
+                        const std::array<int, CHUNK_AREA> &heightMap)
 {
     auto cp = chunk->getPosition();
     auto cx = cp.x;

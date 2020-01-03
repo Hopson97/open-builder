@@ -203,7 +203,7 @@ void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
     qp.style = QueuedPacket::Style::Broadcast;
     qp.channel = channel;
     m_queue.push_back(qp);
-#else 
+#else
     enet_host_broadcast(mp_host, channel, pkt);
     flush();
 #endif

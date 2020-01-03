@@ -1,5 +1,5 @@
+#include "shader.h"
 #include "gl_errors.h"
-#include "gl_object.h"
 #include <common/file_io.h>
 #include <stdexcept>
 
