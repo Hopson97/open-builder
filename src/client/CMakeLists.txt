@@ -3,7 +3,7 @@ add_library(ob-client
     input/keyboard.cpp
     gl/vertex_array.cpp
     gl/shader.cpp
-    gl/gl_textures.cpp
+    gl/textures.cpp
     gl/gl_errors.cpp
     gl/primitive.cpp
     network/client_commands.cpp
