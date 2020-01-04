@@ -37,34 +37,34 @@ const ChunkPosition &Chunk::getPosition() const
 
 Chunk::CompressedBlocks Chunk::compress() const
 {
-    CompressedBlocks comp;
-
-    block_t current = blocks[0];
-    u32 count = 1;
+    CompressedBlocks compressed;
+    block_t currentBlock = blocks[0];
+    u32 blockCount = 1;
 
     for (unsigned i = 1; i < blocks.size(); i++) {
-        if (blocks[i] == current) {
-            count++;
+        auto block = blocks[i];
+        if (block == currentBlock) {
+            blockCount++;
         }
         else {
-            comp.emplace_back(current, count);
-            current = blocks[i];
-            count = 1;
+            compressed.emplace_back(currentBlock, blockCount);
+            currentBlock = blocks[i];
+            blockCount = 1;
         }
     }
-    comp.emplace_back(current, count);
-    return comp;
+    compressed.emplace_back(currentBlock, blockCount);
+    return compressed;
 }
 
-void Chunk::decompress(const Chunk::CompressedBlocks &comp)
+void Chunk::decompress(const Chunk::CompressedBlocks &compressed)
 {
-    int pointer = 0;
-    for (auto &block : comp) {
-        block_t type = block.first;
+    int blockPointer = 0;
+    for (auto &block : compressed) {
+        auto type = block.first;
         auto count = block.second;
 
         for (u16 i = 0; i < count; i++) {
-            blocks[pointer++] = type;
+            blocks[blockPointer++] = type;
         }
     }
 }

@@ -49,18 +49,11 @@ void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
     packet << ClientCommand::ChunkData << chunk.getPosition().x
            << chunk.getPosition().y << chunk.getPosition().z;
 
-#ifdef OLD_STYLE_NETWORK
-    // "Old Style" - Send entire chunk
-    packet.append(chunk.blocks.data(),
-                  chunk.blocks.size() * sizeof(chunk.blocks[0]));
-#else
-    // "New Style" - Compress the chunk before sending
     auto compressedChunk = chunk.compress();
     packet << static_cast<u32>(compressedChunk.size());
     for (auto &block : compressedChunk) {
         packet << block.first << block.second;
     }
-#endif
 
     // Send chunk data to client
     sendToPeer(m_connectedClients[peerId].peer, packet, 1,

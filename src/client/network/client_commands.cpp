@@ -95,15 +95,6 @@ void Client::onChunkData(sf::Packet &packet)
     packet >> position.x >> position.y >> position.z;
     Chunk &chunk = m_chunks.manager.addChunk(position);
 
-    // "Old Style" - Receive entire chunk
-#ifdef OLD_STYLE_NETWORK
-    Chunk::Blocks blocks;
-    for (auto &block : blocks) {
-        packet >> block;
-    }
-    chunk.blocks = std::move(blocks);
-#else
-    // "New Style" - Receive a compressed chunk
     u32 size;
     Chunk::CompressedBlocks compressed;
     packet >> size;
@@ -114,8 +105,6 @@ void Client::onChunkData(sf::Packet &packet)
         compressed.emplace_back(type, count);
     }
     chunk.decompress(compressed);
-#endif
-
     m_chunks.updates.push_back(position);
 }
 

@@ -12,8 +12,6 @@
 
 #include <SFML/System/Clock.hpp>
 
-//#define OLD_STYLE_NETWORK
-
 template <typename T> void bench(const char *n, T f)
 {
     sf::Clock c;
@@ -97,7 +95,7 @@ class NetworkHost {
      * @return true The packet was sent successfully
      * @return false The packet was not sent
      */
-    bool sendToPeer(ENetPeer *peer, sf::Packet &packet, u8 channel, u32 flags);
+    void sendToPeer(ENetPeer *peer, sf::Packet &packet, u8 channel, u32 flags);
 
     /**
      * @brief Broadcasts a packet to all connected peers

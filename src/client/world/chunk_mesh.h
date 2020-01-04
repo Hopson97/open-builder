@@ -2,6 +2,7 @@
 
 #include "../gl/vertex_array.h"
 #include <common/world/coordinate.h>
+#include <array>
 
 struct MeshFace {
     std::array<GLfloat, 12> vertices;
