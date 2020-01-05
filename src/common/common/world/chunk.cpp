@@ -70,16 +70,3 @@ void Chunk::decompress(const Chunk::CompressedBlocks &compressed)
     }
 }
 
-void Chunk::decompress(sf::Packet &packet)
-{ 
-    // Uncompress the block data
-    u32 size;
-    Chunk::CompressedBlocks compressed;
-    packet >> size;
-    for (u32 i = 0; i < size; i++) {
-        block_t type;
-        u16 count;
-        packet >> type >> count;
-        compressed.emplace_back(type, count);
-    }
-}
