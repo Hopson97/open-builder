@@ -24,6 +24,7 @@ block_t Chunk::getBlock(const BlockPosition &blockPosition) const
     if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
         blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE ||
         blockPosition.z < 0 || blockPosition.z >= CHUNK_SIZE) {
+        1;
         return mp_manager.getBlock(
             toGlobalBlockPosition(blockPosition, m_position));
     }
@@ -66,5 +67,19 @@ void Chunk::decompress(const Chunk::CompressedBlocks &compressed)
         for (u16 i = 0; i < count; i++) {
             blocks[blockPointer++] = type;
         }
+    }
+}
+
+void Chunk::decompress(sf::Packet &packet)
+{ 
+    // Uncompress the block data
+    u32 size;
+    Chunk::CompressedBlocks compressed;
+    packet >> size;
+    for (u32 i = 0; i < size; i++) {
+        block_t type;
+        u16 count;
+        packet >> type >> count;
+        compressed.emplace_back(type, count);
     }
 }

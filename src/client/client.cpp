@@ -111,30 +111,51 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     */
 }
 
-void Client::onKeyRelease(sf::Keyboard::Key key)
-{
-    if (key == sf::Keyboard::L) {
-        m_isMouseLocked = !m_isMouseLocked;
-    }
-}
-
 void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
                             [[maybe_unused]] int y)
 {
     // Handle block removal/ block placing events
-    Ray ray(mp_player->position, mp_player->rotation);
-    for (; ray.getLength() < 8; ray.step()) {
-        auto blockPosition = toBlockPosition(ray.getEndpoint());
-        if (m_chunks.manager.getBlock(blockPosition) == 1) {
 
+    // Create a "ray"
+    Ray ray(mp_player->position, mp_player->rotation);
+
+    // Step the ray until it hits a block/ reaches maximum length
+    for (; ray.getLength() < 8; ray.step()) {
+        auto rayBlockPosition = toBlockPosition(ray.getEndpoint());
+        if (m_chunks.manager.getBlock(rayBlockPosition) == 1) {
             BlockUpdate blockUpdate;
             blockUpdate.block = button == sf::Mouse::Left ? 0 : 1;
             blockUpdate.position = button == sf::Mouse::Left
-                                       ? blockPosition
+                                       ? rayBlockPosition
                                        : toBlockPosition(ray.getLastPoint());
             m_chunks.blockUpdates.push_back(blockUpdate);
             break;
         }
+    }
+}
+
+void Client::onKeyRelease(sf::Keyboard::Key key)
+{
+    switch (key) {
+        case sf::Keyboard::L:
+            m_isMouseLocked = !m_isMouseLocked;
+            break;
+
+        case sf::Keyboard::P:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            break;
+
+        case sf::Keyboard::F:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            break;
+
+        case sf::Keyboard::C:
+            glCullFace(GL_BACK);
+            break;
+
+        case sf::Keyboard::N:
+            glCullFace(GL_NONE);
+            break;
     }
 }
 
@@ -150,6 +171,30 @@ void Client::update(float dt)
         m_chunks.manager.ensureNeighbours(chunkPosition);
         m_chunks.manager.setBlock(blockUpdate.position, blockUpdate.block);
         m_chunks.updates.push_back(chunkPosition);
+
+        auto p = chunkPosition;
+        auto localBlockPostion = toLocalBlockPosition(blockUpdate.position);
+        std::cout << localBlockPostion << std::endl;
+        if (localBlockPostion.x == 0) {
+            m_chunks.updates.push_back({p.x - 1, p.y, p.z});
+        }
+        else if (localBlockPostion.x == CHUNK_SIZE - 1) {
+            m_chunks.updates.push_back({p.x + 1, p.y, p.z});
+        }
+
+        if (localBlockPostion.y == 0) {
+            m_chunks.updates.push_back({p.x, p.y - 1, p.z});
+        }
+        else if (localBlockPostion.y == CHUNK_SIZE - 1) {
+            m_chunks.updates.push_back({p.x, p.y + 1, p.z});
+        }
+
+        if (localBlockPostion.z == 0) {
+            m_chunks.updates.push_back({p.x, p.y, p.z - 1});
+        }
+        else if (localBlockPostion.z == CHUNK_SIZE - 1) {
+            m_chunks.updates.push_back({p.x, p.y, p.z + 1});
+        }
     }
     m_chunks.blockUpdates.clear();
 
@@ -161,14 +206,14 @@ void Client::update(float dt)
     };
 
     if (!m_chunks.updates.empty()) {
-        // Sort chunk updates by distance if the update vector is not sorted
-        // already
+        // Sort chunk updates by distance if the update vector is not
+        // sorted already
         if (!std::is_sorted(m_chunks.updates.begin(), m_chunks.updates.end(),
                             [&](const auto &a, const auto &b) {
                                 return distanceToPlayer(a) <
                                        distanceToPlayer(b);
                             })) {
-            // Remove unique elements
+            // Remove non-unique elements
             std::unordered_set<ChunkPosition, ChunkPositionHash> updates;
             for (auto &update : m_chunks.updates) {
                 updates.insert(update);
@@ -188,7 +233,7 @@ void Client::update(float dt)
         }
 
         // Find first "meshable" chunk
-
+        int count = 0;
         if (!m_blockMeshing) {
             m_noMeshingCount = 0;
             for (auto itr = m_chunks.updates.cbegin();
@@ -200,11 +245,13 @@ void Client::update(float dt)
                     deleteChunkRenderable(*itr);
                     m_chunks.updates.erase(itr);
 
-                    // Break so that the game still runs while world is being
-                    // built
-                    // TODO: Work out a way to make this concurrent (aka run
-                    // seperate from rest of application)
-                    break;
+                    // Break so that the game still runs while world is
+                    // being built
+                    // TODO: Work out a way to make this concurrent (aka
+                    // run seperate from rest of application)
+                    if (count++ > 3) {
+                        break;
+                    }
                 }
                 else {
                     m_noMeshingCount++;
