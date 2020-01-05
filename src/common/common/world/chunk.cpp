@@ -69,4 +69,3 @@ void Chunk::decompress(const Chunk::CompressedBlocks &compressed)
         }
     }
 }
-

@@ -28,6 +28,14 @@ void Client::sendPlayerPosition(const glm::vec3 &position)
     NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
 }
 
+void Client::sendBlockUpdate(const BlockUpdate &update)
+{
+    sf::Packet packet;
+    packet << ServerCommand::BlockEdit << update.position.x << update.position.y
+           << update.position.z << update.block;
+    NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
+}
+
 void Client::onPeerConnect([[maybe_unused]] ENetPeer *peer)
 {
 }
@@ -64,6 +72,11 @@ void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
 
         case ClientCommand::SpawnPoint:
             onSpawnPoint(packet);
+            break;
+
+        case ClientCommand::BlockUpdate:
+            onBlockUpdate(packet);
+            break;
 
         case ClientCommand::PeerId:
             break;
@@ -115,7 +128,7 @@ void Client::onChunkData(sf::Packet &packet)
     auto compressedData = getCompressedChunkFromPacket(packet);
     chunk.decompress(compressedData);
 
-    //Add to chunk updates
+    // Add to chunk updates
     m_chunks.updates.push_back(position);
 }
 
@@ -125,5 +138,18 @@ void Client::onSpawnPoint(sf::Packet &packet)
     if (mp_player) {
         packet >> mp_player->position.x >> mp_player->position.y >>
             mp_player->position.z;
+    }
+}
+
+void Client::onBlockUpdate(sf::Packet &packet)
+{
+    u16 count = 0;
+    packet >> count;
+    for (u32 i = 0; i < count; i++) {
+        BlockUpdate blockUpdate;
+        packet >> blockUpdate.position.x >> blockUpdate.position.y >> blockUpdate.position.z >>
+            blockUpdate.block;
+        blockUpdate.type = BlockUpdate::Type::Network;
+        m_chunks.blockUpdates.push_back(blockUpdate);
     }
 }
