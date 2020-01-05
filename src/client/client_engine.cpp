@@ -1,8 +1,9 @@
 #include "client_engine.h"
 
-#include "gameplay.h"
+#include "client.h"
 #include "gl/gl_errors.h"
 #include "window.h"
+#include <SFML/System/Clock.hpp>
 #include <common/debug.h>
 #include <glad/glad.h>
 #include <iostream>
@@ -21,8 +22,8 @@ struct FPSCounter final {
             float fps = frameCount / time.asSeconds();
             float frameTime = time.asMilliseconds() / frameCount;
 
-            std::cout << "==============\nAverage Current Performance\nFPS: "
-                      << fps << "\nFrame time: " << frameTime << "ms\n\n";
+            std::cout << "FPS: " << fps << "\nFrame time: " << frameTime
+                      << "ms\n\n";
             frameCount = 0;
             timer.restart();
         }
@@ -41,47 +42,52 @@ EngineStatus runClientEngine(const ClientConfig &config)
         return EngineStatus::GLInitError;
     }
 
-    glClearColor(0.25, 0.75, 1.0, 1.0);
+    glClearColor(0.25f, 0.75f, 1.0f, 1.0f);
+    // glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glViewport(0, 0, window.width, window.height);
 
     glCheck(glEnable(GL_DEPTH_TEST));
     glCheck(glEnable(GL_CULL_FACE));
     glCheck(glCullFace(GL_BACK));
 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    Gameplay gameplay;
+    Client gameClient;
     Keyboard keyboard;
     EngineStatus status = EngineStatus::Ok;
     FPSCounter counter;
 
-    if (!gameplay.init(window.aspect)) {
+    if (!gameClient.init(window.aspect)) {
         return EngineStatus::CouldNotConnect;
     }
 
     LOG("Client", "Starting game.");
+    sf::Clock clock;
     while (status == EngineStatus::Ok) {
         // Input
         status = window.pollEvents(
-            keyboard, [&gameplay](auto key) { gameplay.onKeyRelease(key); });
+            keyboard, [&gameClient](auto key) { gameClient.onKeyRelease(key); },
+            [&gameClient](auto button, int x, int y) {
+                gameClient.onMouseRelease(button, x, y);
+            });
 
-        gameplay.handleInput(window.window, keyboard);
+        gameClient.handleInput(window.window, keyboard);
 
         // Update
-        gameplay.update();
+        gameClient.update(clock.restart().asSeconds());
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        gameplay.render();
+        gameClient.render();
         window.window.display();
 
         // Stats and stuff
         counter.update();
         if (status == EngineStatus::Ok) {
-            status = gameplay.currentStatus();
+            status = gameClient.currentStatus();
         }
     }
     window.window.close();
-    gameplay.endGame();
+    gameClient.endGame();
     return status;
 }

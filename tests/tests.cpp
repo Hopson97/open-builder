@@ -1,13 +1,8 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
 
-#include <glad/glad.h>
 #include <SFML/Window/Window.hpp>
-
-#include "common/network/net_host_test.h"
-#include "common/world/chunk_test.h"
-#include "common/world/coordinate_test.h"
-
+#include <glad/glad.h>
 
 // ENet causes a bunch compiler warnings eg unused vars so these are here to
 // hide that
@@ -27,11 +22,11 @@
 
 int main(int argc, char *argv[])
 {
-    //sf::Window window({200, 200}, "Tests");
-    //gladLoadGL();
+    // sf::Window window({200, 200}, "Tests");
+    // gladLoadGL();
     enet_initialize();
     int result = Catch::Session().run(argc, argv);
-	//window.close();
+    // window.close();
     enet_deinitialize();
     return result;
 }

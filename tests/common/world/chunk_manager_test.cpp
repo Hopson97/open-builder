@@ -1,22 +1,10 @@
-#pragma once
-
 #include <catch2/catch.hpp>
 #include <common/debug.h>
-#include <common/world/chunk.h>
+#include <common/world/chunk_manager.h>
 
-TEST_CASE("Chunks should be able to be freely modified")
+TEST_CASE("Chunks manager tests")
 {
     block_t block = 10;
-
-    SECTION("Chunk blocks can be set and recieved correctly")
-    {
-        ChunkManager manager;
-        Chunk &chunk = manager.addChunk({0, 0, 0});
-        BlockPosition blockPosition(1, 2, 3);
-
-        chunk.qSetBlock(blockPosition, block);
-        REQUIRE(chunk.qGetBlock(blockPosition) == block);
-    }
 
     SECTION("The chunk manager will correctly set and get neighbouring blocks")
     {
@@ -57,35 +45,6 @@ TEST_CASE("Chunks should be able to be freely modified")
         REQUIRE(manager.getBlock(setPosition) == block);
     }
 
-    SECTION("The chunk is able to get neighbour blocks")
-    {
-        ChunkPosition left(-1, 0, 0);
-        ChunkPosition right(0, 0, 0);
-
-        ChunkManager manager;
-        Chunk &leftChunk = manager.addChunk(left);
-        Chunk &rightChunk = manager.addChunk(right);
-
-        BlockPosition setPosition;
-        BlockPosition correctedPosition;
-
-        setPosition = {-5, 5, 2};
-        correctedPosition = {CHUNK_SIZE - 5, 5, 2};
-        manager.setBlock(setPosition, block);
-        REQUIRE(rightChunk.getBlock(setPosition) == block);
-        REQUIRE(leftChunk.qGetBlock(correctedPosition) == block);
-        REQUIRE(leftChunk.getBlock(correctedPosition) == block);
-        REQUIRE(manager.getBlock(setPosition) == block);
-
-        setPosition = {5, 10, 3};
-        correctedPosition = {CHUNK_SIZE + 5, 10, 3};
-        manager.setBlock(setPosition, block);
-        REQUIRE(leftChunk.getBlock(correctedPosition) == block);
-        REQUIRE(rightChunk.qGetBlock(setPosition) == block);
-        REQUIRE(rightChunk.getBlock(setPosition) == block);
-        REQUIRE(manager.getBlock(setPosition) == block);
-    }
-
     SECTION("The chunk manager correctly identifies it has neighbours for a "
             "given chunk")
     {
@@ -100,5 +59,12 @@ TEST_CASE("Chunks should be able to be freely modified")
 
         REQUIRE(manager.hasNeighbours({1, 1, 1}) == true);
         REQUIRE(manager.hasNeighbours({1, 2, 1}) == false);
+    }
+
+    SECTION("The chunk manager can ensure a chunk has neighbours")
+    {
+        ChunkManager manager;
+        manager.ensureNeighbours({0, 0, 0});
+        REQUIRE(manager.hasNeighbours({0, 0, 0}) == true);
     }
 }

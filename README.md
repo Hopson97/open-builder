@@ -1,10 +1,10 @@
-# Open Builder 
+# Open Builder
 
 [![C++ CI](https://github.com/Hopson97/open-builder/workflows/C++%20CI/badge.svg)](https://github.com/Hopson97/open-builder/actions?query=workflow%3A"C%2B%2B+CI")
 
 Open source Minecraft-like voxel sandbox game with multiplayer support.
 
-More information about the project can be fouund in the **[Open Builder Wiki](https://github.com/Hopson97/open-builder/wiki)**
+More information about the project can be found in the **[Open Builder Wiki](https://github.com/Hopson97/open-builder/wiki)**
 
 This was made mostly for a YouTube series which can be found here: **[Lets Code A Multiplayer Voxel Game](https://www.youtube.com/watch?v=4Rg1RriQZ9Q&list=PLMZ_9w2XRxiYb-ewSron6jd2fC1UHbDbJ&index=2)**
 
@@ -18,10 +18,7 @@ Game is in uh very early stages
 
 A quick overview of the code and project structure can be found in the wiki artle:
 
-
 **[Project Structure](https://github.com/Hopson97/open-builder/wiki/Project-Structure)**
-
-
 
 ## Contributing
 
@@ -111,7 +108,6 @@ The unit tests can be ran using
 sh scripts/tests.sh
 ```
 
-
 ## Similar Projects
 
 This project was heavily influenced by the following projects:
@@ -136,7 +132,7 @@ Minecraft clone created by Fogleman in C.
 
 ## Special Thanks
 
-[DS3PI](https://github.com/D3PSI) - Added GitHub actions, and created the install.sh file to automate the installation process on Linux systems
+[D3PSI](https://github.com/D3PSI) - Added GitHub actions, and created the install.sh file to automate the installation process on Linux systems
 
 ## History
 
@@ -149,5 +145,3 @@ To combat this, I did a masive refactor in just over 2 weeks, re-creating the mo
 The before refactor can be found **[here](https://github.com/Hopson97/open-builder/tree/a452dfd0a5d8fc94059f7e1ab8ecca03dd06ba3a)**
 
 The commit that adds the refactored code can be found **[here](https://github.com/Hopson97/open-builder/tree/9b6c7c83fb1331fa8740ad12d6df9390d5b31c0c)**
-
-

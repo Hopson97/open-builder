@@ -34,29 +34,24 @@ enum class ClientCommand : command_t {
     // Data:
     // i32[3] The position of the chunk
     // block[CHUNK_VOLUME] The block data
-    ChunkData
+    ChunkData,
+
+    // Position for player when they spawn
+    // Data:
+    // float[3]: The X, Y, Z position of the entity
+    SpawnPoint,
+
 };
 
 /**
         Commands to be sent to server
 */
 enum class ServerCommand : command_t {
-    // Command to connect to a server
-    // Data:
-    // peer_id_t: The ID of the player trying to leave
-    Disconnect,
-
     // Command to tell server the position of a player
     // Data:
     // peer_id_t: The player which position is being sent
     // float[3]: The x, y, z position of the player
     PlayerPosition,
-
-    // Client is requesting some data about world
-    // Data:
-    // peer_id_t: The peer requesting the chunk data
-    // i32[3] The position of the chunk
-    ChunkRequest,
 };
 
 template <typename CommandType>

@@ -61,16 +61,20 @@ int getPeerIdFromServer(ENetHost *host)
     return id;
 }
 
-ENetPacket* createPacket(sf::Packet &packet, u32 flags)
+ENetPacket *createPacket(sf::Packet &packet, u32 flags)
 {
-    return enet_packet_create(packet.getData(), packet.getDataSize(),
-                                         flags);
+    return enet_packet_create(packet.getData(), packet.getDataSize(), flags);
 }
 } // namespace
 
 NetworkHost::NetworkHost(std::string &&name)
     : m_name(std::move(name))
 {
+}
+
+NetworkHost::~NetworkHost()
+{
+    enet_host_destroy(mp_host);
 }
 
 std::optional<ENetPeer *> NetworkHost::createAsClient(const std::string &ip)
@@ -107,9 +111,9 @@ bool NetworkHost::createAsServer(int maxConnections)
     return mp_host;
 }
 
-void NetworkHost::disconnectFromPeer(ENetPeer &peer)
+void NetworkHost::disconnectFromPeer(ENetPeer *peer)
 {
-    enet_peer_disconnect(&peer, static_cast<u32>(m_peerId));
+    enet_peer_disconnect(peer, static_cast<u32>(m_peerId));
     ENetEvent event;
     while (enet_host_service(mp_host, &event, 3000) > 0) {
         switch (event.type) {
@@ -125,7 +129,7 @@ void NetworkHost::disconnectFromPeer(ENetPeer &peer)
                 break;
         }
     }
-    enet_peer_reset(&peer);
+    enet_peer_reset(peer);
 }
 
 void NetworkHost::disconnectAllPeers()
@@ -169,47 +173,80 @@ int NetworkHost::getMaxConnections() const
     return m_maxConnections;
 }
 
-bool NetworkHost::sendToPeer(ENetPeer &peer, sf::Packet &packet, u8 channel,
+void NetworkHost::sendToPeer(ENetPeer *peer, sf::Packet &packet, u8 channel,
                              u32 flags)
 {
     ENetPacket *pkt = createPacket(packet, flags);
-    int result = enet_peer_send(&peer, channel, pkt);
-    flush();
-    return result == 0;
+    QueuedPacket qp;
+    qp.packet = pkt;
+    qp.peer = peer;
+    qp.style = QueuedPacket::Style::One;
+    qp.channel = channel;
+    m_queue.push_back(qp);
 }
 
 void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
 {
     ENetPacket *pkt = createPacket(packet, flags);
-    enet_host_broadcast(mp_host, channel, pkt);
-    flush();
-}
-
-void NetworkHost::destroy()
-{
-    enet_host_destroy(mp_host);
+    QueuedPacket qp;
+    qp.packet = pkt;
+    qp.style = QueuedPacket::Style::Broadcast;
+    qp.channel = channel;
+    m_queue.push_back(qp);
 }
 
 void NetworkHost::tick()
 {
+    // Send the queued packets, but not too many at once
+    const int MAX__SEND_LIMIT = 1024;
+
+    int bytesSent = 0;
+
+    while (!m_queue.empty()) {
+        auto qp = m_queue.front();
+        m_queue.pop_front();
+        bytesSent += qp.packet->dataLength;
+
+        switch (qp.style) {
+            case QueuedPacket::Style::Broadcast:
+                enet_host_broadcast(mp_host, qp.channel, qp.packet);
+                break;
+
+            case QueuedPacket::Style::One:
+                enet_peer_send(qp.peer, qp.channel, qp.packet);
+                break;
+
+            default:
+                break;
+        }
+
+        flush();
+        if (bytesSent > MAX__SEND_LIMIT) {
+            break;
+        }
+    }
+
+    assert(mp_host);
     ENetEvent event;
     while (enet_host_service(mp_host, &event, 0) > 0) {
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
-                onPeerConnect(*event.peer);
+                onPeerConnect(event.peer);
                 break;
 
             case ENET_EVENT_TYPE_RECEIVE:
-                onCommandRecieve(*event.packet);
+                onCommandRecieve(event.peer, *event.packet);
                 enet_packet_destroy(event.packet);
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
-                onPeerDisconnect(*event.peer);
+                removePeerFromPacketQueue(event.peer);
+                onPeerDisconnect(event.peer);
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
-                onPeerTimeout(*event.peer);
+                removePeerFromPacketQueue(event.peer);
+                onPeerTimeout(event.peer);
                 break;
 
             case ENET_EVENT_TYPE_NONE:
@@ -218,16 +255,29 @@ void NetworkHost::tick()
     }
 }
 
-void NetworkHost::onCommandRecieve(const ENetPacket &enetPacket)
+void NetworkHost::onCommandRecieve(ENetPeer *peer, const ENetPacket &enetPacket)
 {
     sf::Packet packet;
     packet.append(enetPacket.data, enetPacket.dataLength);
     command_t command;
     packet >> command;
-    onCommandRecieve(packet, command);
+    onCommandRecieve(peer, packet, command);
 }
 
 void NetworkHost::flush()
 {
     enet_host_flush(mp_host);
+}
+
+void NetworkHost::removePeerFromPacketQueue(ENetPeer *peer)
+{
+    for (auto itr = m_queue.cbegin(); itr != m_queue.cend();) {
+        if (itr->style == QueuedPacket::Style::One &&
+            itr->peer->connectID == peer->connectID) {
+            itr = m_queue.erase(itr);
+        }
+        else {
+            itr++;
+        }
+    }
 }

@@ -1,9 +1,9 @@
 #include "chunk.h"
+#include "chunk_manager.h"
 
-#include "../debug.h"
-#include <iostream>
+// TODO Replace the .at with operator[] (when can be sure its safe to do so)
 
-Chunk::Chunk(ChunkManager *manager, const ChunkPosition &position)
+Chunk::Chunk(ChunkManager &manager, const ChunkPosition &position)
     : mp_manager(manager)
     , m_position(position)
 {
@@ -24,7 +24,7 @@ block_t Chunk::getBlock(const BlockPosition &blockPosition) const
     if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
         blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE ||
         blockPosition.z < 0 || blockPosition.z >= CHUNK_SIZE) {
-        return mp_manager->getBlock(
+        return mp_manager.getBlock(
             toGlobalBlockPosition(blockPosition, m_position));
     }
     return qGetBlock(blockPosition);
@@ -35,56 +35,36 @@ const ChunkPosition &Chunk::getPosition() const
     return m_position;
 }
 
-Chunk &ChunkManager::addChunk(const ChunkPosition &chunk)
+Chunk::CompressedBlocks Chunk::compress() const
 {
-    auto itr = m_chunks.find(chunk);
-    if (itr == m_chunks.cend()) {
-        return m_chunks
-            .emplace(std::piecewise_construct, std::forward_as_tuple(chunk),
-                     std::forward_as_tuple(this, chunk))
-            .first->second;
+    CompressedBlocks compressed;
+    block_t currentBlock = blocks[0];
+    u32 blockCount = 1;
+
+    for (unsigned i = 1; i < blocks.size(); i++) {
+        auto block = blocks[i];
+        if (block == currentBlock) {
+            blockCount++;
+        }
+        else {
+            compressed.emplace_back(currentBlock, blockCount);
+            currentBlock = blocks[i];
+            blockCount = 1;
+        }
     }
-    return itr->second;
+    compressed.emplace_back(currentBlock, blockCount);
+    return compressed;
 }
 
-block_t ChunkManager::getBlock(const BlockPosition &blockPosition) const
+void Chunk::decompress(const Chunk::CompressedBlocks &compressed)
 {
-    auto chunkPosition = toChunkPosition(blockPosition);
-    auto itr = m_chunks.find(chunkPosition);
-    if (itr == m_chunks.cend()) {
-        return 0;
+    int blockPointer = 0;
+    for (auto &block : compressed) {
+        auto type = block.first;
+        auto count = block.second;
+
+        for (u16 i = 0; i < count; i++) {
+            blocks[blockPointer++] = type;
+        }
     }
-    return itr->second.qGetBlock(toLocalBlockPosition(blockPosition));
-}
-
-void ChunkManager::setBlock(const BlockPosition &blockPosition, block_t block)
-{
-    auto chunkPosition = toChunkPosition(blockPosition);
-    auto itr = m_chunks.find(chunkPosition);
-    if (itr != m_chunks.cend()) {
-        itr->second.qSetBlock(toLocalBlockPosition(blockPosition), block);
-    }
-}
-
-bool ChunkManager::hasChunk(const ChunkPosition &chunk) const
-{
-    return m_chunks.find(chunk) != m_chunks.cend();
-}
-
-bool ChunkManager::hasNeighbours(const ChunkPosition &chunkPosition) const
-{
-    const auto &cp = chunkPosition;
-    return hasChunk(chunkPosition) &&
-           // Top
-           hasChunk({cp.x, cp.y + 1, cp.z}) &&
-           // Bottom
-           hasChunk({cp.x, cp.y - 1, cp.z}) &&
-           // Left
-           hasChunk({cp.x - 1, cp.y, cp.z}) &&
-           // Right
-           hasChunk({cp.x + 1, cp.y, cp.z}) &&
-           // Front
-           hasChunk({cp.x, cp.y, cp.z - 1}) &&
-           // Back
-           hasChunk({cp.x, cp.y, cp.z + 1});
 }

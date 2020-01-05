@@ -1,5 +1,3 @@
-#pragma once
-
 #include <atomic>
 #include <catch2/catch.hpp>
 #include <common/network/net_host.h>
@@ -13,7 +11,7 @@ class TestServer : public NetworkHost {
     }
 
   private:
-    void onPeerConnect(ENetPeer &peer) override
+    void onPeerConnect(ENetPeer *peer) override
     {
         sf::Packet packet;
         packet << ClientCommand::PeerId << static_cast<peer_id_t>(0);
@@ -21,15 +19,16 @@ class TestServer : public NetworkHost {
         sendToPeer(peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
     }
 
-    void onPeerDisconnect(ENetPeer &peer) override
+    void onPeerDisconnect(ENetPeer *peer) override
     {
     }
 
-    void onPeerTimeout(ENetPeer &peer) override
+    void onPeerTimeout(ENetPeer *peer) override
     {
     }
 
-    void onCommandRecieve(sf::Packet &packet, command_t command) override
+    void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
+                          command_t command) override
     {
     }
 };
@@ -42,23 +41,23 @@ class TestClient : public NetworkHost {
     }
 
   private:
-    void onPeerConnect(ENetPeer &peer) override
+    void onPeerConnect(ENetPeer *peer) override
     {
     }
 
-    void onPeerDisconnect(ENetPeer &peer) override
+    void onPeerDisconnect(ENetPeer *peer) override
     {
     }
 
-    void onPeerTimeout(ENetPeer &peer) override
+    void onPeerTimeout(ENetPeer *peer) override
     {
     }
 
-    void onCommandRecieve(sf::Packet &packet, command_t command) override
+    void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
+                          command_t command) override
     {
     }
 };
-
 
 TEST_CASE("The server works")
 {
@@ -69,7 +68,6 @@ TEST_CASE("The server works")
         REQUIRE(server.getMaxConnections() == 4);
         REQUIRE(server.getConnectedPeerCount() == 0);
     }
-    server.destroy();
 }
 
 TEST_CASE("The client can interact with the server.")
@@ -94,11 +92,10 @@ TEST_CASE("The client can interact with the server.")
         REQUIRE(client.getConnectedPeerCount() == 1);
 
         control = false;
-        client.destroy();
 
         serverThread.join();
     }
-    
+
     SECTION("The client can disconnect from the server")
     {
         std::atomic<bool> control = true;
@@ -110,17 +107,13 @@ TEST_CASE("The client can interact with the server.")
 
         TestClient client;
         auto serverConnection = client.createAsClient(LOCAL_HOST);
-        client.disconnectFromPeer(**serverConnection);
+        client.disconnectFromPeer(*serverConnection);
 
         REQUIRE(server.getConnectedPeerCount() == 0);
         REQUIRE(client.getConnectedPeerCount() == 0);
 
         control = false;
-        client.destroy();
 
         serverThread.join();
     }
-    
-
-    server.destroy();
 }

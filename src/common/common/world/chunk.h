@@ -4,21 +4,30 @@
 #include "coordinate.h"
 #include "world_constants.h"
 #include <array>
+#include <vector>
 
 class ChunkManager;
 
 template <typename T> using BlockArray = std::array<T, CHUNK_VOLUME>;
 
 /**
- * @brief Represents a little slice of the world, holding the blocks that make
- * it up
+ * @brief Data structure for a "chunk" of blocks of the game
  *
  */
 class Chunk {
   public:
     using Blocks = BlockArray<block_t>;
 
-    Chunk(ChunkManager *manager, const ChunkPosition &position);
+    /**
+     * @brief Compressed chunk block data
+     * Contains a block, followed by how many blocks are exactly the same after
+     * it Eg a chunk like [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 3, 3, 3, 3,
+     * 3, 3, 3, 2, 1] Would get compressed to: [0, 4, 1, 4, 0, 2, 1, 4, 3, 7, 2,
+     * 1]
+     */
+    using CompressedBlocks = std::vector<std::pair<block_t, u16>>;
+
+    Chunk(ChunkManager &manager, const ChunkPosition &position);
 
     /**
      * @brief Quick get block - Gets a block at the local block position without
@@ -48,48 +57,24 @@ class Chunk {
     block_t getBlock(const BlockPosition &blockPosition) const;
     const ChunkPosition &getPosition() const;
 
+    /**
+     * @brief Compress the block data of this chunk
+     *
+     * @return CompressedBlocks The compressed block data [See:
+     * CompressedBlocks]
+     */
+    CompressedBlocks compress() const;
+
+    /**
+     * @brief Uncompress block data into this chunk
+     *
+     * @param blocks The compressed block data [See: CompressedBlocks]
+     */
+    void decompress(const CompressedBlocks &blocks);
+
     Blocks blocks{0};
 
   private:
-    ChunkManager *mp_manager;
+    ChunkManager &mp_manager;
     ChunkPosition m_position;
-};
-
-/**
- * @brief Basic chunk container
- *
- */
-class ChunkManager final {
-  public:
-    /**
-     * @brief Adds a chunk to the position, and returns it
-     *
-     * @param chunk The position to add a chunk to
-     * @return Chunk& The newly added chunk, or the one if one already existed
-     */
-    Chunk &addChunk(const ChunkPosition &chunk);
-
-    block_t getBlock(const BlockPosition &blockPosition) const;
-    void setBlock(const BlockPosition &blockPosition, block_t block);
-
-    /**
-     * @brief Check if a chunk exists at this position
-     *
-     * @param chunk The position to check
-     * @return true A chunk exists
-     * @return false A chunk does not exist
-     */
-    bool hasChunk(const ChunkPosition &chunk) const;
-
-    /**
-     * @brief Check if a chunk position has all 6 neighbouring chunks
-     *
-     * @param chunkPosition The position to check neighbours at
-     * @return true All 6 neighbours exist
-     * @return false Not all 6 neighbours exists
-     */
-    bool hasNeighbours(const ChunkPosition &chunkPosition) const;
-
-  private:
-    ChunkPositionMap<Chunk> m_chunks;
 };
