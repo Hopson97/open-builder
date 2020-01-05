@@ -16,7 +16,7 @@ Game is in uh very early stages
 
 ## Project Structure
 
-A quick overview of the code and project structure can be found in the wiki artle:
+A quick overview of the code and project structure can be found in the wiki article:
 
 **[Project Structure](https://github.com/Hopson97/open-builder/wiki/Project-Structure)**
 
@@ -44,19 +44,23 @@ We offer an automated installer for a bunch of different Linux distributions inc
 sudo bash scripts/install.sh
 ```
 
-from the project root directory. If you are interested in the manual way of installation, check below instructions. To then finally run the application see [Running](https://github.com/Hopson97/open-builder#running) below.
+from the project root directory. If you are interested in the [manual way of installation](https://github.com/Hopson97/open-builder#manual-installation), check below instructions. To then finally run the application see [Running](https://github.com/Hopson97/open-builder#running) below.
 
 #### Manual Installation
 
 ##### Libraries
 
-These are required for the project, and usually can be downloaded via your distributions
+These are required for the project, and can usually be downloaded via your distribution-specific package manager:
 
 ```sh
-sudo apt install libsfml-dev libglm-dev
+sudo apt install libsfml-dev libglm-dev     # Debian/Ubuntu
+sudo pacman -S glm sfml                     # Arch/Manjaro
+sudo yum install glm-devel sfml-devel       # Fedora/RHEL
 ```
 
-If not, then you can download them from the website:
+Feel free to create a pull request to add support for your system's package manager!
+
+If there is no mirror available, then you can download and manually install them from their respective websites:
 
 [SFML Download](https://www.sfml-dev.org/download.php)
 
@@ -64,10 +68,12 @@ If not, then you can download them from the website:
 
 ##### Building
 
-This project uses CMake to create the build files. You can install using your package manager eg
+This project uses CMake to create the build files. You can install the tool using your package manager:
 
 ```sh
-sudo apt install cmake
+sudo apt install cmake  # Debian
+sudo pacman -S cmake    # Arch/Manjaro
+sudo yum install cmake  # Fedora/RHEL
 ```
 
 First clone the project and `cd`:
@@ -140,8 +146,8 @@ Originally, this was going to be a Zombie game, but I got very bored of that ver
 
 As a result of this, the code was created for the zombie game, so when I decided to switch over, the code got messy very quickly.
 
-To combat this, I did a masive refactor in just over 2 weeks, re-creating the most the project.
+To combat this, I did a massive refactor in just over 2 weeks, re-creating large parts of the project.
 
-The before refactor can be found **[here](https://github.com/Hopson97/open-builder/tree/a452dfd0a5d8fc94059f7e1ab8ecca03dd06ba3a)**
+The before-refactor-project can be found **[here](https://github.com/Hopson97/open-builder/tree/a452dfd0a5d8fc94059f7e1ab8ecca03dd06ba3a)**
 
 The commit that adds the refactored code can be found **[here](https://github.com/Hopson97/open-builder/tree/9b6c7c83fb1331fa8740ad12d6df9390d5b31c0c)**
