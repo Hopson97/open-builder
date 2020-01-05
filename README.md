@@ -16,7 +16,7 @@ Game is in uh very early stages
 
 ## Project Structure
 
-A quick overview of the code and project structure can be found in the wiki artle:
+A quick overview of the code and project structure can be found in the wiki article:
 
 **[Project Structure](https://github.com/Hopson97/open-builder/wiki/Project-Structure)**
 
