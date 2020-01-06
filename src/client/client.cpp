@@ -100,15 +100,12 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
         velocity.y -= PLAYER_SPEED * 2;
         // std::cout << position << std::endl;
     }
-
-    /*
         if (rotation.x < -80.0f) {
-            rotation.x = -79.0f;
+            rotation.x = -79.9f;
         }
         else if (rotation.x > 85.0f) {
-            rotation.x = 84.0f;
+            rotation.x = 84.9f;
         }
-    */
 }
 
 void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
