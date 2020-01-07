@@ -122,14 +122,18 @@ void Client::onChunkData(sf::Packet &packet)
     // Get position of the recieved chunk, and create a chunk
     ChunkPosition position;
     packet >> position.x >> position.y >> position.z;
-    Chunk &chunk = m_chunks.manager.addChunk(position);
 
-    // Uncompress the block data
-    auto compressedData = getCompressedChunkFromPacket(packet);
-    chunk.decompress(compressedData);
+    if (!m_chunks.manager.hasChunk(position)) {
 
-    // Add to chunk updates
-    m_chunks.updates.push_back(position);
+        Chunk &chunk = m_chunks.manager.addChunk(position);
+
+        // Uncompress the block data
+        auto compressedData = getCompressedChunkFromPacket(packet);
+        chunk.decompress(compressedData);
+
+        // Add to chunk updates
+        m_chunks.updates.push_back(position);
+    }
 }
 
 void Client::onSpawnPoint(sf::Packet &packet)

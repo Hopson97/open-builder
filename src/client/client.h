@@ -19,13 +19,8 @@
 class Keyboard;
 
 struct BlockUpdate {
-    enum class Type : u8 {
-        Network,
-        Self,
-    };
     BlockPosition position;
     block_t block;
-    Type type;
 };
 
 struct Entity final {

@@ -20,8 +20,8 @@ Server::Server()
 
             for (int cy = 0; cy < 5; cy++) {
                 Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
-                makeFlatTerrain(&chunk);
-                //makeNaturalTerrain(&chunk, heightMap);
+                //makeFlatTerrain(&chunk);
+                makeNaturalTerrain(&chunk, heightMap);
             }
         }
     }
