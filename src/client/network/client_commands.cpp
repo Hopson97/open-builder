@@ -149,7 +149,6 @@ void Client::onBlockUpdate(sf::Packet &packet)
         BlockUpdate blockUpdate;
         packet >> blockUpdate.position.x >> blockUpdate.position.y >> blockUpdate.position.z >>
             blockUpdate.block;
-        blockUpdate.type = BlockUpdate::Type::Network;
         m_chunks.blockUpdates.push_back(blockUpdate);
     }
 }
