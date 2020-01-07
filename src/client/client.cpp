@@ -125,6 +125,7 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
             blockUpdate.position = button == sf::Mouse::Left
                                        ? rayBlockPosition
                                        : toBlockPosition(ray.getLastPoint());
+            blockUpdate.type = BlockUpdate::Type::Self;
             m_chunks.blockUpdates.push_back(blockUpdate);
             break;
         }
@@ -169,9 +170,12 @@ void Client::update(float dt)
         m_chunks.manager.setBlock(blockUpdate.position, blockUpdate.block);
         m_chunks.updates.push_back(chunkPosition);
 
+        if (blockUpdate.type == BlockUpdate::Type::Self) {
+            sendBlockUpdate(blockUpdate);
+        }
+
         auto p = chunkPosition;
         auto localBlockPostion = toLocalBlockPosition(blockUpdate.position);
-        std::cout << localBlockPostion << std::endl;
         if (localBlockPostion.x == 0) {
             m_chunks.updates.push_back({p.x - 1, p.y, p.z});
         }

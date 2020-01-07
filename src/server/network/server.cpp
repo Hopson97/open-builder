@@ -20,12 +20,12 @@ Server::Server()
 
             for (int cy = 0; cy < 5; cy++) {
                 Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
-                // makeFlatTerrain(&chunk);
-                makeNaturalTerrain(&chunk, heightMap);
+                makeFlatTerrain(&chunk);
+                //makeNaturalTerrain(&chunk, heightMap);
             }
         }
     }
-    std::cout << "done\n";
+    std::cout << "World created\n";
 }
 
 void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
@@ -126,6 +126,10 @@ void Server::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
         case ServerCommand::PlayerPosition:
             handleCommandPlayerPosition(packet);
             break;
+
+        case ServerCommand::BlockEdit:
+            handleCommandBlockEdit(packet);
+            break;
     }
 }
 
@@ -137,8 +141,36 @@ void Server::handleCommandPlayerPosition(sf::Packet &packet)
         m_entities[id].position.z;
 }
 
-void Server::sendPackets()
+void Server::handleCommandBlockEdit(sf::Packet &packet)
 {
+    BlockPosition position;
+    block_t block;
+    packet >> position.x >> position.y >> position.z >> block;
+    m_blockUpdates.push_back({position, block});
+}
+
+void Server::update()
+{
+    sf::Packet packet;
+    if (m_blockUpdates.size() > 0) {
+
+        u16 size = m_blockUpdates.size();
+        packet << ClientCommand::BlockUpdate << size;
+
+        for (auto &blockUpdate : m_blockUpdates) {
+            auto chunkPosition = toChunkPosition(blockUpdate.position);
+            m_world.chunks.ensureNeighbours(chunkPosition);
+            m_world.chunks.setBlock(blockUpdate.position, blockUpdate.block);
+
+            packet << blockUpdate.position.x << blockUpdate.position.y
+                   << blockUpdate.position.z << blockUpdate.block;
+        }
+        // TODO: Try find a way to not send block updates to players that
+        // created them
+        broadcastToPeers(packet, 0, ENET_PACKET_FLAG_RELIABLE);
+        m_blockUpdates.clear();
+    }
+
     // Player positions
     {
         sf::Packet packet;

@@ -23,10 +23,15 @@ struct ConnectedClient {
 };
 
 class Server final : public NetworkHost {
+    struct BlockUpdate {
+        BlockPosition position;
+        block_t block;
+    };
+
   public:
     Server();
 
-    void sendPackets();
+    void update();
 
   private:
     glm::vec3 findPlayerSpawnPosition();
@@ -40,6 +45,7 @@ class Server final : public NetworkHost {
                           command_t command) override;
 
     void handleCommandPlayerPosition(sf::Packet &packet);
+    void handleCommandBlockEdit(sf::Packet &packet);
 
     int findEmptySlot() const;
 
@@ -52,5 +58,8 @@ class Server final : public NetworkHost {
     struct {
         ChunkManager chunks;
     } m_world;
+
+    std::vector<BlockUpdate> m_blockUpdates;
+
     bool m_isRunning = true;
 };

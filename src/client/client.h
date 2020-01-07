@@ -17,9 +17,15 @@
 #include <unordered_set>
 
 class Keyboard;
+
 struct BlockUpdate {
+    enum class Type : u8 {
+        Network,
+        Self,
+    };
     BlockPosition position;
     block_t block;
+    Type type;
 };
 
 struct Entity final {
@@ -53,6 +59,7 @@ class Client final : public NetworkHost {
     // Network functions; defined in the src/client/network/client_command.cpp
     // directory
     void sendPlayerPosition(const glm::vec3 &position);
+    void sendBlockUpdate(const BlockUpdate &update);
 
     void onPeerConnect(ENetPeer *peer) override;
     void onPeerDisconnect(ENetPeer *peer) override;
@@ -65,6 +72,7 @@ class Client final : public NetworkHost {
     void onSnapshot(sf::Packet &packet);
     void onChunkData(sf::Packet &packet);
     void onSpawnPoint(sf::Packet &packet);
+    void onBlockUpdate(sf::Packet &packet);
     // End of network functions
 
     int findChunkDrawableIndex(const ChunkPosition &position);

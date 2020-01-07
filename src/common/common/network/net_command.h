@@ -41,6 +41,13 @@ enum class ClientCommand : command_t {
     // float[3]: The X, Y, Z position of the entity
     SpawnPoint,
 
+    // Command to say that a block was updated
+    // Data:
+    // u32: Number of block updates
+    // [For each block update...]
+    // i32[3]: The X, Y, Z position of the block edit
+    // block_t: The block it has been changed to
+    BlockUpdate,
 };
 
 /**
@@ -52,6 +59,12 @@ enum class ServerCommand : command_t {
     // peer_id_t: The player which position is being sent
     // float[3]: The x, y, z position of the player
     PlayerPosition,
+   
+    // Command to say that a block was edited
+    // Data:
+    // i32[3]: The X, Y, Z position of the block edit
+    // block_t: The block it has been changed to
+    BlockEdit,
 };
 
 template <typename CommandType>
