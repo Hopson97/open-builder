@@ -9,7 +9,7 @@
 
 void runServerEngine(const ServerConfig &config, sf::Time timeout)
 {
-    Server engine;
+    Server engine(config);
     if (!engine.createAsServer(config.maxConnections)) {
         std::cout << "Failed to create server.\n";
         return;

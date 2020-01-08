@@ -8,24 +8,22 @@
 
 #include "../world/terrain_generation.h"
 
-Server::Server()
+Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
+    ,   m_worldSize (config.worldSize)
+    ,   m_worldHeight (config.worldHeight)
 {
-    int size = TEMP_WORLD_SIZE;
+    for (int z = 0; z < m_worldSize; z++) {
+        for (int x = 0; x < m_worldSize; x++) {
+            std::array<int, CHUNK_AREA> heightMap = makeHeightMap({x, 0, z});
 
-    // Create spawn area
-    for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
-        for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
-            std::array<int, CHUNK_AREA> heightMap = makeHeightMap({cx, 0, cz});
-
-            for (int cy = 0; cy < 5; cy++) {
-                Chunk &chunk = m_world.chunks.addChunk({cx, cy, cz});
+            for (int y = 0; y < m_worldHeight; y++) {
+                Chunk &chunk = m_world.chunks.addChunk({x, y, z});
                 //makeFlatTerrain(&chunk);
-                makeNaturalTerrain(&chunk, heightMap);
+                makeNaturalTerrain(&chunk, heightMap, m_worldSize);
             }
         }
     }
-    std::cout << "World created\n";
 }
 
 void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
@@ -99,9 +97,9 @@ void Server::onPeerConnect(ENetPeer *peer)
         }
 
         // Send the inital world to the client
-        for (int cy = 0; cy < TEMP_WORLD_SIZE; cy++) {
-            for (int cz = 0; cz < TEMP_WORLD_SIZE; cz++) {
-                for (int cx = 0; cx < TEMP_WORLD_SIZE; cx++) {
+        for (int cy = 0; cy < m_worldSize; cy++) {
+            for (int cz = 0; cz < m_worldSize; cz++) {
+                for (int cx = 0; cx < m_worldSize; cx++) {
                     sendChunk(id, {cx, cy, cz});
                 }
             }
@@ -230,10 +228,10 @@ void Server::removePeer(u32 connectionId)
 
 glm::vec3 Server::findPlayerSpawnPosition()
 {
-    int x = (CHUNK_SIZE * TEMP_WORLD_SIZE) / 2;
-    int z = (CHUNK_SIZE * TEMP_WORLD_SIZE) / 2;
+    int x = (CHUNK_SIZE * m_worldSize) / 2;
+    int z = (CHUNK_SIZE * m_worldSize) / 2;
 
-    for (int chunkY = TEMP_WORLD_SIZE - 1; chunkY >= 0; chunkY--) {
+    for (int chunkY = m_worldSize - 1; chunkY >= 0; chunkY--) {
         auto chunkPosition = worldToChunkPosition({x, 0, z});
         chunkPosition.y = chunkY;
         auto &spawn = m_world.chunks.getChunk(chunkPosition);
@@ -247,5 +245,5 @@ glm::vec3 Server::findPlayerSpawnPosition()
             }
         }
     }
-    return {x, CHUNK_SIZE * TEMP_WORLD_SIZE, z};
+    return {x, CHUNK_SIZE * m_worldSize, z};
 }

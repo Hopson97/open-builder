@@ -43,15 +43,15 @@ float getHeight(int x, int z, int chunkX, int chunkZ,
 
 } // namespace
 
-void makeFlatTerrain(Chunk *chunk)
+void makeFlatTerrain(Chunk *chunk, int worldSize)
 {
     auto cp = chunk->getPosition();
     auto cx = cp.x;
     auto cy = cp.y;
     auto cz = cp.z;
 
-    if (cy < TEMP_WORLD_SIZE - 1 && cy > 0 && cx < TEMP_WORLD_SIZE - 1 &&
-        cx > 0 && cz < TEMP_WORLD_SIZE - 1 && cz > 0) {
+    if (cy < worldSize - 1 && cy > 0 && cx < worldSize - 1 && cx > 0 &&
+        cz < worldSize - 1 && cz > 0) {
         chunk->blocks.fill(1);
     }
 }
@@ -175,15 +175,16 @@ std::array<int, CHUNK_AREA> makeHeightMap(const ChunkPosition &location)
 }
 
 void makeNaturalTerrain(Chunk *chunk,
-                        const std::array<int, CHUNK_AREA> &heightMap)
+                        const std::array<int, CHUNK_AREA> &heightMap,
+                        int worldSize)
 {
     auto cp = chunk->getPosition();
     auto cx = cp.x;
     auto cy = cp.y;
     auto cz = cp.z;
 
-    if (cy < TEMP_WORLD_SIZE - 1 && cy > 0 && cx < TEMP_WORLD_SIZE - 1 &&
-        cx > 0 && cz < TEMP_WORLD_SIZE - 1 && cz > 0) {
+    if (cy < worldSize - 1 && cy > 0 && cx < worldSize - 1 && cx > 0 &&
+        cz < worldSize - 1 && cz > 0) {
         for (int z = 0; z < CHUNK_SIZE; z++) {
             for (int x = 0; x < CHUNK_SIZE; x++) {
                 int height = heightMap[x + z * CHUNK_SIZE];

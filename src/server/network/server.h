@@ -29,7 +29,7 @@ class Server final : public NetworkHost {
     };
 
   public:
-    Server();
+    Server(const ServerConfig& config);
 
     void update();
 
@@ -62,4 +62,7 @@ class Server final : public NetworkHost {
     std::vector<BlockUpdate> m_blockUpdates;
 
     bool m_isRunning = true;
+
+    const int m_worldSize;
+    const int m_worldHeight;
 };

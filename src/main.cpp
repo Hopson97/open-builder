@@ -68,6 +68,12 @@ void loadFromConfigFile(Config &config)
         else if (line == "FOV") {
             config.clientOptions.fov = option;
         }
+        else if (line == "WORLD_HEIGHT") {
+            config.serverOptions.worldSize = option;
+        }
+        else if (line == "WORLD_SIZE") {
+            config.serverOptions.worldSize = option;
+        }
     }
 }
 
@@ -187,7 +193,8 @@ int launchBoth(const Config &config)
                              sf::milliseconds(5000));
 
     // Allows some time for the server to set up etc
-    std::this_thread::sleep_for(std::chrono::milliseconds(150));
+    //TODO Improve this to wait until server set up, rather than randime
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     int exit = launchClient(config.clientOptions);
     serverThread.join();
     return exit;
