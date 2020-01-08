@@ -154,6 +154,9 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
         case sf::Keyboard::N:
             glCullFace(GL_NONE);
             break;
+
+        default:
+            break;
     }
 }
 
