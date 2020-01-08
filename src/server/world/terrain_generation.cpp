@@ -189,7 +189,7 @@ void makeNaturalTerrain(Chunk *chunk,
                 int height = heightMap[x + z * CHUNK_SIZE];
                 for (int y = 0; y < CHUNK_SIZE; y++) {
                     int blockY = (y + CHUNK_SIZE * cy);
-                    if (blockY <= height || blockY < 80) {
+                    if (blockY <= height/* || blockY < 80*/) {
                         chunk->qSetBlock({x, y, z}, 1);
                     }
                 }
