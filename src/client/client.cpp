@@ -244,7 +244,7 @@ void Client::update(float dt)
                     auto buffer = makeChunkMesh(chunk);
                     m_chunks.bufferables.push_back(buffer);
                     deleteChunkRenderable(*itr);
-                    m_chunks.updates.erase(itr);
+                    itr = m_chunks.updates.erase(itr);
 
                     // Break so that the game still runs while world is
                     // being built
