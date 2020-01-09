@@ -28,13 +28,14 @@ enum class LaunchType {
     Server,
     Client,
     Both,
+    TwoPlayer,
 };
 
 /**
  * @brief Holds config for both client and server
  */
 struct Config {
-    LaunchType launchType = LaunchType::Both;
+    LaunchType launchType = LaunchType::TwoPlayer;
 
     ServerConfig serverOptions;
     ClientConfig clientOptions;
@@ -199,6 +200,28 @@ int launchBoth(const Config &config)
     serverThread.join();
     return exit;
 }
+
+/**
+ * @brief Launches 2 clients and the server. Useful for testing multiplayer
+ * @param config The config to be used by client/server engines
+ * @return int Exit flag (Success, or Failure)
+ */
+int launchServerAnd2Players(const Config &config)
+{
+    std::thread serverThread(launchServer, config.serverOptions,
+                             sf::milliseconds(5000));
+
+    // Allows some time for the server to set up etc
+    // TODO Improve this to wait until server set up, rather than randime
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::thread client2(launchClient, config.clientOptions);
+
+    int exit = launchClient(config.clientOptions);
+
+    client2.join();
+    serverThread.join();
+    return exit;
+}
 } // namespace
 
 int main(int argc, char **argv)
@@ -229,6 +252,10 @@ int main(int argc, char **argv)
 
         case LaunchType::Client:
             return launchClient(config.clientOptions);
+            break;
+
+        case LaunchType::TwoPlayer:
+            return launchServerAnd2Players(config);
     }
 
     enet_deinitialize();
