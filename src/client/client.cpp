@@ -34,8 +34,8 @@ bool Client::init(float aspect)
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
 
     // Texture for the player model
-    m_texture.create("player");
-    m_texture.bind();
+    m_error_skin_texture.create("error");
+    m_error_skin_texture.bind();
 
     // Texture for grass
     m_grassTexture.create("grass");
@@ -284,9 +284,15 @@ void Client::render()
     // Render all the entities
     auto drawable = m_cube.getDrawable();
     drawable.bind();
-    m_texture.bind();
+
     for (auto &ent : m_entities) {
         if (ent.active && &ent != mp_player) {
+            // Load skin
+            if (ent.playerSkin.textureExists())
+                ent.playerSkin.bind();
+            else
+                m_error_skin_texture.bind();
+
             glm::mat4 modelMatrix{1.0f};
             translateMatrix(modelMatrix,
                             {ent.position.x, ent.position.y, ent.position.z});
@@ -319,8 +325,14 @@ void Client::render()
 
 void Client::endGame()
 {
+    // Destroy all player skins
+    for (auto& ent : m_entities) {
+        if (ent.playerSkin.textureExists())
+            ent.playerSkin.destroy();
+    }
+    m_error_skin_texture.destroy();
+
     m_cube.destroy();
-    m_texture.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
 

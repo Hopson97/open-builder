@@ -27,9 +27,11 @@ class Texture2d final {
     void create(const std::string &file);
     void destroy();
     void bind() const;
+    bool textureExists() const;
 
   private:
     GLuint m_handle = 0;
+    bool m_hasTexture = false;
 };
 
 } // namespace gl

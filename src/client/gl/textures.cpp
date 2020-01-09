@@ -57,6 +57,7 @@ void CubeTexture::create(const std::array<std::string, 6> &textures)
                             GL_CLAMP_TO_EDGE));
     glCheck(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T,
                             GL_CLAMP_TO_EDGE));
+
 }
 
 void CubeTexture::destroy()
@@ -83,6 +84,8 @@ void Texture2d::create(const std::string &file)
                             GL_LINEAR_MIPMAP_LINEAR));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.4f));
+
+    m_hasTexture = true;
 }
 
 void Texture2d::destroy()
@@ -94,5 +97,11 @@ void Texture2d::bind() const
 {
     glCheck(glBindTexture(GL_TEXTURE_2D, m_handle));
 }
+
+bool Texture2d::textureExists() const
+{
+    return m_hasTexture;
+}
+
 
 } // namespace gl

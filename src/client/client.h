@@ -28,6 +28,8 @@ struct Entity final {
     glm::vec3 rotation{0.0f};
     glm::vec3 velocity{0.0f};
     bool active = false;
+
+    gl::Texture2d playerSkin; // May need to be relocated to its own Player Entity
 };
 
 struct ChunkDrawable {
@@ -80,7 +82,7 @@ class Client final : public NetworkHost {
     glm::mat4 m_projectionMatrix{1.0f};
 
     gl::VertexArray m_cube;
-    gl::Texture2d m_texture;
+    gl::Texture2d m_error_skin_texture;
     gl::Texture2d m_grassTexture;
 
     struct {
