@@ -15,7 +15,6 @@ class DebugLogger final {
   public:
     static DebugLogger &get()
     {
-        std::unique_lock<std::mutex> lock(mu);
         static DebugLogger logger;
         return logger;
     }
@@ -39,7 +38,6 @@ class DebugLogger final {
 
   private:
     DebugLogger() = default;
-    inline static std::mutex mu;
 };
 
 #define LOGVAR(where, title, var) DebugLogger::get().log(where, title, var);
