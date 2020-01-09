@@ -98,7 +98,7 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
     else if (keyboard.isKeyDown(sf::Keyboard::LShift)) {
         velocity.y -= PLAYER_SPEED * 2;
-        // std::cout << position << std::endl;
+        std::cout << mp_player->position << std::endl;
     }
         if (rotation.x < -80.0f) {
             rotation.x = -79.9f;

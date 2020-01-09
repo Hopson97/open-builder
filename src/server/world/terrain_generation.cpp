@@ -61,13 +61,13 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
             int voxelX = x + chunkX * CHUNK_SIZE;
             int voxelZ = z + chunkZ * CHUNK_SIZE;
             // Get noise value
-            float value = glm::simplex(glm::vec2{voxelX / 64.0f, voxelZ / 64.0f});
+            float value = glm::simplex(glm::vec2{voxelX / 128.0f, voxelZ / 128.0f});
 
             // Make it between 0.0 and 1.0
             value = (value + 1) / 2;
 
             // Make it bigger
-            value *= 32 + 32;
+            value *= 64;
 
             int height = value < 10 ? 10 : value;
 
@@ -79,18 +79,24 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
 }
 
 void createSmoothTerrain(Chunk &chunk,
-                         const std::array<int, CHUNK_AREA> &heightMap)
+                         const std::array<int, CHUNK_AREA> &heightMap, int worldSize)
 {
-    int cy = chunk.getPosition().y;
+    auto cp = chunk.getPosition();
+    auto cx = cp.x;
+    auto cy = cp.y;
+    auto cz = cp.z;
 
-    for (int z = 0; z < CHUNK_SIZE; z++) {
-        for (int x = 0; x < CHUNK_SIZE; x++) {
-            int height = heightMap[z * CHUNK_SIZE + x];
-            for (int y = 0; y < CHUNK_SIZE; y++) {
-                int blockY = cy * CHUNK_SIZE + y;
+    if (cy < worldSize - 1 && cy > 0 && cx < worldSize - 1 && cx > 0 &&
+        cz < worldSize - 1 && cz > 0) {
+        for (int z = 0; z < CHUNK_SIZE; z++) {
+            for (int x = 0; x < CHUNK_SIZE; x++) {
+                int height = heightMap[z * CHUNK_SIZE + x];
+                for (int y = 0; y < CHUNK_SIZE; y++) {
+                    int blockY = cy * CHUNK_SIZE + y;
 
-                if (blockY <= height) {
-                    chunk.qSetBlock({x, y, z}, 1);
+                    if (blockY <= height) {
+                        chunk.qSetBlock({x, y, z}, 1);
+                    }
                 }
             }
         }

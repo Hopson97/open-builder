@@ -20,7 +20,7 @@ Server::Server(const ServerConfig &config)
             for (int y = 0; y < m_worldHeight; y++) {
                 Chunk &chunk = m_world.chunks.addChunk({x, y, z});
                 //makeFlatTerrain(&chunk);
-                createSmoothTerrain(chunk, heightMap);
+                createSmoothTerrain(chunk, heightMap, m_worldSize);
             }
         }
     }
