@@ -176,8 +176,10 @@ void Server::handleCommandPlayerSkin(sf::Packet& packet)
     peer_id_t id;
     packet >> id;
 
-    for (int i = 0; i < (1024 * 8); i++)
+    for (int i = 0; i < (1024 * 8); i++) {
         packet >> m_entities[id].m_skinData[i];
+
+    }
 
     sendPlayerSkin(id);
 }
