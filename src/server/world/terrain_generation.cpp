@@ -9,12 +9,28 @@
 
 namespace {
 
+/*
+float trilinearInterpolation(float blf, float blb, float brf, float brb,
+                             float tlf, float tlb, float trf, float trb,
+                             const glm::vec3 &point)
+{
+    return (blf * (1 - point.x) * (1 - point.y) * (1 - point.z)) +
+           (brf * point.x * (1 - point.y) * (1 - point.z)) +
+           (blb * (1 - point.x) * point.y * (1 - point.z)) +
+           (tlf * (1 - point.x) * (1 - point.y) * point.z) +
+           (trf * point.x * (1 - point.y) * point.z) +
+           (tlb * (1 - point.x) * point.y * point.z) +
+           (brb * point.x * point.y * (1 - point.z)) +
+           (trb * point.x * point.y * point.z);
+}
+*/
+
 struct NoiseOptions {
     int octaves;
     float amplitude;
     float smoothness;
     float roughness;
-    float offset; 
+    float offset;
 };
 
 float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
@@ -39,7 +55,6 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
         value += noise * amplitude;
         accumulatedAmps += amplitude;
     }
-
 
     return ((value / accumulatedAmps)) * options.amplitude + options.offset;
 }
@@ -106,6 +121,10 @@ void makeFlatTerrain(Chunk *chunk, int worldSize)
 
 void makeStepTerrain(Chunk *chunk)
 {
+
+
+
+
     for (int y = 0; y < CHUNK_SIZE; y++) {
         int realY = y + chunk->getPosition().y * CHUNK_SIZE;
         for (int z = 0; z < CHUNK_SIZE; z++) {
