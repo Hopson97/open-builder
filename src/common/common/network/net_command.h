@@ -48,6 +48,12 @@ enum class ClientCommand : command_t {
     // i32[3]: The X, Y, Z position of the block edit
     // block_t: The block it has been changed to
     BlockUpdate,
+
+    // Command to update the skin of a player in-game
+    // Data:
+    // peer_id_t: The ID of the player 
+    // 8192 Uint8: Skin data (RGBA8 format)
+    NewPlayerSkin,
 };
 
 /**
@@ -65,6 +71,11 @@ enum class ServerCommand : command_t {
     // i32[3]: The X, Y, Z position of the block edit
     // block_t: The block it has been changed to
     BlockEdit,
+
+    // Command that sends the player's skin 
+    // Data:
+    // Uint8: Imaga Data in RGBA format (Should be 8kb)
+    PlayerSkin,
 };
 
 template <typename CommandType>

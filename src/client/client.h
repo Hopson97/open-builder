@@ -57,6 +57,7 @@ class Client final : public NetworkHost {
     // directory
     void sendPlayerPosition(const glm::vec3 &position);
     void sendBlockUpdate(const BlockUpdate &update);
+    void sendPlayerSkin(const sf::Image &playerSkin);
 
     void onPeerConnect(ENetPeer *peer) override;
     void onPeerDisconnect(ENetPeer *peer) override;
@@ -70,6 +71,7 @@ class Client final : public NetworkHost {
     void onChunkData(sf::Packet &packet);
     void onSpawnPoint(sf::Packet &packet);
     void onBlockUpdate(sf::Packet &packet);
+    void onPlayerSkinReceive(sf::Packet &packet);
     // End of network functions
 
     int findChunkDrawableIndex(const ChunkPosition &position);
@@ -82,8 +84,9 @@ class Client final : public NetworkHost {
     glm::mat4 m_projectionMatrix{1.0f};
 
     gl::VertexArray m_cube;
-    gl::Texture2d m_error_skin_texture;
+    gl::Texture2d m_errorSkinTexture;
     gl::Texture2d m_grassTexture;
+    sf::Image m_rawPlayerSkin;
 
     struct {
         gl::Shader program;

@@ -34,8 +34,8 @@ bool Client::init(float aspect)
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
 
     // Texture for the player model
-    m_error_skin_texture.create("error");
-    m_error_skin_texture.bind();
+    m_errorSkinTexture.create("error");
+    m_errorSkinTexture.bind();
 
     // Texture for grass
     m_grassTexture.create("grass");
@@ -54,6 +54,12 @@ bool Client::init(float aspect)
 
     m_projectionMatrix =
         glm::perspective(3.14f / 2.0f, aspect, 0.01f, 10000.0f);
+
+    // Load player skin and send to server
+    //mp_player->playerSkin.create("player");
+    m_rawPlayerSkin = gl::loadRawImageFile("player");
+    sendPlayerSkin(m_rawPlayerSkin);
+
     return true;
 }
 
@@ -291,7 +297,7 @@ void Client::render()
             if (ent.playerSkin.textureExists())
                 ent.playerSkin.bind();
             else
-                m_error_skin_texture.bind();
+                m_errorSkinTexture.bind();
 
             glm::mat4 modelMatrix{1.0f};
             translateMatrix(modelMatrix,
@@ -330,7 +336,7 @@ void Client::endGame()
         if (ent.playerSkin.textureExists())
             ent.playerSkin.destroy();
     }
-    m_error_skin_texture.destroy();
+    m_errorSkinTexture.destroy();
 
     m_cube.destroy();
     m_basicShader.program.destroy();
