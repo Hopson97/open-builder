@@ -81,7 +81,7 @@ class Client final : public NetworkHost {
 
     gl::VertexArray m_cube;
     gl::Texture2d m_texture;
-    gl::Texture2d m_grassTexture;
+    gl::TextureArray m_blockTextures;
 
     struct {
         gl::Shader program;
@@ -112,8 +112,6 @@ class Client final : public NetworkHost {
     bool m_isMouseLocked = false;
 
     ViewFrustum m_frustum;
-
-    gl::TextureArray m_blockTextures;
 
     unsigned m_noMeshingCount = 0;
     bool m_blockMeshing = false;

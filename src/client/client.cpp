@@ -37,13 +37,9 @@ bool Client::init(float aspect)
     m_texture.create("player");
     m_texture.bind();
 
-    // Texture for grass
-    m_grassTexture.create("grass");
-    m_grassTexture.bind();
-
     m_blockTextures.create(2, 16);
-    m_blockTextures.addTexture("grass");
-    m_blockTextures.addTexture("grass");
+    m_blockTextures.addTexture("default/textures/grass");
+    m_blockTextures.addTexture("default/textures/dirtgrass");
 
 
     // Set up the server connection
@@ -329,6 +325,7 @@ void Client::endGame()
     m_texture.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
+    m_blockTextures.destroy();
 
     for (auto &chunk : m_chunks.drawables) {
         chunk.vao.destroy();
