@@ -42,8 +42,8 @@ bool Client::init(float aspect)
     m_grassTexture.bind();
 
     m_blockTextures.create(2, 16);
-    m_blockTextures.addTexture("grass");
-    m_blockTextures.addTexture("dirt");
+    m_blockTextures.addTexture("water");
+    m_blockTextures.addTexture("sand");
 
 
     // Set up the server connection
