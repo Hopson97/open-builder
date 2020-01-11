@@ -34,32 +34,32 @@ ChunkMesh makeChunkMesh(const Chunk &chunk)
 
                     // Left block face
                     if (chunk.getBlock({x - 1, y, z}) == 0) {
-                        mesh.addFace(LEFT_FACE, blockPosition);
+                        mesh.addFace(LEFT_FACE, blockPosition, 1);
                     }
 
                     // Right chunk face
                     if (chunk.getBlock({x + 1, y, z}) == 0) {
-                        mesh.addFace(RIGHT_FACE, blockPosition);
+                        mesh.addFace(RIGHT_FACE, blockPosition, 1);
                     }
 
                     // Front chunk face
                     if (chunk.getBlock({x, y, z + 1}) == 0) {
-                        mesh.addFace(FRONT_FACE, blockPosition);
+                        mesh.addFace(FRONT_FACE, blockPosition, 1);
                     }
 
                     // Back chunk face
                     if (chunk.getBlock({x, y, z - 1}) == 0) {
-                        mesh.addFace(BACK_FACE, blockPosition);
+                        mesh.addFace(BACK_FACE, blockPosition, 1);
                     }
 
                     // Bottom chunk face
                     if (chunk.getBlock({x, y - 1, z}) == 0) {
-                        mesh.addFace(BOTTOM_FACE, blockPosition);
+                        mesh.addFace(BOTTOM_FACE, blockPosition, 0);
                     }
 
                     // Top chunk face
                     if (chunk.getBlock({x, y + 1, z}) == 0) {
-                        mesh.addFace(TOP_FACE, blockPosition);
+                        mesh.addFace(TOP_FACE, blockPosition, 0);
                     }
                 }
             }

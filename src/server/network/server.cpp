@@ -21,6 +21,7 @@ Server::Server(const ServerConfig &config)
                 Chunk &chunk = m_world.chunks.addChunk({x, y, z});
                 //makeFlatTerrain(&chunk);
                 createSmoothTerrain(chunk, heightMap, m_worldSize);
+                //makeRawNoiseTerrain(chunk);
             }
         }
     }

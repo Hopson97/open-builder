@@ -41,6 +41,11 @@ bool Client::init(float aspect)
     m_grassTexture.create("grass");
     m_grassTexture.bind();
 
+    m_blockTextures.create(2, 16);
+    m_blockTextures.addTexture("grass");
+    m_blockTextures.addTexture("dirt");
+
+
     // Set up the server connection
     auto peer = NetworkHost::createAsClient(LOCAL_HOST);
     if (!peer) {
@@ -53,7 +58,7 @@ bool Client::init(float aspect)
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
     m_projectionMatrix =
-        glm::perspective(3.14f / 2.0f, aspect, 0.01f, 10000.0f);
+        glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
     return true;
 }
 
@@ -297,7 +302,8 @@ void Client::render()
 
     // Render chunks
     m_chunkShader.program.bind();
-    m_grassTexture.bind();
+    //m_grassTexture.bind();
+    m_blockTextures.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
 
     // Buffer chunks
