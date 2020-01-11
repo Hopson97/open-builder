@@ -58,15 +58,18 @@ void Server::sendChunk(peer_id_t peerId, const ChunkPosition& position)
         ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Server::sendPlayerSkin(peer_id_t peerId)
+void Server::sendPlayerSkin(peer_id_t peerId, peer_id_t toPeer)
 {
-    sf::Packet announcement;
-    announcement << ClientCommand::NewPlayerSkin;
+    sf::Packet skinPacket;
+    skinPacket << ClientCommand::NewPlayerSkin;
 
     for (int i = 0; i < (1024 * 8); i++)
-        announcement << m_entities[peerId].m_skinData[i];
+        skinPacket << m_entities[peerId].m_skinData[i];
 
-    broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);
+    if (toPeer == NULL)
+        broadcastToPeers(skinPacket, 0, ENET_PACKET_FLAG_RELIABLE);
+    else
+        sendToPeer(m_connectedClients[toPeer].peer, skinPacket, 0, ENET_PACKET_FLAG_RELIABLE);
 }
 
 void Server::onPeerConnect(ENetPeer* peer)
@@ -116,6 +119,12 @@ void Server::onPeerConnect(ENetPeer* peer)
                 }
             }
         }
+
+        // Send the peer other player's skins 
+        // (Note: Could this overwhelm the player's buffer?)
+        for (int p_id = 0; p_id < m_entities.size(); p_id++)
+            if (m_entities[p_id].hasSkin)
+                sendPlayerSkin(p_id, id);
     }
 }
 
@@ -178,8 +187,9 @@ void Server::handleCommandPlayerSkin(sf::Packet& packet)
 
     for (int i = 0; i < (1024 * 8); i++) {
         packet >> m_entities[id].m_skinData[i];
-
     }
+
+    m_entities[id].hasSkin = true;
 
     sendPlayerSkin(id);
 }
@@ -251,6 +261,7 @@ void Server::removePeer(u32 connectionId)
     if (itr != m_connectedClients.cend()) {
         LOGVAR("Server", "Client disconnected, Peer Id:", (int)itr->entityId);
         m_entities[itr->entityId].active = false;
+        m_entities[itr->entityId].hasSkin = false;
         itr->connected = false;
         itr->peer = nullptr;
 

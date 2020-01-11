@@ -16,6 +16,7 @@ struct ServerEntity {
     bool active = false;
 
     std::vector<sf::Uint8> m_skinData;
+    bool hasSkin = false;
 };
 
 struct ConnectedClient {
@@ -39,7 +40,7 @@ class Server final : public NetworkHost {
     glm::vec3 findPlayerSpawnPosition();
 
     void sendChunk(peer_id_t peerId, const ChunkPosition &chunk);
-    void sendPlayerSkin(peer_id_t peerId);
+    void sendPlayerSkin(peer_id_t peerId, peer_id_t toPeer = NULL);
 
     void onPeerConnect(ENetPeer *peer) override;
     void onPeerDisconnect(ENetPeer *peer) override;
