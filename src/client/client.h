@@ -1,6 +1,7 @@
 #pragma once
 
 #include "client_engine.h"
+#include "client_config.h"
 #include "gl/shader.h"
 #include "gl/textures.h"
 #include "gl/vertex_array.h"
@@ -41,7 +42,7 @@ class Client final : public NetworkHost {
   public:
     Client();
 
-    bool init(float aspect);
+    bool init(const ClientConfig& config, float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
     void onMouseRelease(sf::Mouse::Button button, int x, int y);

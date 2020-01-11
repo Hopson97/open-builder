@@ -49,31 +49,40 @@ void loadFromConfigFile(Config &config)
 {
     std::ifstream inFile("config.txt");
     std::string line;
-    int option;
-    while (inFile >> line >> option) {
+    auto loadInt = [&inFile](int& value) {
+        int option;
+        inFile >> option;
+        value = option;
+    };
+    while (inFile >> line) {
         if (line == "FULLSCREEN") {
-            config.clientOptions.fullScreen = option;
+            loadInt((int&)config.clientOptions.fullScreen);
         }
         else if (line == "WIN_WIDTH") {
-            config.clientOptions.windowWidth = option;
+            loadInt(config.clientOptions.windowWidth);
         }
         else if (line == "WIN_HEIGHT") {
-            config.clientOptions.windowHeight = option;
+            loadInt(config.clientOptions.windowHeight);
         }
         else if (line == "FPS_CAPPED") {
-            config.clientOptions.isFpsCapped = option;
+            loadInt((int&)config.clientOptions.isFpsCapped);
         }
         else if (line == "FPS") {
-            config.clientOptions.fpsLimit = option;
+            loadInt(config.clientOptions.fpsLimit);
         }
         else if (line == "FOV") {
-            config.clientOptions.fov = option;
+            loadInt(config.clientOptions.fov);
+        }
+        else if (line == "SKIN") {
+            std::string strOption;
+            inFile >> strOption;
+            config.clientOptions.skinName = strOption;
         }
         else if (line == "WORLD_HEIGHT") {
-            config.serverOptions.worldSize = option;
+            loadInt(config.serverOptions.worldHeight);
         }
         else if (line == "WORLD_SIZE") {
-            config.serverOptions.worldSize = option;
+            loadInt(config.serverOptions.worldSize);
         }
     }
 }
@@ -113,6 +122,9 @@ void parseArgs(Config &config,
         }
         else if (option.first == "-client") {
             config.launchType = LaunchType::Client;
+        }
+        else if (option.first == "-skin") {
+            config.clientOptions.skinName = option.second;
         }
     }
 }
@@ -239,8 +251,8 @@ int main(int argc, char **argv)
         }
     }
 
-    parseArgs(config, args);
     loadFromConfigFile(config);
+    parseArgs(config, args);
 
     switch (config.launchType) {
         case LaunchType::Both:

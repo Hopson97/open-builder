@@ -14,7 +14,7 @@ Client::Client()
 {
 }
 
-bool Client::init(float aspect)
+bool Client::init(const ClientConfig& config, float aspect)
 {
     // OpenGL stuff
     m_cube = makeCubeVertexArray(1, 2, 1);
@@ -57,7 +57,7 @@ bool Client::init(float aspect)
 
     // Load player skin and send to server
     //mp_player->playerSkin.create("player");
-    m_rawPlayerSkin = gl::loadRawImageFile("player");
+    m_rawPlayerSkin = gl::loadRawImageFile(config.skinName);
     sendPlayerSkin(m_rawPlayerSkin);
 
     return true;
