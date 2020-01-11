@@ -9,6 +9,7 @@ namespace gl {
 /**
  * @brief Wrapper for an OpenGL cube-mapped texture object
  */
+/*
 class CubeTexture final {
   public:
     void create(const std::array<std::string, 6> &textures);
@@ -18,6 +19,7 @@ class CubeTexture final {
   private:
     GLuint m_handle = 0;
 };
+*/
 
 /**
  * @brief Wrapper for a regaulr OpenGL 2D texture

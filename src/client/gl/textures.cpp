@@ -5,8 +5,6 @@
 #include <iostream>
 
 namespace {
-const std::string TEXTURE_PATH = "res/textures/";
-
 GLuint createTexture()
 {
     GLuint handle;
@@ -41,6 +39,7 @@ namespace gl {
 //
 //  Cube Texture
 //
+/*
 void CubeTexture::create(const std::array<std::string, 6> &textures)
 {
     m_handle = createTexture();
@@ -72,6 +71,7 @@ void CubeTexture::bind() const
 {
     glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, m_handle));
 }
+*/
 
 //
 //  Texture 2D
@@ -81,7 +81,7 @@ void Texture2d::create(const std::string &file)
     m_handle = createTexture();
     bind();
 
-    auto path = TEXTURE_PATH + file + ".png";
+    auto path = "res/" + file + ".png";
     bufferImage(GL_TEXTURE_2D, path);
 
     glCheck(glGenerateMipmap(GL_TEXTURE_2D));
@@ -127,7 +127,7 @@ void TextureArray::create(GLsizei numTextures, GLsizei textureSize)
 int TextureArray::addTexture(const std::string &file)
 {
     sf::Image image;
-    if (!image.loadFromFile(TEXTURE_PATH + file + ".png")) {
+    if (!image.loadFromFile("res/" + file + ".png")) {
         // Create a error image
         image.create(m_textureSize, m_textureSize);
         for (int y = 0; y < m_textureSize; y++) {

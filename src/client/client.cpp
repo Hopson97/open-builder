@@ -34,7 +34,7 @@ bool Client::init(float aspect)
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
 
     // Texture for the player model
-    m_texture.create("player");
+    m_texture.create("default/textures/player");
     m_texture.bind();
 
     m_blockTextures.create(2, 16);
