@@ -3,7 +3,7 @@
 #include <common/world/world_constants.h>
 
 void ChunkMesh::addFace(const MeshFace &face,
-                        const BlockPosition &blockPosition)
+                        const BlockPosition &blockPosition, int texture)
 {
     int index = 0;
     for (int i = 0; i < 4; i++) {
@@ -16,7 +16,9 @@ void ChunkMesh::addFace(const MeshFace &face,
         cardinalLights.push_back(face.lightLevel);
     }
     textureCoords.insert(textureCoords.end(),
-                         {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f});
+                         {0.0f, 0.0f, (float)texture, 1.0f, 0.0f,
+                          (float)texture, 1.0f, 1.0f, (float)texture, 0.0f,
+                          1.0f, (float)texture});
     indices.push_back(indicesCount);
     indices.push_back(indicesCount + 1);
     indices.push_back(indicesCount + 2);
@@ -33,7 +35,7 @@ gl::VertexArray ChunkMesh::createBuffer()
     vao.create();
     vao.bind();
     vao.addVertexBuffer(3, vertices);
-    vao.addVertexBuffer(2, textureCoords);
+    vao.addVertexBuffer(3, textureCoords);
     vao.addVertexBuffer(1, cardinalLights);
     vao.addIndexBuffer(indices);
 
