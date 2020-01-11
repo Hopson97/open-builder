@@ -52,7 +52,7 @@ enum class ClientCommand : command_t {
     // Command to update the skin of a player in-game
     // Data:
     // peer_id_t: The ID of the player 
-    // 8192 Uint8: Skin data (RGBA8 format)
+    // u8[8192]: Skin data (RGBA8 format)
     NewPlayerSkin,
 };
 
@@ -74,7 +74,7 @@ enum class ServerCommand : command_t {
 
     // Command that sends the player's skin 
     // Data:
-    // Uint8: Imaga Data in RGBA format (Should be 8kb)
+    // u8[8192]: Imaga Data in RGBA format (Should be 8kb)
     PlayerSkin,
 };
 

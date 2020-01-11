@@ -1,5 +1,6 @@
 #include "client.h"
 
+#include "client_config.h"
 #include "gl/primitive.h"
 #include "input/keyboard.h"
 #include "world/chunk_mesh_generation.h"

@@ -49,40 +49,34 @@ void loadFromConfigFile(Config &config)
 {
     std::ifstream inFile("config.txt");
     std::string line;
-    auto loadInt = [&inFile](int& value) {
-        int option;
-        inFile >> option;
-        value = option;
-    };
+
     while (inFile >> line) {
         if (line == "FULLSCREEN") {
-            loadInt((int&)config.clientOptions.fullScreen);
+            inFile >> config.clientOptions.fullScreen;
         }
         else if (line == "WIN_WIDTH") {
-            loadInt(config.clientOptions.windowWidth);
+            inFile >> config.clientOptions.windowWidth;
         }
         else if (line == "WIN_HEIGHT") {
-            loadInt(config.clientOptions.windowHeight);
+            inFile >> config.clientOptions.windowHeight;
         }
         else if (line == "FPS_CAPPED") {
-            loadInt((int&)config.clientOptions.isFpsCapped);
+            inFile >> config.clientOptions.isFpsCapped;
         }
         else if (line == "FPS") {
-            loadInt(config.clientOptions.fpsLimit);
+            inFile >> config.clientOptions.fpsLimit;
         }
         else if (line == "FOV") {
-            loadInt(config.clientOptions.fov);
+            inFile >> config.clientOptions.fov;
         }
         else if (line == "SKIN") {
-            std::string strOption;
-            inFile >> strOption;
-            config.clientOptions.skinName = strOption;
+            inFile >> config.clientOptions.skinName;
         }
         else if (line == "WORLD_HEIGHT") {
-            loadInt(config.serverOptions.worldHeight);
+            inFile >> config.serverOptions.worldHeight;
         }
         else if (line == "WORLD_SIZE") {
-            loadInt(config.serverOptions.worldSize);
+            inFile >> config.serverOptions.worldSize;
         }
     }
 }
@@ -260,11 +254,9 @@ int main(int argc, char **argv)
 
         case LaunchType::Server:
             return launchServer(config.serverOptions);
-            break;
 
         case LaunchType::Client:
             return launchClient(config.clientOptions);
-            break;
 
         case LaunchType::TwoPlayer:
             return launchServerAnd2Players(config);

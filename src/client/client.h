@@ -1,7 +1,6 @@
 #pragma once
 
 #include "client_engine.h"
-#include "client_config.h"
 #include "gl/shader.h"
 #include "gl/textures.h"
 #include "gl/vertex_array.h"

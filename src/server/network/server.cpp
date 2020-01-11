@@ -65,10 +65,9 @@ void Server::sendPlayerSkin(peer_id_t peerId, peer_id_t toPeer)
     skinPacket << ClientCommand::NewPlayerSkin;
     skinPacket << peerId;
 
-    for (int i = 0; i < (1024 * 8); i++)
-        skinPacket << m_entities[peerId].m_skinData[i];
+    skinPacket.append(m_entities[peerId].m_skinData.data(), 8192);
 
-    if (toPeer == NULL) {
+    if (!toPeer) {
         broadcastToPeers(skinPacket, 0, ENET_PACKET_FLAG_RELIABLE);
     } 
     else {
@@ -163,7 +162,7 @@ void Server::onCommandRecieve([[maybe_unused]] ENetPeer* peer,
 
 void Server::handleCommandPlayerPosition(sf::Packet& packet)
 {
-    peer_id_t id;
+    peer_id_t id = 0;
     packet >> id;
     packet >> m_entities[id].position.x >> m_entities[id].position.y >>
         m_entities[id].position.z;
@@ -187,13 +186,14 @@ void Server::handleCommandPlayerSkin(sf::Packet& packet)
         return;
     }
 
-    peer_id_t id;
+    peer_id_t id = 0;
     packet >> id;
 
-    for (int i = 0; i < (1024 * 8); i++) {
-        packet >> m_entities[id].m_skinData[i];
-    }
+    // Copy contents into a buffer vector which then gets copied into the player skin data
+    sf::Uint8* skinPixels = (sf::Uint8*)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
+    std::vector<sf::Uint8> newPixels(skinPixels, skinPixels + 8192);
 
+    m_entities[id].m_skinData.swap(newPixels);
     m_entities[id].hasSkin = true;
 
     sendPlayerSkin(id);
