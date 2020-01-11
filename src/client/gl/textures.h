@@ -32,4 +32,18 @@ class Texture2d final {
     GLuint m_handle = 0;
 };
 
+class TextureArray final {
+  public:
+    void create(GLsizei numTextures, GLsizei textureSize);
+    int addTexture(const std::string &file);
+    void destroy();
+    void bind() const;
+
+private:
+    GLuint m_handle = 0;
+    GLuint m_textureCount = 0;
+    GLuint m_maxTextures = 0;
+    GLuint m_textureSize = 0;
+};
+
 } // namespace gl

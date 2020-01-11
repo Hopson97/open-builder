@@ -38,6 +38,9 @@ void destroyTexture(GLuint *texture)
 
 namespace gl {
 
+//
+//  Cube Texture
+//
 void CubeTexture::create(const std::array<std::string, 6> &textures)
 {
     m_handle = createTexture();
@@ -70,6 +73,9 @@ void CubeTexture::bind() const
     glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, m_handle));
 }
 
+//
+//  Texture 2D
+//
 void Texture2d::create(const std::string &file)
 {
     m_handle = createTexture();
@@ -93,6 +99,71 @@ void Texture2d::destroy()
 void Texture2d::bind() const
 {
     glCheck(glBindTexture(GL_TEXTURE_2D, m_handle));
+}
+
+//
+//  Texture Array
+//
+void TextureArray::create(GLsizei numTextures, GLsizei textureSize)
+{
+    m_handle = createTexture();
+    bind();
+
+    m_maxTextures = numTextures;
+    m_textureSize = textureSize;
+
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER,
+                    GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, textureSize, textureSize,
+                 numTextures, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+}
+
+int TextureArray::addTexture(const std::string &file)
+{
+    sf::Image image;
+    if (!image.loadFromFile(TEXTURE_PATH + file + ".png")) {
+        // Create a error image
+        image.create(m_textureSize, m_textureSize);
+        for (int y = 0; y < m_textureSize; y++) {
+            for (int x = 0; x < m_textureSize; x++) {
+                image.setPixel(
+                    x, y, (x + y % 2) == 0 ? sf::Color::Red : sf::Color::Black);
+            }
+        }
+    };
+
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, m_textureCount, m_textureSize,
+                    m_textureSize, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+                    image.getPixelsPtr());
+
+	// Generate Mipmap
+    glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER,
+                    GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_LOD_BIAS, -1);
+
+    return m_textureCount++;
+}
+
+
+void TextureArray::destroy()
+{
+    destroyTexture(&m_handle);
+    m_textureCount = 0;
+    m_maxTextures = 0;
+    m_textureSize = 0;
+}
+
+void TextureArray::bind() const
+{
+    glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_handle));
 }
 
 } // namespace gl

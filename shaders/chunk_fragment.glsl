@@ -1,12 +1,12 @@
 #version 330
 
 in float passBasicLight;
-in vec2 passTexCoord;
+in vec3 passTexCoord;
 
 out vec4 outColour;
 
-uniform sampler2D tex;
+uniform sampler2DArray textureArray;
 
 void main() {
-    outColour = passBasicLight * texture(tex, passTexCoord);
+    outColour = passBasicLight * texture(textureArray, passTexCoord);
 }
