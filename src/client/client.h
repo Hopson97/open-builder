@@ -20,7 +20,7 @@ class Keyboard;
 
 struct BlockUpdate {
     BlockPosition position;
-    block_t block;
+    block_t block = 0;
 };
 
 struct Entity final {
@@ -117,6 +117,8 @@ class Client final : public NetworkHost {
     bool m_isMouseLocked = false;
 
     ViewFrustum m_frustum;
+
+    gl::TextureArray m_blockTextures;
 
     unsigned m_noMeshingCount = 0;
     bool m_blockMeshing = false;

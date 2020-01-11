@@ -11,7 +11,7 @@ struct MeshFace {
 
 struct ChunkMesh {
 
-    void addFace(const MeshFace &face, const BlockPosition &blockPosition);
+    void addFace(const MeshFace &face, const BlockPosition &blockPosition, int texture);
 
     gl::VertexArray createBuffer();
 

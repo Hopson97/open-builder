@@ -140,6 +140,8 @@ Minecraft clone created by Fogleman in C.
 
 [D3PSI](https://github.com/D3PSI) - Added GitHub actions, and created the install.sh file to automate the installation process on Linux systems
 
+CalvinSpace - Created a lot of the textures for the blocks
+
 ## History
 
 Originally, this was going to be a Zombie game, but I got very bored of that very quickly, and so changed the project to be a voxel game instead.

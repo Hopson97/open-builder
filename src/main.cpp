@@ -48,6 +48,12 @@ struct Config {
 void loadFromConfigFile(Config &config)
 {
     std::ifstream inFile("config.txt");
+    auto loadInt = [&inFile](int &value) {
+        int option;
+        inFile >> option;
+        value = option;
+    };
+
     std::string line;
 
     while (inFile >> line) {
@@ -200,7 +206,7 @@ int launchBoth(const Config &config)
                              sf::milliseconds(5000));
 
     // Allows some time for the server to set up etc
-    //TODO Improve this to wait until server set up, rather than randime
+    // TODO Improve this to wait until server set up, rather than randime
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     int exit = launchClient(config.clientOptions);
     serverThread.join();
