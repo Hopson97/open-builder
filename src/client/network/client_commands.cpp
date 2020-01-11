@@ -181,7 +181,7 @@ void Client::onPlayerSkinReceive(sf::Packet& packet)
     peer_id_t id;
     packet >> id;
 
-    LOGVAR("Client", "Received skin for peer", id);
+    LOGVAR("Client", "Received skin for peer", (int)id);
 
     std::vector<sf::Uint8> pixels(8192);
     for (int i = 0; i < (1024 * 8); i++) {
@@ -189,5 +189,5 @@ void Client::onPlayerSkinReceive(sf::Packet& packet)
     }
 
     sf::Uint8* umm = pixels.data() - 1;
-    m_entities[id].playerSkin.create(32, 64, pixels.data() - 1);
+    m_entities[id].playerSkin.create(32, 64, pixels.data());
 }

@@ -60,16 +60,21 @@ void Server::sendChunk(peer_id_t peerId, const ChunkPosition& position)
 
 void Server::sendPlayerSkin(peer_id_t peerId, peer_id_t toPeer)
 {
+    LOGVAR("Server", "Sending skin of peer:", (int)peerId);
     sf::Packet skinPacket;
     skinPacket << ClientCommand::NewPlayerSkin;
+    skinPacket << peerId;
 
     for (int i = 0; i < (1024 * 8); i++)
         skinPacket << m_entities[peerId].m_skinData[i];
 
-    if (toPeer == NULL)
+    if (toPeer == NULL) {
         broadcastToPeers(skinPacket, 0, ENET_PACKET_FLAG_RELIABLE);
-    else
+    } 
+    else {
+        LOGVAR("Server", "Sending skin to :", (int)toPeer);
         sendToPeer(m_connectedClients[toPeer].peer, skinPacket, 0, ENET_PACKET_FLAG_RELIABLE);
+    }
 }
 
 void Server::onPeerConnect(ENetPeer* peer)
