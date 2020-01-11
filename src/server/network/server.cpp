@@ -58,7 +58,7 @@ void Server::sendChunk(peer_id_t peerId, const ChunkPosition& position)
         ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Server::sendPlayerSkin(peer_id_t peerId, peer_id_t toPeer)
+void Server::sendPlayerSkin(peer_id_t peerId, std::optional<peer_id_t> toPeer)
 {
     LOGVAR("Server", "Sending skin of peer:", (int)peerId);
     sf::Packet skinPacket;
@@ -67,12 +67,12 @@ void Server::sendPlayerSkin(peer_id_t peerId, peer_id_t toPeer)
 
     skinPacket.append(m_entities[peerId].m_skinData.data(), 8192);
 
-    if (!toPeer) {
+    if (!toPeer.has_value()) {
         broadcastToPeers(skinPacket, 0, ENET_PACKET_FLAG_RELIABLE);
     } 
     else {
-        LOGVAR("Server", "Sending skin to :", (int)toPeer);
-        sendToPeer(m_connectedClients[toPeer].peer, skinPacket, 0, ENET_PACKET_FLAG_RELIABLE);
+        LOGVAR("Server", "Sending skin to :", (int)toPeer.value());
+        sendToPeer(m_connectedClients[toPeer.value()].peer, skinPacket, 0, ENET_PACKET_FLAG_RELIABLE);
     }
 }
 
