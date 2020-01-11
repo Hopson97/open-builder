@@ -15,12 +15,12 @@ Server::Server(const ServerConfig& config)
 {
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
-            std::array<int, CHUNK_AREA> heightMap = makeHeightMap({ x, 0, z });
-
+            std::array<int, CHUNK_AREA> heightMap = createChunkHeightMap({x, 0, z});
             for (int y = 0; y < m_worldHeight; y++) {
                 Chunk& chunk = m_world.chunks.addChunk({ x, y, z });
                 //makeFlatTerrain(&chunk);
-                makeNaturalTerrain(&chunk, heightMap, m_worldSize);
+                createSmoothTerrain(chunk, heightMap, m_worldSize);
+                //makeRawNoiseTerrain(chunk);
             }
         }
     }
