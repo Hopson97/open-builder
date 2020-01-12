@@ -24,17 +24,16 @@ Server::Server(const ServerConfig &config)
                          1;
                  y++) {
                 Chunk &chunk = m_world.chunks.addChunk({x, y, z});
-                // makeFlatTerrain(&chunk);
                 createSmoothTerrain(chunk, heightMap, m_worldSize);
                 m_world.chunks.ensureNeighbours({x, y, z});
-                // makeRawNoiseTerrain(chunk);
             }
         }
     }
 
     // Read data files
-
+    //
     // Load the voxel data
+    //
     auto data = getObdData("game/blocks.obd");
     for (auto &block : data) {
         auto &bd = block.data;
@@ -50,9 +49,7 @@ Server::Server(const ServerConfig &config)
         voxelData.isCollidable =
             static_cast<bool>(std::stoi(bd["isCollidable"]));
 
-        m_voxelRegistry.addVoxelData(vox);
-
-        LOGVAR("Server", "Loaded voxel data: ", vox.name);
+        m_voxelRegistry.addVoxelData(voxelData);
     }
 }
 

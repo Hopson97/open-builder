@@ -194,9 +194,6 @@ void Client::onPlayerSkinReceive(sf::Packet &packet)
 
 void Client::onGameRegistryData(sf::Packet &packet)
 {
-    LOG("Client", "Received game data");
-
-
     //  ====
     //  Get all blocks from the server
     //
@@ -249,8 +246,6 @@ void Client::onGameRegistryData(sf::Packet &packet)
         voxelData.isCollidable = isCollidable;
 
         m_voxelData.addVoxelData(voxelData);
-
-        LOGVAR("Client", "Received Block: ", data.name);
     }
 
     m_hasReceivedGameData = true;
