@@ -1,26 +1,26 @@
 block
-name grass
-texture_top pack:grass
-texture_side pack:grasside
-texture_bottom pack:dirt
-mesh block
-state solid
+    name grass
+    texture_top pack:grass
+    texture_side pack:grasside
+    texture_bottom pack:dirt
+    mesh block
+    state solid
 end
 
 block
-name dirt
-texture_top pack:dirt
-texture_side pack:dirt
-texture_bottom pack:dirt
-mesh block
-state solid
+    name dirt
+    texture_top pack:dirt
+    texture_side pack:dirt
+    texture_bottom pack:dirt
+    mesh block
+    state solid
 end
 
 block
-name: stone
-texture_top pack:stone
-texture_side pack:stone
-texture_bottom pack:stone
-mesh block
-state solid
+    name: stone
+    texture_top pack:stone
+    texture_side pack:stone
+    texture_bottom pack:stone
+    mesh block
+    state solid
 end

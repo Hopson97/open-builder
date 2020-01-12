@@ -16,6 +16,7 @@ end                             \n\
                                 \n\
 block                           \n\
     name dirt                   \n\
+                                \n\
     texture_top pack:dirt       \n\
     mesh block                  \n\
     state solid                 \n\

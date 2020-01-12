@@ -13,6 +13,7 @@
 #include "server/server_config.h"
 
 #include <common/network/enet.h>
+#include <common/obd_parser.h>
 
 // Enable nvidia
 #ifdef _WIN32
@@ -37,8 +38,8 @@ enum class LaunchType {
 struct Config {
     LaunchType launchType = LaunchType::Both;
 
-    ServerConfig serverOptions;
-    ClientConfig clientOptions;
+    ServerConfig server;
+    ClientConfig client;
 };
 
 /**
@@ -47,41 +48,25 @@ struct Config {
  */
 void loadFromConfigFile(Config &config)
 {
-    std::ifstream inFile("config.txt");
-    std::string line;
+    auto data = getObdData("config.obd");
+    auto clientData = data[0].data;
+    auto serverData = data[1].data;
 
-    while (inFile >> line) {
-        if (line == "FULLSCREEN") {
-            inFile >> config.clientOptions.fullScreen;
-        }
-        else if (line == "WIN_WIDTH") {
-            inFile >> config.clientOptions.windowWidth;
-        }
-        else if (line == "WIN_HEIGHT") {
-            inFile >> config.clientOptions.windowHeight;
-        }
-        else if (line == "FPS_CAPPED") {
-            inFile >> config.clientOptions.isFpsCapped;
-        }
-        else if (line == "FPS") {
-            inFile >> config.clientOptions.fpsLimit;
-        }
-        else if (line == "FOV") {
-            inFile >> config.clientOptions.fov;
-        }
-        else if (line == "SKIN") {
-            inFile >> config.clientOptions.skinName;
-        }
-        else if (line == "TEXTURE_PACK") {
-            inFile >> config.clientOptions.texturePack;
-        }
-        else if (line == "WORLD_HEIGHT") {
-            inFile >> config.serverOptions.worldHeight;
-        }
-        else if (line == "WORLD_SIZE") {
-            inFile >> config.serverOptions.worldSize;
-        }
+    for (auto& [k, v] : clientData) {
+        std::cout << k << " " << v << std::endl;
     }
+
+    config.client.fullScreen = std::stoi(clientData["fullscreen"]);
+    config.client.windowWidth = std::stoi(clientData["window_width"]);
+    config.client.windowHeight = std::stoi(clientData["window_height"]);
+    config.client.isFpsCapped = std::stoi(clientData["cap_fps"]);
+    config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
+    config.client.fov = std::stoi(clientData["fov"]);
+    config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
+    config.client.skinName = clientData["skin"];
+    config.client.texturePack = clientData["texture_pack"];
+
+    config.server.worldSize = std::stoi(serverData["world_size"]);
 }
 
 /**
@@ -114,14 +99,14 @@ void parseArgs(Config &config,
                 std::cout << "Unable to set max connections, defaulting to "
                              "4. Reason: "
                           << e.what() << "\n";
-                config.serverOptions.maxConnections = 4;
+                config.server.maxConnections = 4;
             }
         }
         else if (option.first == "-client") {
             config.launchType = LaunchType::Client;
         }
         else if (option.first == "-skin") {
-            config.clientOptions.skinName = option.second;
+            config.client.skinName = option.second;
         }
     }
 }
@@ -199,13 +184,13 @@ int launchClient(const ClientConfig &config)
  */
 int launchBoth(const Config &config)
 {
-    std::thread serverThread(launchServer, config.serverOptions,
+    std::thread serverThread(launchServer, config.server,
                              sf::milliseconds(5000));
 
     // Allows some time for the server to set up etc
     // TODO Improve this to wait until server set up, rather than randime
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    int exit = launchClient(config.clientOptions);
+    int exit = launchClient(config.client);
     serverThread.join();
     return exit;
 }
@@ -217,15 +202,15 @@ int launchBoth(const Config &config)
  */
 int launchServerAnd2Players(const Config &config)
 {
-    std::thread serverThread(launchServer, config.serverOptions,
+    std::thread serverThread(launchServer, config.server,
                              sf::milliseconds(20000));
 
     // Allows some time for the server to set up etc
     // TODO Improve this to wait until server set up, rather than randime
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    std::thread client2(launchClient, config.clientOptions);
+    std::thread client2(launchClient, config.client);
 
-    int exit = launchClient(config.clientOptions);
+    int exit = launchClient(config.client);
 
     client2.join();
     serverThread.join();
@@ -256,10 +241,10 @@ int main(int argc, char **argv)
             return launchBoth(config);
 
         case LaunchType::Server:
-            return launchServer(config.serverOptions);
+            return launchServer(config.server);
 
         case LaunchType::Client:
-            return launchClient(config.clientOptions);
+            return launchClient(config.client);
 
         case LaunchType::TwoPlayer:
             return launchServerAnd2Players(config);

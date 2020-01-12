@@ -33,6 +33,9 @@ std::vector<DataBlock> getObdDataRaw(const std::string &obd)
         DataBlock block;
         block.type = line;
         while (stream >> line) {
+            if (line.empty()) {
+                continue;
+            }
             if (line == "end") {
                 break;
             }
@@ -47,7 +50,7 @@ std::vector<DataBlock> getObdDataRaw(const std::string &obd)
     return data;
 }
 
-std::vector<DataBlock> getObdData(std::string &filename)
+std::vector<DataBlock> getObdData(const std::string &filename)
 {
     return getObdDataRaw(loadFileContents(filename));
 }

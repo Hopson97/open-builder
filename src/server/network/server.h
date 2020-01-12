@@ -70,5 +70,4 @@ class Server final : public NetworkHost {
     bool m_isRunning = true;
 
     const int m_worldSize;
-    const int m_worldHeight;
 };
