@@ -1,7 +1,9 @@
 
 add_library(ob-common
     file_io.cpp
+    obd_parser.cpp
     debug.cpp
+    world/voxel_types.cpp
     network/net_host.cpp
     world/chunk.cpp
     world/chunk_manager.cpp

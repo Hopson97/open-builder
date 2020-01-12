@@ -3,9 +3,9 @@
 #include <common/debug.h>
 #include <iostream>
 
-namespace {
-const std::string TEXTURE_PATH = "res/textures/";
+#include <common/types.h>
 
+namespace {
 GLuint createTexture()
 {
     GLuint handle;
@@ -40,6 +40,7 @@ namespace gl {
 //
 //  Cube Texture
 //
+/*
 void CubeTexture::create(const std::array<std::string, 6> &textures)
 {
     m_handle = createTexture();
@@ -72,6 +73,7 @@ void CubeTexture::bind() const
 {
     glCheck(glBindTexture(GL_TEXTURE_CUBE_MAP, m_handle));
 }
+*/
 
 //
 //  Texture 2D
@@ -81,7 +83,7 @@ void Texture2d::create(const std::string &file)
     m_handle = createTexture();
     bind();
 
-    auto path = TEXTURE_PATH + file + ".png";
+    auto path = "res/" + file + ".png";
     bufferImage(GL_TEXTURE_2D, path);
 
     glCheck(glGenerateMipmap(GL_TEXTURE_2D));
@@ -93,19 +95,21 @@ void Texture2d::create(const std::string &file)
     m_hasTexture = true;
 }
 
-void Texture2d::create(unsigned int width, unsigned int height, const sf::Uint8* pixels)
+void Texture2d::create(unsigned int width, unsigned int height,
+                       const sf::Uint8 *pixels)
 {
     m_handle = createTexture();
     bind();
 
     sf::Image img;
     img.create(width, height, pixels);
-    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getSize().x, img.getSize().y, 0,
-        GL_RGBA, GL_UNSIGNED_BYTE, img.getPixelsPtr()));
+    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getSize().x,
+                         img.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                         img.getPixelsPtr()));
 
     glCheck(glGenerateMipmap(GL_TEXTURE_2D));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-        GL_LINEAR_MIPMAP_LINEAR));
+                            GL_LINEAR_MIPMAP_LINEAR));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.4f));
 
@@ -122,16 +126,15 @@ void Texture2d::bind() const
     glCheck(glBindTexture(GL_TEXTURE_2D, m_handle));
 }
 
-
 bool Texture2d::textureExists() const
 {
     return m_hasTexture;
 }
 
-sf::Image loadRawImageFile(const std::string& file)
+sf::Image loadRawImageFile(const std::string &file)
 {
     sf::Image img;
-    auto path = TEXTURE_PATH + file + ".png";
+    auto path = "res/" + file + ".png";
 
     if (!img.loadFromFile(path)) {
         std::cerr << "Could not load: " << file << '\n';
@@ -160,20 +163,21 @@ void TextureArray::create(GLsizei numTextures, GLsizei textureSize)
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, textureSize, textureSize,
-                 numTextures, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                 numTextures, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 }
 
-int TextureArray::addTexture(const std::string &file)
+GLuint TextureArray::addTexture(const std::string &file)
 {
     sf::Image image;
-    if (!image.loadFromFile(TEXTURE_PATH + file + ".png")) {
+    if (!image.loadFromFile("res/" + file + ".png")) {
         // Create a error image
         image.create(m_textureSize, m_textureSize);
-        for (int y = 0; y < m_textureSize; y++) {
-            for (int x = 0; x < m_textureSize; x++) {
-                image.setPixel(
-                    x, y, (x + y % 2) == 0 ? sf::Color::Red : sf::Color::Black);
+        for (GLuint y = 0; y < m_textureSize; y++) {
+            for (GLuint x = 0; x < m_textureSize; x++) {
+                u8 r = static_cast<u8>(rand() % 255);
+                u8 g = static_cast<u8>(rand() % 255);
+                u8 b = static_cast<u8>(rand() % 255);
+                image.setPixel(x, y, {r, g, b});
             }
         }
     };
@@ -182,7 +186,7 @@ int TextureArray::addTexture(const std::string &file)
                     m_textureSize, 1, GL_RGBA, GL_UNSIGNED_BYTE,
                     image.getPixelsPtr());
 
-	// Generate Mipmap
+    // Generate Mipmap
     glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
 
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER,
@@ -191,7 +195,6 @@ int TextureArray::addTexture(const std::string &file)
 
     return m_textureCount++;
 }
-
 
 void TextureArray::destroy()
 {

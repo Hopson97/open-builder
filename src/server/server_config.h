@@ -5,5 +5,4 @@
 struct ServerConfig {
     int maxConnections = 4;
     int worldSize = 16;
-    int worldHeight = 4;
 };

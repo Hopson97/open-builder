@@ -46,6 +46,8 @@ class ChunkManager final {
      */
     void ensureNeighbours(const ChunkPosition &chunkPosition);
 
+    const ChunkPositionMap<Chunk> chunks() const;
+
   private:
     ChunkPositionMap<Chunk> m_chunks;
 };
