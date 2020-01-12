@@ -1,15 +1,13 @@
 #pragma once
 
+#include "../data/server_voxel_data.h"
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/network/net_host.h>
 #include <common/world/chunk_manager.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include <queue>
 #include <unordered_map>
-
-#include "../data/voxel_data.h"
-
-#include <glm/gtc/matrix_transform.hpp>
 
 struct ServerConfig;
 
@@ -44,6 +42,7 @@ class Server final : public NetworkHost {
     void sendChunk(peer_id_t peerId, const ChunkPosition &chunk);
     void sendPlayerSkin(peer_id_t peerId,
                         std::optional<peer_id_t> toPeer = std::nullopt);
+    void sendGameData(peer_id_t peerId);
 
     void onPeerConnect(ENetPeer *peer) override;
     void onPeerDisconnect(ENetPeer *peer) override;
@@ -71,5 +70,5 @@ class Server final : public NetworkHost {
     bool m_isRunning = true;
     const int m_worldSize;
 
-    VoxelRegistry m_voxelRegistry;
+    VoxelRegistry<ServerVoxelData> m_voxelRegistry;
 };

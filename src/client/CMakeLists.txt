@@ -1,5 +1,6 @@
 
 add_library(ob-client
+    data/voxel_textures.cpp
     input/keyboard.cpp
     gl/vertex_array.cpp
     gl/shader.cpp

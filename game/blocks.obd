@@ -1,26 +1,26 @@
 block
     name openbuilder:grass
-    texture_top pack:grass
-    texture_side pack:grasside
-    texture_bottom pack:dirt
+    texture_top grass
+    texture_side grasside
+    texture_bottom dirt
     mesh block
     type solid
 end
 
 block
     name openbuilder:dirt
-    texture_top pack:dirt
-    texture_side pack:dirt
-    texture_bottom pack:dirt
+    texture_top dirt
+    texture_side dirt
+    texture_bottom dirt
     mesh block
     type solid
 end
 
 block
     name openbuilder:stone
-    texture_top pack:stone
-    texture_side pack:stone
-    texture_bottom pack:stone
+    texture_top stone
+    texture_side stone
+    texture_bottom stone
     mesh block
     type solid
 end

@@ -42,7 +42,7 @@ class Texture2d final {
 class TextureArray final {
   public:
     void create(GLsizei numTextures, GLsizei textureSize);
-    int addTexture(const std::string &file);
+    GLuint addTexture(const std::string &file);
     void destroy();
     void bind() const;
 

@@ -164,7 +164,7 @@ void TextureArray::create(GLsizei numTextures, GLsizei textureSize)
                  numTextures, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 }
 
-int TextureArray::addTexture(const std::string &file)
+GLuint TextureArray::addTexture(const std::string &file)
 {
     sf::Image image;
     if (!image.loadFromFile("res/" + file + ".png")) {
@@ -173,7 +173,7 @@ int TextureArray::addTexture(const std::string &file)
         for (GLuint y = 0; y < m_textureSize; y++) {
             for (GLuint x = 0; x < m_textureSize; x++) {
                 image.setPixel(
-                    x, y, (x + y % 2) == 0 ? sf::Color::Red : sf::Color::Black);
+                    x, y, {rand() % 255, rand() % 255, rand() % 255});
             }
         }
     };

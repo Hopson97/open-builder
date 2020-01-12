@@ -36,16 +36,18 @@ Server::Server(const ServerConfig &config)
     auto data = getObdData("game/blocks.obd");
     for (auto &block : data) {
         auto &bd = block.data;
-        VoxelData data;
-        data.name = bd["name"];
-        data.topTexture = bd["texture_top"];
-        data.sideTexture = bd["texture_side"];
-        data.bottomTexture = bd["texture_bottom"];
+        ServerVoxelData vox;
+        vox.name = bd["name"];
+        vox.topTexture = bd["texture_top"];
+        vox.sideTexture = bd["texture_side"];
+        vox.bottomTexture = bd["texture_bottom"];
 
-        data.meshStyle = toVoxelMeshStyle(bd["mesh"]);
-        data.meshType = toVoxelMeshType(bd["type"]);
+        vox.meshStyle = toVoxelMeshStyle(bd["mesh"]);
+        vox.meshType = toVoxelMeshType(bd["type"]);
 
-        LOGVAR("Server", "Loaded voxel data: ", data.name);
+        m_voxelRegistry.addVoxelData(vox);
+
+        LOGVAR("Server", "Loaded voxel data: ", vox.name);
     }
 }
 
@@ -100,6 +102,26 @@ void Server::sendPlayerSkin(peer_id_t peerId, std::optional<peer_id_t> toPeer)
     }
 }
 
+void Server::sendGameData(peer_id_t peerId)
+{
+    sf::Packet packet;
+    packet << ClientCommand::GameRegistryData;
+
+    auto &data = m_voxelRegistry.getVoxelData();
+    packet << static_cast<u16>(data.size());
+    for (auto &voxel : data) {
+        auto mesh = static_cast<VoxelMeshStyle>(voxel.meshStyle);
+        auto type = static_cast<VoxelMeshType>(voxel.meshType);
+        LOGVAR("Server", "Added voxel data:", voxel.name);
+        packet << voxel.name << voxel.topTexture << voxel.sideTexture
+               << voxel.bottomTexture << mesh << type;
+    }
+
+    LOGVAR("Server", "Sending game data to :", (int)peerId);
+    sendToPeer(m_connectedClients[peerId].peer, packet, 0,
+               ENET_PACKET_FLAG_RELIABLE);
+}
+
 void Server::onPeerConnect(ENetPeer *peer)
 {
     int slot = findEmptySlot();
@@ -111,14 +133,18 @@ void Server::onPeerConnect(ENetPeer *peer)
         packet << ClientCommand::PeerId << id;
         NetworkHost::sendToPeer(peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
 
+        // Add peer
+        addPeer(peer, id);
+
+        // Send them the game data
+        sendGameData(id);
+
         // Broadcast the connection event
         sf::Packet announcement;
         announcement << ClientCommand::PlayerJoin << id;
         broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);
 
-        addPeer(peer, id);
-
-        // Send the spawn position
+        // Send the spawn chunks
         sf::Packet spawn;
         auto &player = m_entities[id];
         player.position = findPlayerSpawnPosition();

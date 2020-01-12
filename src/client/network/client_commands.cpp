@@ -97,6 +97,10 @@ void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
             onPlayerSkinReceive(packet);
             break;
 
+        case ClientCommand::GameRegistryData:
+            onGameRegistryData(packet);
+            break;
+
         case ClientCommand::PeerId:
             break;
     }
@@ -186,4 +190,58 @@ void Client::onPlayerSkinReceive(sf::Packet &packet)
     sf::Uint8 *skinPixels =
         (sf::Uint8 *)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
     m_entities[id].playerSkin.create(32, 64, skinPixels);
+}
+
+void Client::onGameRegistryData(sf::Packet &packet)
+{
+    LOG("Client", "Received game data");
+    u16 numBlocks;
+    packet >> numBlocks;
+    // todo
+    // 1. Need to somehow work out the exact amount of textures needed
+    // 2. Need to pass in the actual texture pack resolution
+    m_voxelTextures.init(numBlocks * 3, 16);
+    const std::string texturePath = "default/textures/blocks/";
+    for (u16 i = 0; i < numBlocks; i++) {
+        std::string name;
+        std::string textureTop;
+        std::string textureSide;
+        std::string textureBottom;
+
+        u8 meshStyle;
+        u8 meshType;
+
+        packet >> name >> textureTop >> textureSide >> textureBottom >>
+            meshStyle >> meshType;
+
+        std::cout << "DATA: " << name << " " << textureTop << " " << textureSide
+                  << " " << textureBottom << '\n';
+
+        ClientVoxelData data;
+        data.name = name;
+        data.topTexture =
+            m_voxelTextures.getTextureId(texturePath + textureTop);
+        data.sideTexture =
+            m_voxelTextures.getTextureId(texturePath + textureSide);
+        data.bottomTexture =
+            m_voxelTextures.getTextureId(texturePath + textureBottom);
+
+        data.meshStyle = static_cast<VoxelMeshStyle>(meshStyle);
+        data.meshType = static_cast<VoxelMeshType>(meshType);
+
+        m_voxelData.addVoxelData(data);
+
+        LOGVAR("Client", "Received Block: ", data.name);
+    }
+
+    m_hasReceivedGameData = true;
+
+    /*
+        // Textures for blocks
+        m_blockTextures.create(2, 16);
+        m_blockTextures.addTexture(config.texturePack +
+       "/textures/blocks/grass"); m_blockTextures.addTexture(config.texturePack
+       +
+                                   "/textures/blocks/grassside");
+    */
 }

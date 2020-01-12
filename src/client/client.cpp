@@ -39,11 +39,7 @@ bool Client::init(const ClientConfig &config, float aspect)
     m_errorSkinTexture.create("skins/error");
     m_errorSkinTexture.bind();
 
-    // Textures for blocks
-    m_blockTextures.create(2, 16);
-    m_blockTextures.addTexture(config.texturePack + "/textures/blocks/grass");
-    m_blockTextures.addTexture(config.texturePack +
-                               "/textures/blocks/grassside");
+    m_texturePack = config.texturePack;
 
     // Set up the server connection
     auto peer = NetworkHost::createAsClient(LOCAL_HOST);
@@ -65,6 +61,9 @@ bool Client::init(const ClientConfig &config, float aspect)
 
 void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
 {
+    if (!m_hasReceivedGameData) {
+        return;
+    }
     static auto lastMousePosition = sf::Mouse::getPosition(window);
 
     // Handle mouse input
@@ -168,9 +167,14 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
 
 void Client::update(float dt)
 {
+    NetworkHost::tick();
+    if (!m_hasReceivedGameData) {
+        return;
+    }
+
     mp_player->position += mp_player->velocity * dt;
     mp_player->velocity *= 0.99 * dt;
-    NetworkHost::tick();
+
     sendPlayerPosition(mp_player->position);
 
     // Update blocks
@@ -274,6 +278,9 @@ void Client::update(float dt)
 
 void Client::render()
 {
+    if (!m_hasReceivedGameData) {
+        return;
+    }
     // Setup matrices
     glm::mat4 viewMatrix{1.0f};
     glm::mat4 projectionViewMatrix{1.0f};
@@ -310,8 +317,8 @@ void Client::render()
 
     // Render chunks
     m_chunkShader.program.bind();
-    // m_grassTexture.bind();
-    m_blockTextures.bind();
+
+    m_voxelTextures.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
 
     // Buffer chunks
@@ -343,7 +350,7 @@ void Client::endGame()
     m_cube.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
-    m_blockTextures.destroy();
+    m_voxelTextures.destroy();
 
     for (auto &chunk : m_chunks.drawables) {
         chunk.vao.destroy();

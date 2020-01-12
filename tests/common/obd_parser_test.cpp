@@ -18,8 +18,8 @@ block                           \n\
     name dirt                   \n\
                                 \n\
     texture_top pack:dirt       \n\
-    mesh block                  \n\
-    state solid                 \n\
+    mesh cross                  \n\
+    state flora                 \n\
 end                             \n\
 ";  
 
@@ -46,6 +46,11 @@ TEST_CASE("OBD files can be read from correctly")
         REQUIRE(block.data["mesh"] == "block");
         REQUIRE(block.data["state"] == "solid");
 
+        auto block2 = data[1];
 
+        REQUIRE(block2.data["name"] == "dirt");
+        REQUIRE(block2.data["texture_top"] == "pack:dirt");
+        REQUIRE(block2.data["mesh"] == "cross");
+        REQUIRE(block2.data["state"] == "flora");
     }
 }

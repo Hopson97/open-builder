@@ -54,6 +54,20 @@ enum class ClientCommand : command_t {
     // peer_id_t: The ID of the player
     // u8[8192]: Skin data (RGBA8 format)
     NewPlayerSkin,
+
+    // The data needed for the blocks, entities etc
+    // The client will not process data/render anything until this has been
+    // recieved
+    // Data:
+    // u16: Number of block types
+    // [For each block type (Sent in order of Block ID)...]
+    // String: name
+    // String top_texture
+    // String side_texture
+    // String bottom_texture
+    // u8 mesh_style
+    // u8 mesh_type
+    GameRegistryData
 };
 
 /**

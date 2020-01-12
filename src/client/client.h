@@ -16,6 +16,10 @@
 #include <common/world/chunk_manager.h>
 #include <unordered_set>
 
+#include "data/client_voxel_data.h"
+#include "data/voxel_textures.h"
+#include <common/data/voxel_types.h>
+
 class Keyboard;
 
 struct BlockUpdate {
@@ -73,6 +77,8 @@ class Client final : public NetworkHost {
     void onSpawnPoint(sf::Packet &packet);
     void onBlockUpdate(sf::Packet &packet);
     void onPlayerSkinReceive(sf::Packet &packet);
+
+    void onGameRegistryData(sf::Packet &packet);
     // End of network functions
 
     int findChunkDrawableIndex(const ChunkPosition &position);
@@ -80,6 +86,7 @@ class Client final : public NetworkHost {
 
     // Network
     ENetPeer *mp_serverPeer = nullptr;
+    bool m_hasReceivedGameData = false;
 
     // Rendering/ OpenGL stuff
     glm::mat4 m_projectionMatrix{1.0f};
@@ -88,7 +95,9 @@ class Client final : public NetworkHost {
 
     gl::Texture2d m_errorSkinTexture;
     sf::Image m_rawPlayerSkin;
-    gl::TextureArray m_blockTextures;
+
+    std::string m_texturePack;
+    VoxelTextures m_voxelTextures;
 
     struct {
         gl::Shader program;
@@ -113,6 +122,8 @@ class Client final : public NetworkHost {
         std::vector<ChunkPosition> updates;
         std::vector<BlockUpdate> blockUpdates;
     } m_chunks;
+
+    VoxelRegistry<ClientVoxelData> m_voxelData;
 
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
