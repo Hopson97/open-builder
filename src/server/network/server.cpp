@@ -16,10 +16,11 @@ Server::Server(const ServerConfig& config)
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
             std::array<int, CHUNK_AREA> heightMap = createChunkHeightMap({x, 0, z});
-            for (int y = 0; y < m_worldHeight; y++) {
+            for (int y = 0; y < *std::max_element(heightMap.cbegin(), heightMap.cend()) / CHUNK_SIZE + 1; y++) {
                 Chunk& chunk = m_world.chunks.addChunk({ x, y, z });
                 //makeFlatTerrain(&chunk);
                 createSmoothTerrain(chunk, heightMap, m_worldSize);
+                m_world.chunks.ensureNeighbours({x, y, z});
                 //makeRawNoiseTerrain(chunk);
             }
         }
@@ -116,19 +117,18 @@ void Server::onPeerConnect(ENetPeer* peer)
         }
 
         // Send the inital world to the client
-        for (int cy = 0; cy < m_worldSize; cy++) {
-            for (int cz = 0; cz < m_worldSize; cz++) {
-                for (int cx = 0; cx < m_worldSize; cx++) {
-                    sendChunk(id, { cx, cy, cz });
-                }
-            }
+        for (auto &chunk : m_world.chunks.chunks()) {
+            sendChunk(id, chunk.second.getPosition());
         }
+
 
         // Send the peer other player's skins 
         // (Note: Could this overwhelm the player's buffer?)
-        for (int p_id = 0; p_id < m_entities.size(); p_id++)
-            if (m_entities[p_id].hasSkin)
+        for (unsigned p_id = 0; p_id < m_entities.size(); p_id++) {
+            if (m_entities[p_id].hasSkin) {
                 sendPlayerSkin(p_id, id);
+            }
+        }
     }
 }
 
@@ -204,7 +204,7 @@ void Server::update()
     sf::Packet packet;
     if (m_blockUpdates.size() > 0) {
 
-        u16 size = m_blockUpdates.size();
+        u16 size = static_cast<u16>(m_blockUpdates.size());
         packet << ClientCommand::BlockUpdate << size;
 
         for (auto& blockUpdate : m_blockUpdates) {

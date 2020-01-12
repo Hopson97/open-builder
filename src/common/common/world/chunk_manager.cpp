@@ -76,3 +76,8 @@ void ChunkManager::ensureNeighbours(const ChunkPosition &chunkPosition)
     addChunk({cp.x, cp.y, cp.z - 1});
     addChunk({cp.x, cp.y, cp.z + 1});
 }
+
+const ChunkPositionMap<Chunk> ChunkManager::chunks() const
+{
+    return m_chunks;
+}

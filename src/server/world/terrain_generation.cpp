@@ -64,7 +64,7 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
 {
     NoiseOptions options;
-    options.amplitude = 74.f;
+    options.amplitude = 125;
     options.octaves = 6;
     options.smoothness = 215.f;
     options.roughness = 0.5f;
@@ -89,7 +89,7 @@ void createSmoothTerrain(Chunk &chunk,
     auto cy = cp.y;
     auto cz = cp.z;
 
-    if (cy < worldSize - 1 && cy > 0 && cx < worldSize - 1 && cx > 0 &&
+    if (cy > 0 && cx < worldSize - 1 && cx > 0 &&
         cz < worldSize - 1 && cz > 0) {
         for (int z = 0; z < CHUNK_SIZE; z++) {
             for (int x = 0; x < CHUNK_SIZE; x++) {
@@ -155,8 +155,8 @@ void makeRawNoiseTerrain(Chunk &chunk)
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             // Get block position in the world (X and Z, as Y is up/height)
-            float bx = chunk.getPosition().x * CHUNK_SIZE + x;
-            float bz = chunk.getPosition().z * CHUNK_SIZE + z;
+            float bx = static_cast<float>(chunk.getPosition().x * CHUNK_SIZE + x);
+            float bz = static_cast<float>(chunk.getPosition().z * CHUNK_SIZE + z);
 
             // Get noise value
             float noiseValue = glm::simplex(glm::vec2{bx / 200.0f, bz / 200.0f});

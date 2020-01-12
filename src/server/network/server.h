@@ -21,7 +21,7 @@ struct ServerEntity {
 
 struct ConnectedClient {
     ENetPeer *peer = nullptr;
-    peer_id_t entityId;
+    peer_id_t entityId = 0;
     bool connected = false;
 };
 
