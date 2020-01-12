@@ -8,37 +8,42 @@
 
 #include "../world/terrain_generation.h"
 
-Server::Server(const ServerConfig& config)
+Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
     , m_worldHeight(config.worldHeight)
 {
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
-            std::array<int, CHUNK_AREA> heightMap = createChunkHeightMap({x, 0, z});
-            for (int y = 0; y < *std::max_element(heightMap.cbegin(), heightMap.cend()) / CHUNK_SIZE + 1; y++) {
-                Chunk& chunk = m_world.chunks.addChunk({ x, y, z });
-                //makeFlatTerrain(&chunk);
+            std::array<int, CHUNK_AREA> heightMap =
+                createChunkHeightMap({x, 0, z});
+            for (int y = 0;
+                 y < *std::max_element(heightMap.cbegin(), heightMap.cend()) /
+                             CHUNK_SIZE +
+                         1;
+                 y++) {
+                Chunk &chunk = m_world.chunks.addChunk({x, y, z});
+                // makeFlatTerrain(&chunk);
                 createSmoothTerrain(chunk, heightMap, m_worldSize);
                 m_world.chunks.ensureNeighbours({x, y, z});
-                //makeRawNoiseTerrain(chunk);
+                // makeRawNoiseTerrain(chunk);
             }
         }
     }
 }
 
-void Server::sendChunk(peer_id_t peerId, const ChunkPosition& position)
+void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
 {
     if (!m_connectedClients[peerId].connected) {
         return;
     }
 
-    const Chunk& chunk = [this, &position]() {
+    const Chunk &chunk = [this, &position]() {
         if (m_world.chunks.hasChunk(position)) {
             return m_world.chunks.getChunk(position);
         }
         else {
-            Chunk& c = m_world.chunks.addChunk(position);
+            Chunk &c = m_world.chunks.addChunk(position);
             return c;
         }
     }();
@@ -46,17 +51,17 @@ void Server::sendChunk(peer_id_t peerId, const ChunkPosition& position)
     // Create the chunk-data packet
     sf::Packet packet;
     packet << ClientCommand::ChunkData << chunk.getPosition().x
-        << chunk.getPosition().y << chunk.getPosition().z;
+           << chunk.getPosition().y << chunk.getPosition().z;
 
     auto compressedChunk = chunk.compress();
     packet << static_cast<u32>(compressedChunk.size());
-    for (auto& block : compressedChunk) {
+    for (auto &block : compressedChunk) {
         packet << block.first << block.second;
     }
 
     // Send chunk data to client
     sendToPeer(m_connectedClients[peerId].peer, packet, 1,
-        ENET_PACKET_FLAG_RELIABLE);
+               ENET_PACKET_FLAG_RELIABLE);
 }
 
 void Server::sendPlayerSkin(peer_id_t peerId, std::optional<peer_id_t> toPeer)
@@ -70,14 +75,15 @@ void Server::sendPlayerSkin(peer_id_t peerId, std::optional<peer_id_t> toPeer)
 
     if (!toPeer.has_value()) {
         broadcastToPeers(skinPacket, 0, ENET_PACKET_FLAG_RELIABLE);
-    } 
+    }
     else {
         LOGVAR("Server", "Sending skin to :", (int)toPeer.value());
-        sendToPeer(m_connectedClients[toPeer.value()].peer, skinPacket, 0, ENET_PACKET_FLAG_RELIABLE);
+        sendToPeer(m_connectedClients[toPeer.value()].peer, skinPacket, 0,
+                   ENET_PACKET_FLAG_RELIABLE);
     }
 }
 
-void Server::onPeerConnect(ENetPeer* peer)
+void Server::onPeerConnect(ENetPeer *peer)
 {
     int slot = findEmptySlot();
     if (slot >= 0) {
@@ -97,11 +103,11 @@ void Server::onPeerConnect(ENetPeer* peer)
 
         // Send the spawn position
         sf::Packet spawn;
-        auto& player = m_entities[id];
+        auto &player = m_entities[id];
         player.position = findPlayerSpawnPosition();
         player.m_skinData.resize(8192);
         spawn << ClientCommand::SpawnPoint << player.position.x
-            << player.position.y << player.position.z;
+              << player.position.y << player.position.z;
         sendToPeer(peer, spawn, 0, ENET_PACKET_FLAG_RELIABLE);
 
         // Send chunks around the player to the client (Spawn chunks)
@@ -111,7 +117,7 @@ void Server::onPeerConnect(ENetPeer* peer)
         for (int cy = pc.y - r; cy <= pc.y + r; cy++) {
             for (int cz = pc.z - r; cz < pc.z + r; cz++) {
                 for (int cx = pc.x - r; cx < pc.z + r; cx++) {
-                    sendChunk(id, { cx, cy, cz });
+                    sendChunk(id, {cx, cy, cz});
                 }
             }
         }
@@ -121,8 +127,7 @@ void Server::onPeerConnect(ENetPeer* peer)
             sendChunk(id, chunk.second.getPosition());
         }
 
-
-        // Send the peer other player's skins 
+        // Send the peer other player's skins
         // (Note: Could this overwhelm the player's buffer?)
         for (unsigned p_id = 0; p_id < m_entities.size(); p_id++) {
             if (m_entities[p_id].hasSkin) {
@@ -132,35 +137,35 @@ void Server::onPeerConnect(ENetPeer* peer)
     }
 }
 
-void Server::onPeerDisconnect(ENetPeer* peer)
+void Server::onPeerDisconnect(ENetPeer *peer)
 {
     removePeer(peer->connectID);
 }
 
-void Server::onPeerTimeout(ENetPeer* peer)
+void Server::onPeerTimeout(ENetPeer *peer)
 {
     removePeer(peer->connectID);
 }
 
-void Server::onCommandRecieve([[maybe_unused]] ENetPeer* peer,
-    sf::Packet& packet, command_t command)
+void Server::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
+                              sf::Packet &packet, command_t command)
 {
     switch (static_cast<ServerCommand>(command)) {
-    case ServerCommand::PlayerPosition:
-        handleCommandPlayerPosition(packet);
-        break;
+        case ServerCommand::PlayerPosition:
+            handleCommandPlayerPosition(packet);
+            break;
 
-    case ServerCommand::BlockEdit:
-        handleCommandBlockEdit(packet);
-        break;
+        case ServerCommand::BlockEdit:
+            handleCommandBlockEdit(packet);
+            break;
 
-    case ServerCommand::PlayerSkin:
-        handleCommandPlayerSkin(packet);
-        break;
+        case ServerCommand::PlayerSkin:
+            handleCommandPlayerSkin(packet);
+            break;
     }
 }
 
-void Server::handleCommandPlayerPosition(sf::Packet& packet)
+void Server::handleCommandPlayerPosition(sf::Packet &packet)
 {
     peer_id_t id = 0;
     packet >> id;
@@ -168,20 +173,21 @@ void Server::handleCommandPlayerPosition(sf::Packet& packet)
         m_entities[id].position.z;
 }
 
-void Server::handleCommandBlockEdit(sf::Packet& packet)
+void Server::handleCommandBlockEdit(sf::Packet &packet)
 {
     BlockPosition position;
     block_t block;
     packet >> position.x >> position.y >> position.z >> block;
-    m_blockUpdates.push_back({ position, block });
+    m_blockUpdates.push_back({position, block});
 }
 
-void Server::handleCommandPlayerSkin(sf::Packet& packet)
+void Server::handleCommandPlayerSkin(sf::Packet &packet)
 {
-    LOGVAR("Server", "Received player skin, packet size: ", (int)packet.getDataSize());
+    LOGVAR("Server",
+           "Received player skin, packet size: ", (int)packet.getDataSize());
 
-    if (packet.getDataSize() != (sizeof(command_t) + sizeof(peer_id_t) + 8192))
-    {
+    if (packet.getDataSize() !=
+        (sizeof(command_t) + sizeof(peer_id_t) + 8192)) {
         LOG("Server", "Player Skin Packet is of an invalid size");
         return;
     }
@@ -189,8 +195,10 @@ void Server::handleCommandPlayerSkin(sf::Packet& packet)
     peer_id_t id = 0;
     packet >> id;
 
-    // Copy contents into a buffer vector which then gets copied into the player skin data
-    sf::Uint8* skinPixels = (sf::Uint8*)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
+    // Copy contents into a buffer vector which then gets copied into the player
+    // skin data
+    sf::Uint8 *skinPixels =
+        (sf::Uint8 *)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
     std::vector<sf::Uint8> newPixels(skinPixels, skinPixels + 8192);
 
     m_entities[id].m_skinData.swap(newPixels);
@@ -202,25 +210,26 @@ void Server::handleCommandPlayerSkin(sf::Packet& packet)
 void Server::update()
 {
     {
-    sf::Packet packet;
-    if (m_blockUpdates.size() > 0) {
+        sf::Packet packet;
+        if (m_blockUpdates.size() > 0) {
 
-        u16 size = static_cast<u16>(m_blockUpdates.size());
-        packet << ClientCommand::BlockUpdate << size;
+            u16 size = static_cast<u16>(m_blockUpdates.size());
+            packet << ClientCommand::BlockUpdate << size;
 
-        for (auto& blockUpdate : m_blockUpdates) {
-            auto chunkPosition = toChunkPosition(blockUpdate.position);
-            m_world.chunks.ensureNeighbours(chunkPosition);
-            m_world.chunks.setBlock(blockUpdate.position, blockUpdate.block);
+            for (auto &blockUpdate : m_blockUpdates) {
+                auto chunkPosition = toChunkPosition(blockUpdate.position);
+                m_world.chunks.ensureNeighbours(chunkPosition);
+                m_world.chunks.setBlock(blockUpdate.position,
+                                        blockUpdate.block);
 
-            packet << blockUpdate.position.x << blockUpdate.position.y
-                << blockUpdate.position.z << blockUpdate.block;
+                packet << blockUpdate.position.x << blockUpdate.position.y
+                       << blockUpdate.position.z << blockUpdate.block;
+            }
+            // TODO: Try find a way to not send block updates to players that
+            // created them
+            broadcastToPeers(packet, 0, ENET_PACKET_FLAG_RELIABLE);
+            m_blockUpdates.clear();
         }
-        // TODO: Try find a way to not send block updates to players that
-        // created them
-        broadcastToPeers(packet, 0, ENET_PACKET_FLAG_RELIABLE);
-        m_blockUpdates.clear();
-    }
     }
 
     // Player positions
@@ -231,7 +240,7 @@ void Server::update()
         for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
             if (m_connectedClients[i].connected) {
                 packet << static_cast<peer_id_t>(i) << m_entities[i].position.x
-                    << m_entities[i].position.y << m_entities[i].position.z;
+                       << m_entities[i].position.y << m_entities[i].position.z;
             }
         }
         broadcastToPeers(packet, 0, 0);
@@ -248,7 +257,7 @@ int Server::findEmptySlot() const
     return -1;
 }
 
-void Server::addPeer(ENetPeer* peer, peer_id_t id)
+void Server::addPeer(ENetPeer *peer, peer_id_t id)
 {
     LOGVAR("Server", "New Peer, Peer Id:", (int)id);
     m_connectedClients[id].peer = peer;
@@ -260,7 +269,7 @@ void Server::removePeer(u32 connectionId)
 {
     auto itr = std::find_if(
         m_connectedClients.begin(), m_connectedClients.end(),
-        [this, &connectionId](auto& conn) {
+        [this, &connectionId](auto &conn) {
             return conn.peer && conn.peer->connectID == connectionId;
         });
 
@@ -287,18 +296,18 @@ glm::vec3 Server::findPlayerSpawnPosition()
     int z = (CHUNK_SIZE * m_worldSize) / 2;
 
     for (int chunkY = m_worldSize - 1; chunkY >= 0; chunkY--) {
-        auto chunkPosition = worldToChunkPosition({ x, 0, z });
+        auto chunkPosition = worldToChunkPosition({x, 0, z});
         chunkPosition.y = chunkY;
-        auto& spawn = m_world.chunks.getChunk(chunkPosition);
+        auto &spawn = m_world.chunks.getChunk(chunkPosition);
 
         for (int blockY = CHUNK_SIZE - 1; blockY >= 0; blockY--) {
-            auto blockPosition = toLocalBlockPosition({ x, 0, z });
+            auto blockPosition = toLocalBlockPosition({x, 0, z});
             blockPosition.y = blockY;
             if (spawn.qGetBlock(blockPosition) > 0) {
                 auto worldY = chunkY * CHUNK_SIZE + blockY + 3;
-                return { x, worldY, z };
+                return {x, worldY, z};
             }
         }
     }
-    return { x, CHUNK_SIZE * m_worldSize, z };
+    return {x, CHUNK_SIZE * m_worldSize, z};
 }

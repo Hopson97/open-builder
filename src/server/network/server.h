@@ -32,7 +32,7 @@ class Server final : public NetworkHost {
     };
 
   public:
-    Server(const ServerConfig& config);
+    Server(const ServerConfig &config);
 
     void update();
 
@@ -40,7 +40,8 @@ class Server final : public NetworkHost {
     glm::vec3 findPlayerSpawnPosition();
 
     void sendChunk(peer_id_t peerId, const ChunkPosition &chunk);
-    void sendPlayerSkin(peer_id_t peerId, std::optional<peer_id_t> toPeer = std::nullopt);
+    void sendPlayerSkin(peer_id_t peerId,
+                        std::optional<peer_id_t> toPeer = std::nullopt);
 
     void onPeerConnect(ENetPeer *peer) override;
     void onPeerDisconnect(ENetPeer *peer) override;
@@ -50,7 +51,7 @@ class Server final : public NetworkHost {
 
     void handleCommandPlayerPosition(sf::Packet &packet);
     void handleCommandBlockEdit(sf::Packet &packet);
-    void handleCommandPlayerSkin(sf::Packet& packet);
+    void handleCommandPlayerSkin(sf::Packet &packet);
 
     int findEmptySlot() const;
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../gl/vertex_array.h"
-#include <common/world/coordinate.h>
 #include <array>
+#include <common/world/coordinate.h>
 
 struct MeshFace {
     std::array<GLfloat, 12> vertices;
@@ -11,7 +11,8 @@ struct MeshFace {
 
 struct ChunkMesh {
 
-    void addFace(const MeshFace &face, const BlockPosition &blockPosition, int texture);
+    void addFace(const MeshFace &face, const BlockPosition &blockPosition,
+                 int texture);
 
     gl::VertexArray createBuffer();
 

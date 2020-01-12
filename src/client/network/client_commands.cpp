@@ -36,7 +36,7 @@ void Client::sendBlockUpdate(const BlockUpdate &update)
     NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
 }
 
-void Client::sendPlayerSkin(const sf::Image& playerSkin)
+void Client::sendPlayerSkin(const sf::Image &playerSkin)
 {
     // Check the image is the right size
     if (playerSkin.getSize() != sf::Vector2u(32, 64)) {
@@ -47,7 +47,8 @@ void Client::sendPlayerSkin(const sf::Image& playerSkin)
     sf::Packet packet;
     packet << ServerCommand::PlayerSkin << NetworkHost::getPeerId();
     packet.append(playerSkin.getPixelsPtr(), 8192);
-    NetworkHost::sendToPeer(mp_serverPeer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
+    NetworkHost::sendToPeer(mp_serverPeer, packet, 0,
+                            ENET_PACKET_FLAG_RELIABLE);
 }
 
 void Client::onPeerConnect([[maybe_unused]] ENetPeer *peer)
@@ -169,19 +170,20 @@ void Client::onBlockUpdate(sf::Packet &packet)
     packet >> count;
     for (u32 i = 0; i < count; i++) {
         BlockUpdate blockUpdate;
-        packet >> blockUpdate.position.x >> blockUpdate.position.y >> blockUpdate.position.z >>
-            blockUpdate.block;
+        packet >> blockUpdate.position.x >> blockUpdate.position.y >>
+            blockUpdate.position.z >> blockUpdate.block;
         m_chunks.blockUpdates.push_back(blockUpdate);
     }
 }
 
-void Client::onPlayerSkinReceive(sf::Packet& packet)
+void Client::onPlayerSkinReceive(sf::Packet &packet)
 {
     peer_id_t id = 0;
     packet >> id;
 
     LOGVAR("Client", "Received skin for peer", (int)id);
 
-    sf::Uint8* skinPixels = (sf::Uint8*)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
+    sf::Uint8 *skinPixels =
+        (sf::Uint8 *)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
     m_entities[id].playerSkin.create(32, 64, skinPixels);
 }

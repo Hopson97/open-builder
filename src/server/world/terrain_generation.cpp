@@ -89,8 +89,8 @@ void createSmoothTerrain(Chunk &chunk,
     auto cy = cp.y;
     auto cz = cp.z;
 
-    if (cy > 0 && cx < worldSize - 1 && cx > 0 &&
-        cz < worldSize - 1 && cz > 0) {
+    if (cy > 0 && cx < worldSize - 1 && cx > 0 && cz < worldSize - 1 &&
+        cz > 0) {
         for (int z = 0; z < CHUNK_SIZE; z++) {
             for (int x = 0; x < CHUNK_SIZE; x++) {
                 int height = heightMap[z * CHUNK_SIZE + x];
@@ -155,11 +155,14 @@ void makeRawNoiseTerrain(Chunk &chunk)
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             // Get block position in the world (X and Z, as Y is up/height)
-            float bx = static_cast<float>(chunk.getPosition().x * CHUNK_SIZE + x);
-            float bz = static_cast<float>(chunk.getPosition().z * CHUNK_SIZE + z);
+            float bx =
+                static_cast<float>(chunk.getPosition().x * CHUNK_SIZE + x);
+            float bz =
+                static_cast<float>(chunk.getPosition().z * CHUNK_SIZE + z);
 
             // Get noise value
-            float noiseValue = glm::simplex(glm::vec2{bx / 200.0f, bz / 200.0f});
+            float noiseValue =
+                glm::simplex(glm::vec2{bx / 200.0f, bz / 200.0f});
 
             // Make it a positive number
             noiseValue = (noiseValue + 1) / 2.0f;

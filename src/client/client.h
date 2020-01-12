@@ -29,7 +29,8 @@ struct Entity final {
     glm::vec3 velocity{0.0f};
     bool active = false;
 
-    gl::Texture2d playerSkin; // May need to be relocated to its own Player Entity
+    gl::Texture2d
+        playerSkin; // May need to be relocated to its own Player Entity
 };
 
 struct ChunkDrawable {
@@ -41,7 +42,7 @@ class Client final : public NetworkHost {
   public:
     Client();
 
-    bool init(const ClientConfig& config, float aspect);
+    bool init(const ClientConfig &config, float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
