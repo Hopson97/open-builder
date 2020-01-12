@@ -42,7 +42,8 @@ bool Client::init(const ClientConfig &config, float aspect)
     // Textures for blocks
     m_blockTextures.create(2, 16);
     m_blockTextures.addTexture(config.texturePack + "/textures/blocks/grass");
-    m_blockTextures.addTexture(config.texturePack + "/textures/blocks/grassside");
+    m_blockTextures.addTexture(config.texturePack +
+                               "/textures/blocks/grassside");
 
     // Set up the server connection
     auto peer = NetworkHost::createAsClient(LOCAL_HOST);

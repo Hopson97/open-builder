@@ -1,6 +1,7 @@
 
 add_library(ob-common
     file_io.cpp
+    obd_parser.cpp
     debug.cpp
     network/net_host.cpp
     world/chunk.cpp
