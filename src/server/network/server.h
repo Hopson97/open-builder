@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../data/server_voxel_data.h"
+#include "../world/server_voxel.h"
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/network/net_host.h>
@@ -70,5 +70,5 @@ class Server final : public NetworkHost {
     bool m_isRunning = true;
     const int m_worldSize;
 
-    VoxelRegistry<ServerVoxelData> m_voxelRegistry;
+    VoxelRegistry<ServerVoxel> m_voxelRegistry;
 };

@@ -36,7 +36,7 @@ Server::Server(const ServerConfig &config)
     auto data = getObdData("game/blocks.obd");
     for (auto &block : data) {
         auto &bd = block.data;
-        ServerVoxelData vox;
+        ServerVoxel vox;
         vox.name = bd["name"];
         vox.topTexture = bd["texture_top"];
         vox.sideTexture = bd["texture_side"];

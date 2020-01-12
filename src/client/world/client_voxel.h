@@ -1,10 +1,9 @@
 #pragma once
 
-#include <common/data/voxel_types.h>
+#include <common/world/voxel_types.h>
 #include <glad/glad.h>
-#include <iostream>
 
-struct ClientVoxelData {
+struct ClientVoxel {
     std::string name;
     GLuint topTexture = 0;
     GLuint sideTexture = 0;

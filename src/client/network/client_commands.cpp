@@ -230,7 +230,7 @@ void Client::onGameRegistryData(sf::Packet &packet)
 
         
 
-        ClientVoxelData data;
+        ClientVoxel data;
         data.name = name;
         data.topTexture = getTexture(texturePath + textureTop);
         data.sideTexture = getTexture(texturePath + textureSide);

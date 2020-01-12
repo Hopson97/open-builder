@@ -1,13 +1,8 @@
 #pragma once
 
-#include <common/data/voxel_types.h>
-#include <string>
-#include <unordered_map>
-#include <vector>
+#include <common/world/voxel_types.h>
 
-#include <common/world/world_constants.h>
-
-struct ServerVoxelData {
+struct ServerVoxel {
     std::string name;
     std::string topTexture;
     std::string sideTexture;

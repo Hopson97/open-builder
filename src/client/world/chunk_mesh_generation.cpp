@@ -15,7 +15,7 @@ const MeshFace BOTTOM_FACE = {{0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1}, 0.4f};
 
 } // namespace
 
-ChunkMesh makeChunkMesh(const Chunk &chunk, const VoxelRegistry<ClientVoxelData>& voxelData)
+ChunkMesh makeChunkMesh(const Chunk &chunk, const VoxelRegistry<ClientVoxel>& voxelData)
 {
     sf::Clock clock;
     ChunkMesh mesh;

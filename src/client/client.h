@@ -16,8 +16,8 @@
 #include <common/world/chunk_manager.h>
 #include <unordered_set>
 
-#include "data/client_voxel_data.h"
-#include <common/data/voxel_types.h>
+#include "world/client_voxel.h"
+#include <common/world/voxel_types.h>
 
 class Keyboard;
 
@@ -122,7 +122,7 @@ class Client final : public NetworkHost {
         std::vector<BlockUpdate> blockUpdates;
     } m_chunks;
 
-    VoxelRegistry<ClientVoxelData> m_voxelData;
+    VoxelRegistry<ClientVoxel> m_voxelData;
 
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
