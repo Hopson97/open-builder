@@ -2,6 +2,8 @@
 
 How to define a block using the .obd format
 
+Example: [blocks.obd](https://github.com/Hopson97/open-builder/blob/master/game/blocks.obd)
+
 ## Overview
 
 Blocks have the following format:

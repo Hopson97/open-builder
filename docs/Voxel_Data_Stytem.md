@@ -32,7 +32,7 @@ For example, if `Grass` has an ID of `1`, then the chunks will store grass as `1
 
 ### Server
 
-voxels are loaded from `root/game/voxels.md` when the server starts up.
+Voxel data is loaded from [`root/game/voxels.md`](https://github.com/Hopson97/open-builder/blob/master/game/blocks.obd) when the server starts up.
 
 This happpens in the [`Server class`](https://github.com/Hopson97/open-builder/blob/master/src/server/network/server.cpp) constructor.
 

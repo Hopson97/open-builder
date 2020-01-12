@@ -24,11 +24,9 @@ Example:
 voxelData.isCollidable = static_cast<bool>(std::stoi(bd["isCollidable"]));
 ```
 
-# Step 3: Edit the `blocks.obd` file to add the new attribute
+## Step 3: Edit the `blocks.obd` file to add the new attribute
 
-TODO ADD LINK TO THE blocks.obd FILE
-
-For every block, you need to add the new data in for each one in the [`blocks.obd`] file.
+For every block, you need to add the new data in for each one in the [`blocks.obd`](https://github.com/Hopson97/open-builder/blob/master/game/blocks.obd) file.
 
 Example
 
@@ -36,9 +34,9 @@ Example
 isCollidable 0
 ```
 
-# Step 4: Update the docs
+## Step 4: Update the docs
 
-Go to TODO PUT LINK HERE [`OBD_Blocks.md]() and update the relevent sections describing the new type
+Go to [`OBD_Blocks.md](https://github.com/Hopson97/open-builder/blob/master/docs/OBD_Blocks.md) and update the relevent sections describing the new attribute.
 
 Example
 
