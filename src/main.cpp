@@ -52,10 +52,6 @@ void loadFromConfigFile(Config &config)
     auto clientData = data[0].data;
     auto serverData = data[1].data;
 
-    for (auto &[k, v] : clientData) {
-        std::cout << k << " " << v << std::endl;
-    }
-
     config.client.fullScreen = std::stoi(clientData["fullscreen"]);
     config.client.windowWidth = std::stoi(clientData["window_width"]);
     config.client.windowHeight = std::stoi(clientData["window_height"]);
