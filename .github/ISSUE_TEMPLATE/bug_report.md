@@ -1,3 +1,12 @@
+---
+name: Bug report
+about: Create a report to help us improve
+title: ''
+labels: Bug
+assignees: ''
+
+---
+
 # Bug Name
 
 (Does your bug have a name that you can use to refer to it throughout this doc?)
