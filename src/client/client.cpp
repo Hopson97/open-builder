@@ -124,7 +124,7 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
     // Step the ray until it hits a block/ reaches maximum length
     for (; ray.getLength() < 8; ray.step()) {
         auto rayBlockPosition = toBlockPosition(ray.getEndpoint());
-        if (m_chunks.manager.getBlock(rayBlockPosition) == 1) {
+        if (m_chunks.manager.getBlock(rayBlockPosition) > 0) {
             BlockUpdate blockUpdate;
             blockUpdate.block = button == sf::Mouse::Left ? 0 : 1;
             blockUpdate.position = button == sf::Mouse::Left

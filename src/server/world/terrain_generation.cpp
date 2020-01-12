@@ -64,7 +64,7 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
 {
     NoiseOptions options;
-    options.amplitude = 125;
+    options.amplitude = 70;
     options.octaves = 6;
     options.smoothness = 215.f;
     options.roughness = 0.5f;
@@ -89,17 +89,23 @@ void createSmoothTerrain(Chunk &chunk,
     auto cy = cp.y;
     auto cz = cp.z;
 
-    if (cy > 0 && cx < worldSize - 1 && cx > 0 && cz < worldSize - 1 &&
-        cz > 0) {
-        for (int z = 0; z < CHUNK_SIZE; z++) {
-            for (int x = 0; x < CHUNK_SIZE; x++) {
-                int height = heightMap[z * CHUNK_SIZE + x];
-                for (int y = 0; y < CHUNK_SIZE; y++) {
-                    int blockY = cy * CHUNK_SIZE + y;
+    for (int z = 0; z < CHUNK_SIZE; z++) {
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            int height = heightMap[z * CHUNK_SIZE + x];
+            for (int y = 0; y < CHUNK_SIZE; y++) {
+                int blockY = cy * CHUNK_SIZE + y;
 
-                    if (blockY <= height) {
-                        chunk.qSetBlock({x, y, z}, 1);
-                    }
+                if (blockY > height) {
+                    // TODO water
+                }
+                else if (blockY == height) {
+                    chunk.qSetBlock({x, y, z}, 1);
+                }
+                else if (blockY > height - 5) {
+                    chunk.qSetBlock({x, y, z}, 2);
+                }
+                else {
+                    chunk.qSetBlock({x, y, z}, 3);
                 }
             }
         }
