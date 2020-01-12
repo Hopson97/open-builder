@@ -13,6 +13,9 @@ VoxelMeshType toVoxelMeshType(const std::string &meshType)
     else if (meshType == "fluid") {
         return VoxelMeshType::Fluid;
     }
+    else if (meshType == "gas") {
+        return VoxelMeshType::Gas;
+    }
     else {
         LOGVAR("Loading", "Unkown mesh type: ", meshType);
         return VoxelMeshType::ERROR;
@@ -26,6 +29,9 @@ VoxelMeshStyle toVoxelMeshStyle(const std::string &styleType)
     }
     else if (styleType == "cross") {
         return VoxelMeshStyle::Cross;
+    }
+    else if (styleType == "none") {
+        return VoxelMeshStyle::None;
     }
     else {
         LOGVAR("Loading", "Unkown mesh style: ", styleType);

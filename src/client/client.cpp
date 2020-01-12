@@ -251,7 +251,7 @@ void Client::update(float dt)
                  itr != m_chunks.updates.cend();) {
                 if (m_chunks.manager.hasNeighbours(*itr)) {
                     auto &chunk = m_chunks.manager.getChunk(*itr);
-                    auto buffer = makeChunkMesh(chunk);
+                    auto buffer = makeChunkMesh(chunk, m_voxelData);
                     m_chunks.bufferables.push_back(buffer);
                     deleteChunkRenderable(*itr);
                     itr = m_chunks.updates.erase(itr);

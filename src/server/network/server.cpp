@@ -110,8 +110,8 @@ void Server::sendGameData(peer_id_t peerId)
     auto &data = m_voxelRegistry.getVoxelData();
     packet << static_cast<u16>(data.size());
     for (auto &voxel : data) {
-        auto mesh = static_cast<VoxelMeshStyle>(voxel.meshStyle);
-        auto type = static_cast<VoxelMeshType>(voxel.meshType);
+        auto mesh = static_cast<u8>(voxel.meshStyle);
+        auto type = static_cast<u8>(voxel.meshType);
         LOGVAR("Server", "Added voxel data:", voxel.name);
         packet << voxel.name << voxel.topTexture << voxel.sideTexture
                << voxel.bottomTexture << mesh << type;
