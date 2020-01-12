@@ -52,7 +52,7 @@ void loadFromConfigFile(Config &config)
     auto clientData = data[0].data;
     auto serverData = data[1].data;
 
-    for (auto& [k, v] : clientData) {
+    for (auto &[k, v] : clientData) {
         std::cout << k << " " << v << std::endl;
     }
 
