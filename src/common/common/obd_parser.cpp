@@ -7,15 +7,15 @@
 #include <sstream>
 
 namespace {
-void cleanString(std::string &value)
+/**
+    Removes trailing/ leading whitespace from a string
+*/
+std::string cleanString(const std::string &line)
 {
-    value.erase(value.begin(),
-                std::find_if(value.begin(), value.end(),
-                             std::bind1st(std::not_equal_to<char>(), ' ')));
-    value.erase(std::find_if(value.rbegin(), value.rend(),
-                             std::bind1st(std::not_equal_to<char>(), ' '))
-                    .base(),
-                value.end());
+    const char *WhiteSpace = " \t\v\r\n";
+    std::size_t start = line.find_first_not_of(WhiteSpace);
+    std::size_t end = line.find_last_not_of(WhiteSpace);
+    return start == end ? std::string() : line.substr(start, end - start + 1);
 }
 } // namespace
 
@@ -26,7 +26,7 @@ std::vector<DataBlock> getObdDataRaw(const std::string &obd)
     std::string line;
 
     while (std::getline(stream, line)) {
-        cleanString(line);
+        line = cleanString(line);
         if (line.empty()) {
             continue;
         }

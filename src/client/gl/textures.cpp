@@ -3,6 +3,8 @@
 #include <common/debug.h>
 #include <iostream>
 
+#include <common/types.h>
+
 namespace {
 GLuint createTexture()
 {
@@ -172,8 +174,11 @@ GLuint TextureArray::addTexture(const std::string &file)
         image.create(m_textureSize, m_textureSize);
         for (GLuint y = 0; y < m_textureSize; y++) {
             for (GLuint x = 0; x < m_textureSize; x++) {
+                u8 r = static_cast<u8>(rand() % 255);
+                u8 g = static_cast<u8>(rand() % 255);
+                u8 b = static_cast<u8>(rand() % 255);
                 image.setPixel(x, y,
-                               {rand() % 255, rand() % 255, rand() % 255});
+                               {r, g, b});
             }
         }
     };

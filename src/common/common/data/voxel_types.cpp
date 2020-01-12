@@ -18,7 +18,7 @@ VoxelMeshType toVoxelMeshType(const std::string &meshType)
     }
     else {
         LOGVAR("Loading", "Unkown mesh type: ", meshType);
-        return VoxelMeshType::ERROR;
+        return VoxelMeshType::Error;
     }
 }
 
@@ -35,6 +35,6 @@ VoxelMeshStyle toVoxelMeshStyle(const std::string &styleType)
     }
     else {
         LOGVAR("Loading", "Unkown mesh style: ", styleType);
-        return VoxelMeshStyle::ERROR;
+        return VoxelMeshStyle::Error;
     }
 }
