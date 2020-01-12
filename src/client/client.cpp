@@ -9,6 +9,8 @@
 #include <common/network/net_constants.h>
 #include <thread>
 
+#include "client_config.h"
+
 Client::Client()
     : NetworkHost("Client")
 {
@@ -34,7 +36,7 @@ bool Client::init(const ClientConfig &config, float aspect)
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
 
     // Texture for the player model
-    m_errorSkinTexture.create("error");
+    m_errorSkinTexture.create("skins/error");
     m_errorSkinTexture.bind();
 
     // Textures for blocks
@@ -52,6 +54,9 @@ bool Client::init(const ClientConfig &config, float aspect)
     // Set player stuff
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
+
+    m_rawPlayerSkin = gl::loadRawImageFile("skins/" + config.skinName);
+    sendPlayerSkin(m_rawPlayerSkin);
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
     return true;

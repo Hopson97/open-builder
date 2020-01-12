@@ -35,7 +35,7 @@ enum class LaunchType {
  * @brief Holds config for both client and server
  */
 struct Config {
-    LaunchType launchType = LaunchType::TwoPlayer;
+    LaunchType launchType = LaunchType::Both;
 
     ServerConfig serverOptions;
     ClientConfig clientOptions;
@@ -201,7 +201,7 @@ int launchBoth(const Config &config)
 
     // Allows some time for the server to set up etc
     // TODO Improve this to wait until server set up, rather than randime
-    std::this_thread::sleep_for(std::chrono::milliseconds(6500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     int exit = launchClient(config.clientOptions);
     serverThread.join();
     return exit;
