@@ -33,17 +33,22 @@ Server::Server(const ServerConfig &config)
     }
 
     // Read data files
+
+    // Load the voxel data
     auto data = getObdData("game/blocks.obd");
     for (auto &block : data) {
         auto &bd = block.data;
-        ServerVoxel vox;
-        vox.name = bd["name"];
-        vox.topTexture = bd["texture_top"];
-        vox.sideTexture = bd["texture_side"];
-        vox.bottomTexture = bd["texture_bottom"];
+        ServerVoxel voxelData;
+        voxelData.name = bd["name"];
+        voxelData.topTexture = bd["texture_top"];
+        voxelData.sideTexture = bd["texture_side"];
+        voxelData.bottomTexture = bd["texture_bottom"];
 
-        vox.meshStyle = toVoxelMeshStyle(bd["mesh"]);
-        vox.meshType = toVoxelMeshType(bd["type"]);
+        voxelData.meshStyle = toVoxelMeshStyle(bd["mesh"]);
+        voxelData.meshType = toVoxelMeshType(bd["type"]);
+
+        voxelData.isCollidable =
+            static_cast<bool>(std::stoi(bd["isCollidable"]));
 
         m_voxelRegistry.addVoxelData(vox);
 
@@ -110,11 +115,17 @@ void Server::sendGameData(peer_id_t peerId)
     auto &data = m_voxelRegistry.getVoxelData();
     packet << static_cast<u16>(data.size());
     for (auto &voxel : data) {
-        auto mesh = static_cast<u8>(voxel.meshStyle);
-        auto type = static_cast<u8>(voxel.meshType);
+        u8 mesh = static_cast<u8>(voxel.meshStyle);
+        u8 type = static_cast<u8>(voxel.meshType);
+        u8 isCollidable = static_cast<u8>(voxel.isCollidable);
         LOGVAR("Server", "Added voxel data:", voxel.name);
-        packet << voxel.name << voxel.topTexture << voxel.sideTexture
-               << voxel.bottomTexture << mesh << type;
+        packet << voxel.name;
+        packet << voxel.topTexture;
+        packet << voxel.sideTexture;
+        packet << voxel.bottomTexture;
+        packet << mesh;
+        packet << type;
+        packet << isCollidable;
     }
 
     LOGVAR("Server", "Sending game data to :", (int)peerId);

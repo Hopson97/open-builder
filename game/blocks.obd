@@ -5,6 +5,7 @@ block
     texture_bottom error
     mesh none
     type gas
+    isCollidable 0
 end
 
 block
@@ -14,6 +15,7 @@ block
     texture_bottom dirt
     mesh block
     type solid
+    isCollidable 1
 end
 
 block
@@ -23,6 +25,7 @@ block
     texture_bottom dirt
     mesh block
     type solid
+    isCollidable 1
 end
 
 block
@@ -32,4 +35,5 @@ block
     texture_bottom stone
     mesh block
     type solid
+    isCollidable 1
 end

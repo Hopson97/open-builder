@@ -11,4 +11,6 @@ struct ClientVoxel {
 
     VoxelMeshStyle meshStyle = VoxelMeshStyle::Error;
     VoxelMeshType meshType = VoxelMeshType::Error;
+
+    bool isCollidable = true;
 };

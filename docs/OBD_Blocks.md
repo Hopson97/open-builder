@@ -14,6 +14,7 @@ block
     texture_bottom dirt
     mesh block
     type solid
+    isCollidable 0
 end
 ```
 
@@ -27,6 +28,7 @@ Where:
 | texture_bottom | String         | The name of the texture that should appear on the bottom face  |
 | mesh           | VoxelMeshStyle | The style of the mesh, more info below                         |
 | type           | VoxelMeshType  | The type/ physical state of the block, more info below         |
+| isCollidable   | Boolean        | Whether this voxel can be collided with. 0 = no, 1 = yes       |
 
 
 ## VoxelMeshStyle

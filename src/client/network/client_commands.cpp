@@ -196,6 +196,10 @@ void Client::onGameRegistryData(sf::Packet &packet)
 {
     LOG("Client", "Received game data");
 
+
+    //  ====
+    //  Get all blocks from the server
+    //
     // Maps tewxture names to their respective IDs in the
     // OpenGL texture array
     std::unordered_map<std::string, GLuint> textureMap;
@@ -222,34 +226,32 @@ void Client::onGameRegistryData(sf::Packet &packet)
         std::string textureSide;
         std::string textureBottom;
 
-        u8 meshStyle;
-        u8 meshType;
+        u8 meshStyle = 0;
+        u8 meshType = 0;
+        u8 isCollidable = 0;
 
-        packet >> name >> textureTop >> textureSide >> textureBottom >>
-            meshStyle >> meshType;
+        packet >> name;
+        packet >> textureTop;
+        packet >> textureSide;
+        packet >> textureBottom;
+        packet >> meshStyle;
+        packet >> meshType;
+        packet >> isCollidable;
 
-        ClientVoxel data;
-        data.name = name;
-        data.topTexture = getTexture(texturePath + textureTop);
-        data.sideTexture = getTexture(texturePath + textureSide);
-        data.bottomTexture = getTexture(texturePath + textureBottom);
+        ClientVoxel voxelData;
+        voxelData.name = name;
+        voxelData.topTexture = getTexture(texturePath + textureTop);
+        voxelData.sideTexture = getTexture(texturePath + textureSide);
+        voxelData.bottomTexture = getTexture(texturePath + textureBottom);
 
-        data.meshStyle = static_cast<VoxelMeshStyle>(meshStyle);
-        data.meshType = static_cast<VoxelMeshType>(meshType);
+        voxelData.meshStyle = static_cast<VoxelMeshStyle>(meshStyle);
+        voxelData.meshType = static_cast<VoxelMeshType>(meshType);
+        voxelData.isCollidable = isCollidable;
 
-        m_voxelData.addVoxelData(data);
+        m_voxelData.addVoxelData(voxelData);
 
         LOGVAR("Client", "Received Block: ", data.name);
     }
 
     m_hasReceivedGameData = true;
-
-    /*
-        // Textures for blocks
-        m_blockTextures.create(2, 16);
-        m_blockTextures.addTexture(config.texturePack +
-       "/textures/blocks/grass"); m_blockTextures.addTexture(config.texturePack
-       +
-                                   "/textures/blocks/grassside");
-    */
 }

@@ -62,11 +62,12 @@ enum class ClientCommand : command_t {
     // u16: Number of block types
     // [For each block type (Sent in order of Block ID)...]
     // String: name
-    // String top_texture
-    // String side_texture
-    // String bottom_texture
-    // u8 mesh_style
-    // u8 mesh_type
+    // String: the voxel's top texture
+    // String: the voxel's side texture
+    // String: the voxel's bottom texture
+    // u8: The voxels mesh style aka VoxelMeshStyle
+    // u8: The voxels state/type aka VoxelMeshType
+    // u8: Whether the block is collidable or not
     GameRegistryData
 };
 

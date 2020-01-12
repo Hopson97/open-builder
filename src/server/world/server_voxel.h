@@ -10,4 +10,6 @@ struct ServerVoxel {
 
     VoxelMeshStyle meshStyle;
     VoxelMeshType meshType;
+
+    bool isCollidable = true;
 };
