@@ -8,6 +8,8 @@
 
 #include "../world/terrain_generation.h"
 
+#include <common/obd_parser.h>
+
 Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
@@ -28,6 +30,22 @@ Server::Server(const ServerConfig &config)
                 // makeRawNoiseTerrain(chunk);
             }
         }
+    }
+
+    // Read data files
+    auto data = getObdData("game/blocks.obd");
+    for (auto &block : data) {
+        auto &bd = block.data;
+        VoxelData data;
+        data.name = bd["name"];
+        data.topTexture = bd["texture_top"];
+        data.sideTexture = bd["texture_side"];
+        data.bottomTexture = bd["texture_bottom"];
+
+        data.meshStyle = toVoxelMeshStyle(bd["mesh"]);
+        data.meshType = toVoxelMeshType(bd["type"]);
+
+        LOGVAR("Server", "Loaded voxel data: ", data.name);
     }
 }
 
@@ -177,7 +195,7 @@ void Server::handleCommandBlockEdit(sf::Packet &packet)
     BlockPosition position;
     block_t block;
     packet >> position.x >> position.y >> position.z >> block;
-    m_blockUpdates.push_back({position, block});
+    m_world.blockUpdates.push_back({position, block});
 }
 
 void Server::handleCommandPlayerSkin(sf::Packet &packet)
@@ -210,12 +228,12 @@ void Server::update()
 {
     {
         sf::Packet packet;
-        if (m_blockUpdates.size() > 0) {
+        if (m_world.blockUpdates.size() > 0) {
 
-            u16 size = static_cast<u16>(m_blockUpdates.size());
+            u16 size = static_cast<u16>(m_world.blockUpdates.size());
             packet << ClientCommand::BlockUpdate << size;
 
-            for (auto &blockUpdate : m_blockUpdates) {
+            for (auto &blockUpdate : m_world.blockUpdates) {
                 auto chunkPosition = toChunkPosition(blockUpdate.position);
                 m_world.chunks.ensureNeighbours(chunkPosition);
                 m_world.chunks.setBlock(blockUpdate.position,
@@ -227,7 +245,7 @@ void Server::update()
             // TODO: Try find a way to not send block updates to players that
             // created them
             broadcastToPeers(packet, 0, ENET_PACKET_FLAG_RELIABLE);
-            m_blockUpdates.clear();
+            m_world.blockUpdates.clear();
         }
     }
 

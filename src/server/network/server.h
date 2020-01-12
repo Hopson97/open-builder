@@ -7,6 +7,8 @@
 #include <queue>
 #include <unordered_map>
 
+#include "../data/voxel_data.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 
 struct ServerConfig;
@@ -63,11 +65,11 @@ class Server final : public NetworkHost {
 
     struct {
         ChunkManager chunks;
+        std::vector<BlockUpdate> blockUpdates;
     } m_world;
 
-    std::vector<BlockUpdate> m_blockUpdates;
-
     bool m_isRunning = true;
-
     const int m_worldSize;
+
+    VoxelRegistry m_voxelRegistry;
 };

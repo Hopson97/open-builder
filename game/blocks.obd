@@ -17,7 +17,7 @@ block
 end
 
 block
-    name: openbuilder:stone
+    name openbuilder:stone
     texture_top pack:stone
     texture_side pack:stone
     texture_bottom pack:stone
