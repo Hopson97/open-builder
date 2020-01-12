@@ -14,6 +14,7 @@
 #include <common/network/net_host.h>
 #include <common/network/net_types.h>
 #include <common/world/chunk_manager.h>
+#include <common/world/voxel_registry.h>
 #include <unordered_set>
 
 #include "world/client_voxel.h"
