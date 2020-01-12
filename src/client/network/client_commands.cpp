@@ -196,7 +196,7 @@ void Client::onGameRegistryData(sf::Packet &packet)
 {
     LOG("Client", "Received game data");
 
-    // Maps tewxture names to their respective IDs in the 
+    // Maps tewxture names to their respective IDs in the
     // OpenGL texture array
     std::unordered_map<std::string, GLuint> textureMap;
     auto getTexture = [&textureMap, this](const std::string &name) {
@@ -227,8 +227,6 @@ void Client::onGameRegistryData(sf::Packet &packet)
 
         packet >> name >> textureTop >> textureSide >> textureBottom >>
             meshStyle >> meshType;
-
-        
 
         ClientVoxel data;
         data.name = name;

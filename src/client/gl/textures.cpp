@@ -177,8 +177,7 @@ GLuint TextureArray::addTexture(const std::string &file)
                 u8 r = static_cast<u8>(rand() % 255);
                 u8 g = static_cast<u8>(rand() % 255);
                 u8 b = static_cast<u8>(rand() % 255);
-                image.setPixel(x, y,
-                               {r, g, b});
+                image.setPixel(x, y, {r, g, b});
             }
         }
     };
