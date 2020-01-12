@@ -6,10 +6,10 @@
 
 struct ClientVoxelData {
     std::string name;
-    GLuint topTexture;
-    GLuint sideTexture;
-    GLuint bottomTexture;
+    GLuint topTexture = 0;
+    GLuint sideTexture = 0;
+    GLuint bottomTexture = 0;
 
-    VoxelMeshStyle meshStyle;
-    VoxelMeshType meshType;
+    VoxelMeshStyle meshStyle = VoxelMeshStyle::Error;
+    VoxelMeshType meshType = VoxelMeshType::Error;
 };

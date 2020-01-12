@@ -17,7 +17,6 @@
 #include <unordered_set>
 
 #include "data/client_voxel_data.h"
-#include "data/voxel_textures.h"
 #include <common/data/voxel_types.h>
 
 class Keyboard;
@@ -97,7 +96,7 @@ class Client final : public NetworkHost {
     sf::Image m_rawPlayerSkin;
 
     std::string m_texturePack;
-    VoxelTextures m_voxelTextures;
+    gl::TextureArray m_voxelTextures;
 
     struct {
         gl::Shader program;

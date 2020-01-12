@@ -195,12 +195,26 @@ void Client::onPlayerSkinReceive(sf::Packet &packet)
 void Client::onGameRegistryData(sf::Packet &packet)
 {
     LOG("Client", "Received game data");
+
+    // Maps tewxture names to their respective IDs in the 
+    // OpenGL texture array
+    std::unordered_map<std::string, GLuint> textureMap;
+    auto getTexture = [&textureMap, this](const std::string &name) {
+        auto itr = textureMap.find(name);
+        if (itr == textureMap.end()) {
+            auto id = m_voxelTextures.addTexture(name);
+            textureMap.emplace(name, id);
+            return id;
+        }
+        return itr->second;
+    };
+
     u16 numBlocks;
     packet >> numBlocks;
     // todo
     // 1. Need to somehow work out the exact amount of textures needed
     // 2. Need to pass in the actual texture pack resolution
-    m_voxelTextures.init(numBlocks * 3, 16);
+    m_voxelTextures.create(numBlocks * 3, 16);
     const std::string texturePath = "default/textures/blocks/";
     for (u16 i = 0; i < numBlocks; i++) {
         std::string name;
@@ -214,17 +228,13 @@ void Client::onGameRegistryData(sf::Packet &packet)
         packet >> name >> textureTop >> textureSide >> textureBottom >>
             meshStyle >> meshType;
 
-        std::cout << "DATA: " << name << " " << textureTop << " " << textureSide
-                  << " " << textureBottom << '\n';
+        
 
         ClientVoxelData data;
         data.name = name;
-        data.topTexture =
-            m_voxelTextures.getTextureId(texturePath + textureTop);
-        data.sideTexture =
-            m_voxelTextures.getTextureId(texturePath + textureSide);
-        data.bottomTexture =
-            m_voxelTextures.getTextureId(texturePath + textureBottom);
+        data.topTexture = getTexture(texturePath + textureTop);
+        data.sideTexture = getTexture(texturePath + textureSide);
+        data.bottomTexture = getTexture(texturePath + textureBottom);
 
         data.meshStyle = static_cast<VoxelMeshStyle>(meshStyle);
         data.meshType = static_cast<VoxelMeshType>(meshType);
