@@ -1,5 +1,6 @@
 #include "client.h"
 
+#include "client_config.h"
 #include "gl/primitive.h"
 #include "input/keyboard.h"
 #include "world/chunk_mesh_generation.h"
@@ -14,7 +15,7 @@ Client::Client()
 {
 }
 
-bool Client::init(float aspect)
+bool Client::init(const ClientConfig& config, float aspect)
 {
     // OpenGL stuff
     m_cube = makeCubeVertexArray(1, 2, 1);
@@ -34,8 +35,8 @@ bool Client::init(float aspect)
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
 
     // Texture for the player model
-    m_texture.create("player");
-    m_texture.bind();
+    m_errorSkinTexture.create("error");
+    m_errorSkinTexture.bind();
 
     // Texture for grass
     m_grassTexture.create("grass");
@@ -57,8 +58,12 @@ bool Client::init(float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
-    m_projectionMatrix =
-        glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
+    // Load player skin and send to server
+    //mp_player->playerSkin.create("player");
+    m_rawPlayerSkin = gl::loadRawImageFile(config.skinName);
+    sendPlayerSkin(m_rawPlayerSkin);
+
+    m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
     return true;
 }
 
@@ -289,9 +294,15 @@ void Client::render()
     // Render all the entities
     auto drawable = m_cube.getDrawable();
     drawable.bind();
-    m_texture.bind();
+
     for (auto &ent : m_entities) {
         if (ent.active && &ent != mp_player) {
+            // Load skin
+            if (ent.playerSkin.textureExists())
+                ent.playerSkin.bind();
+            else
+                m_errorSkinTexture.bind();
+
             glm::mat4 modelMatrix{1.0f};
             translateMatrix(modelMatrix,
                             {ent.position.x, ent.position.y, ent.position.z});
@@ -325,8 +336,14 @@ void Client::render()
 
 void Client::endGame()
 {
+    // Destroy all player skins
+    for (auto& ent : m_entities) {
+        if (ent.playerSkin.textureExists())
+            ent.playerSkin.destroy();
+    }
+    m_errorSkinTexture.destroy();
+
     m_cube.destroy();
-    m_texture.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
 

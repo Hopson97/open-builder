@@ -36,6 +36,20 @@ void Client::sendBlockUpdate(const BlockUpdate &update)
     NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
 }
 
+void Client::sendPlayerSkin(const sf::Image& playerSkin)
+{
+    // Check the image is the right size
+    if (playerSkin.getSize() != sf::Vector2u(32, 64)) {
+        LOG("Client", "Player's skin has the wrong dimensions");
+        return;
+    }
+
+    sf::Packet packet;
+    packet << ServerCommand::PlayerSkin << NetworkHost::getPeerId();
+    packet.append(playerSkin.getPixelsPtr(), 8192);
+    NetworkHost::sendToPeer(mp_serverPeer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
+}
+
 void Client::onPeerConnect([[maybe_unused]] ENetPeer *peer)
 {
 }
@@ -78,6 +92,10 @@ void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
             onBlockUpdate(packet);
             break;
 
+        case ClientCommand::NewPlayerSkin:
+            onPlayerSkinReceive(packet);
+            break;
+
         case ClientCommand::PeerId:
             break;
     }
@@ -85,7 +103,7 @@ void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
 
 void Client::onPlayerJoin(sf::Packet &packet)
 {
-    peer_id_t id;
+    peer_id_t id = 0;
     packet >> id;
     m_entities[id].active = true;
 
@@ -94,7 +112,7 @@ void Client::onPlayerJoin(sf::Packet &packet)
 
 void Client::onPlayerLeave(sf::Packet &packet)
 {
-    peer_id_t id;
+    peer_id_t id = 0;
     packet >> id;
     m_entities[id].active = false;
 
@@ -155,4 +173,15 @@ void Client::onBlockUpdate(sf::Packet &packet)
             blockUpdate.block;
         m_chunks.blockUpdates.push_back(blockUpdate);
     }
+}
+
+void Client::onPlayerSkinReceive(sf::Packet& packet)
+{
+    peer_id_t id = 0;
+    packet >> id;
+
+    LOGVAR("Client", "Received skin for peer", (int)id);
+
+    sf::Uint8* skinPixels = (sf::Uint8*)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
+    m_entities[id].playerSkin.create(32, 64, skinPixels);
 }

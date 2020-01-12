@@ -14,6 +14,9 @@ struct ServerConfig;
 struct ServerEntity {
     glm::vec3 position{0.0f};
     bool active = false;
+
+    std::vector<sf::Uint8> m_skinData;
+    bool hasSkin = false;
 };
 
 struct ConnectedClient {
@@ -37,6 +40,7 @@ class Server final : public NetworkHost {
     glm::vec3 findPlayerSpawnPosition();
 
     void sendChunk(peer_id_t peerId, const ChunkPosition &chunk);
+    void sendPlayerSkin(peer_id_t peerId, std::optional<peer_id_t> toPeer = std::nullopt);
 
     void onPeerConnect(ENetPeer *peer) override;
     void onPeerDisconnect(ENetPeer *peer) override;
@@ -46,6 +50,7 @@ class Server final : public NetworkHost {
 
     void handleCommandPlayerPosition(sf::Packet &packet);
     void handleCommandBlockEdit(sf::Packet &packet);
+    void handleCommandPlayerSkin(sf::Packet& packet);
 
     int findEmptySlot() const;
 
