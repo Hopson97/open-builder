@@ -16,4 +16,4 @@ assignees: ''
 
 ** Implementations ideas [optional]**
 
-[Eg, use perlin noise  to generate a smooth heightmap]
+[Eg, use simplex noise to generate a smooth heightmap]
