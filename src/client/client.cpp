@@ -58,14 +58,12 @@ bool Client::init(const ClientConfig& config, float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
-    m_projectionMatrix =
-
     // Load player skin and send to server
     //mp_player->playerSkin.create("player");
     m_rawPlayerSkin = gl::loadRawImageFile(config.skinName);
     sendPlayerSkin(m_rawPlayerSkin);
 
-    glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
+    m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
     return true;
 }
 

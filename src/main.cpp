@@ -48,12 +48,6 @@ struct Config {
 void loadFromConfigFile(Config &config)
 {
     std::ifstream inFile("config.txt");
-    auto loadInt = [&inFile](int &value) {
-        int option;
-        inFile >> option;
-        value = option;
-    };
-
     std::string line;
 
     while (inFile >> line) {
@@ -207,7 +201,7 @@ int launchBoth(const Config &config)
 
     // Allows some time for the server to set up etc
     // TODO Improve this to wait until server set up, rather than randime
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(6500));
     int exit = launchClient(config.clientOptions);
     serverThread.join();
     return exit;
@@ -221,11 +215,11 @@ int launchBoth(const Config &config)
 int launchServerAnd2Players(const Config &config)
 {
     std::thread serverThread(launchServer, config.serverOptions,
-                             sf::milliseconds(5000));
+                             sf::milliseconds(20000));
 
     // Allows some time for the server to set up etc
     // TODO Improve this to wait until server set up, rather than randime
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     std::thread client2(launchClient, config.clientOptions);
 
     int exit = launchClient(config.clientOptions);
