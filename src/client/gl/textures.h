@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/Graphics/Image.hpp>
 #include <array>
 #include <glad/glad.h>
 #include <string>
@@ -27,11 +28,14 @@ class CubeTexture final {
 class Texture2d final {
   public:
     void create(const std::string &file);
+    void create(unsigned int width, unsigned int height, const sf::Uint8* pixels);
     void destroy();
     void bind() const;
+    bool textureExists() const;
 
   private:
     GLuint m_handle = 0;
+    bool m_hasTexture = false;
 };
 
 class TextureArray final {
@@ -47,5 +51,7 @@ private:
     GLuint m_maxTextures = 0;
     GLuint m_textureSize = 0;
 };
+
+sf::Image loadRawImageFile(const std::string& file);
 
 } // namespace gl

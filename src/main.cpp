@@ -28,13 +28,14 @@ enum class LaunchType {
     Server,
     Client,
     Both,
+    TwoPlayer,
 };
 
 /**
  * @brief Holds config for both client and server
  */
 struct Config {
-    LaunchType launchType = LaunchType::Both;
+    LaunchType launchType = LaunchType::TwoPlayer;
 
     ServerConfig serverOptions;
     ClientConfig clientOptions;
@@ -47,38 +48,35 @@ struct Config {
 void loadFromConfigFile(Config &config)
 {
     std::ifstream inFile("config.txt");
-    auto loadInt = [&inFile](int &value) {
-        int option;
-        inFile >> option;
-        value = option;
-    };
-
     std::string line;
-    int option;
-    while (inFile >> line >> option) {
+
+    while (inFile >> line) {
         if (line == "FULLSCREEN") {
-            config.clientOptions.fullScreen = option;
+            inFile >> config.clientOptions.fullScreen;
         }
         else if (line == "WIN_WIDTH") {
-            config.clientOptions.windowWidth = option;
+            inFile >> config.clientOptions.windowWidth;
         }
         else if (line == "WIN_HEIGHT") {
-            config.clientOptions.windowHeight = option;
+            inFile >> config.clientOptions.windowHeight;
         }
         else if (line == "FPS_CAPPED") {
-            config.clientOptions.isFpsCapped = option;
+            inFile >> config.clientOptions.isFpsCapped;
         }
         else if (line == "FPS") {
-            config.clientOptions.fpsLimit = option;
+            inFile >> config.clientOptions.fpsLimit;
         }
         else if (line == "FOV") {
-            config.clientOptions.fov = option;
+            inFile >> config.clientOptions.fov;
+        }
+        else if (line == "SKIN") {
+            inFile >> config.clientOptions.skinName;
         }
         else if (line == "WORLD_HEIGHT") {
-            config.serverOptions.worldSize = option;
+            inFile >> config.serverOptions.worldHeight;
         }
         else if (line == "WORLD_SIZE") {
-            config.serverOptions.worldSize = option;
+            inFile >> config.serverOptions.worldSize;
         }
     }
 }
@@ -118,6 +116,9 @@ void parseArgs(Config &config,
         }
         else if (option.first == "-client") {
             config.launchType = LaunchType::Client;
+        }
+        else if (option.first == "-skin") {
+            config.clientOptions.skinName = option.second;
         }
     }
 }
@@ -200,8 +201,30 @@ int launchBoth(const Config &config)
 
     // Allows some time for the server to set up etc
     // TODO Improve this to wait until server set up, rather than randime
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(6500));
     int exit = launchClient(config.clientOptions);
+    serverThread.join();
+    return exit;
+}
+
+/**
+ * @brief Launches 2 clients and the server. Useful for testing multiplayer
+ * @param config The config to be used by client/server engines
+ * @return int Exit flag (Success, or Failure)
+ */
+int launchServerAnd2Players(const Config &config)
+{
+    std::thread serverThread(launchServer, config.serverOptions,
+                             sf::milliseconds(20000));
+
+    // Allows some time for the server to set up etc
+    // TODO Improve this to wait until server set up, rather than randime
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::thread client2(launchClient, config.clientOptions);
+
+    int exit = launchClient(config.clientOptions);
+
+    client2.join();
     serverThread.join();
     return exit;
 }
@@ -222,8 +245,8 @@ int main(int argc, char **argv)
         }
     }
 
-    parseArgs(config, args);
     loadFromConfigFile(config);
+    parseArgs(config, args);
 
     switch (config.launchType) {
         case LaunchType::Both:
@@ -231,10 +254,12 @@ int main(int argc, char **argv)
 
         case LaunchType::Server:
             return launchServer(config.serverOptions);
-            break;
 
         case LaunchType::Client:
             return launchClient(config.clientOptions);
+
+        case LaunchType::TwoPlayer:
+            return launchServerAnd2Players(config);
     }
 
     enet_deinitialize();

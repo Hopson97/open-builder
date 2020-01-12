@@ -14,7 +14,7 @@ Client::Client()
 {
 }
 
-bool Client::init(float aspect)
+bool Client::init(const ClientConfig &config, float aspect)
 {
     // OpenGL stuff
     m_cube = makeCubeVertexArray(1, 2, 1);
@@ -34,13 +34,13 @@ bool Client::init(float aspect)
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
 
     // Texture for the player model
-    m_texture.create("default/textures/player");
-    m_texture.bind();
+    m_errorSkinTexture.create("error");
+    m_errorSkinTexture.bind();
 
+    // Textures for blocks
     m_blockTextures.create(2, 16);
     m_blockTextures.addTexture("default/textures/grass");
     m_blockTextures.addTexture("default/textures/dirtgrass");
-
 
     // Set up the server connection
     auto peer = NetworkHost::createAsClient(LOCAL_HOST);
@@ -53,8 +53,7 @@ bool Client::init(float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
-    m_projectionMatrix =
-        glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
+    m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
     return true;
 }
 
@@ -101,12 +100,12 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
         velocity.y -= PLAYER_SPEED * 2;
         std::cout << mp_player->position << std::endl;
     }
-        if (rotation.x < -80.0f) {
-            rotation.x = -79.9f;
-        }
-        else if (rotation.x > 85.0f) {
-            rotation.x = 84.9f;
-        }
+    if (rotation.x < -80.0f) {
+        rotation.x = -79.9f;
+    }
+    else if (rotation.x > 85.0f) {
+        rotation.x = 84.9f;
+    }
 }
 
 void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
@@ -285,9 +284,16 @@ void Client::render()
     // Render all the entities
     auto drawable = m_cube.getDrawable();
     drawable.bind();
-    m_texture.bind();
+
     for (auto &ent : m_entities) {
         if (ent.active && &ent != mp_player) {
+            if (ent.playerSkin.textureExists()) {
+                ent.playerSkin.bind();
+            }
+            else {
+                m_errorSkinTexture.bind();
+            }
+
             glm::mat4 modelMatrix{1.0f};
             translateMatrix(modelMatrix,
                             {ent.position.x, ent.position.y, ent.position.z});
@@ -298,7 +304,7 @@ void Client::render()
 
     // Render chunks
     m_chunkShader.program.bind();
-    //m_grassTexture.bind();
+    // m_grassTexture.bind();
     m_blockTextures.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
 
@@ -321,8 +327,14 @@ void Client::render()
 
 void Client::endGame()
 {
+    // Destroy all player skins
+    for (auto &ent : m_entities) {
+        if (ent.playerSkin.textureExists())
+            ent.playerSkin.destroy();
+    }
+    m_errorSkinTexture.destroy();
+
     m_cube.destroy();
-    m_texture.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
     m_blockTextures.destroy();

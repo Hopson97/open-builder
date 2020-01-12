@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 /**
  * @brief Config options for client
  * Mostly for the window and general graphics options
@@ -12,4 +14,6 @@ struct ClientConfig {
     int fov = 65;
 
     bool isFpsCapped = true;
+
+    std::string skinName = "player";
 };
