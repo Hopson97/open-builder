@@ -201,6 +201,7 @@ void Server::handleCommandPlayerSkin(sf::Packet& packet)
 
 void Server::update()
 {
+    {
     sf::Packet packet;
     if (m_blockUpdates.size() > 0) {
 
@@ -219,6 +220,7 @@ void Server::update()
         // created them
         broadcastToPeers(packet, 0, ENET_PACKET_FLAG_RELIABLE);
         m_blockUpdates.clear();
+    }
     }
 
     // Player positions

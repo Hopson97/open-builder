@@ -170,8 +170,8 @@ int TextureArray::addTexture(const std::string &file)
     if (!image.loadFromFile("res/" + file + ".png")) {
         // Create a error image
         image.create(m_textureSize, m_textureSize);
-        for (int y = 0; y < m_textureSize; y++) {
-            for (int x = 0; x < m_textureSize; x++) {
+        for (GLuint y = 0; y < m_textureSize; y++) {
+            for (GLuint x = 0; x < m_textureSize; x++) {
                 image.setPixel(
                     x, y, (x + y % 2) == 0 ? sf::Color::Red : sf::Color::Black);
             }
