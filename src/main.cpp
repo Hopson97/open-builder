@@ -72,6 +72,9 @@ void loadFromConfigFile(Config &config)
         else if (line == "SKIN") {
             inFile >> config.clientOptions.skinName;
         }
+        else if (line == "TEXTURE_PACK") {
+            inFile >> config.clientOptions.texturePack;
+        }
         else if (line == "WORLD_HEIGHT") {
             inFile >> config.serverOptions.worldHeight;
         }
