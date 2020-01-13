@@ -10,7 +10,6 @@
 #include <queue>
 #include <unordered_map>
 
-
 #include <sol/sol.hpp>
 
 struct ServerConfig;
@@ -63,9 +62,6 @@ class Server final : public NetworkHost {
     void addPeer(ENetPeer *peer, peer_id_t id);
     void removePeer(u32 connectionId);
 
-
-    void addBlock(int x);
-
     std::array<ServerEntity, 512> m_entities;
     std::array<ConnectedClient, MAX_CONNECTIONS> m_connectedClients{};
 
@@ -79,5 +75,5 @@ class Server final : public NetworkHost {
 
     sol::state m_luaState;
 
-    VoxelRegistry<ServerVoxel> m_voxelRegistry;
+    // VoxelRegistry<ServerVoxel> m_voxelRegistry;
 };

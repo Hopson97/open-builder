@@ -10,10 +10,42 @@
 
 #include <common/obd_parser.h>
 
-void Server::addBlock(int x)
-{
-    std::cout << "Hello world\n" << x << '\n';
-}
+struct Game {
+    struct ServerVoxel {
+        std::string name;
+        std::string topTexture;
+        std::string sideTexture;
+        std::string bottomTexture;
+
+        VoxelMeshStyle meshStyle;
+        VoxelMeshType meshType;
+
+        bool isCollidable = true;
+    };
+
+    void addVoxel(const sol::table &vox)
+    {
+        ServerVoxel voxel;
+        voxel.name = vox["name"].get<std::string>();
+        voxel.meshType = toVoxelMeshType(vox["type"].get<std::string>());
+        voxel.isCollidable = vox["collidable"].get<bool>();
+
+        voxel.topTexture = vox["render"]["top"].get<std::string>();
+        voxel.sideTexture = vox["render"]["sides"].get<std::string>();
+        voxel.bottomTexture = vox["render"]["bottom"].get<std::string>();
+
+        voxel.meshStyle =
+            toVoxelMeshStyle(vox["render"]["mesh"].get<std::string>());
+
+        voxels.push_back(voxel);
+
+        LOGVAR("Server", "Adding block", voxel.name);
+    }
+
+    std::vector<ServerVoxel> voxels;
+};
+
+Game game;
 
 Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
@@ -36,22 +68,31 @@ Server::Server(const ServerConfig &config)
     }
 
     m_luaState.open_libraries(sol::lib::base);
-    sol::load_result script = m_luaState.load_file("game/blocks.lua");
 
-    m_luaState["test"] = this;
-    m_luaState["addBlock"] = &Server::addBlock;
+    auto newGame = m_luaState["game"].get_or_create<sol::table>();
+    newGame.new_usertype<Game>("State",
+		"addVoxel", &Game::addVoxel
+	);
+
+    m_luaState.script("game = game.State.new()");
+    sol::load_result script = m_luaState.load_file("game/blocks.lua");
 
     if (script.valid()) {
         script();
     }
     else {
-        std::cout << "nay\n";
+		sol::error err = script;
+		std::cerr << "Lua error: " << err.what() << std::endl;
     }
+
+    game = m_luaState["game"];
 
     // Read data files
     //
     // Load the voxel data
     //
+
+    /*
     auto data = getObdData("game/blocks.obd");
     for (auto &block : data) {
         auto &bd = block.data;
@@ -69,6 +110,7 @@ Server::Server(const ServerConfig &config)
 
         m_voxelRegistry.addVoxelData(voxelData);
     }
+    */
 }
 
 void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
@@ -127,7 +169,7 @@ void Server::sendGameData(peer_id_t peerId)
     sf::Packet packet;
     packet << ClientCommand::GameRegistryData;
 
-    auto &data = m_voxelRegistry.getVoxelData();
+    auto &data = game.voxels;
     packet << static_cast<u16>(data.size());
     for (auto &voxel : data) {
         u8 mesh = static_cast<u8>(voxel.meshStyle);

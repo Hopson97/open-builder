@@ -3,7 +3,6 @@
 #include "../types.h"
 #include <string>
 
-
 enum class VoxelMeshStyle : u8 {
     Block = 0,
     Cross = 1,
@@ -24,4 +23,3 @@ enum class VoxelMeshType : u8 {
 
 VoxelMeshType toVoxelMeshType(const std::string &meshType);
 VoxelMeshStyle toVoxelMeshStyle(const std::string &styleType);
-

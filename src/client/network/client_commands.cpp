@@ -194,6 +194,7 @@ void Client::onPlayerSkinReceive(sf::Packet &packet)
 
 void Client::onGameRegistryData(sf::Packet &packet)
 {
+    LOG("Client", "Got data");
     //  ====
     //  Get all blocks from the server
     //
@@ -212,6 +213,7 @@ void Client::onGameRegistryData(sf::Packet &packet)
 
     u16 numBlocks;
     packet >> numBlocks;
+    LOGVAR("Client", "Got blocks: ", (int)numBlocks);
     // todo
     // 1. Need to somehow work out the exact amount of textures needed
     // 2. Need to pass in the actual texture pack resolution
