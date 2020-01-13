@@ -10,6 +10,11 @@
 
 #include <common/obd_parser.h>
 
+void Server::addBlock(int x)
+{
+    std::cout << "Hello world\n" << x << '\n';
+}
+
 Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
@@ -28,6 +33,19 @@ Server::Server(const ServerConfig &config)
                 m_world.chunks.ensureNeighbours({x, y, z});
             }
         }
+    }
+
+    m_luaState.open_libraries(sol::lib::base);
+    sol::load_result script = m_luaState.load_file("game/blocks.lua");
+
+    m_luaState["test"] = this;
+    m_luaState["addBlock"] = &Server::addBlock;
+
+    if (script.valid()) {
+        script();
+    }
+    else {
+        std::cout << "nay\n";
     }
 
     // Read data files
