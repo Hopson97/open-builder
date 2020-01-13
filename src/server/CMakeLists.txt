@@ -11,6 +11,7 @@ set_flags(ob-server)
 target_link_libraries(ob-server 
     glad
     ob-common
+    lua
     Threads::Threads 
     ${SFML_LIBRARIES} 
     ${SFML_DEPENDENCIES}

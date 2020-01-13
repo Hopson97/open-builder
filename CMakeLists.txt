@@ -40,6 +40,7 @@ function (include_dirs target)
     target_include_directories(${target} 
         PRIVATE 
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/lua/
         ${CMAKE_CURRENT_SOURCE_DIR}/src/common/
     )
 endfunction(include_dirs)
