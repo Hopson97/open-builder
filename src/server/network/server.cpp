@@ -37,17 +37,16 @@ Server::Server(const ServerConfig &config)
         for (int x = 0; x < m_worldSize; x++) {
             std::array<int, CHUNK_AREA> heightMap =
                 createChunkHeightMap({x, 0, z});
-            for (int y = 0;
-                 y < *std::max_element(heightMap.cbegin(), heightMap.cend()) /
-                             CHUNK_SIZE +
-                         1;
-                 y++) {
+            int maxHeight =
+                *std::max_element(heightMap.cbegin(), heightMap.cend());
+            for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
                 Chunk &chunk = m_world.chunks.addChunk({x, y, z});
                 createSmoothTerrain(chunk, heightMap, m_worldSize);
                 m_world.chunks.ensureNeighbours({x, y, z});
             }
         }
     }
+    std::cout << "Yeah i am being created\n";
 }
 
 void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
