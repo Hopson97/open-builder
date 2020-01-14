@@ -59,3 +59,33 @@ openbuilder.data.addVoxel {
         mesh = "block",
     },
 }
+
+--
+--  Water block
+--
+openbuilder.data.addVoxel {
+    name = "openbuilder:water",
+    type = "fluid",
+    collidable = false,
+    render = {
+        top = "water",
+        sides = "water",
+        bottom = "water",
+        mesh = "block",
+    },
+}
+
+--
+--  Sand block
+--
+openbuilder.data.addVoxel {
+    name = "openbuilder:sand",
+    type = "solid",
+    collidable = false,
+    render = {
+        top = "sand",
+        sides = "sand",
+        bottom = "sand",
+        mesh = "block",
+    },
+}
