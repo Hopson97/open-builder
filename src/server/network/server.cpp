@@ -51,22 +51,6 @@ Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
 {
-    for (int z = 0; z < m_worldSize; z++) {
-        for (int x = 0; x < m_worldSize; x++) {
-            std::array<int, CHUNK_AREA> heightMap =
-                createChunkHeightMap({x, 0, z});
-            for (int y = 0;
-                 y < *std::max_element(heightMap.cbegin(), heightMap.cend()) /
-                             CHUNK_SIZE +
-                         1;
-                 y++) {
-                Chunk &chunk = m_world.chunks.addChunk({x, y, z});
-                createSmoothTerrain(chunk, heightMap, m_worldSize);
-                m_world.chunks.ensureNeighbours({x, y, z});
-            }
-        }
-    }
-
     m_luaState.open_libraries(sol::lib::base);
 
     auto newGame = m_luaState["game"].get_or_create<sol::table>();
@@ -86,6 +70,24 @@ Server::Server(const ServerConfig &config)
     }
 
     game = m_luaState["game"];
+
+
+
+    for (int z = 0; z < m_worldSize; z++) {
+        for (int x = 0; x < m_worldSize; x++) {
+            std::array<int, CHUNK_AREA> heightMap =
+                createChunkHeightMap({x, 0, z});
+            for (int y = 0;
+                 y < *std::max_element(heightMap.cbegin(), heightMap.cend()) /
+                             CHUNK_SIZE +
+                         1;
+                 y++) {
+                Chunk &chunk = m_world.chunks.addChunk({x, y, z});
+                createSmoothTerrain(chunk, heightMap, m_worldSize);
+                m_world.chunks.ensureNeighbours({x, y, z});
+            }
+        }
+    }
 
     // Read data files
     //
