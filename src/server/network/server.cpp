@@ -10,55 +10,19 @@
 
 #include <common/obd_parser.h>
 
-struct Game {
-    struct ServerVoxel {
-        std::string name;
-        std::string topTexture;
-        std::string sideTexture;
-        std::string bottomTexture;
-
-        VoxelMeshStyle meshStyle;
-        VoxelMeshType meshType;
-
-        bool isCollidable = true;
-    };
-
-    void addVoxel(const sol::table &vox)
-    {
-        ServerVoxel voxel;
-        voxel.name = vox["name"].get<std::string>();
-        voxel.meshType = toVoxelMeshType(vox["type"].get<std::string>());
-        voxel.isCollidable = vox["collidable"].get<bool>();
-
-        voxel.topTexture = vox["render"]["top"].get<std::string>();
-        voxel.sideTexture = vox["render"]["sides"].get<std::string>();
-        voxel.bottomTexture = vox["render"]["bottom"].get<std::string>();
-
-        voxel.meshStyle =
-            toVoxelMeshStyle(vox["render"]["mesh"].get<std::string>());
-
-        voxels.push_back(voxel);
-
-        LOGVAR("Server", "Adding block", voxel.name);
-    }
-
-    std::vector<ServerVoxel> voxels;
-};
-
-Game game;
-
 Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
 {
     m_luaState.open_libraries(sol::lib::base);
 
-    auto newGame = m_luaState["game"].get_or_create<sol::table>();
-    newGame.new_usertype<Game>("State",
-		"addVoxel", &Game::addVoxel
-	);
+    sol::table data = m_luaState.create_named_table(
+        "data", "addVoxel",
+        [&](const sol::table &voxelDef) { m_gameData.addVoxel(voxelDef); });
 
-    m_luaState.script("game = game.State.new()");
+    sol::table obgame =
+        m_luaState.create_named_table("openbuilder", "data", data);
+
     sol::load_result script = m_luaState.load_file("game/blocks.lua");
 
     if (script.valid()) {
@@ -68,10 +32,6 @@ Server::Server(const ServerConfig &config)
 		sol::error err = script;
 		std::cerr << "Lua error: " << err.what() << std::endl;
     }
-
-    game = m_luaState["game"];
-
-
 
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
@@ -88,31 +48,6 @@ Server::Server(const ServerConfig &config)
             }
         }
     }
-
-    // Read data files
-    //
-    // Load the voxel data
-    //
-
-    /*
-    auto data = getObdData("game/blocks.obd");
-    for (auto &block : data) {
-        auto &bd = block.data;
-        ServerVoxel voxelData;
-        voxelData.name = bd["name"];
-        voxelData.topTexture = bd["texture_top"];
-        voxelData.sideTexture = bd["texture_side"];
-        voxelData.bottomTexture = bd["texture_bottom"];
-
-        voxelData.meshStyle = toVoxelMeshStyle(bd["mesh"]);
-        voxelData.meshType = toVoxelMeshType(bd["type"]);
-
-        voxelData.isCollidable =
-            static_cast<bool>(std::stoi(bd["isCollidable"]));
-
-        m_voxelRegistry.addVoxelData(voxelData);
-    }
-    */
 }
 
 void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
@@ -171,7 +106,7 @@ void Server::sendGameData(peer_id_t peerId)
     sf::Packet packet;
     packet << ClientCommand::GameRegistryData;
 
-    auto &data = game.voxels;
+    auto &data = m_gameData.voxelData();
     packet << static_cast<u16>(data.size());
     for (auto &voxel : data) {
         u8 mesh = static_cast<u8>(voxel.meshStyle);

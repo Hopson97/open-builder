@@ -1,8 +1,7 @@
 --
 --  Air block
 --
-print("The code is running or?")
-game:addVoxel ({
+openbuilder.data.addVoxel({
     name = "openbuilder:air",
     type = "gas",
     collidable = false,
@@ -19,7 +18,7 @@ print("The code is running or?")
 --
 --  Grass block
 --
-game:addVoxel {
+openbuilder.data.addVoxel {
     name = "openbuilder:grass",
     type = "solid",
     collidable = true,
@@ -34,7 +33,7 @@ game:addVoxel {
 --
 --  Dirt block
 --
-game:addVoxel {
+openbuilder.data.addVoxel {
     name = "openbuilder:dirt",
     type = "solid",
     collidable = true,
@@ -49,7 +48,7 @@ game:addVoxel {
 --
 --  Stone block
 --
-game:addVoxel {
+openbuilder.data.addVoxel {
     name = "openbuilder:stone",
     type = "solid",
     collidable = true,

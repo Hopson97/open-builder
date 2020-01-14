@@ -7,8 +7,7 @@
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_registry.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <queue>
-#include <unordered_map>
+#include "../scripting/server_game_data.h"
 
 #include <sol/sol.hpp>
 
@@ -74,6 +73,5 @@ class Server final : public NetworkHost {
     const int m_worldSize;
 
     sol::state m_luaState;
-
-    // VoxelRegistry<ServerVoxel> m_voxelRegistry;
+    ServerGameData m_gameData;
 };
