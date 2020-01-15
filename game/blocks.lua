@@ -13,8 +13,6 @@ openbuilder.data.addVoxel({
     },
 })
 
-print("The code is running or?")
-
 --
 --  Grass block
 --
