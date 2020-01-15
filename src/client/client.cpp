@@ -1,6 +1,5 @@
 #include "client.h"
 
-#include "client_config.h"
 #include "gl/primitive.h"
 #include "input/keyboard.h"
 #include "world/chunk_mesh_generation.h"
@@ -10,12 +9,14 @@
 #include <common/network/net_constants.h>
 #include <thread>
 
+#include "client_config.h"
+
 Client::Client()
     : NetworkHost("Client")
 {
 }
 
-bool Client::init(const ClientConfig& config, float aspect)
+bool Client::init(const ClientConfig &config, float aspect)
 {
     // OpenGL stuff
     m_cube = makeCubeVertexArray(1, 2, 1);
@@ -35,17 +36,10 @@ bool Client::init(const ClientConfig& config, float aspect)
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
 
     // Texture for the player model
-    m_errorSkinTexture.create("error");
+    m_errorSkinTexture.create("skins/error");
     m_errorSkinTexture.bind();
 
-    // Texture for grass
-    m_grassTexture.create("grass");
-    m_grassTexture.bind();
-
-    m_blockTextures.create(2, 16);
-    m_blockTextures.addTexture("grass");
-    m_blockTextures.addTexture("grass");
-
+    m_texturePack = config.texturePack;
 
     // Set up the server connection
     auto peer = NetworkHost::createAsClient(LOCAL_HOST);
@@ -58,9 +52,7 @@ bool Client::init(const ClientConfig& config, float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
-    // Load player skin and send to server
-    //mp_player->playerSkin.create("player");
-    m_rawPlayerSkin = gl::loadRawImageFile(config.skinName);
+    m_rawPlayerSkin = gl::loadRawImageFile("skins/" + config.skinName);
     sendPlayerSkin(m_rawPlayerSkin);
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
@@ -69,6 +61,9 @@ bool Client::init(const ClientConfig& config, float aspect)
 
 void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
 {
+    if (!m_hasReceivedGameData) {
+        return;
+    }
     static auto lastMousePosition = sf::Mouse::getPosition(window);
 
     // Handle mouse input
@@ -110,12 +105,12 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
         velocity.y -= PLAYER_SPEED * 2;
         std::cout << mp_player->position << std::endl;
     }
-        if (rotation.x < -80.0f) {
-            rotation.x = -79.9f;
-        }
-        else if (rotation.x > 85.0f) {
-            rotation.x = 84.9f;
-        }
+    if (rotation.x < -80.0f) {
+        rotation.x = -79.9f;
+    }
+    else if (rotation.x > 85.0f) {
+        rotation.x = 84.9f;
+    }
 }
 
 void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
@@ -129,7 +124,7 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
     // Step the ray until it hits a block/ reaches maximum length
     for (; ray.getLength() < 8; ray.step()) {
         auto rayBlockPosition = toBlockPosition(ray.getEndpoint());
-        if (m_chunks.manager.getBlock(rayBlockPosition) == 1) {
+        if (m_chunks.manager.getBlock(rayBlockPosition) > 0) {
             BlockUpdate blockUpdate;
             blockUpdate.block = button == sf::Mouse::Left ? 0 : 1;
             blockUpdate.position = button == sf::Mouse::Left
@@ -172,9 +167,14 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
 
 void Client::update(float dt)
 {
+    NetworkHost::tick();
+    if (!m_hasReceivedGameData) {
+        return;
+    }
+
     mp_player->position += mp_player->velocity * dt;
     mp_player->velocity *= 0.99 * dt;
-    NetworkHost::tick();
+
     sendPlayerPosition(mp_player->position);
 
     // Update blocks
@@ -251,7 +251,7 @@ void Client::update(float dt)
                  itr != m_chunks.updates.cend();) {
                 if (m_chunks.manager.hasNeighbours(*itr)) {
                     auto &chunk = m_chunks.manager.getChunk(*itr);
-                    auto buffer = makeChunkMesh(chunk);
+                    auto buffer = makeChunkMesh(chunk, m_voxelData);
                     m_chunks.bufferables.push_back(buffer);
                     deleteChunkRenderable(*itr);
                     itr = m_chunks.updates.erase(itr);
@@ -278,6 +278,9 @@ void Client::update(float dt)
 
 void Client::render()
 {
+    if (!m_hasReceivedGameData) {
+        return;
+    }
     // Setup matrices
     glm::mat4 viewMatrix{1.0f};
     glm::mat4 projectionViewMatrix{1.0f};
@@ -297,11 +300,12 @@ void Client::render()
 
     for (auto &ent : m_entities) {
         if (ent.active && &ent != mp_player) {
-            // Load skin
-            if (ent.playerSkin.textureExists())
+            if (ent.playerSkin.textureExists()) {
                 ent.playerSkin.bind();
-            else
+            }
+            else {
                 m_errorSkinTexture.bind();
+            }
 
             glm::mat4 modelMatrix{1.0f};
             translateMatrix(modelMatrix,
@@ -313,8 +317,8 @@ void Client::render()
 
     // Render chunks
     m_chunkShader.program.bind();
-    //m_grassTexture.bind();
-    m_blockTextures.bind();
+
+    m_voxelTextures.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
 
     // Buffer chunks
@@ -337,7 +341,7 @@ void Client::render()
 void Client::endGame()
 {
     // Destroy all player skins
-    for (auto& ent : m_entities) {
+    for (auto &ent : m_entities) {
         if (ent.playerSkin.textureExists())
             ent.playerSkin.destroy();
     }
@@ -346,6 +350,7 @@ void Client::endGame()
     m_cube.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
+    m_voxelTextures.destroy();
 
     for (auto &chunk : m_chunks.drawables) {
         chunk.vao.destroy();

@@ -1,0 +1,39 @@
+block
+    name openbuilder:air
+    texture_top error
+    texture_side error
+    texture_bottom error
+    mesh none
+    type gas
+    isCollidable 0
+end
+
+block
+    name openbuilder:grass
+    texture_top grass
+    texture_side grass_side
+    texture_bottom dirt
+    mesh block
+    type solid
+    isCollidable 1
+end
+
+block
+    name openbuilder:dirt
+    texture_top dirt
+    texture_side dirt
+    texture_bottom dirt
+    mesh block
+    type solid
+    isCollidable 1
+end
+
+block
+    name openbuilder:stone
+    texture_top stone
+    texture_side stone
+    texture_bottom stone
+    mesh block
+    type solid
+    isCollidable 1
+end

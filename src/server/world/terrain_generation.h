@@ -10,9 +10,8 @@ void makeFlatTerrain(Chunk *chunk, int worldSize);
 void makeStepTerrain(Chunk *chunk);
 void makeRandomTerrain(Chunk *chunk);
 
-void makeRawNoiseTerrain(Chunk &chunk);
-
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position);
 
 void createSmoothTerrain(Chunk &chunk,
-                         const std::array<int, CHUNK_AREA> &heightMap, int worldSize);
+                         const std::array<int, CHUNK_AREA> &heightMap,
+                         int worldSize);

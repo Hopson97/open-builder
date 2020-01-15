@@ -23,7 +23,7 @@ GLuint compileShader(const GLchar *source, GLenum shaderType)
                   << std::endl;
 
         throw std::runtime_error("Unable to load a shader: " +
-                                                   std::string(infoLog));
+                                 std::string(infoLog));
     }
 
     return shaderID;

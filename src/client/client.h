@@ -14,7 +14,11 @@
 #include <common/network/net_host.h>
 #include <common/network/net_types.h>
 #include <common/world/chunk_manager.h>
+#include <common/world/voxel_registry.h>
 #include <unordered_set>
+
+#include "world/client_voxel.h"
+#include <common/world/voxel_types.h>
 
 class Keyboard;
 
@@ -29,7 +33,8 @@ struct Entity final {
     glm::vec3 velocity{0.0f};
     bool active = false;
 
-    gl::Texture2d playerSkin; // May need to be relocated to its own Player Entity
+    gl::Texture2d
+        playerSkin; // May need to be relocated to its own Player Entity
 };
 
 struct ChunkDrawable {
@@ -41,7 +46,7 @@ class Client final : public NetworkHost {
   public:
     Client();
 
-    bool init(const ClientConfig& config, float aspect);
+    bool init(const ClientConfig &config, float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
@@ -72,6 +77,8 @@ class Client final : public NetworkHost {
     void onSpawnPoint(sf::Packet &packet);
     void onBlockUpdate(sf::Packet &packet);
     void onPlayerSkinReceive(sf::Packet &packet);
+
+    void onGameRegistryData(sf::Packet &packet);
     // End of network functions
 
     int findChunkDrawableIndex(const ChunkPosition &position);
@@ -79,14 +86,18 @@ class Client final : public NetworkHost {
 
     // Network
     ENetPeer *mp_serverPeer = nullptr;
+    bool m_hasReceivedGameData = false;
 
     // Rendering/ OpenGL stuff
     glm::mat4 m_projectionMatrix{1.0f};
 
     gl::VertexArray m_cube;
+
     gl::Texture2d m_errorSkinTexture;
-    gl::Texture2d m_grassTexture;
     sf::Image m_rawPlayerSkin;
+
+    std::string m_texturePack;
+    gl::TextureArray m_voxelTextures;
 
     struct {
         gl::Shader program;
@@ -112,13 +123,13 @@ class Client final : public NetworkHost {
         std::vector<BlockUpdate> blockUpdates;
     } m_chunks;
 
+    VoxelRegistry<ClientVoxel> m_voxelData;
+
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
     bool m_isMouseLocked = false;
 
     ViewFrustum m_frustum;
-
-    gl::TextureArray m_blockTextures;
 
     unsigned m_noMeshingCount = 0;
     bool m_blockMeshing = false;

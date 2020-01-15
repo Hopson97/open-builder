@@ -1,19 +1,19 @@
----
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: Feature
-assignees: ''
+---	
+name: Feature request	
+about: Suggest an idea for this project	
+title: ''	
+labels: Feature	
+assignees: ''	
 
 ---
 
-** Suggestion Title **
+# Suggestion Title
 [eg, terrain generation]
 
-** Describe your suggestion **
+## Describe your suggestion
 [eg. Would be cool if the world was bumpy and not not bumpy]
 
 
-** Implementations ideas [optional]**
+## Implementations ideas [optional]
 
-[Eg, use perlin noise  to generate a smooth heightmap]
+[Eg, use simplex noise to generate a smooth heightmap]

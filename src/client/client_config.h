@@ -16,4 +16,5 @@ struct ClientConfig {
     bool isFpsCapped = true;
 
     std::string skinName = "player";
+    std::string texturePack = "default";
 };

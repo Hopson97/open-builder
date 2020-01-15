@@ -1,13 +1,14 @@
 #pragma once
 
+#include "../world/server_voxel.h"
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/network/net_host.h>
 #include <common/world/chunk_manager.h>
+#include <common/world/voxel_registry.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include <queue>
 #include <unordered_map>
-
-#include <glm/gtc/matrix_transform.hpp>
 
 struct ServerConfig;
 
@@ -21,7 +22,7 @@ struct ServerEntity {
 
 struct ConnectedClient {
     ENetPeer *peer = nullptr;
-    peer_id_t entityId;
+    peer_id_t entityId = 0;
     bool connected = false;
 };
 
@@ -32,7 +33,7 @@ class Server final : public NetworkHost {
     };
 
   public:
-    Server(const ServerConfig& config);
+    Server(const ServerConfig &config);
 
     void update();
 
@@ -40,7 +41,9 @@ class Server final : public NetworkHost {
     glm::vec3 findPlayerSpawnPosition();
 
     void sendChunk(peer_id_t peerId, const ChunkPosition &chunk);
-    void sendPlayerSkin(peer_id_t peerId, std::optional<peer_id_t> toPeer = std::nullopt);
+    void sendPlayerSkin(peer_id_t peerId,
+                        std::optional<peer_id_t> toPeer = std::nullopt);
+    void sendGameData(peer_id_t peerId);
 
     void onPeerConnect(ENetPeer *peer) override;
     void onPeerDisconnect(ENetPeer *peer) override;
@@ -50,7 +53,7 @@ class Server final : public NetworkHost {
 
     void handleCommandPlayerPosition(sf::Packet &packet);
     void handleCommandBlockEdit(sf::Packet &packet);
-    void handleCommandPlayerSkin(sf::Packet& packet);
+    void handleCommandPlayerSkin(sf::Packet &packet);
 
     int findEmptySlot() const;
 
@@ -62,12 +65,11 @@ class Server final : public NetworkHost {
 
     struct {
         ChunkManager chunks;
+        std::vector<BlockUpdate> blockUpdates;
     } m_world;
 
-    std::vector<BlockUpdate> m_blockUpdates;
-
     bool m_isRunning = true;
-
     const int m_worldSize;
-    const int m_worldHeight;
+
+    VoxelRegistry<ServerVoxel> m_voxelRegistry;
 };

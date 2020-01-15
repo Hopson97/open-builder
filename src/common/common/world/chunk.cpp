@@ -24,7 +24,6 @@ block_t Chunk::getBlock(const BlockPosition &blockPosition) const
     if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
         blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE ||
         blockPosition.z < 0 || blockPosition.z >= CHUNK_SIZE) {
-        1;
         return mp_manager.getBlock(
             toGlobalBlockPosition(blockPosition, m_position));
     }
