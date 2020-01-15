@@ -16,12 +16,15 @@ Server::Server(const ServerConfig &config)
 {
     m_luaState.open_libraries(sol::lib::base);
 
+    // clang-format off
     sol::table data = m_luaState.create_named_table(
-        "data", "addVoxel",
-        [&](const sol::table &voxelDef) { m_gameData.addVoxel(voxelDef); });
+        "data", 
+        "addVoxel", [&](const sol::table &voxelDef) { m_gameData.addVoxel(voxelDef); });
 
-    sol::table obgame =
-        m_luaState.create_named_table("openbuilder", "data", data);
+    sol::table obgame = m_luaState.create_named_table("openbuilder", 
+        "data", data);
+
+    // clang-format on
 
     sol::load_result script = m_luaState.load_file("game/blocks.lua");
 
@@ -350,7 +353,7 @@ glm::vec3 Server::findPlayerSpawnPosition()
         for (int blockY = CHUNK_SIZE - 1; blockY >= 0; blockY--) {
             auto blockPosition = toLocalBlockPosition({x, 0, z});
             blockPosition.y = blockY;
-            if (spawn.qGetBlock(blockPosition) > 0) {
+            if (spawn.qGetBlock(blockPosition) == 1) {
                 auto worldY = chunkY * CHUNK_SIZE + blockY + 3;
                 return {x, worldY, z};
             }
