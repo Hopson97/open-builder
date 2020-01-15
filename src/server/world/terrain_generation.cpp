@@ -58,7 +58,7 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
         float x = voxelX * frequency / options.smoothness;
         float y = voxelZ * frequency / options.smoothness;
 
-        float noise = glm::simplex(glm::vec3{x, y, 90595.0f});
+        float noise = glm::simplex(glm::vec3{x, y, 9095.0f});
         noise = (noise + 1.0f) / 2.0f;
         value += noise * amplitude;
         accumulatedAmps += amplitude;
@@ -72,20 +72,20 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
 
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
 {
-    const float WOLRD_SIZE = 16 * CHUNK_SIZE;
+    const float WOLRD_SIZE = 10 * CHUNK_SIZE;
 
     NoiseOptions land;
     land.amplitude = 120;
     land.octaves = 6;
     land.smoothness = 195.f;
-    land.roughness = 0.54f;
+    land.roughness = 0.58f;
     land.offset = 50;
 
     NoiseOptions land2;
     land2.amplitude = 20;
-    land2.octaves = 2;
-    land2.smoothness = 100;
-    land2.roughness = 0.65f;
+    land2.octaves = 4;
+    land2.smoothness = 200;
+    land2.roughness = 0.45f;
     land2.offset = 0;
 
     std::array<int, CHUNK_AREA> heightMap;
@@ -100,7 +100,8 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
             auto noise = getNoiseAt({x, z}, {position.x, position.z}, land);
             auto noise2 = getNoiseAt({x, z}, {position.x, position.z}, land2);
             auto island = rounded(coord.x, coord.y) * 1.25;
-            float result = (noise * noise2) * island;
+            float result =
+                ((noise * noise2) * island);// + (noise2 / 2.0f) * island) / 2.0f;
 
 
             heightMap[z * CHUNK_SIZE + x] =

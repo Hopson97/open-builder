@@ -12,5 +12,5 @@ CLIENT_DATA
 end
 
 SERVER_DATA
-    world_size 16
+    world_size 10
 end
