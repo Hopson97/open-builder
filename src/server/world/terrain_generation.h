@@ -14,4 +14,4 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position);
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
-                         int worldSize);
+                         int worldSize, int baseChunk);

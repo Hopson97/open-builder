@@ -79,7 +79,7 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
     land.octaves = 6;
     land.smoothness = 195.f;
     land.roughness = 0.58f;
-    land.offset = 50;
+    land.offset = 0;
 
     NoiseOptions land2;
     land2.amplitude = 20;
@@ -116,11 +116,11 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
-                         int worldSize)
+                         int worldSize, int baseChunk)
 {
     auto cp = chunk.getPosition();
     auto cx = cp.x;
-    auto cy = cp.y;
+    auto cy = cp.y - baseChunk;
     auto cz = cp.z;
 
     for (int z = 0; z < CHUNK_SIZE; z++) {
@@ -130,16 +130,16 @@ void createSmoothTerrain(Chunk &chunk,
                 int blockY = cy * CHUNK_SIZE + y;
 
                 if (blockY > height) {
-                    //chunk.qSetBlock({x, y, z}, blockY < 64 ? 4 : 0);
+                    chunk.qSetBlock({x, y, z}, blockY < 10 ? 4 : 0);
                 }
                 else if (blockY == height) {
-                    chunk.qSetBlock({x, y, z}, blockY < 66 ? 5 : 1);
+                    chunk.qSetBlock({x, y, z}, blockY < 13 ? 5 : 1);
                 }
                 else if (blockY > height - 5) {
                     chunk.qSetBlock({x, y, z}, 2);
                 }
                 else {
-                    chunk.qSetBlock({x, y, z}, 3);
+                    chunk.qSetBlock({x, y, z}, 5);
                 }
             }
         }
