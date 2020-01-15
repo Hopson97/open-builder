@@ -14,43 +14,42 @@ Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
 {
+    m_luaState.open_libraries(sol::lib::base);
+
+    // clang-format off
+    sol::table data = m_luaState.create_named_table(
+        "data", 
+        "addVoxel", [&](const sol::table &voxelDef) { m_gameData.addVoxel(voxelDef); });
+
+    sol::table obgame = m_luaState.create_named_table("openbuilder", 
+        "data", data);
+
+    // clang-format on
+
+    sol::load_result script = m_luaState.load_file("game/blocks.lua");
+
+    if (script.valid()) {
+        script();
+    }
+    else {
+        sol::error err = script;
+        std::cerr << "Lua error: " << err.what() << std::endl;
+    }
+
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
             std::array<int, CHUNK_AREA> heightMap =
                 createChunkHeightMap({x, 0, z});
-            for (int y = 0;
-                 y < *std::max_element(heightMap.cbegin(), heightMap.cend()) /
-                             CHUNK_SIZE +
-                         1;
-                 y++) {
+            int maxHeight =
+                *std::max_element(heightMap.cbegin(), heightMap.cend());
+            for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
                 Chunk &chunk = m_world.chunks.addChunk({x, y, z});
                 createSmoothTerrain(chunk, heightMap, m_worldSize);
                 m_world.chunks.ensureNeighbours({x, y, z});
             }
         }
     }
-
-    // Read data files
-    //
-    // Load the voxel data
-    //
-    auto data = getObdData("game/blocks.obd");
-    for (auto &block : data) {
-        auto &bd = block.data;
-        ServerVoxel voxelData;
-        voxelData.name = bd["name"];
-        voxelData.topTexture = bd["texture_top"];
-        voxelData.sideTexture = bd["texture_side"];
-        voxelData.bottomTexture = bd["texture_bottom"];
-
-        voxelData.meshStyle = toVoxelMeshStyle(bd["mesh"]);
-        voxelData.meshType = toVoxelMeshType(bd["type"]);
-
-        voxelData.isCollidable =
-            static_cast<bool>(std::stoi(bd["isCollidable"]));
-
-        m_voxelRegistry.addVoxelData(voxelData);
-    }
+    std::cout << "Yeah i am being created\n";
 }
 
 void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
@@ -109,7 +108,7 @@ void Server::sendGameData(peer_id_t peerId)
     sf::Packet packet;
     packet << ClientCommand::GameRegistryData;
 
-    auto &data = m_voxelRegistry.getVoxelData();
+    auto &data = m_gameData.voxelData();
     packet << static_cast<u16>(data.size());
     for (auto &voxel : data) {
         u8 mesh = static_cast<u8>(voxel.meshStyle);
@@ -354,7 +353,7 @@ glm::vec3 Server::findPlayerSpawnPosition()
         for (int blockY = CHUNK_SIZE - 1; blockY >= 0; blockY--) {
             auto blockPosition = toLocalBlockPosition({x, 0, z});
             blockPosition.y = blockY;
-            if (spawn.qGetBlock(blockPosition) > 0) {
+            if (spawn.qGetBlock(blockPosition) == 1) {
                 auto worldY = chunkY * CHUNK_SIZE + blockY + 3;
                 return {x, worldY, z};
             }

@@ -4,13 +4,13 @@ CLIENT_DATA
     fov 90
 
     fullscreen 0
-    window_width 1600
-    window_height 900
+    window_width 1280
+    window_height 720
 
     skin player
     texture_pack default
 end
 
 SERVER_DATA
-    world_size 16
+    world_size 10
 end

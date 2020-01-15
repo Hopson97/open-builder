@@ -2,6 +2,7 @@
 
 #include <common/world/voxel_types.h>
 
+/*
 struct ServerVoxel {
     std::string name;
     std::string topTexture;
@@ -13,3 +14,4 @@ struct ServerVoxel {
 
     bool isCollidable = true;
 };
+*/

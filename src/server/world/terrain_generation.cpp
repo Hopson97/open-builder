@@ -33,8 +33,16 @@ struct NoiseOptions {
     float offset;
 };
 
+// THANKS! Karasa and K.jpg for help with this algo
+float rounded(float x, float y)
+{
+    auto bump = [](float t) { return glm::max(0.0f, 1.0f - t * t); };
+    float b = bump(x) * bump(y);
+    return b;
+}
+
 float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
-                 const NoiseOptions &options)
+                 const NoiseOptions &options, float seed)
 {
     // Get voxel X/Z positions
     float voxelX = blockPosition.x + chunkPosition.x * CHUNK_SIZE;
@@ -50,33 +58,59 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
         float x = voxelX * frequency / options.smoothness;
         float y = voxelZ * frequency / options.smoothness;
 
-        float noise = glm::simplex(glm::vec2{x, y});
+        float noise = glm::simplex(glm::vec3{x, y, seed});
         noise = (noise + 1.0f) / 2.0f;
         value += noise * amplitude;
         accumulatedAmps += amplitude;
     }
 
-    return ((value / accumulatedAmps)) * options.amplitude + options.offset;
+    // return ((value / accumulatedAmps)) * options.amplitude + options.offset;
+    return value / accumulatedAmps;
 }
 
 } // namespace
 
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
 {
-    NoiseOptions options;
-    options.amplitude = 70;
-    options.octaves = 6;
-    options.smoothness = 215.f;
-    options.roughness = 0.5f;
-    options.offset = 20.0f;
+    const float WOLRD_SIZE = 10 * CHUNK_SIZE;
+
+    NoiseOptions land;
+    land.amplitude = 120;
+    land.octaves = 6;
+    land.smoothness = 195.f;
+    land.roughness = 0.58f;
+    land.offset = 50;
+
+    NoiseOptions land2;
+    land2.amplitude = 20;
+    land2.octaves = 4;
+    land2.smoothness = 200;
+    land2.roughness = 0.45f;
+    land2.offset = 0;
+
+    float seed = 9095.0f;
 
     std::array<int, CHUNK_AREA> heightMap;
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
-            heightMap[z * CHUNK_SIZE + x] = static_cast<int>(
-                getNoiseAt({x, z}, {position.x, position.z}, options));
+            float bx = x + position.x * CHUNK_SIZE;
+            float bz = z + position.z * CHUNK_SIZE;
+
+            glm::vec2 coord =
+                (glm::vec2{bx, bz} - WOLRD_SIZE / 2.0f) / WOLRD_SIZE * 2.0f;
+
+            auto noise = getNoiseAt({x, z}, {position.x, position.z}, land, seed);
+            auto noise2 = getNoiseAt({x, z}, {position.x, position.z}, land2, seed);
+            auto island = rounded(coord.x, coord.y) * 1.25;
+            float result =
+                ((noise * noise2) * island);// + (noise2 / 2.0f) * island) / 2.0f;
+
+
+            heightMap[z * CHUNK_SIZE + x] =
+                static_cast<int>(result * land.amplitude + land.offset);
         }
     }
+
     return heightMap;
 }
 
@@ -96,10 +130,10 @@ void createSmoothTerrain(Chunk &chunk,
                 int blockY = cy * CHUNK_SIZE + y;
 
                 if (blockY > height) {
-                    // TODO water
+                    //chunk.qSetBlock({x, y, z}, blockY < 64 ? 4 : 0);
                 }
                 else if (blockY == height) {
-                    chunk.qSetBlock({x, y, z}, 1);
+                    chunk.qSetBlock({x, y, z}, blockY < 66 ? 5 : 1);
                 }
                 else if (blockY > height - 5) {
                     chunk.qSetBlock({x, y, z}, 2);
