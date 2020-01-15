@@ -29,8 +29,8 @@ Server::Server(const ServerConfig &config)
         script();
     }
     else {
-		sol::error err = script;
-		std::cerr << "Lua error: " << err.what() << std::endl;
+        sol::error err = script;
+        std::cerr << "Lua error: " << err.what() << std::endl;
     }
 
     for (int z = 0; z < m_worldSize; z++) {

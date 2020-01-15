@@ -8,7 +8,8 @@ ServerGameData::ServerGameData()
 
 void ServerGameData::addVoxel(const sol::table &voxelData)
 {
-    auto style = toVoxelMeshStyle(voxelData["render"]["mesh"].get<std::string>());
+    auto style =
+        toVoxelMeshStyle(voxelData["render"]["mesh"].get<std::string>());
     auto type = toVoxelMeshType(voxelData["type"].get<std::string>());
 
     ServerVoxel voxel;
