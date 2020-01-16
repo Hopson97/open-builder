@@ -34,7 +34,7 @@ struct NoiseOptions {
 };
 
 // THANKS! Karasa and K.jpg for help with this algo
-float rounded(const glm::vec2& coord)
+float rounded(const glm::vec2 &coord)
 {
     auto bump = [](float t) {
         return glm::max(0.0f, 1.0f - std::pow(t, 6.0f));
@@ -65,8 +65,6 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
         value += noise * amplitude;
         accumulatedAmps += amplitude;
     }
-
-    // return ((value / accumulatedAmps)) * options.amplitude + options.offset;
     return value / accumulatedAmps;
 }
 
@@ -104,14 +102,12 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
 
             auto noise = getNoiseAt({x, z}, chunkXZ, firstNoise, seed);
             auto noise2 =
-                getNoiseAt({x, z}, {position.x, position.z}, secondNoise, 9095.0f);
+                getNoiseAt({x, z}, {position.x, position.z}, secondNoise, seed);
             auto island = rounded(coord) * 1.25;
-            float result = ((noise * noise2));// * island);// + (noise2 / 2.0f) * island) / 2.0f;
+            float result = noise * noise2;
 
             heightMap[z * CHUNK_SIZE + x] =
-                static_cast<int>(
-                    (result * firstNoise.amplitude + firstNoise.offset) *
-                    island) -
+                (result * firstNoise.amplitude + firstNoise.offset) * island -
                 2;
         }
     }
@@ -121,18 +117,15 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
-                         int worldSize, int baseChunk)
+                         int baseChunk)
 {
-    auto cp = chunk.getPosition();
-    auto cx = cp.x;
-    auto cy = cp.y - baseChunk;
-    auto cz = cp.z;
+    auto base = chunk.getPosition().y - baseChunk;
 
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             int height = heightMap[z * CHUNK_SIZE + x];
             for (int y = 0; y < CHUNK_SIZE; y++) {
-                int blockY = cy * CHUNK_SIZE + y;
+                int blockY = base * CHUNK_SIZE + y;
 
                 if (blockY > height) {
                     chunk.qSetBlock({x, y, z}, blockY < 32 ? 4 : 0);
