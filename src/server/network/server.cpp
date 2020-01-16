@@ -16,20 +16,26 @@ Server::Server(const ServerConfig &config)
 {
     m_luaState.open_libraries(sol::lib::base);
 
+    auto openbuilder = m_luaState["openbuilder"].get_or_create<sol::table>();
+    
     // clang-format off
-    sol::table data = m_luaState.create_named_table(
-        "data", 
+    auto data = openbuilder.create_named("data", 
         "addVoxel", [&](const sol::table &voxelDef) { m_gameData.addVoxel(voxelDef); });
 
-    sol::table obgame = m_luaState.create_named_table("openbuilder", 
-        "data", data);
+    auto meshStyle = openbuilder.create_named("MeshStyle",
+        "BLOCK", VoxelMeshStyle::Block,
+        "CROSS", VoxelMeshStyle::Cross);
+
+    auto voxelType = openbuilder.create_named("VoxelType",
+        "SOLID", VoxelType::Solid);
+
 
     // clang-format on
 
-    sol::load_result script = m_luaState.load_file("game/blocks.lua");
+    auto script = m_luaState.load_file("game/blocks.lua");
 
     if (script.valid()) {
-        script();
+        auto r = script();
     }
     else {
         sol::error err = script;

@@ -8,10 +8,6 @@ ServerGameData::ServerGameData()
 
 void ServerGameData::addVoxel(const sol::table &voxelData)
 {
-    auto style =
-        toVoxelMeshStyle(voxelData["render"]["mesh"].get<std::string>());
-    auto type = toVoxelMeshType(voxelData["type"].get<std::string>());
-
     ServerVoxel voxel;
     voxel.name = voxelData["name"].get<std::string>();
 
@@ -21,8 +17,9 @@ void ServerGameData::addVoxel(const sol::table &voxelData)
     voxel.sideTexture = voxelData["render"]["sides"].get<std::string>();
     voxel.bottomTexture = voxelData["render"]["bottom"].get<std::string>();
 
-    voxel.meshStyle = style;
-    voxel.meshType = type;
+    voxel.meshStyle = voxelData["render"]["mesh"].get<VoxelMeshStyle>();
+    voxel.meshType = voxelData["render"]["type"].get<VoxelType>();
+    ;
 
     m_voxelDataList.push_back(voxel);
 

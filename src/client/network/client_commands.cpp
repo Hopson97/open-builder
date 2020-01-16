@@ -244,7 +244,7 @@ void Client::onGameRegistryData(sf::Packet &packet)
         voxelData.bottomTexture = getTexture(texturePath + textureBottom);
 
         voxelData.meshStyle = static_cast<VoxelMeshStyle>(meshStyle);
-        voxelData.meshType = static_cast<VoxelMeshType>(meshType);
+        voxelData.meshType = static_cast<VoxelType>(meshType);
         voxelData.isCollidable = isCollidable;
 
         m_voxelData.addVoxelData(voxelData);

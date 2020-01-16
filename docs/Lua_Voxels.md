@@ -54,7 +54,7 @@ So far this field accepts the following parameters:
 | block | A cube shaped mesh | Grass, dirt, etc         |
 | cross | An 'X' shaped mesh | Tall grass, flowers, etc |
 
-## VoxelMeshType
+## VoxelType
 
 This refers to what "type" the block is, or rather it's sort of physical state
 

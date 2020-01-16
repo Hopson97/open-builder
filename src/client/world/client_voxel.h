@@ -10,7 +10,7 @@ struct ClientVoxel {
     GLuint bottomTexture = 0;
 
     VoxelMeshStyle meshStyle = VoxelMeshStyle::Error;
-    VoxelMeshType meshType = VoxelMeshType::Error;
+    VoxelType meshType = VoxelType::Error;
 
     bool isCollidable = true;
 };

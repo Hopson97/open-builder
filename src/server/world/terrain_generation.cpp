@@ -34,12 +34,12 @@ struct NoiseOptions {
 };
 
 // THANKS! Karasa and K.jpg for help with this algo
-float rounded(float x, float y)
+float rounded(const glm::vec2& coord)
 {
     auto bump = [](float t) {
         return glm::max(0.0f, 1.0f - std::pow(t, 6.0f));
     };
-    float b = bump(x) * bump(y);
+    float b = bump(coord.x) * bump(coord.y);
     return b * 0.9f;
 }
 
@@ -104,13 +104,13 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position, 
             auto noise = getNoiseAt({x, z}, chunkXZ, firstNoise, seed);
             auto noise2 =
                 getNoiseAt({x, z}, {position.x, position.z}, secondNoise, 9095.0f);
-            auto island = rounded(coord.x, coord.y) * 1.25;
+            auto island = rounded(coord) * 1.25;
             float result = ((noise * noise2));// * island);// + (noise2 / 2.0f) * island) / 2.0f;
 
             heightMap[z * CHUNK_SIZE + x] =
                 static_cast<int>(
                     (result * firstNoise.amplitude + firstNoise.offset) *
-                    island) -
+                    1) -
                 2;
         }
     }

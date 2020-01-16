@@ -12,7 +12,7 @@ struct ServerVoxel {
     std::string bottomTexture;
 
     VoxelMeshStyle meshStyle;
-    VoxelMeshType meshType;
+    VoxelType meshType;
 
     bool isCollidable = true;
 };

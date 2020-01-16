@@ -3,13 +3,13 @@
 --
 openbuilder.data.addVoxel({
     name = "openbuilder:air",
-    type = "gas",
+    type = openbuilder.VoxelType.GAS,
     collidable = false,
     render = {
         top = "error",
         sides = "error",
         bottom ="error",
-        mesh = "block",
+        mesh = openbuilder.MeshStyle.BLOCK
     },
 })
 
@@ -18,13 +18,13 @@ openbuilder.data.addVoxel({
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:grass",
-    type = "solid",
+    type = openbuilder.VoxelType.SOLID,
     collidable = true,
     render = {
         top = "grass",
         sides = "grass_side",
         bottom = "dirt",
-        mesh = "block",
+        mesh = openbuilder.MeshStyle.BLOCK
     },
 }
 
@@ -33,13 +33,13 @@ openbuilder.data.addVoxel {
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:dirt",
-    type = "solid",
+    type = openbuilder.VoxelType.SOLID,
     collidable = true,
     render = {
         top = "dirt",
         sides = "dirt",
         bottom = "dirt",
-        mesh =  "block",
+        mesh =  openbuilder.MeshStyle.BLOCK
     },
 }
 
@@ -48,13 +48,13 @@ openbuilder.data.addVoxel {
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:stone",
-    type = "solid",
+    type = openbuilder.VoxelType.SOLID,
     collidable = true,
     render = {
         top = "stone",
         sides = "stone",
         bottom = "stone",
-        mesh = "block",
+        mesh =  openbuilder.MeshStyle.BLOCK
     },
 }
 
@@ -63,13 +63,13 @@ openbuilder.data.addVoxel {
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:water",
-    type = "fluid",
+    type = openbuilder.VoxelType.FLUID,
     collidable = false,
     render = {
         top = "water",
         sides = "water",
         bottom = "water",
-        mesh = "block",
+        mesh =  openbuilder.MeshStyle.BLOCK
     },
 }
 
@@ -78,12 +78,12 @@ openbuilder.data.addVoxel {
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:sand",
-    type = "solid",
+    type = openbuilder.VoxelType.SOLID,
     collidable = false,
     render = {
         top = "sand",
         sides = "sand",
         bottom = "sand",
-        mesh = "block",
+        mesh = openbuilder.MeshStyle.BLOCK
     },
 }
