@@ -36,9 +36,11 @@ struct NoiseOptions {
 // THANKS! Karasa and K.jpg for help with this algo
 float rounded(float x, float y)
 {
-    auto bump = [](float t) { return glm::max(0.0f, 1.0f - t * t); };
+    auto bump = [](float t) {
+        return glm::max(0.0f, 1.0f - std::pow(t, 6.0f));
+    };
     float b = bump(x) * bump(y);
-    return b;
+    return b * 0.9f;
 }
 
 float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
@@ -70,25 +72,25 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
 
 } // namespace
 
-std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
+std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position, float seed)
 {
     const float WOLRD_SIZE = 10 * CHUNK_SIZE;
 
-    NoiseOptions land;
-    land.amplitude = 120;
-    land.octaves = 6;
-    land.smoothness = 195.f;
-    land.roughness = 0.58f;
-    land.offset = 50;
+    NoiseOptions firstNoise;
+    firstNoise.amplitude = 105;
+    firstNoise.octaves = 6;
+    firstNoise.smoothness = 205.f;
+    firstNoise.roughness = 0.58f;
+    firstNoise.offset = 15;
 
-    NoiseOptions land2;
-    land2.amplitude = 20;
-    land2.octaves = 4;
-    land2.smoothness = 200;
-    land2.roughness = 0.45f;
-    land2.offset = 0;
+    NoiseOptions secondNoise;
+    secondNoise.amplitude = 20;
+    secondNoise.octaves = 4;
+    secondNoise.smoothness = 200;
+    secondNoise.roughness = 0.45f;
+    secondNoise.offset = 0;
 
-    float seed = 9095.0f;
+    glm::vec2 chunkXZ = {position.x, position.z};
 
     std::array<int, CHUNK_AREA> heightMap;
     for (int z = 0; z < CHUNK_SIZE; z++) {
@@ -99,15 +101,17 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
             glm::vec2 coord =
                 (glm::vec2{bx, bz} - WOLRD_SIZE / 2.0f) / WOLRD_SIZE * 2.0f;
 
-            auto noise = getNoiseAt({x, z}, {position.x, position.z}, land, seed);
-            auto noise2 = getNoiseAt({x, z}, {position.x, position.z}, land2, seed);
+            auto noise = getNoiseAt({x, z}, chunkXZ, firstNoise, seed);
+            auto noise2 =
+                getNoiseAt({x, z}, {position.x, position.z}, secondNoise, 9095.0f);
             auto island = rounded(coord.x, coord.y) * 1.25;
-            float result =
-                ((noise * noise2) * island);// + (noise2 / 2.0f) * island) / 2.0f;
-
+            float result = ((noise * noise2));// * island);// + (noise2 / 2.0f) * island) / 2.0f;
 
             heightMap[z * CHUNK_SIZE + x] =
-                static_cast<int>(result * land.amplitude + land.offset);
+                static_cast<int>(
+                    (result * firstNoise.amplitude + firstNoise.offset) *
+                    island) -
+                2;
         }
     }
 
@@ -116,11 +120,11 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
-                         int worldSize)
+                         int worldSize, int baseChunk)
 {
     auto cp = chunk.getPosition();
     auto cx = cp.x;
-    auto cy = cp.y;
+    auto cy = cp.y - baseChunk;
     auto cz = cp.z;
 
     for (int z = 0; z < CHUNK_SIZE; z++) {
@@ -130,16 +134,16 @@ void createSmoothTerrain(Chunk &chunk,
                 int blockY = cy * CHUNK_SIZE + y;
 
                 if (blockY > height) {
-                    //chunk.qSetBlock({x, y, z}, blockY < 64 ? 4 : 0);
+                    chunk.qSetBlock({x, y, z}, blockY < 32 ? 4 : 0);
                 }
                 else if (blockY == height) {
-                    chunk.qSetBlock({x, y, z}, blockY < 66 ? 5 : 1);
+                    chunk.qSetBlock({x, y, z}, blockY < 35 ? 5 : 1);
                 }
                 else if (blockY > height - 5) {
                     chunk.qSetBlock({x, y, z}, 2);
                 }
                 else {
-                    chunk.qSetBlock({x, y, z}, 3);
+                    chunk.qSetBlock({x, y, z}, 5);
                 }
             }
         }
