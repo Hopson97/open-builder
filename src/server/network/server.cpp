@@ -62,7 +62,7 @@ Server::Server(const ServerConfig &config)
             for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
                 Chunk &chunk = m_world.chunks.addChunk({x, y + m_worldSize - 1, z});
                 createSmoothTerrain(chunk, heightMap, m_worldSize,
-                                    m_worldSize);
+                                    m_worldSize - 1);
                 m_world.chunks.ensureNeighbours(chunk.getPosition());
             }
         }
