@@ -36,7 +36,8 @@ Server::Server(const ServerConfig &config)
         std::cerr << "Lua error: " << err.what() << std::endl;
     }
 
-    //Create core
+    /*
+    //under
     for (int z = 1; z < m_worldSize - 1; z++) {
         for (int x = 1; x < m_worldSize - 1; x++) {
             for (int y = 1; y < m_worldSize - 1; y++) {
@@ -47,7 +48,7 @@ Server::Server(const ServerConfig &config)
         }
     }
 
-    //Create "top of the world"
+    //above
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
             std::array<int, CHUNK_AREA> heightMap =
@@ -64,22 +65,23 @@ Server::Server(const ServerConfig &config)
             }
         }
     }
+    */
 
-    /*
+    
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
             std::array<int, CHUNK_AREA> heightMap =
-                createChunkHeightMap({x, 0, z});
+                createChunkHeightMap({x, 0, z}, 9095.f);
             int maxHeight =
                 *std::max_element(heightMap.cbegin(), heightMap.cend());
             for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
                 Chunk &chunk = m_world.chunks.addChunk({x, y, z});
-                createSmoothTerrain(chunk, heightMap, m_worldSize);
+                createSmoothTerrain(chunk, heightMap, m_worldSize, 0);
                 m_world.chunks.ensureNeighbours({x, y, z});
             }
         }
     }
-    */
+    
     std::cout << "Yeah i am being created\n";
 }
 
