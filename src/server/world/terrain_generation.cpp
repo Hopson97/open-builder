@@ -72,25 +72,25 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
 
 } // namespace
 
-std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
+std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position, float seed)
 {
     const float WOLRD_SIZE = 10 * CHUNK_SIZE;
 
-    NoiseOptions land;
-    land.amplitude = 110;
-    land.octaves = 6;
-    land.smoothness = 205.f;
-    land.roughness = 0.58f;
-    land.offset = 8;
+    NoiseOptions firstNoise;
+    firstNoise.amplitude = 105;
+    firstNoise.octaves = 6;
+    firstNoise.smoothness = 205.f;
+    firstNoise.roughness = 0.58f;
+    firstNoise.offset = 15;
 
-    NoiseOptions land2;
-    land2.amplitude = 20;
-    land2.octaves = 4;
-    land2.smoothness = 200;
-    land2.roughness = 0.45f;
-    land2.offset = 0;
+    NoiseOptions secondNoise;
+    secondNoise.amplitude = 20;
+    secondNoise.octaves = 4;
+    secondNoise.smoothness = 200;
+    secondNoise.roughness = 0.45f;
+    secondNoise.offset = 0;
 
-    float seed = 9095.0f;
+    glm::vec2 chunkXZ = {position.x, position.z};
 
     std::array<int, CHUNK_AREA> heightMap;
     for (int z = 0; z < CHUNK_SIZE; z++) {
@@ -101,14 +101,17 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
             glm::vec2 coord =
                 (glm::vec2{bx, bz} - WOLRD_SIZE / 2.0f) / WOLRD_SIZE * 2.0f;
 
-            auto noise = getNoiseAt({x, z}, {position.x, position.z}, land, seed);
-            auto noise2 = getNoiseAt({x, z}, {position.x, position.z}, land2, seed);
+            auto noise = getNoiseAt({x, z}, chunkXZ, firstNoise, seed);
+            auto noise2 =
+                getNoiseAt({x, z}, {position.x, position.z}, secondNoise, 9095.0f);
             auto island = rounded(coord.x, coord.y) * 1.25;
             float result = ((noise * noise2));// * island);// + (noise2 / 2.0f) * island) / 2.0f;
 
-
             heightMap[z * CHUNK_SIZE + x] =
-                static_cast<int>((result * land.amplitude + land.offset) * island) - 2;
+                static_cast<int>(
+                    (result * firstNoise.amplitude + firstNoise.offset) *
+                    island) -
+                2;
         }
     }
 

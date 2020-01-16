@@ -51,10 +51,7 @@ Server::Server(const ServerConfig &config)
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
             std::array<int, CHUNK_AREA> heightMap =
-                createChunkHeightMap({x, 0, z});
-
-            std::cout << *std::min_element(heightMap.cbegin(), heightMap.cend())
-                      << std::endl;
+                createChunkHeightMap({x, 0, z}, 9095.0f);
 
             int maxHeight =
                 *std::max_element(heightMap.cbegin(), heightMap.cend());
@@ -67,8 +64,6 @@ Server::Server(const ServerConfig &config)
             }
         }
     }
-
-
 
     /*
     for (int z = 0; z < m_worldSize; z++) {
