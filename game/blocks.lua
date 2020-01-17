@@ -9,7 +9,7 @@ openbuilder.data.addVoxel({
         top = "error",
         sides = "error",
         bottom ="error",
-        mesh = openbuilder.MeshStyle.Block
+        mesh = openbuilder.MeshStyle.None
     },
 })
 
@@ -18,13 +18,10 @@ openbuilder.data.addVoxel({
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:grass",
-    type = openbuilder.VoxelType.Solid,
-    collidable = true,
     render = {
         top = "grass",
         sides = "grass_side",
         bottom = "dirt",
-        mesh = openbuilder.MeshStyle.Block
     },
 }
 
@@ -33,13 +30,10 @@ openbuilder.data.addVoxel {
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:dirt",
-    type = openbuilder.VoxelType.Solid,
-    collidable = true,
     render = {
         top = "dirt",
         sides = "dirt",
         bottom = "dirt",
-        mesh =  openbuilder.MeshStyle.Block
     },
 }
 
@@ -48,13 +42,10 @@ openbuilder.data.addVoxel {
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:stone",
-    type = openbuilder.VoxelType.Solid,
-    collidable = true,
     render = {
         top = "stone",
         sides = "stone",
         bottom = "stone",
-        mesh =  openbuilder.MeshStyle.Block
     },
 }
 
@@ -69,7 +60,6 @@ openbuilder.data.addVoxel {
         top = "water",
         sides = "water",
         bottom = "water",
-        mesh =  openbuilder.MeshStyle.Block
     },
 }
 
@@ -84,6 +74,5 @@ openbuilder.data.addVoxel {
         top = "sand",
         sides = "sand",
         bottom = "sand",
-        mesh = openbuilder.MeshStyle.Block
     },
 }

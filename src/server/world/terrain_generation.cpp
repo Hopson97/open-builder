@@ -130,7 +130,7 @@ void createSmoothTerrain(Chunk &chunk,
                 if (blockY > height) {
                     chunk.qSetBlock({x, y, z}, blockY < 32 ? 4 : 0);
                 }
-                else if (blockY == height) {
+                else if (blockY <= height) {
                     chunk.qSetBlock({x, y, z}, blockY < 35 ? 5 : 1);
                 }
                 else if (blockY > height - 5) {

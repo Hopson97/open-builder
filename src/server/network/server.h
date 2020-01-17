@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../scripting/server_game_data.h"
-#include "../world/server_voxel.h"
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/network/net_host.h>

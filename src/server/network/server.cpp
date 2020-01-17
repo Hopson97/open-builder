@@ -24,7 +24,8 @@ Server::Server(const ServerConfig &config)
 
     auto meshStyle = openbuilder.create_named("MeshStyle",
         "Block", VoxelMeshStyle::Block,
-        "Cross", VoxelMeshStyle::Cross);
+        "Cross", VoxelMeshStyle::Cross,
+        "None", VoxelMeshStyle::None);
 
     auto voxelType = openbuilder.create_named("VoxelType",
         "Solid", VoxelType::Solid,
