@@ -59,6 +59,7 @@ void loadFromConfigFile(Config &config)
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
     config.client.fov = std::stoi(clientData["fov"]);
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
+    config.client.connectionTimeout = sf::milliseconds(std::stoi(clientData["connection_timeout"]));
     config.client.skinName = clientData["skin"];
     config.client.texturePack = clientData["texture_pack"];
 
@@ -183,9 +184,6 @@ int launchBoth(const Config &config)
     std::thread serverThread(launchServer, config.server,
                              sf::milliseconds(5000));
 
-    // Allows some time for the server to set up etc
-    // TODO Improve this to wait until server set up, rather than randime
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     int exit = launchClient(config.client);
     serverThread.join();
     return exit;
@@ -201,9 +199,6 @@ int launchServerAnd2Players(const Config &config)
     std::thread serverThread(launchServer, config.server,
                              sf::milliseconds(20000));
 
-    // Allows some time for the server to set up etc
-    // TODO Improve this to wait until server set up, rather than randime
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     std::thread client2(launchClient, config.client);
 
     int exit = launchClient(config.client);

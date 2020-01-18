@@ -7,6 +7,8 @@ CLIENT_DATA
     window_width 1280
     window_height 720
 
+    connection_timeout 10000
+
     skin player
     texture_pack default
 end
