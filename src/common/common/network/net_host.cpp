@@ -4,6 +4,7 @@
 #include "net_constants.h"
 
 #include <SFML/System/Clock.hpp>
+#include <thread>
 
 namespace {
 ENetHost *createHost(const ENetAddress *address, int connections)
@@ -77,7 +78,8 @@ NetworkHost::~NetworkHost()
     enet_host_destroy(mp_host);
 }
 
-std::optional<ENetPeer *> NetworkHost::createAsClient(const std::string &ip, sf::Time timeout)
+std::optional<ENetPeer *> NetworkHost::createAsClient(const std::string &ip,
+                                                      sf::Time timeout)
 {
     mp_host = createHost(0, 1);
     if (!mp_host) {
