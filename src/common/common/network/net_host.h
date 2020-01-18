@@ -54,10 +54,12 @@ class NetworkHost {
      * @brief Creates as a client, and connects the host to a server
      *
      * @param ip The IP address of the server
+     * @param ip How long the client waits for a connection before closing
      * @return std::optional<ENetPeer *> The server peer, might not be
      * successful connection hence optional
      */
-    std::optional<ENetPeer *> createAsClient(const std::string &ip);
+    std::optional<ENetPeer *> createAsClient(const std::string &ip,
+                                             sf::Time timeout);
 
     /**
      * @brief Sets up the host to be a server
