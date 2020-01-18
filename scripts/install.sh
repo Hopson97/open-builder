@@ -40,21 +40,21 @@ else
     fi
     echo "Trying to install dependencies for ${distroname} using ${pkgman}."
     if [[ ${pkgman} == yum ]]; then
-        if yum -y update && yum -y install cmake make pkgconf-pkg-config gcc g++ glm-devel sfml-devel mesa-libGL-devel; then
+        if yum -y update && yum -y install cmake make pkgconf-pkg-config gcc g++ sfml-devel mesa-libGL-devel; then
             echo "Successfully installed dependencies for your system." 
         else
             echo "Failed to install dependencies!"
             exit 1
         fi
     elif [[ ${pkgman} == pacman ]]; then
-        if pacman -Syu --noconfirm && pacman -Sy --noconfirm cmake make pkg-config gcc glm sfml; then
+        if pacman -Syu --noconfirm && pacman -Sy --noconfirm cmake make pkg-config gcc sfml; then
             echo "Successfully installed dependencies for your system." 
         else
             echo "Failed to install dependencies!"
             exit 1
         fi
     elif [[ ${pkgman} == apt ]]; then
-        if apt-get -y update && apt-get -y --fix-missing install make pkg-config gcc g++ libglm-dev libsfml-dev libegl1-mesa-dev; then
+        if apt-get -y update && apt-get -y --fix-missing install make pkg-config gcc g++ libsfml-dev libegl1-mesa-dev; then
             echo "Successfully installed dependencies for your system."
         else
             echo "Failed to install dependencies!"
