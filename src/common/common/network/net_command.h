@@ -41,6 +41,34 @@ enum class ClientCommand : command_t {
     // float[3]: The X, Y, Z position of the entity
     SpawnPoint,
 
+    // Command to say that a block was updated
+    // Data:
+    // u32: Number of block updates
+    // [For each block update...]
+    // i32[3]: The X, Y, Z position of the block edit
+    // block_t: The block it has been changed to
+    BlockUpdate,
+
+    // Command to update the skin of a player in-game
+    // Data:
+    // peer_id_t: The ID of the player
+    // u8[8192]: Skin data (RGBA8 format)
+    NewPlayerSkin,
+
+    // The data needed for the blocks, entities etc
+    // The client will not process data/render anything until this has been
+    // recieved
+    // Data:
+    // u16: Number of block types
+    // [For each block type (Sent in order of Block ID)...]
+    // String: name
+    // String: the voxel's top texture
+    // String: the voxel's side texture
+    // String: the voxel's bottom texture
+    // u8: The voxels mesh style aka VoxelMeshStyle
+    // u8: The voxels state/type aka VoxelMeshType
+    // u8: Whether the block is collidable or not
+    GameRegistryData
 };
 
 /**
@@ -52,6 +80,17 @@ enum class ServerCommand : command_t {
     // peer_id_t: The player which position is being sent
     // float[3]: The x, y, z position of the player
     PlayerPosition,
+
+    // Command to say that a block was edited
+    // Data:
+    // i32[3]: The X, Y, Z position of the block edit
+    // block_t: The block it has been changed to
+    BlockEdit,
+
+    // Command that sends the player's skin
+    // Data:
+    // u8[8192]: Imaga Data in RGBA format (Should be 8kb)
+    PlayerSkin,
 };
 
 template <typename CommandType>

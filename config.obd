@@ -1,0 +1,18 @@
+CLIENT_DATA
+    cap_fps 0
+    fps_limit 60
+    fov 90
+
+    fullscreen 0
+    window_width 1280
+    window_height 720
+
+    connection_timeout 10000
+
+    skin player
+    texture_pack default
+end
+
+SERVER_DATA
+    world_size 10
+end

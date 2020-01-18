@@ -4,4 +4,5 @@
 
 struct ServerConfig {
     int maxConnections = 4;
+    int worldSize = 16;
 };

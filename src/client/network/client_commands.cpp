@@ -4,12 +4,51 @@
 #include <common/world/chunk.h>
 #include <thread>
 
+namespace {
+Chunk::CompressedBlocks getCompressedChunkFromPacket(sf::Packet &packet)
+{
+    u32 size;
+    Chunk::CompressedBlocks compressed;
+    packet >> size;
+    for (u32 i = 0; i < size; i++) {
+        block_t type;
+        u16 count;
+        packet >> type >> count;
+        compressed.emplace_back(type, count);
+    }
+    return compressed;
+}
+} // namespace
+
 void Client::sendPlayerPosition(const glm::vec3 &position)
 {
     sf::Packet packet;
     packet << ServerCommand::PlayerPosition << NetworkHost::getPeerId()
            << position.x << position.y << position.z;
     NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
+}
+
+void Client::sendBlockUpdate(const BlockUpdate &update)
+{
+    sf::Packet packet;
+    packet << ServerCommand::BlockEdit << update.position.x << update.position.y
+           << update.position.z << update.block;
+    NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
+}
+
+void Client::sendPlayerSkin(const sf::Image &playerSkin)
+{
+    // Check the image is the right size
+    if (playerSkin.getSize() != sf::Vector2u(32, 64)) {
+        LOG("Client", "Player's skin has the wrong dimensions");
+        return;
+    }
+
+    sf::Packet packet;
+    packet << ServerCommand::PlayerSkin << NetworkHost::getPeerId();
+    packet.append(playerSkin.getPixelsPtr(), 8192);
+    NetworkHost::sendToPeer(mp_serverPeer, packet, 0,
+                            ENET_PACKET_FLAG_RELIABLE);
 }
 
 void Client::onPeerConnect([[maybe_unused]] ENetPeer *peer)
@@ -48,6 +87,19 @@ void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
 
         case ClientCommand::SpawnPoint:
             onSpawnPoint(packet);
+            break;
+
+        case ClientCommand::BlockUpdate:
+            onBlockUpdate(packet);
+            break;
+
+        case ClientCommand::NewPlayerSkin:
+            onPlayerSkinReceive(packet);
+            break;
+
+        case ClientCommand::GameRegistryData:
+            onGameRegistryData(packet);
+            break;
 
         case ClientCommand::PeerId:
             break;
@@ -56,7 +108,7 @@ void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
 
 void Client::onPlayerJoin(sf::Packet &packet)
 {
-    peer_id_t id;
+    peer_id_t id = 0;
     packet >> id;
     m_entities[id].active = true;
 
@@ -65,7 +117,7 @@ void Client::onPlayerJoin(sf::Packet &packet)
 
 void Client::onPlayerLeave(sf::Packet &packet)
 {
-    peer_id_t id;
+    peer_id_t id = 0;
     packet >> id;
     m_entities[id].active = false;
 
@@ -90,22 +142,21 @@ void Client::onSnapshot(sf::Packet &packet)
 
 void Client::onChunkData(sf::Packet &packet)
 {
+    // Get position of the recieved chunk, and create a chunk
     ChunkPosition position;
-
     packet >> position.x >> position.y >> position.z;
-    Chunk &chunk = m_chunks.manager.addChunk(position);
 
-    u32 size;
-    Chunk::CompressedBlocks compressed;
-    packet >> size;
-    for (u32 i = 0; i < size; i++) {
-        block_t type;
-        u16 count;
-        packet >> type >> count;
-        compressed.emplace_back(type, count);
+    if (!m_chunks.manager.hasChunk(position)) {
+
+        Chunk &chunk = m_chunks.manager.addChunk(position);
+
+        // Uncompress the block data
+        auto compressedData = getCompressedChunkFromPacket(packet);
+        chunk.decompress(compressedData);
+
+        // Add to chunk updates
+        m_chunks.updates.push_back(position);
     }
-    chunk.decompress(compressed);
-    m_chunks.updates.push_back(position);
 }
 
 void Client::onSpawnPoint(sf::Packet &packet)
@@ -115,4 +166,89 @@ void Client::onSpawnPoint(sf::Packet &packet)
         packet >> mp_player->position.x >> mp_player->position.y >>
             mp_player->position.z;
     }
+}
+
+void Client::onBlockUpdate(sf::Packet &packet)
+{
+    u16 count = 0;
+    packet >> count;
+    for (u32 i = 0; i < count; i++) {
+        BlockUpdate blockUpdate;
+        packet >> blockUpdate.position.x >> blockUpdate.position.y >>
+            blockUpdate.position.z >> blockUpdate.block;
+        m_chunks.blockUpdates.push_back(blockUpdate);
+    }
+}
+
+void Client::onPlayerSkinReceive(sf::Packet &packet)
+{
+    peer_id_t id = 0;
+    packet >> id;
+
+    LOGVAR("Client", "Received skin for peer", (int)id);
+
+    sf::Uint8 *skinPixels =
+        (sf::Uint8 *)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
+    m_entities[id].playerSkin.create(32, 64, skinPixels);
+}
+
+void Client::onGameRegistryData(sf::Packet &packet)
+{
+    LOG("Client", "Got data");
+    //  ====
+    //  Get all blocks from the server
+    //
+    // Maps tewxture names to their respective IDs in the
+    // OpenGL texture array
+    std::unordered_map<std::string, GLuint> textureMap;
+    auto getTexture = [&textureMap, this](const std::string &name) {
+        auto itr = textureMap.find(name);
+        if (itr == textureMap.end()) {
+            auto id = m_voxelTextures.addTexture(name);
+            textureMap.emplace(name, id);
+            return id;
+        }
+        return itr->second;
+    };
+
+    u16 numBlocks;
+    packet >> numBlocks;
+    LOGVAR("Client", "Got blocks: ", (int)numBlocks);
+    // todo
+    // 1. Need to somehow work out the exact amount of textures needed
+    // 2. Need to pass in the actual texture pack resolution
+    m_voxelTextures.create(numBlocks * 3, 16);
+    const std::string texturePath = "default/textures/blocks/";
+    for (u16 i = 0; i < numBlocks; i++) {
+        std::string name;
+        std::string textureTop;
+        std::string textureSide;
+        std::string textureBottom;
+
+        u8 meshStyle = 0;
+        u8 meshType = 0;
+        u8 isCollidable = 0;
+
+        packet >> name;
+        packet >> textureTop;
+        packet >> textureSide;
+        packet >> textureBottom;
+        packet >> meshStyle;
+        packet >> meshType;
+        packet >> isCollidable;
+
+        ClientVoxel voxelData;
+        voxelData.name = name;
+        voxelData.topTexture = getTexture(texturePath + textureTop);
+        voxelData.sideTexture = getTexture(texturePath + textureSide);
+        voxelData.bottomTexture = getTexture(texturePath + textureBottom);
+
+        voxelData.meshStyle = static_cast<VoxelMeshStyle>(meshStyle);
+        voxelData.meshType = static_cast<VoxelMeshType>(meshType);
+        voxelData.isCollidable = isCollidable;
+
+        m_voxelData.addVoxelData(voxelData);
+    }
+
+    m_hasReceivedGameData = true;
 }

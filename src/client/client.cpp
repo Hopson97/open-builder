@@ -9,12 +9,14 @@
 #include <common/network/net_constants.h>
 #include <thread>
 
+#include "client_config.h"
+
 Client::Client()
     : NetworkHost("Client")
 {
 }
 
-bool Client::init(float aspect)
+bool Client::init(const ClientConfig &config, float aspect)
 {
     // OpenGL stuff
     m_cube = makeCubeVertexArray(1, 2, 1);
@@ -34,15 +36,13 @@ bool Client::init(float aspect)
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
 
     // Texture for the player model
-    m_texture.create("player");
-    m_texture.bind();
+    m_errorSkinTexture.create("skins/error");
+    m_errorSkinTexture.bind();
 
-    // Texture for grass
-    m_grassTexture.create("grass");
-    m_grassTexture.bind();
+    m_texturePack = config.texturePack;
 
     // Set up the server connection
-    auto peer = NetworkHost::createAsClient(LOCAL_HOST);
+    auto peer = NetworkHost::createAsClient(LOCAL_HOST, config.connectionTimeout);
     if (!peer) {
         return false;
     }
@@ -52,13 +52,18 @@ bool Client::init(float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
-    m_projectionMatrix =
-        glm::perspective(3.14f / 2.0f, aspect, 0.01f, 10000.0f);
+    m_rawPlayerSkin = gl::loadRawImageFile("skins/" + config.skinName);
+    sendPlayerSkin(m_rawPlayerSkin);
+
+    m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
     return true;
 }
 
 void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
 {
+    if (!m_hasReceivedGameData) {
+        return;
+    }
     static auto lastMousePosition = sf::Mouse::getPosition(window);
 
     // Handle mouse input
@@ -98,23 +103,13 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
     else if (keyboard.isKeyDown(sf::Keyboard::LShift)) {
         velocity.y -= PLAYER_SPEED * 2;
-        // std::cout << position << std::endl;
+        std::cout << mp_player->position << std::endl;
     }
-
-    /*
-        if (rotation.x < -80.0f) {
-            rotation.x = -79.0f;
-        }
-        else if (rotation.x > 85.0f) {
-            rotation.x = 84.0f;
-        }
-    */
-}
-
-void Client::onKeyRelease(sf::Keyboard::Key key)
-{
-    if (key == sf::Keyboard::L) {
-        m_isMouseLocked = !m_isMouseLocked;
+    if (rotation.x < -80.0f) {
+        rotation.x = -79.9f;
+    }
+    else if (rotation.x > 85.0f) {
+        rotation.x = 84.9f;
     }
 }
 
@@ -122,34 +117,95 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
                             [[maybe_unused]] int y)
 {
     // Handle block removal/ block placing events
-    Ray ray(mp_player->position, mp_player->rotation);
-    for (; ray.getLength() < 8; ray.step()) {
-        auto blockPosition = toBlockPosition(ray.getEndpoint());
-        if (m_chunks.manager.getBlock(blockPosition) == 1) {
 
+    // Create a "ray"
+    Ray ray(mp_player->position, mp_player->rotation);
+
+    // Step the ray until it hits a block/ reaches maximum length
+    for (; ray.getLength() < 8; ray.step()) {
+        auto rayBlockPosition = toBlockPosition(ray.getEndpoint());
+        if (m_chunks.manager.getBlock(rayBlockPosition) > 0) {
             BlockUpdate blockUpdate;
             blockUpdate.block = button == sf::Mouse::Left ? 0 : 1;
             blockUpdate.position = button == sf::Mouse::Left
-                                       ? blockPosition
+                                       ? rayBlockPosition
                                        : toBlockPosition(ray.getLastPoint());
             m_chunks.blockUpdates.push_back(blockUpdate);
+            sendBlockUpdate(blockUpdate);
             break;
         }
     }
 }
 
+void Client::onKeyRelease(sf::Keyboard::Key key)
+{
+    switch (key) {
+        case sf::Keyboard::L:
+            m_isMouseLocked = !m_isMouseLocked;
+            break;
+
+        case sf::Keyboard::P:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            break;
+
+        case sf::Keyboard::F:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            break;
+
+        case sf::Keyboard::C:
+            glCullFace(GL_BACK);
+            break;
+
+        case sf::Keyboard::N:
+            glCullFace(GL_NONE);
+            break;
+
+        default:
+            break;
+    }
+}
+
 void Client::update(float dt)
 {
+    NetworkHost::tick();
+    if (!m_hasReceivedGameData) {
+        return;
+    }
+
     mp_player->position += mp_player->velocity * dt;
     mp_player->velocity *= 0.99 * dt;
-    NetworkHost::tick();
+
     sendPlayerPosition(mp_player->position);
+
     // Update blocks
     for (auto &blockUpdate : m_chunks.blockUpdates) {
         auto chunkPosition = toChunkPosition(blockUpdate.position);
         m_chunks.manager.ensureNeighbours(chunkPosition);
         m_chunks.manager.setBlock(blockUpdate.position, blockUpdate.block);
         m_chunks.updates.push_back(chunkPosition);
+
+        auto p = chunkPosition;
+        auto localBlockPostion = toLocalBlockPosition(blockUpdate.position);
+        if (localBlockPostion.x == 0) {
+            m_chunks.updates.push_back({p.x - 1, p.y, p.z});
+        }
+        else if (localBlockPostion.x == CHUNK_SIZE - 1) {
+            m_chunks.updates.push_back({p.x + 1, p.y, p.z});
+        }
+
+        if (localBlockPostion.y == 0) {
+            m_chunks.updates.push_back({p.x, p.y - 1, p.z});
+        }
+        else if (localBlockPostion.y == CHUNK_SIZE - 1) {
+            m_chunks.updates.push_back({p.x, p.y + 1, p.z});
+        }
+
+        if (localBlockPostion.z == 0) {
+            m_chunks.updates.push_back({p.x, p.y, p.z - 1});
+        }
+        else if (localBlockPostion.z == CHUNK_SIZE - 1) {
+            m_chunks.updates.push_back({p.x, p.y, p.z + 1});
+        }
     }
     m_chunks.blockUpdates.clear();
 
@@ -161,14 +217,14 @@ void Client::update(float dt)
     };
 
     if (!m_chunks.updates.empty()) {
-        // Sort chunk updates by distance if the update vector is not sorted
-        // already
+        // Sort chunk updates by distance if the update vector is not
+        // sorted already
         if (!std::is_sorted(m_chunks.updates.begin(), m_chunks.updates.end(),
                             [&](const auto &a, const auto &b) {
                                 return distanceToPlayer(a) <
                                        distanceToPlayer(b);
                             })) {
-            // Remove unique elements
+            // Remove non-unique elements
             std::unordered_set<ChunkPosition, ChunkPositionHash> updates;
             for (auto &update : m_chunks.updates) {
                 updates.insert(update);
@@ -188,23 +244,25 @@ void Client::update(float dt)
         }
 
         // Find first "meshable" chunk
-
+        int count = 0;
         if (!m_blockMeshing) {
             m_noMeshingCount = 0;
             for (auto itr = m_chunks.updates.cbegin();
                  itr != m_chunks.updates.cend();) {
                 if (m_chunks.manager.hasNeighbours(*itr)) {
                     auto &chunk = m_chunks.manager.getChunk(*itr);
-                    auto buffer = makeChunkMesh(chunk);
+                    auto buffer = makeChunkMesh(chunk, m_voxelData);
                     m_chunks.bufferables.push_back(buffer);
                     deleteChunkRenderable(*itr);
-                    m_chunks.updates.erase(itr);
+                    itr = m_chunks.updates.erase(itr);
 
-                    // Break so that the game still runs while world is being
-                    // built
-                    // TODO: Work out a way to make this concurrent (aka run
-                    // seperate from rest of application)
-                    break;
+                    // Break so that the game still runs while world is
+                    // being built
+                    // TODO: Work out a way to make this concurrent (aka
+                    // run seperate from rest of application)
+                    if (count++ > 3) {
+                        break;
+                    }
                 }
                 else {
                     m_noMeshingCount++;
@@ -220,6 +278,9 @@ void Client::update(float dt)
 
 void Client::render()
 {
+    if (!m_hasReceivedGameData) {
+        return;
+    }
     // Setup matrices
     glm::mat4 viewMatrix{1.0f};
     glm::mat4 projectionViewMatrix{1.0f};
@@ -236,9 +297,16 @@ void Client::render()
     // Render all the entities
     auto drawable = m_cube.getDrawable();
     drawable.bind();
-    m_texture.bind();
+
     for (auto &ent : m_entities) {
         if (ent.active && &ent != mp_player) {
+            if (ent.playerSkin.textureExists()) {
+                ent.playerSkin.bind();
+            }
+            else {
+                m_errorSkinTexture.bind();
+            }
+
             glm::mat4 modelMatrix{1.0f};
             translateMatrix(modelMatrix,
                             {ent.position.x, ent.position.y, ent.position.z});
@@ -249,7 +317,8 @@ void Client::render()
 
     // Render chunks
     m_chunkShader.program.bind();
-    m_grassTexture.bind();
+
+    m_voxelTextures.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
 
     // Buffer chunks
@@ -271,10 +340,17 @@ void Client::render()
 
 void Client::endGame()
 {
+    // Destroy all player skins
+    for (auto &ent : m_entities) {
+        if (ent.playerSkin.textureExists())
+            ent.playerSkin.destroy();
+    }
+    m_errorSkinTexture.destroy();
+
     m_cube.destroy();
-    m_texture.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
+    m_voxelTextures.destroy();
 
     for (auto &chunk : m_chunks.drawables) {
         chunk.vao.destroy();

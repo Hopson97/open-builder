@@ -40,6 +40,7 @@ function (include_dirs target)
     target_include_directories(${target} 
         PRIVATE 
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/lua/
         ${CMAKE_CURRENT_SOURCE_DIR}/src/common/
     )
 endfunction(include_dirs)
@@ -96,10 +97,11 @@ function (do_tests)
     #Create the unit test executable
     add_executable(tests
         tests/tests.cpp
-        tests/common/world/chunk_manager_test.cpp
-        tests/common/world/coordinate_test.cpp
-        tests/common/world/chunk_test.cpp
-        tests/common/network/net_host_test.cpp
+      #  tests/common/world/chunk_manager_test.cpp
+      #  tests/common/world/coordinate_test.cpp
+      #  tests/common/world/chunk_test.cpp
+        #tests/common/network/net_host_test.cpp
+        tests/common/obd_parser_test.cpp
     )
     
     include_dirs(tests)

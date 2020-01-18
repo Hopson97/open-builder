@@ -1,1 +1,1 @@
-.\Release\open-builder.exe -server 4
+.\Release\OpenBuilder.exe -server 4

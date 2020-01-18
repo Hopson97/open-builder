@@ -9,7 +9,7 @@
 
 void runServerEngine(const ServerConfig &config, sf::Time timeout)
 {
-    Server engine;
+    Server engine(config);
     if (!engine.createAsServer(config.maxConnections)) {
         std::cout << "Failed to create server.\n";
         return;
@@ -40,7 +40,7 @@ void runServerEngine(const ServerConfig &config, sf::Time timeout)
 
         // Server updates
         engine.tick();
-        engine.sendPackets();
+        engine.update();
 
         // Exit the server if there is no connections
         if (engine.getConnectedPeerCount() == 0) {

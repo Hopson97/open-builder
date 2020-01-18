@@ -3,6 +3,8 @@
 #include <common/file_io.h>
 #include <stdexcept>
 
+#include <iostream>
+
 namespace {
 GLuint compileShader(const GLchar *source, GLenum shaderType)
 {
@@ -17,6 +19,9 @@ GLuint compileShader(const GLchar *source, GLenum shaderType)
     glCheck(glGetShaderiv(shaderID, GL_COMPILE_STATUS, &isSuccess));
     if (!isSuccess) {
         glCheck(glGetShaderInfoLog(shaderID, 512, nullptr, infoLog));
+        std::cout << "Unable to load a shader: " + std::string(infoLog)
+                  << std::endl;
+
         throw std::runtime_error("Unable to load a shader: " +
                                  std::string(infoLog));
     }

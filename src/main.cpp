@@ -13,6 +13,7 @@
 #include "server/server_config.h"
 
 #include <common/network/enet.h>
+#include <common/obd_parser.h>
 
 // Enable nvidia
 #ifdef _WIN32
@@ -28,6 +29,7 @@ enum class LaunchType {
     Server,
     Client,
     Both,
+    TwoPlayer,
 };
 
 /**
@@ -36,8 +38,8 @@ enum class LaunchType {
 struct Config {
     LaunchType launchType = LaunchType::Both;
 
-    ServerConfig serverOptions;
-    ClientConfig clientOptions;
+    ServerConfig server;
+    ClientConfig client;
 };
 
 /**
@@ -46,29 +48,22 @@ struct Config {
  */
 void loadFromConfigFile(Config &config)
 {
-    std::ifstream inFile("config.txt");
-    std::string line;
-    int option;
-    while (inFile >> line >> option) {
-        if (line == "FULLSCREEN") {
-            config.clientOptions.fullScreen = option;
-        }
-        else if (line == "WIN_WIDTH") {
-            config.clientOptions.windowWidth = option;
-        }
-        else if (line == "WIN_HEIGHT") {
-            config.clientOptions.windowHeight = option;
-        }
-        else if (line == "FPS_CAPPED") {
-            config.clientOptions.isFpsCapped = option;
-        }
-        else if (line == "FPS") {
-            config.clientOptions.fpsLimit = option;
-        }
-        else if (line == "FOV") {
-            config.clientOptions.fov = option;
-        }
-    }
+    auto data = getObdData("config.obd");
+    auto clientData = data[0].data;
+    auto serverData = data[1].data;
+
+    config.client.fullScreen = std::stoi(clientData["fullscreen"]);
+    config.client.windowWidth = std::stoi(clientData["window_width"]);
+    config.client.windowHeight = std::stoi(clientData["window_height"]);
+    config.client.isFpsCapped = std::stoi(clientData["cap_fps"]);
+    config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
+    config.client.fov = std::stoi(clientData["fov"]);
+    config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
+    config.client.connectionTimeout = sf::milliseconds(std::stoi(clientData["connection_timeout"]));
+    config.client.skinName = clientData["skin"];
+    config.client.texturePack = clientData["texture_pack"];
+
+    config.server.worldSize = std::stoi(serverData["world_size"]);
 }
 
 /**
@@ -101,11 +96,14 @@ void parseArgs(Config &config,
                 std::cout << "Unable to set max connections, defaulting to "
                              "4. Reason: "
                           << e.what() << "\n";
-                config.serverOptions.maxConnections = 4;
+                config.server.maxConnections = 4;
             }
         }
         else if (option.first == "-client") {
             config.launchType = LaunchType::Client;
+        }
+        else if (option.first == "-skin") {
+            config.client.skinName = option.second;
         }
     }
 }
@@ -183,12 +181,29 @@ int launchClient(const ClientConfig &config)
  */
 int launchBoth(const Config &config)
 {
-    std::thread serverThread(launchServer, config.serverOptions,
+    std::thread serverThread(launchServer, config.server,
                              sf::milliseconds(5000));
 
-    // Allows some time for the server to set up etc
-    std::this_thread::sleep_for(std::chrono::milliseconds(150));
-    int exit = launchClient(config.clientOptions);
+    int exit = launchClient(config.client);
+    serverThread.join();
+    return exit;
+}
+
+/**
+ * @brief Launches 2 clients and the server. Useful for testing multiplayer
+ * @param config The config to be used by client/server engines
+ * @return int Exit flag (Success, or Failure)
+ */
+int launchServerAnd2Players(const Config &config)
+{
+    std::thread serverThread(launchServer, config.server,
+                             sf::milliseconds(20000));
+
+    std::thread client2(launchClient, config.client);
+
+    int exit = launchClient(config.client);
+
+    client2.join();
     serverThread.join();
     return exit;
 }
@@ -209,19 +224,21 @@ int main(int argc, char **argv)
         }
     }
 
-    parseArgs(config, args);
     loadFromConfigFile(config);
+    parseArgs(config, args);
 
     switch (config.launchType) {
         case LaunchType::Both:
             return launchBoth(config);
 
         case LaunchType::Server:
-            return launchServer(config.serverOptions);
-            break;
+            return launchServer(config.server);
 
         case LaunchType::Client:
-            return launchClient(config.clientOptions);
+            return launchClient(config.client);
+
+        case LaunchType::TwoPlayer:
+            return launchServerAnd2Players(config);
     }
 
     enet_deinitialize();
