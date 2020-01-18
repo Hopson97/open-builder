@@ -4,6 +4,7 @@ add_library(ob-common
     obd_parser.cpp
     debug.cpp
     network/net_host.cpp
+    scripting/script_engine.cpp
     world/chunk.cpp
     world/chunk_manager.cpp
     world/coordinate.cpp
