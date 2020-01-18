@@ -183,7 +183,8 @@ int launchBoth(const Config &config)
 {
     std::thread serverThread(launchServer, config.server,
                              sf::milliseconds(5000));
-
+    //temp, the retrying until connection made doesn't seem to be working
+    std::this_thread::sleep_for(std::chrono::milliseconds(700));
     int exit = launchClient(config.client);
     serverThread.join();
     return exit;

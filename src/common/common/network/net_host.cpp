@@ -89,11 +89,13 @@ std::optional<ENetPeer *> NetworkHost::createAsClient(const std::string &ip,
 
     sf::Clock clock;
     auto server = connectHostTo(mp_host, ip);
+    /*
     while (!server && clock.getElapsedTime() < timeout) {
         LOG(m_name.c_str(), "Error: Failed to connect to server, retrying...");
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         server = connectHostTo(mp_host, ip);
     }
+    */
     if (!server) {
         LOG(m_name.c_str(), "Error: Failed to connect to server (Game Full).");
         return {};
