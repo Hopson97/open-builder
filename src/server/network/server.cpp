@@ -113,7 +113,6 @@ void Server::sendGameData(peer_id_t peerId)
         u8 mesh = static_cast<u8>(voxel.meshStyle);
         u8 type = static_cast<u8>(voxel.meshType);
         u8 isCollidable = static_cast<u8>(voxel.isCollidable);
-        LOGVAR("Server", "Added voxel data:", voxel.name);
         packet << voxel.name;
         packet << voxel.topTexture;
         packet << voxel.sideTexture;
@@ -123,7 +122,6 @@ void Server::sendGameData(peer_id_t peerId)
         packet << isCollidable;
     }
 
-    LOGVAR("Server", "Sending game data to :", (int)peerId);
     sendToPeer(m_connectedClients[peerId].peer, packet, 0,
                ENET_PACKET_FLAG_RELIABLE);
 }

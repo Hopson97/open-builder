@@ -15,11 +15,9 @@ void ServerGameData::addVoxel(const sol::table &voxelData)
         voxel.isCollidable = voxelData["collidable"].get<bool>();
     }
     if (voxelData["render"]["mesh"].valid()) {
-  
         voxel.meshStyle = voxelData["render"]["mesh"].get<VoxelMeshStyle>();
     }
     if (voxelData["render"]["type"].valid()) {
-
         voxel.meshType = voxelData["render"]["type"].get<VoxelType>();
     }
 
@@ -29,8 +27,6 @@ void ServerGameData::addVoxel(const sol::table &voxelData)
     voxel.bottomTexture = voxelData["render"]["bottom"].get<std::string>();
 
     m_voxelDataList.push_back(voxel);
-
-    LOGVAR("Server", "Adding block", voxel.name);
 }
 
 const VoxelDataList &ServerGameData::voxelData() const
