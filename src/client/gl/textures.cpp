@@ -169,7 +169,7 @@ void TextureArray::create(GLsizei numTextures, GLsizei textureSize)
 GLuint TextureArray::addTexture(const std::string &file)
 {
     sf::Image image;
-    if (!image.loadFromFile("res/" + file + ".png")) {
+    if (!image.loadFromFile(file + ".png")) {
         // Create a error image
         image.create(m_textureSize, m_textureSize);
         for (GLuint y = 0; y < m_textureSize; y++) {

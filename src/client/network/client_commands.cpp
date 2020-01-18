@@ -218,7 +218,8 @@ void Client::onGameRegistryData(sf::Packet &packet)
     // 1. Need to somehow work out the exact amount of textures needed
     // 2. Need to pass in the actual texture pack resolution
     m_voxelTextures.create(numBlocks * 3, 16);
-    const std::string texturePath = "default/textures/blocks/";
+
+    const std::string texturePath = "texture_packs/" + m_texturePack + "/blocks/";
     for (u16 i = 0; i < numBlocks; i++) {
         std::string name;
         std::string textureTop;
