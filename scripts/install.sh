@@ -72,5 +72,6 @@ else
            echo "Failed to build the project!"
            exit 1
        fi
+    fi
     exit 0
 fi
