@@ -10,7 +10,7 @@ CLIENT_DATA
     connection_timeout 10000
 
     skin player
-    texture_pack default
+    texture_pack default1
 end
 
 SERVER_DATA
