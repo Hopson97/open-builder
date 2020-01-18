@@ -14,41 +14,30 @@ Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
 {
-    m_luaState.open_libraries(sol::lib::base);
-
-    auto openbuilder = m_luaState["openbuilder"].get_or_create<sol::table>();
 
     // clang-format off
-    auto data = openbuilder.create_named("data", 
+    m_script.addTable("data", 
         "addVoxel", [&](const sol::table &voxelDef) { m_gameData.addVoxel(voxelDef); });
 
-    auto meshStyle = openbuilder.create_named("MeshStyle",
+    m_script.addTable("MeshStyle",
         "Block", VoxelMeshStyle::Block,
         "Cross", VoxelMeshStyle::Cross,
         "None", VoxelMeshStyle::None);
 
-    auto voxelType = openbuilder.create_named("VoxelType",
+    m_script.addTable("VoxelType",
         "Solid", VoxelType::Solid,
         "Fluid", VoxelType::Fluid,
         "Flora", VoxelType::Flora,
         "Gas", VoxelType::Gas);
 
+    m_script.runLuaScript("game/blocks.lua");
     // clang-format on
 
-    auto script = m_luaState.load_file("game/blocks.lua");
-
-    if (script.valid()) {
-        auto r = script();
-    }
-    else {
-        sol::error err = script;
-        std::cerr << "Lua error: " << err.what() << std::endl;
-    }
 
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
             std::array<int, CHUNK_AREA> heightMap =
-                createChunkHeightMap({x, 0, z}, m_worldSize, 9095.f);
+                createChunkHeightMap({x, 0, z}, (float)m_worldSize, 9095.f);
             int maxHeight =
                 *std::max_element(heightMap.cbegin(), heightMap.cend());
             for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {

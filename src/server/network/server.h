@@ -8,7 +8,7 @@
 #include <common/world/voxel_registry.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <sol/sol.hpp>
+#include <common/scripting/script_engine.h>
 
 struct ServerConfig;
 
@@ -71,6 +71,6 @@ class Server final : public NetworkHost {
     bool m_isRunning = true;
     const int m_worldSize;
 
-    sol::state m_luaState;
+    ScriptEngine m_script;
     ServerGameData m_gameData;
 };

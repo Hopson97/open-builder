@@ -80,7 +80,7 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
     firstNoise.octaves = 6;
     firstNoise.smoothness = 205.f;
     firstNoise.roughness = 0.58f;
-    firstNoise.offset = 15;
+    firstNoise.offset = 18;
 
     NoiseOptions secondNoise;
     secondNoise.amplitude = 20;
@@ -108,7 +108,7 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
 
             heightMap[z * CHUNK_SIZE + x] =
                 (result * firstNoise.amplitude + firstNoise.offset) * island -
-                2;
+                5;
         }
     }
 
