@@ -238,6 +238,7 @@ void Client::onGameRegistryData(sf::Packet &packet)
         packet >> isCollidable;
 
         ClientVoxel voxelData;
+        voxelData.id = m_voxelData.getNextId();
         voxelData.name = name;
         voxelData.topTexture = getTexture(texturePath + textureTop);
         voxelData.sideTexture = getTexture(texturePath + textureSide);

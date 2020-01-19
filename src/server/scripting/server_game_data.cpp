@@ -14,17 +14,20 @@ void ServerGameData::addVoxel(const sol::table &voxelData)
     if (voxelData["collidable"].valid()) {
         voxel.isCollidable = voxelData["collidable"].get<bool>();
     }
-    if (voxelData["render"]["mesh"].valid()) {
-        voxel.meshStyle = voxelData["render"]["mesh"].get<VoxelMeshStyle>();
-    }
-    if (voxelData["render"]["type"].valid()) {
-        voxel.meshType = voxelData["render"]["type"].get<VoxelType>();
+
+
+
+    if (voxelData["type"].valid()) {
+        voxel.meshType =
+            voxelData["type"].get<VoxelType>();
     }
 
-    voxel.meshType = voxelData["render"]["type"].get<VoxelType>();
     voxel.topTexture = voxelData["render"]["top"].get<std::string>();
     voxel.sideTexture = voxelData["render"]["sides"].get<std::string>();
     voxel.bottomTexture = voxelData["render"]["bottom"].get<std::string>();
+    if (voxelData["render"]["mesh"].valid()) {
+        voxel.meshStyle = voxelData["render"]["mesh"].get<VoxelMeshStyle>();
+    }
 
     m_voxelDataList.push_back(voxel);
 }

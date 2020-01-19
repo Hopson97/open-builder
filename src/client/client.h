@@ -81,7 +81,6 @@ class Client final : public NetworkHost {
     void onGameRegistryData(sf::Packet &packet);
     // End of network functions
 
-    int findChunkDrawableIndex(const ChunkPosition &position);
     void deleteChunkRenderable(const ChunkPosition &position);
 
     // Network
@@ -122,8 +121,9 @@ class Client final : public NetworkHost {
     Entity m_externalCamera;
 
     struct {
-        std::vector<ChunkMesh> bufferables;
+        std::vector<ChunkMeshCollection> bufferables;
         std::vector<ChunkDrawable> drawables;
+        std::vector<ChunkDrawable> fluidDrawables;
         ChunkManager manager;
         std::vector<ChunkPosition> updates;
         std::vector<BlockUpdate> blockUpdates;

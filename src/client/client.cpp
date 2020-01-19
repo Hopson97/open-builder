@@ -1,6 +1,7 @@
 #include "client.h"
 
 #include "gl/primitive.h"
+#include "gl/gl_errors.h"
 #include "input/keyboard.h"
 #include "world/chunk_mesh_generation.h"
 #include <SFML/Window/Mouse.hpp>
@@ -10,6 +11,34 @@
 #include <thread>
 
 #include "client_config.h"
+
+namespace {
+int findChunkDrawableIndex(const ChunkPosition &position,
+                           const std::vector<ChunkDrawable> &drawables)
+{
+    for (int i = 0; i < static_cast<int>(drawables.size()); i++) {
+        if (drawables[i].position == position) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void deleteChunkRenderable(const ChunkPosition &position,
+                           std::vector<ChunkDrawable> &drawables)
+{
+    auto index = findChunkDrawableIndex(position, drawables);
+    if (index > -1) {
+        drawables[index].vao.destroy();
+
+        // As the chunk renders need not be a sorted array, "swap and pop"
+        // can be used
+        // More efficent (and maybe safer) than normal deletion
+        std::iter_swap(drawables.begin() + index, drawables.end() - 1);
+        drawables.pop_back();
+    }
+}
+} // namespace
 
 Client::Client()
     : NetworkHost("Client")
@@ -313,6 +342,7 @@ void Client::update(float dt)
 
 void Client::render()
 {
+    // TODO [Hopson] Clean this up
     if (!m_hasReceivedGameData) {
         return;
     }
@@ -377,9 +407,16 @@ void Client::render()
 
     // Buffer chunks
     for (auto &chunkMesh : m_chunks.bufferables) {
-        if (chunkMesh.indicesCount > 0) {
-            m_chunks.drawables.push_back(
-                {chunkMesh.position, chunkMesh.createBuffer()});
+        // TODO [Hopson] -> DRY this code
+        if (chunkMesh.blockMesh.indicesCount > 0) {
+            m_chunks.drawables.push_back({chunkMesh.blockMesh.position,
+                                          chunkMesh.blockMesh.createBuffer()});
+        }
+        if (chunkMesh.fluidMesh.indicesCount > 0) {
+            std::cout << "buffer el watero\n" << std::endl;
+            m_chunks.fluidDrawables.push_back(
+                {chunkMesh.fluidMesh.position,
+                 chunkMesh.fluidMesh.createBuffer()});
         }
     }
     m_chunks.bufferables.clear();
@@ -390,14 +427,22 @@ void Client::render()
             chunk.vao.getDrawable().bindAndDraw();
         }
     }
+    glCheck(glEnable(GL_BLEND));
+    for (const auto &chunk : m_chunks.fluidDrawables) {
+        if (m_frustum.chunkIsInFrustum(chunk.position)) {
+            chunk.vao.getDrawable().bindAndDraw();
+        }
+    }
+    glCheck(glDisable(GL_BLEND));
 }
 
 void Client::endGame()
 {
     // Destroy all player skins
     for (auto &ent : m_entities) {
-        if (ent.playerSkin.textureExists())
+        if (ent.playerSkin.textureExists()) {
             ent.playerSkin.destroy();
+        }
     }
     m_errorSkinTexture.destroy();
 
@@ -409,6 +454,9 @@ void Client::endGame()
     for (auto &chunk : m_chunks.drawables) {
         chunk.vao.destroy();
     }
+    for (auto &chunk : m_chunks.fluidDrawables) {
+        chunk.vao.destroy();
+    }
     NetworkHost::disconnectFromPeer(mp_serverPeer);
 }
 
@@ -417,27 +465,8 @@ EngineStatus Client::currentStatus() const
     return m_status;
 }
 
-int Client::findChunkDrawableIndex(const ChunkPosition &position)
-{
-    for (int i = 0; i < static_cast<int>(m_chunks.drawables.size()); i++) {
-        if (m_chunks.drawables[i].position == position) {
-            return i;
-        }
-    }
-    return -1;
-}
-
 void Client::deleteChunkRenderable(const ChunkPosition &position)
 {
-    auto index = findChunkDrawableIndex(position);
-    if (index > -1) {
-        m_chunks.drawables[index].vao.destroy();
-
-        // As the chunk renders need not be a sorted array, "swap and pop"
-        // can be used
-        // More efficent (and maybe safer) than normal deletion
-        std::iter_swap(m_chunks.drawables.begin() + index,
-                       m_chunks.drawables.end() - 1);
-        m_chunks.drawables.pop_back();
-    }
+    ::deleteChunkRenderable(position, m_chunks.drawables);
+    ::deleteChunkRenderable(position, m_chunks.fluidDrawables);
 }

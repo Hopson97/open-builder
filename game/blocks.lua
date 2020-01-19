@@ -1,5 +1,5 @@
 --
---  Air block
+--  Air Voxel Data
 --
 openbuilder.data.addVoxel({
     name = "openbuilder:air",
@@ -14,7 +14,7 @@ openbuilder.data.addVoxel({
 })
 
 --
---  Grass block
+--  Grass Voxel Data
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:grass",
@@ -26,7 +26,7 @@ openbuilder.data.addVoxel {
 }
 
 --
---  Dirt block
+--  Dirt Voxel Data
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:dirt",
@@ -38,7 +38,7 @@ openbuilder.data.addVoxel {
 }
 
 --
---  Stone block
+--  Stone Voxel Data
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:stone",
@@ -50,7 +50,7 @@ openbuilder.data.addVoxel {
 }
 
 --
---  Water block
+--  Water Voxel Data
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:water",
@@ -64,7 +64,7 @@ openbuilder.data.addVoxel {
 }
 
 --
---  Sand block
+--  Sand Voxel Data
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:sand",
@@ -77,7 +77,7 @@ openbuilder.data.addVoxel {
 }
 
 --
---  Wood block
+--  Wood Voxel Data
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:wood",
@@ -90,7 +90,21 @@ openbuilder.data.addVoxel {
 }
 
 --
---  Coal ore block
+--  Leaf Voxel Data
+--
+openbuilder.data.addVoxel {
+    name = "openbuilder:leaf",
+    type = openbuilder.VoxelType.Flora,
+    collidable = false,
+    render = {
+        top = "leaves",
+        sides = "leaves",
+        bottom = "leaves",
+    },
+}
+
+--
+--  Coal ore Voxel Data
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:coal_ore",
@@ -103,7 +117,7 @@ openbuilder.data.addVoxel {
 }
 
 --
---  Iron ore block
+--  Iron ore Voxel Data
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:iron_ore",
