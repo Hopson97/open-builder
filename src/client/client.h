@@ -110,9 +110,18 @@ class Client final : public NetworkHost {
     } m_chunkShader;
 
     struct {
+        gl::Shader program;
+        gl::UniformLocation projectionViewLocation;
+        gl::UniformLocation timeLocation;
+    } m_fluidShader;
+
+    struct {
         Entity entity;
         glm::mat4 projection;
     } m_extCamera;
+
+    //For time-based render stuff eg waves in the water
+    sf::Clock m_clock;
 
     // Gameplay/ World
     std::array<Entity, 512> m_entities;

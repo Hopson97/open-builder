@@ -64,6 +64,14 @@ bool Client::init(const ClientConfig &config, float aspect)
     m_chunkShader.projectionViewLocation =
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
 
+    // Chunk shader
+    m_fluidShader.program.create("water", "chunk");
+    m_fluidShader.program.bind();
+    m_fluidShader.projectionViewLocation =
+        m_fluidShader.program.getUniformLocation("projectionViewMatrix");
+    m_fluidShader.timeLocation =
+        m_fluidShader.program.getUniformLocation("time");
+
     // Texture for the player model
     m_errorSkinTexture.create("skins/error");
     m_errorSkinTexture.bind();
@@ -392,18 +400,8 @@ void Client::render()
         }
     }
 
+    // To do [Hopson]: DRY
     // Render chunks
-    m_chunkShader.program.bind();
-
-    m_voxelTextures.bind();
-    if (m_extCamera.entity.active) {
-        gl::loadUniform(m_chunkShader.projectionViewLocation,
-                        cameraProjectionView);
-    }
-    else {
-        gl::loadUniform(m_chunkShader.projectionViewLocation,
-                        playerProjectionView);
-    }
 
     // Buffer chunks
     for (auto &chunkMesh : m_chunks.bufferables) {
@@ -421,11 +419,38 @@ void Client::render()
     }
     m_chunks.bufferables.clear();
 
-    // Render them (if in view)
+
+    // TODO [Hopson] -> DRY this code VVVV
+    // Render solid chunk blocks
+    m_chunkShader.program.bind();
+
+    m_voxelTextures.bind();
+    if (m_extCamera.entity.active) {
+        gl::loadUniform(m_chunkShader.projectionViewLocation,
+                        cameraProjectionView);
+    }
+    else {
+        gl::loadUniform(m_chunkShader.projectionViewLocation,
+                        playerProjectionView);
+    }
+
     for (const auto &chunk : m_chunks.drawables) {
         if (m_frustum.chunkIsInFrustum(chunk.position)) {
             chunk.vao.getDrawable().bindAndDraw();
         }
+    }
+
+    //Render fluid mesh
+    m_fluidShader.program.bind();
+    gl::loadUniform(m_fluidShader.timeLocation,
+                    m_clock.getElapsedTime().asSeconds());
+    if (m_extCamera.entity.active) {
+        gl::loadUniform(m_fluidShader.projectionViewLocation,
+                        cameraProjectionView);
+    }
+    else {
+        gl::loadUniform(m_fluidShader.projectionViewLocation,
+                        playerProjectionView);
     }
     glCheck(glEnable(GL_BLEND));
     for (const auto &chunk : m_chunks.fluidDrawables) {
