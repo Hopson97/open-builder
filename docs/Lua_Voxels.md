@@ -13,37 +13,38 @@ Example:
 
 ```lua
 openbuilder.data.addVoxel {
-    name = "openbuilder:grass",
-    type = "solid",
-    collidable = true,
+    name = "openbuilder:water",
+    type = openbuilder.VoxelType.Fluid,
+    collidable = false,
     render = {
-        top = "grass",
-        sides = "grass_side",
-        bottom = "dirt",
-        mesh = "block",
+        mesh = openbuilder.MeshStyle.Block,
+        top = "water",
+        sides = "water",
+        bottom = "water",
     },
 }
 ```
 
 Where:
 
-| Key            | Type           | Explanation                                                    |
-|----------------|----------------|----------------------------------------------------------------|
-| name           | String         | The name of the block, used to refer to it in other .lua scripts |
-| type           | VoxelType      | The type/ physical state of the block, more info below         |
-| collidable     | Boolean        | Whether this voxel can be collided with.                        |
-| render         | Lua Table      | Some information about how the voxel should be rendered        |
+| Key            | Type           | Default                         | Explanation                                                      | 
+|----------------|----------------|---------------------------------|--------------------------------------------------------|
+| name           | String         | N/A                             | The name of the block, used to refer to it in other .lua scripts |
+| type           | VoxelType      | `openbuilder.VoxelType.Solid`   | The type/ physical state of the block, more info below         |
+| collidable     | Boolean        | `true`                          | Whether this voxel can be collided with.                        |
+| render         | Lua Table      | N/A                             | Some information about how the voxel should be rendered        |
 
 Where the "render" table is defined as:
+| Key       | Type      | Default                       | Explanation                                                      | 
+|-----------|-----------|-------------------------------|--------------------------------------------------------|
+| top       | String    | N/A                           | The name of the texture that should appear on the top face     |
+| sides     | String    | N/A                           | The name of the texture that should appear on the block sides  |
+| bottom    | String    | N/A                           | The name of the texture that should appear on the bottom face  |
+| mesh      | MeshStyle | `openbuilder.MeshStyle.Block` | The style of the mesh, more info below                         |
 
-| top       | String            | The name of the texture that should appear on the top face     |
-| sides     | String            | The name of the texture that should appear on the block sides  |
-| bottom    | String            | The name of the texture that should appear on the bottom face  |
-| mesh      | VoxelMeshStyle    | The style of the mesh, more info below                         |
 
 
-
-## VoxelMeshStyle
+## MeshStyle
 
 This refers to what "shape" the mesh should have.
 

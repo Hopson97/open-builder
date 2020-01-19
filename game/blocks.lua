@@ -68,11 +68,49 @@ openbuilder.data.addVoxel {
 --
 openbuilder.data.addVoxel {
     name = "openbuilder:sand",
-    type = openbuilder.VoxelType.Solid,
     collidable = false,
     render = {
         top = "sand",
         sides = "sand",
         bottom = "sand",
+    },
+}
+
+--
+--  Wood block
+--
+openbuilder.data.addVoxel {
+    name = "openbuilder:wood",
+    collidable = false,
+    render = {
+        top = "logtop",
+        sides = "log",
+        bottom = "logtop",
+    },
+}
+
+--
+--  Coal ore block
+--
+openbuilder.data.addVoxel {
+    name = "openbuilder:coal_ore",
+    collidable = false,
+    render = {
+        top = "coal_ore",
+        sides = "coal_ore",
+        bottom = "coal_ore",
+    },
+}
+
+--
+--  Iron ore block
+--
+openbuilder.data.addVoxel {
+    name = "openbuilder:iron_ore",
+    collidable = false,
+    render = {
+        top = "logtop",
+        sides = "log",
+        bottom = "logtop",
     },
 }
