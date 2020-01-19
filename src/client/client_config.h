@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include <SFML/System/Time.hpp>
+#include <string>
 
 /**
  * @brief Config options for client

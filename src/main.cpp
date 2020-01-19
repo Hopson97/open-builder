@@ -59,7 +59,8 @@ void loadFromConfigFile(Config &config)
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
     config.client.fov = std::stoi(clientData["fov"]);
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
-    config.client.connectionTimeout = sf::milliseconds(std::stoi(clientData["connection_timeout"]));
+    config.client.connectionTimeout =
+        sf::milliseconds(std::stoi(clientData["connection_timeout"]));
     config.client.skinName = clientData["skin"];
     config.client.texturePack = clientData["texture_pack"];
 
@@ -139,7 +140,8 @@ int exitFailure(const char *message)
 int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
 {
     LOG("Launcher", "Launching server");
-    runServerEngine(config, timeout);
+    ServerLauncher launcher(config, timeout);
+    launcher.runServerEngine();
     LOG("Launcher", "Server has exited.");
     return EXIT_SUCCESS;
 }
@@ -181,10 +183,12 @@ int launchClient(const ClientConfig &config)
  */
 int launchBoth(const Config &config)
 {
-    std::thread serverThread(launchServer, config.server,
-                             sf::milliseconds(5000));
-    //temp, the retrying until connection made doesn't seem to be working
-    std::this_thread::sleep_for(std::chrono::milliseconds(700));
+    ServerLauncher server(config.server, sf::milliseconds(5000));
+    std::thread serverThread([&server]() {
+        LOG("Launcher", "Launching server");
+        server.runServerEngine();
+    });
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     int exit = launchClient(config.client);
     serverThread.join();
     return exit;
@@ -197,8 +201,12 @@ int launchBoth(const Config &config)
  */
 int launchServerAnd2Players(const Config &config)
 {
-    std::thread serverThread(launchServer, config.server,
-                             sf::milliseconds(20000));
+    ServerLauncher server(config.server, sf::milliseconds(5000));
+    std::thread serverThread([&server]() {
+        LOG("Launcher", "Launching server");
+        server.runServerEngine();
+    });
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     std::thread client2(launchClient, config.client);
 

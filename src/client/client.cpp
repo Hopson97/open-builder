@@ -42,7 +42,8 @@ bool Client::init(const ClientConfig &config, float aspect)
     m_texturePack = config.texturePack;
 
     // Set up the server connection
-    auto peer = NetworkHost::createAsClient(LOCAL_HOST, config.connectionTimeout);
+    auto peer =
+        NetworkHost::createAsClient(LOCAL_HOST, config.connectionTimeout);
     if (!peer) {
         return false;
     }

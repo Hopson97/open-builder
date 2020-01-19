@@ -72,7 +72,8 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
 
 } // namespace
 
-std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position, float seed)
+std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
+                                                 float seed)
 {
     const float WOLRD_SIZE = 10 * CHUNK_SIZE;
 
@@ -102,10 +103,12 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position, 
                 (glm::vec2{bx, bz} - WOLRD_SIZE / 2.0f) / WOLRD_SIZE * 2.0f;
 
             auto noise = getNoiseAt({x, z}, chunkXZ, firstNoise, seed);
-            auto noise2 =
-                getNoiseAt({x, z}, {position.x, position.z}, secondNoise, 9095.0f);
+            auto noise2 = getNoiseAt({x, z}, {position.x, position.z},
+                                     secondNoise, 9095.0f);
             auto island = rounded(coord.x, coord.y) * 1.25;
-            float result = ((noise * noise2));// * island);// + (noise2 / 2.0f) * island) / 2.0f;
+            float result =
+                ((noise *
+                  noise2)); // * island);// + (noise2 / 2.0f) * island) / 2.0f;
 
             heightMap[z * CHUNK_SIZE + x] =
                 static_cast<int>(
