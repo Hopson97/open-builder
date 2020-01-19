@@ -5,10 +5,11 @@
 struct ScriptEngine {
     ScriptEngine();
 
-    void runLuaScript(const std::string& path);
+    void runLuaScript(const std::string &path);
 
     template <typename... Args>
-    void addTable(const std::string &tableName, Args &&... args) {
+    void addTable(const std::string &tableName, Args &&... args)
+    {
         gameTable.create_named(tableName, std::forward<Args>(args)...);
     }
 

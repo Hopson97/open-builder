@@ -110,10 +110,16 @@ class Client final : public NetworkHost {
         gl::UniformLocation projectionViewLocation;
     } m_chunkShader;
 
+    struct {
+        Entity entity;
+        glm::mat4 projection;
+    } m_extCamera;
+
     // Gameplay/ World
     std::array<Entity, 512> m_entities;
 
     Entity *mp_player = nullptr;
+    Entity m_externalCamera;
 
     struct {
         std::vector<ChunkMesh> bufferables;
@@ -128,6 +134,7 @@ class Client final : public NetworkHost {
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
     bool m_isMouseLocked = false;
+    bool m_playerCameraActive = true;
 
     ViewFrustum m_frustum;
 

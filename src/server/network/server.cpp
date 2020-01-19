@@ -33,7 +33,6 @@ Server::Server(const ServerConfig &config)
     m_script.runLuaScript("game/blocks.lua");
     // clang-format on
 
-
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
             std::array<int, CHUNK_AREA> heightMap =

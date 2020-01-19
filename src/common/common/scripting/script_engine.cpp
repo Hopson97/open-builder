@@ -17,7 +17,7 @@ void ScriptEngine::runLuaScript(const std::string &path)
         if (result.valid()) {
             std::cout << "Script ran sucessfully: " << path << '\n';
         }
-        else { 
+        else {
             sol::error err = result;
             std::cerr << "Lua error: " << err.what() << std::endl;
         }
