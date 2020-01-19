@@ -53,9 +53,9 @@ from the project root directory. If you are interested in the [manual way of ins
 These are required for the project, and can usually be downloaded via your distribution-specific package manager:
 
 ```sh
-sudo apt install libsfml-dev libglm-dev     # Debian/Ubuntu
-sudo pacman -S glm sfml                     # Arch/Manjaro
-sudo yum install glm-devel sfml-devel       # Fedora/RHEL
+sudo apt install libsfml-dev                # Debian/Ubuntu
+sudo pacman -S sfml                         # Arch/Manjaro
+sudo yum install sfml-devel                 # Fedora/RHEL
 ```
 
 Feel free to create a pull request to add support for your system's package manager!
@@ -63,8 +63,6 @@ Feel free to create a pull request to add support for your system's package mana
 If there is no mirror available, then you can download and manually install them from their respective websites:
 
 [SFML Download](https://www.sfml-dev.org/download.php)
-
-[GLM Download](https://github.com/g-truc/glm/tags)
 
 ##### Building
 

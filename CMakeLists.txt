@@ -69,7 +69,6 @@ set(
 # Find libraries
 find_package(Threads)
 find_package(SFML REQUIRED audio network graphics window system)
-find_package(glm REQUIRED)
 
 # Add local libraries
 add_subdirectory(deps)

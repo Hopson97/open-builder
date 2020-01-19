@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/System/Time.hpp>
 #include <string>
 
 /**
@@ -14,6 +15,8 @@ struct ClientConfig {
     int fov = 65;
 
     bool isFpsCapped = true;
+
+    sf::Time connectionTimeout = sf::milliseconds(10000);
 
     std::string skinName = "player";
     std::string texturePack = "default";

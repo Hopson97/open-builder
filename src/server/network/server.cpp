@@ -121,6 +121,7 @@ void Server::sendGameData(peer_id_t peerId)
         packet << isCollidable;
     }
 
+
     sendToPeer(m_connectedClients[peerId].peer, packet, 0,
                ENET_PACKET_FLAG_RELIABLE);
 }
