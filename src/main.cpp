@@ -151,8 +151,12 @@ int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
  * @param config Config to be used by the client engine
  * @return int Exit flag (Success, or Failure)
  */
-int launchClient(const ClientConfig &config)
+int launchClient(const ClientConfig &config,bool shouldShowInstructions)
 {
+    if(shouldShowInstructions){
+        std::cout << "Press Enter to Continue"<<std::endl;;
+        std::cin.ignore();
+    }
     LOG("Launcher", "Launching client");
     switch (runClientEngine(config)) {
         case EngineStatus::Exit:
@@ -189,7 +193,7 @@ int launchBoth(const Config &config)
         server.runServerEngine();
     });
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    int exit = launchClient(config.client);
+    int exit = launchClient(config.client,false);
     serverThread.join();
     return exit;
 }
@@ -208,9 +212,9 @@ int launchServerAnd2Players(const Config &config)
     });
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    std::thread client2(launchClient, config.client);
+    std::thread client2(launchClient, config.client,false);
 
-    int exit = launchClient(config.client);
+    int exit = launchClient(config.client,false);
 
     client2.join();
     serverThread.join();
@@ -244,7 +248,7 @@ int main(int argc, char **argv)
             return launchServer(config.server);
 
         case LaunchType::Client:
-            return launchClient(config.client);
+            return launchClient(config.client,true);
 
         case LaunchType::TwoPlayer:
             return launchServerAnd2Players(config);
