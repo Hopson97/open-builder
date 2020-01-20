@@ -115,12 +115,7 @@ class Client final : public NetworkHost {
         gl::UniformLocation timeLocation;
     } m_fluidShader;
 
-    struct {
-        Entity entity;
-        glm::mat4 projection;
-    } m_extCamera;
-
-    //For time-based render stuff eg waves in the water
+    // For time-based render stuff eg waves in the water
     sf::Clock m_clock;
 
     // Gameplay/ World
@@ -143,7 +138,6 @@ class Client final : public NetworkHost {
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
     bool m_isMouseLocked = false;
-    bool m_playerCameraActive = true;
 
     ViewFrustum m_frustum;
 

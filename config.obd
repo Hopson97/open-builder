@@ -7,10 +7,10 @@ CLIENT_DATA
     window_width 1600
     window_height 900
 
-    connection_timeout 10000
-
     skin player
     texture_pack default1
+
+    server_ip LOCAL
 end
 
 SERVER_DATA

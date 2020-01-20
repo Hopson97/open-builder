@@ -8,6 +8,8 @@ tags
 *.temp
 
 open-builder/
+OpenBuilder/
+.zip
 
 *.srctrlprj
 *.srctrldb

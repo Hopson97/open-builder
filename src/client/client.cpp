@@ -1,7 +1,7 @@
 #include "client.h"
 
-#include "gl/primitive.h"
 #include "gl/gl_errors.h"
+#include "gl/primitive.h"
 #include "input/keyboard.h"
 #include "world/chunk_mesh_generation.h"
 #include <SFML/Window/Mouse.hpp>
@@ -80,7 +80,7 @@ bool Client::init(const ClientConfig &config, float aspect)
 
     // Set up the server connection
     auto peer =
-        NetworkHost::createAsClient(LOCAL_HOST, config.connectionTimeout);
+        NetworkHost::createAsClient(config.serverIp);
     if (!peer) {
         return false;
     }
@@ -90,14 +90,10 @@ bool Client::init(const ClientConfig &config, float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
-    m_extCamera.entity.active = false;
-
     m_rawPlayerSkin = gl::loadRawImageFile("skins/" + config.skinName);
     sendPlayerSkin(m_rawPlayerSkin);
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
-    m_extCamera.projection =
-        glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
     return true;
 }
 
@@ -107,18 +103,15 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
         return;
     }
     static auto lastMousePosition = sf::Mouse::getPosition(window);
-    {
-        Entity *e = m_playerCameraActive ? mp_player : &m_extCamera.entity;
-        if (!m_isMouseLocked && window.hasFocus() &&
-            sf::Mouse::getPosition(window).y >= 0) {
-            auto change = sf::Mouse::getPosition(window) - lastMousePosition;
-            e->rotation.x += static_cast<float>(change.y / 8.0f);
-            e->rotation.y += static_cast<float>(change.x / 8.0f);
-            sf::Mouse::setPosition(
-                {(int)window.getSize().x / 2, (int)window.getSize().y / 2},
-                window);
-            lastMousePosition = sf::Mouse::getPosition(window);
-        }
+
+    if (!m_isMouseLocked && window.hasFocus() &&
+        sf::Mouse::getPosition(window).y >= 0) {
+        auto change = sf::Mouse::getPosition(window) - lastMousePosition;
+        mp_player->rotation.x += static_cast<float>(change.y / 8.0f);
+        mp_player->rotation.y += static_cast<float>(change.x / 8.0f);
+        sf::Mouse::setPosition(
+            {(int)window.getSize().x / 2, (int)window.getSize().y / 2}, window);
+        lastMousePosition = sf::Mouse::getPosition(window);
     }
 
     // Handle keyboard input
@@ -127,58 +120,33 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
         PLAYER_SPEED *= 10;
     }
 
-    {
-        // Handle mouse input
-        auto &rotation = mp_player->rotation;
-        auto &velocity = mp_player->velocity;
-        if (keyboard.isKeyDown(sf::Keyboard::W)) {
-            velocity += forwardsVector(rotation) * PLAYER_SPEED;
-        }
-        else if (keyboard.isKeyDown(sf::Keyboard::S)) {
-            velocity += backwardsVector(rotation) * PLAYER_SPEED;
-        }
-        if (keyboard.isKeyDown(sf::Keyboard::A)) {
-            velocity += leftVector(rotation) * PLAYER_SPEED;
-        }
-        else if (keyboard.isKeyDown(sf::Keyboard::D)) {
-            velocity += rightVector(rotation) * PLAYER_SPEED;
-        }
-        if (keyboard.isKeyDown(sf::Keyboard::Space)) {
-            velocity.y += PLAYER_SPEED * 2;
-        }
-        else if (keyboard.isKeyDown(sf::Keyboard::LShift)) {
-            velocity.y -= PLAYER_SPEED * 2;
-            std::cout << mp_player->position << std::endl;
-        }
-        if (rotation.x < -80.0f) {
-            rotation.x = -79.9f;
-        }
-        else if (rotation.x > 85.0f) {
-            rotation.x = 84.9f;
-        }
+    // Handle mouse input
+    auto &rotation = mp_player->rotation;
+    auto &velocity = mp_player->velocity;
+    if (keyboard.isKeyDown(sf::Keyboard::W)) {
+        velocity += forwardsVector(rotation) * PLAYER_SPEED;
     }
-
-    {
-        auto &rotation = m_extCamera.entity.rotation;
-        auto &velocity = m_extCamera.entity.velocity;
-        if (keyboard.isKeyDown(sf::Keyboard::Up)) {
-            velocity += forwardsVector(rotation) * PLAYER_SPEED;
-        }
-        else if (keyboard.isKeyDown(sf::Keyboard::Down)) {
-            velocity += backwardsVector(rotation) * PLAYER_SPEED;
-        }
-        if (keyboard.isKeyDown(sf::Keyboard::Left)) {
-            velocity += leftVector(rotation) * PLAYER_SPEED;
-        }
-        else if (keyboard.isKeyDown(sf::Keyboard::Right)) {
-            velocity += rightVector(rotation) * PLAYER_SPEED;
-        }
-        if (rotation.x < -80.0f) {
-            rotation.x = -79.9f;
-        }
-        else if (rotation.x > 85.0f) {
-            rotation.x = 84.9f;
-        }
+    else if (keyboard.isKeyDown(sf::Keyboard::S)) {
+        velocity += backwardsVector(rotation) * PLAYER_SPEED;
+    }
+    if (keyboard.isKeyDown(sf::Keyboard::A)) {
+        velocity += leftVector(rotation) * PLAYER_SPEED;
+    }
+    else if (keyboard.isKeyDown(sf::Keyboard::D)) {
+        velocity += rightVector(rotation) * PLAYER_SPEED;
+    }
+    if (keyboard.isKeyDown(sf::Keyboard::Space)) {
+        velocity.y += PLAYER_SPEED * 2;
+    }
+    else if (keyboard.isKeyDown(sf::Keyboard::LShift)) {
+        velocity.y -= PLAYER_SPEED * 2;
+        std::cout << mp_player->position << std::endl;
+    }
+    if (rotation.x < -80.0f) {
+        rotation.x = -79.9f;
+    }
+    else if (rotation.x > 85.0f) {
+        rotation.x = 84.9f;
     }
 }
 
@@ -221,14 +189,6 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             break;
 
-        case sf::Keyboard::C:
-            m_extCamera.entity.active = !m_extCamera.entity.active;
-            break;
-
-        case sf::Keyboard::R:
-            m_playerCameraActive = !m_playerCameraActive;
-            break;
-
         default:
             break;
     }
@@ -240,9 +200,6 @@ void Client::update(float dt)
     if (!m_hasReceivedGameData) {
         return;
     }
-
-    m_extCamera.entity.position += m_extCamera.entity.velocity * dt;
-    m_extCamera.entity.velocity *= 0.99 * dt;
 
     mp_player->position += mp_player->velocity * dt;
     mp_player->velocity *= 0.99 * dt;
@@ -358,18 +315,8 @@ void Client::render()
     m_basicShader.program.bind();
     glm::mat4 playerProjectionView = createProjectionViewMatrix(
         mp_player->position, mp_player->rotation, m_projectionMatrix);
-    glm::mat4 cameraProjectionView = createProjectionViewMatrix(
-        m_extCamera.entity.position, m_extCamera.entity.rotation,
-        m_extCamera.projection);
 
-    if (m_extCamera.entity.active) {
-        gl::loadUniform(m_basicShader.projectionViewLocation,
-                        cameraProjectionView);
-    }
-    else {
-        gl::loadUniform(m_basicShader.projectionViewLocation,
-                        playerProjectionView);
-    }
+    gl::loadUniform(m_basicShader.projectionViewLocation, playerProjectionView);
 
     // Update the viewing frustum for frustum culling
     m_frustum.update(playerProjectionView);
@@ -379,29 +326,25 @@ void Client::render()
     drawable.bind();
 
     for (auto &ent : m_entities) {
-        if (!m_extCamera.entity.active && &ent == mp_player) {
-            continue;
-        }
-        else {
-            if (ent.active) {
-                if (ent.playerSkin.textureExists()) {
-                    ent.playerSkin.bind();
-                }
-                else {
-                    m_errorSkinTexture.bind();
-                }
 
-                glm::mat4 modelMatrix{1.0f};
-                translateMatrix(modelMatrix, {ent.position.x, ent.position.y,
-                                              ent.position.z});
-                gl::loadUniform(m_basicShader.modelLocation, modelMatrix);
-                drawable.draw();
+        if (ent.active && &ent != mp_player) {
+            if (ent.playerSkin.textureExists()) {
+                ent.playerSkin.bind();
             }
+            else {
+                m_errorSkinTexture.bind();
+            }
+
+            glm::mat4 modelMatrix{1.0f};
+            translateMatrix(modelMatrix,
+                            {ent.position.x, ent.position.y, ent.position.z});
+            gl::loadUniform(m_basicShader.modelLocation, modelMatrix);
+            drawable.draw();
         }
     }
 
-    // To do [Hopson]: DRY
     // Render chunks
+    m_voxelTextures.bind();
 
     // Buffer chunks
     for (auto &chunkMesh : m_chunks.bufferables) {
@@ -419,20 +362,10 @@ void Client::render()
     }
     m_chunks.bufferables.clear();
 
-
     // TODO [Hopson] -> DRY this code VVVV
     // Render solid chunk blocks
     m_chunkShader.program.bind();
-
-    m_voxelTextures.bind();
-    if (m_extCamera.entity.active) {
-        gl::loadUniform(m_chunkShader.projectionViewLocation,
-                        cameraProjectionView);
-    }
-    else {
-        gl::loadUniform(m_chunkShader.projectionViewLocation,
-                        playerProjectionView);
-    }
+    gl::loadUniform(m_chunkShader.projectionViewLocation, playerProjectionView);
 
     for (const auto &chunk : m_chunks.drawables) {
         if (m_frustum.chunkIsInFrustum(chunk.position)) {
@@ -440,18 +373,12 @@ void Client::render()
         }
     }
 
-    //Render fluid mesh
+    // Render fluid mesh
     m_fluidShader.program.bind();
     gl::loadUniform(m_fluidShader.timeLocation,
                     m_clock.getElapsedTime().asSeconds());
-    if (m_extCamera.entity.active) {
-        gl::loadUniform(m_fluidShader.projectionViewLocation,
-                        cameraProjectionView);
-    }
-    else {
-        gl::loadUniform(m_fluidShader.projectionViewLocation,
-                        playerProjectionView);
-    }
+    gl::loadUniform(m_fluidShader.projectionViewLocation, playerProjectionView);
+
     glCheck(glEnable(GL_BLEND));
     for (const auto &chunk : m_chunks.fluidDrawables) {
         if (m_frustum.chunkIsInFrustum(chunk.position)) {

@@ -3,6 +3,8 @@
 #include <SFML/System/Time.hpp>
 #include <string>
 
+#include <common/network/net_constants.h>
+
 /**
  * @brief Config options for client
  * Mostly for the window and general graphics options
@@ -16,8 +18,8 @@ struct ClientConfig {
 
     bool isFpsCapped = true;
 
-    sf::Time connectionTimeout = sf::milliseconds(10000);
-
     std::string skinName = "player";
     std::string texturePack = "default";
+
+    std::string serverIp = LOCAL_HOST;
 };
