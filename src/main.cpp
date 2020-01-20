@@ -154,11 +154,12 @@ int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
 /**
  * @brief Launches the client
  * @param config Config to be used by the client engine
+ * @param launchingJustClient It defines if the instructions should be printed
  * @return int Exit flag (Success, or Failure)
  */
-int launchClient(const ClientConfig &config,bool shouldShowInstructions)
+int launchClient(const ClientConfig &config,bool launchingJustClient)
 {
-    if(shouldShowInstructions && config.shouldShowInstructions){
+    if(launchingJustClient && config.shouldShowInstructions){
         std::cout<<"Take a look at the instructions before you play."<<std::endl
         <<"And also remember that the default configurations are on the config.obd file"<<std::endl;
         TextTable t( '-', '|', '+' );
