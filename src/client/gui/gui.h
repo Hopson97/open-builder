@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../gl/textures.h"
 #include "../gl/shader.h"
+#include "../gl/textures.h"
 #include "../gl/vertex_array.h"
 #include <SFML/Window/Event.hpp>
 #include <common/macros.h>
@@ -10,6 +10,8 @@
 
 struct GuiImage {
     gl::Texture2d m_image;
+
+    void setSource(const std::string &imageSource);
 };
 
 class Gui final {
@@ -22,7 +24,7 @@ class Gui final {
     void processKeypress(sf::Event e);
     void processMouseEvent(sf::Event e);
 
-    void addImage(const std::string &string);
+    void addImage(const GuiImage &image);
 
     void render();
 

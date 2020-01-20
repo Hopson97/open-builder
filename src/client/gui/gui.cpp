@@ -29,12 +29,9 @@ void Gui::processMouseEvent(sf::Event e)
 {
 }
 
-void Gui::addImage(const std::string &string)
+void Gui::addImage(const GuiImage &image)
 {
-    GuiImage image;
-    image.m_image.create(string);
     m_images.push_back(image);
-    std::cout << "Added " << string << std::endl;
 }
 
 void Gui::render()
@@ -46,4 +43,13 @@ void Gui::render()
         img.m_image.bind();
         d.draw();
     }
+}
+
+
+void GuiImage::setSource(const std::string &imageSource)
+{
+    if (m_image.textureExists()) {
+        m_image.destroy();
+    }
+    m_image.create(imageSource);
 }

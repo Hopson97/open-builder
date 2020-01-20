@@ -43,10 +43,19 @@ void deleteChunkRenderable(const ChunkPosition &position,
 Client::Client()
     : NetworkHost("Client")
 {
-    auto guiTable =
-        m_lua.addTable("gui", "addImage", [&](const std::string &image) {
-            m_gui.addImage(image);
-        });
+    auto gui = m_lua.addTable("gui");
+
+    auto img = gui.new_usertype<GuiImage>("Image");
+    img["setSource"] = &GuiImage::setSource;
+
+
+
+    gui["addImage"] = [&](const GuiImage &img)  {
+        m_gui.addImage(img);
+    };
+
+
+    
     m_lua.runLuaScript("game/gui.lua");
 }
 
