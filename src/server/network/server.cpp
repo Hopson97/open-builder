@@ -14,73 +14,38 @@ Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
 {
-    m_luaState.open_libraries(sol::lib::base);
 
     // clang-format off
-    sol::table data = m_luaState.create_named_table(
-        "data", 
+    m_script.addTable("data", 
         "addVoxel", [&](const sol::table &voxelDef) { m_gameData.addVoxel(voxelDef); });
 
-    sol::table obgame = m_luaState.create_named_table("openbuilder", 
-        "data", data);
+    m_script.addTable("MeshStyle",
+        "Block", VoxelMeshStyle::Block,
+        "Cross", VoxelMeshStyle::Cross,
+        "None", VoxelMeshStyle::None);
 
+    m_script.addTable("VoxelType",
+        "Solid", VoxelType::Solid,
+        "Fluid", VoxelType::Fluid,
+        "Flora", VoxelType::Flora,
+        "Gas", VoxelType::Gas);
+
+    m_script.runLuaScript("game/blocks.lua");
     // clang-format on
 
-    sol::load_result script = m_luaState.load_file("game/blocks.lua");
-
-    if (script.valid()) {
-        script();
-    }
-    else {
-        sol::error err = script;
-        std::cerr << "Lua error: " << err.what() << std::endl;
-    }
-
-    /*
-    //under
-    for (int z = 1; z < m_worldSize - 1; z++) {
-        for (int x = 1; x < m_worldSize - 1; x++) {
-            for (int y = 1; y < m_worldSize - 1; y++) {
-                Chunk& chunk = m_world.chunks.addChunk({x, y, z});
-                chunk.blocks.fill(3);
-                m_world.chunks.ensureNeighbours(chunk.getPosition());
-            }
-        }
-    }
-
-    //above
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
             std::array<int, CHUNK_AREA> heightMap =
-                createChunkHeightMap({x, 0, z}, 9095.0f);
-
-            int maxHeight =
-                *std::max_element(heightMap.cbegin(), heightMap.cend());
-
-            for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
-                Chunk &chunk = m_world.chunks.addChunk({x, y + m_worldSize - 1,
-    z}); createSmoothTerrain(chunk, heightMap, m_worldSize, m_worldSize - 1);
-                m_world.chunks.ensureNeighbours(chunk.getPosition());
-            }
-        }
-    }
-    */
-
-    for (int z = 0; z < m_worldSize; z++) {
-        for (int x = 0; x < m_worldSize; x++) {
-            std::array<int, CHUNK_AREA> heightMap =
-                createChunkHeightMap({x, 0, z}, 9095.f);
+                createChunkHeightMap({x, 0, z}, (float)m_worldSize, 9095.f);
             int maxHeight =
                 *std::max_element(heightMap.cbegin(), heightMap.cend());
             for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
                 Chunk &chunk = m_world.chunks.addChunk({x, y, z});
-                createSmoothTerrain(chunk, heightMap, m_worldSize, 0);
+                createSmoothTerrain(chunk, heightMap, 0);
                 m_world.chunks.ensureNeighbours({x, y, z});
             }
         }
     }
-
-    std::cout << "Yeah i am being created\n";
 }
 
 void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
@@ -145,7 +110,6 @@ void Server::sendGameData(peer_id_t peerId)
         u8 mesh = static_cast<u8>(voxel.meshStyle);
         u8 type = static_cast<u8>(voxel.meshType);
         u8 isCollidable = static_cast<u8>(voxel.isCollidable);
-        LOGVAR("Server", "Added voxel data:", voxel.name);
         packet << voxel.name;
         packet << voxel.topTexture;
         packet << voxel.sideTexture;
@@ -155,7 +119,7 @@ void Server::sendGameData(peer_id_t peerId)
         packet << isCollidable;
     }
 
-    LOGVAR("Server", "Sending game data to :", (int)peerId);
+
     sendToPeer(m_connectedClients[peerId].peer, packet, 0,
                ENET_PACKET_FLAG_RELIABLE);
 }

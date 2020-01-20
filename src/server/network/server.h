@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../scripting/server_game_data.h"
-#include "../world/server_voxel.h"
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/network/net_host.h>
@@ -9,7 +8,7 @@
 #include <common/world/voxel_registry.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <sol/sol.hpp>
+#include <common/scripting/script_engine.h>
 
 struct ServerConfig;
 
@@ -72,6 +71,6 @@ class Server final : public NetworkHost {
     bool m_isRunning = true;
     const int m_worldSize;
 
-    sol::state m_luaState;
+    ScriptEngine m_script;
     ServerGameData m_gameData;
 };

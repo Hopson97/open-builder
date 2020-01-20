@@ -2107,42 +2107,8 @@ namespace sol {
 #endif // SOL_FORWARD_DETAIL_HPP
 // end of sol/forward_detail.hpp
 
-// beginning of sol/bytecode.hpp
+#include "../lua/lua.hpp"
 
-// beginning of sol/compatibility.hpp
-
-// beginning of sol/compatibility/version.hpp
-
-#if defined(SOL_USING_CXX_LUA) && SOL_USING_CXX_LUA
-	#include <lua.h>
-	#include <lualib.h>
-	#include <lauxlib.h>
-	#if defined(SOL_USING_CXX_LUAJIT) && SOL_USING_CXX_LUAJIT
-		#include <luajit.h>
-	#endif // C++ LuaJIT ... whatever that means
-	#if (!defined(SOL_EXCEPTIONS_SAFE_PROPAGATION) || !(SOL_EXCEPTIONS_SAFE_PROPAGATION)) && (!defined(SOL_EXCEPTIONS_ALWAYS_UNSAFE) || !(SOL_EXCEPTIONS_ALWAYS_UNSAFE))
-		#define SOL_EXCEPTIONS_SAFE_PROPAGATION 1
-	#endif // Exceptions can be propagated safely using C++-compiled Lua
-#else
-	#if defined(SOL_NO_LUA_HPP) && SOL_NO_LUA_HPP
-		extern "C" {
-			#if defined(LUAJIT_VERSION) && LUAJIT_VERSION
-			#endif
-		}
-	#else
-		#if defined(__has_include)
-			#if __has_include(<lua.hpp>)
-				#include <lua.hpp>
-			#else
-				extern "C" {
-					#if defined(LUAJIT_VERSION) && LUAJIT_VERSION
-					#endif
-				}
-			#endif // lua.hpp exists or does not
-		#else
-		#endif // check for lua.hpp safely for Lua 5.1 derps
-	#endif // Manual - have lua.hpp or not
-#endif // C++ Mangling for Lua vs. Not
 
 #ifdef LUAJIT_VERSION
 	#ifndef SOL_LUAJIT

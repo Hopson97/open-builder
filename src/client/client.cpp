@@ -1,5 +1,6 @@
 #include "client.h"
 
+#include "gl/gl_errors.h"
 #include "gl/primitive.h"
 #include "input/keyboard.h"
 #include "world/chunk_mesh_generation.h"
@@ -11,9 +12,51 @@
 
 #include "client_config.h"
 
+namespace {
+int findChunkDrawableIndex(const ChunkPosition &position,
+                           const std::vector<ChunkDrawable> &drawables)
+{
+    for (int i = 0; i < static_cast<int>(drawables.size()); i++) {
+        if (drawables[i].position == position) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void deleteChunkRenderable(const ChunkPosition &position,
+                           std::vector<ChunkDrawable> &drawables)
+{
+    auto index = findChunkDrawableIndex(position, drawables);
+    if (index > -1) {
+        drawables[index].vao.destroy();
+
+        // As the chunk renders need not be a sorted array, "swap and pop"
+        // can be used
+        // More efficent (and maybe safer) than normal deletion
+        std::iter_swap(drawables.begin() + index, drawables.end() - 1);
+        drawables.pop_back();
+    }
+}
+} // namespace
+
 Client::Client()
     : NetworkHost("Client")
 {
+    auto gui = m_lua.addTable("gui");
+
+    auto img = gui.new_usertype<GuiImage>("Image");
+    img["setSource"] = &GuiImage::setSource;
+
+
+
+    gui["addImage"] = [&](const GuiImage &img)  {
+        m_gui.addImage(img);
+    };
+
+
+    
+    m_lua.runLuaScript("game/gui.lua");
 }
 
 bool Client::init(const ClientConfig &config, float aspect)
@@ -35,6 +78,14 @@ bool Client::init(const ClientConfig &config, float aspect)
     m_chunkShader.projectionViewLocation =
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
 
+    // Chunk shader
+    m_fluidShader.program.create("water", "chunk");
+    m_fluidShader.program.bind();
+    m_fluidShader.projectionViewLocation =
+        m_fluidShader.program.getUniformLocation("projectionViewMatrix");
+    m_fluidShader.timeLocation =
+        m_fluidShader.program.getUniformLocation("time");
+
     // Texture for the player model
     m_errorSkinTexture.create("skins/error");
     m_errorSkinTexture.bind();
@@ -42,8 +93,7 @@ bool Client::init(const ClientConfig &config, float aspect)
     m_texturePack = config.texturePack;
 
     // Set up the server connection
-    auto peer =
-        NetworkHost::createAsClient(LOCAL_HOST, config.connectionTimeout);
+    auto peer = NetworkHost::createAsClient(config.serverIp);
     if (!peer) {
         return false;
     }
@@ -67,7 +117,6 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
     static auto lastMousePosition = sf::Mouse::getPosition(window);
 
-    // Handle mouse input
     if (!m_isMouseLocked && window.hasFocus() &&
         sf::Mouse::getPosition(window).y >= 0) {
         auto change = sf::Mouse::getPosition(window) - lastMousePosition;
@@ -84,6 +133,7 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
         PLAYER_SPEED *= 10;
     }
 
+    // Handle mouse input
     auto &rotation = mp_player->rotation;
     auto &velocity = mp_player->velocity;
     if (keyboard.isKeyDown(sf::Keyboard::W)) {
@@ -98,7 +148,6 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     else if (keyboard.isKeyDown(sf::Keyboard::D)) {
         velocity += rightVector(rotation) * PLAYER_SPEED;
     }
-
     if (keyboard.isKeyDown(sf::Keyboard::Space)) {
         velocity.y += PLAYER_SPEED * 2;
     }
@@ -151,14 +200,6 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
 
         case sf::Keyboard::F:
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            break;
-
-        case sf::Keyboard::C:
-            glCullFace(GL_BACK);
-            break;
-
-        case sf::Keyboard::N:
-            glCullFace(GL_NONE);
             break;
 
         default:
@@ -279,27 +320,26 @@ void Client::update(float dt)
 
 void Client::render()
 {
+    // TODO [Hopson] Clean this up
     if (!m_hasReceivedGameData) {
         return;
     }
     // Setup matrices
-    glm::mat4 viewMatrix{1.0f};
-    glm::mat4 projectionViewMatrix{1.0f};
-
     m_basicShader.program.bind();
-    rotateMatrix(viewMatrix, mp_player->rotation);
-    translateMatrix(viewMatrix, -mp_player->position);
+    glm::mat4 playerProjectionView = createProjectionViewMatrix(
+        mp_player->position, mp_player->rotation, m_projectionMatrix);
 
-    projectionViewMatrix = m_projectionMatrix * viewMatrix;
-    gl::loadUniform(m_basicShader.projectionViewLocation, projectionViewMatrix);
+    gl::loadUniform(m_basicShader.projectionViewLocation, playerProjectionView);
 
-    m_frustum.update(projectionViewMatrix);
+    // Update the viewing frustum for frustum culling
+    m_frustum.update(playerProjectionView);
 
     // Render all the entities
     auto drawable = m_cube.getDrawable();
     drawable.bind();
 
     for (auto &ent : m_entities) {
+
         if (ent.active && &ent != mp_player) {
             if (ent.playerSkin.textureExists()) {
                 ent.playerSkin.bind();
@@ -317,43 +357,72 @@ void Client::render()
     }
 
     // Render chunks
-    m_chunkShader.program.bind();
-
     m_voxelTextures.bind();
-    gl::loadUniform(m_chunkShader.projectionViewLocation, projectionViewMatrix);
 
     // Buffer chunks
     for (auto &chunkMesh : m_chunks.bufferables) {
-        if (chunkMesh.indicesCount > 0) {
-            m_chunks.drawables.push_back(
-                {chunkMesh.position, chunkMesh.createBuffer()});
+        // TODO [Hopson] -> DRY this code
+        if (chunkMesh.blockMesh.indicesCount > 0) {
+            m_chunks.drawables.push_back({chunkMesh.blockMesh.position,
+                                          chunkMesh.blockMesh.createBuffer()});
+        }
+        if (chunkMesh.fluidMesh.indicesCount > 0) {
+            m_chunks.fluidDrawables.push_back(
+                {chunkMesh.fluidMesh.position,
+                 chunkMesh.fluidMesh.createBuffer()});
         }
     }
     m_chunks.bufferables.clear();
 
-    // Render them (if in view)
+    // TODO [Hopson] -> DRY this code VVVV
+    // Render solid chunk blocks
+    m_chunkShader.program.bind();
+    gl::loadUniform(m_chunkShader.projectionViewLocation, playerProjectionView);
+
     for (const auto &chunk : m_chunks.drawables) {
         if (m_frustum.chunkIsInFrustum(chunk.position)) {
             chunk.vao.getDrawable().bindAndDraw();
         }
     }
+
+    // Render fluid mesh
+    m_fluidShader.program.bind();
+    gl::loadUniform(m_fluidShader.timeLocation,
+                    m_clock.getElapsedTime().asSeconds());
+    gl::loadUniform(m_fluidShader.projectionViewLocation, playerProjectionView);
+
+    glCheck(glEnable(GL_BLEND));
+    for (const auto &chunk : m_chunks.fluidDrawables) {
+        if (m_frustum.chunkIsInFrustum(chunk.position)) {
+            chunk.vao.getDrawable().bindAndDraw();
+        }
+    }
+    glCheck(glDisable(GL_BLEND));
+
+    // GUI
+    m_gui.render();
 }
 
 void Client::endGame()
 {
     // Destroy all player skins
     for (auto &ent : m_entities) {
-        if (ent.playerSkin.textureExists())
+        if (ent.playerSkin.textureExists()) {
             ent.playerSkin.destroy();
+        }
     }
     m_errorSkinTexture.destroy();
 
     m_cube.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
+    m_fluidShader.program.destroy();
     m_voxelTextures.destroy();
 
     for (auto &chunk : m_chunks.drawables) {
+        chunk.vao.destroy();
+    }
+    for (auto &chunk : m_chunks.fluidDrawables) {
         chunk.vao.destroy();
     }
     NetworkHost::disconnectFromPeer(mp_serverPeer);
@@ -364,27 +433,8 @@ EngineStatus Client::currentStatus() const
     return m_status;
 }
 
-int Client::findChunkDrawableIndex(const ChunkPosition &position)
-{
-    for (int i = 0; i < static_cast<int>(m_chunks.drawables.size()); i++) {
-        if (m_chunks.drawables[i].position == position) {
-            return i;
-        }
-    }
-    return -1;
-}
-
 void Client::deleteChunkRenderable(const ChunkPosition &position)
 {
-    auto index = findChunkDrawableIndex(position);
-    if (index > -1) {
-        m_chunks.drawables[index].vao.destroy();
-
-        // As the chunk renders need not be a sorted array, "swap and pop"
-        // can be used
-        // More efficent (and maybe safer) than normal deletion
-        std::iter_swap(m_chunks.drawables.begin() + index,
-                       m_chunks.drawables.end() - 1);
-        m_chunks.drawables.pop_back();
-    }
+    ::deleteChunkRenderable(position, m_chunks.drawables);
+    ::deleteChunkRenderable(position, m_chunks.fluidDrawables);
 }

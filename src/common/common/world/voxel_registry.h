@@ -14,6 +14,11 @@ template <typename VoxelDataType> class VoxelRegistry {
         m_voxels.push_back(voxel);
     }
 
+    int getNextId()
+    {
+        return m_voxels.size();
+    }
+
     const VoxelDataType &getVoxelData(block_t id) const
     {
         return m_voxels.at(id);

@@ -10,7 +10,7 @@ struct MeshFace {
 };
 
 struct ChunkMesh {
-
+    ChunkMesh(const ChunkPosition &chunkPosition);
     void addFace(const MeshFace &face, const BlockPosition &blockPosition,
                  int texture);
 
@@ -23,4 +23,10 @@ struct ChunkMesh {
     int indicesCount = 0;
 
     ChunkPosition position;
+};
+
+struct ChunkMeshCollection {
+    ChunkMeshCollection(const ChunkPosition &chunkPosition);
+    ChunkMesh blockMesh;
+    ChunkMesh fluidMesh;
 };

@@ -47,3 +47,26 @@ gl::VertexArray makeCubeVertexArray(GLfloat width, GLfloat height,
 
     return vao;
 }
+
+gl::VertexArray makeQuadVertexArray(GLfloat relativeWidth,
+                                    GLfloat relativeHeight)
+{
+    auto w = relativeWidth;
+    auto h = relativeHeight;
+    std::vector<GLfloat> vertices = {
+        0, 0, w, 0, w, h, 0, h,
+    };
+
+    std::vector<GLuint> indices = {0, 1, 2, 2, 3, 0};
+
+    std::vector<GLfloat> textureCoords = {0.0f, 0.0f, 1.0f, 0.0f,
+                                          1.0f, 1.0f, 0.0f, 1.0f};
+
+    gl::VertexArray vao;
+    vao.create();
+    vao.bind();
+    vao.addVertexBuffer(2, vertices);
+    vao.addVertexBuffer(2, textureCoords);
+    vao.addIndexBuffer(indices);
+    return vao;
+}

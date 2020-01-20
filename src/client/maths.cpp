@@ -7,6 +7,20 @@
 //      General vector and matricies helpers
 //
 // ===============================================
+glm::mat4 createProjectionViewMatrix(const glm::vec3 &position,
+                                     const glm::vec3 &rotation,
+                                     const glm::mat4 &projection)
+{
+    glm::mat4 view{1.0f};
+    glm::mat4 projectionView{1.0f};
+
+    rotateMatrix(view, rotation);
+    translateMatrix(view, -position);
+    projectionView = projection * view;
+
+    return projectionView;
+}
+
 void rotateMatrix(glm::mat4 &matrix, const glm::vec3 &degrees)
 {
     matrix = glm::rotate(matrix, glm::radians(degrees.x), {1, 0, 0});
