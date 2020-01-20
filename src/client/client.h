@@ -16,6 +16,8 @@
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_registry.h>
 #include <unordered_set>
+#include <common/scripting/script_engine.h>
+#include "gui/gui.h"
 
 #include "world/client_voxel.h"
 #include <common/world/voxel_types.h>
@@ -115,6 +117,10 @@ class Client final : public NetworkHost {
         gl::UniformLocation timeLocation;
     } m_fluidShader;
 
+    struct {
+        gl::Shader program;
+    } m_guiShader;
+
     // For time-based render stuff eg waves in the water
     sf::Clock m_clock;
 
@@ -134,6 +140,12 @@ class Client final : public NetworkHost {
     } m_chunks;
 
     VoxelRegistry<ClientVoxel> m_voxelData;
+
+    // Lua
+    ScriptEngine m_lua;
+
+    //GUI
+    Gui m_gui;
 
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;

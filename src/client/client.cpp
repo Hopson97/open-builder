@@ -43,6 +43,7 @@ void deleteChunkRenderable(const ChunkPosition &position,
 Client::Client()
     : NetworkHost("Client")
 {
+    m_lua.addTable("gui");
 }
 
 bool Client::init(const ClientConfig &config, float aspect)
@@ -72,6 +73,9 @@ bool Client::init(const ClientConfig &config, float aspect)
     m_fluidShader.timeLocation =
         m_fluidShader.program.getUniformLocation("time");
 
+    // GUI Shader
+    m_guiShader.program.create("gui", "gui");
+
     // Texture for the player model
     m_errorSkinTexture.create("skins/error");
     m_errorSkinTexture.bind();
@@ -79,8 +83,7 @@ bool Client::init(const ClientConfig &config, float aspect)
     m_texturePack = config.texturePack;
 
     // Set up the server connection
-    auto peer =
-        NetworkHost::createAsClient(config.serverIp);
+    auto peer = NetworkHost::createAsClient(config.serverIp);
     if (!peer) {
         return false;
     }
@@ -354,7 +357,6 @@ void Client::render()
                                           chunkMesh.blockMesh.createBuffer()});
         }
         if (chunkMesh.fluidMesh.indicesCount > 0) {
-            std::cout << "buffer el watero\n" << std::endl;
             m_chunks.fluidDrawables.push_back(
                 {chunkMesh.fluidMesh.position,
                  chunkMesh.fluidMesh.createBuffer()});
@@ -386,6 +388,10 @@ void Client::render()
         }
     }
     glCheck(glDisable(GL_BLEND));
+
+    // GUI
+    m_guiShader.program.bind();
+    m_gui.render();
 }
 
 void Client::endGame()
@@ -401,6 +407,8 @@ void Client::endGame()
     m_cube.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
+    m_fluidShader.program.destroy();
+    m_guiShader.program.destroy();
     m_voxelTextures.destroy();
 
     for (auto &chunk : m_chunks.drawables) {
