@@ -11,6 +11,7 @@ CLIENT_DATA
 
     skin player
     texture_pack default1
+    shouldShowInstructions 1
 end
 
 SERVER_DATA

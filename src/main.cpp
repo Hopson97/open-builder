@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <thread>
 #include <vector>
@@ -12,8 +13,11 @@
 #include "client/client_config.h"
 #include "server/server_config.h"
 
+#include "client/TextTable.h"
+
 #include <common/network/enet.h>
 #include <common/obd_parser.h>
+
 
 // Enable nvidia
 #ifdef _WIN32
@@ -56,6 +60,7 @@ void loadFromConfigFile(Config &config)
     config.client.windowWidth = std::stoi(clientData["window_width"]);
     config.client.windowHeight = std::stoi(clientData["window_height"]);
     config.client.isFpsCapped = std::stoi(clientData["cap_fps"]);
+    config.client.shouldShowInstructions = std::stoi(clientData["shouldShowInstructions"]);
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
     config.client.fov = std::stoi(clientData["fov"]);
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
@@ -153,8 +158,39 @@ int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
  */
 int launchClient(const ClientConfig &config,bool shouldShowInstructions)
 {
-    if(shouldShowInstructions){
-        std::cout << "Press Enter to Continue"<<std::endl;;
+    if(shouldShowInstructions && config.shouldShowInstructions){
+        std::cout<<"Take a look at the instructions before you play."<<std::endl
+        <<"And also remember that the default configurations are on the config.obd file"<<std::endl;
+        TextTable t( '-', '|', '+' );
+        t.add("Action");
+        t.add("Key/Mouse");
+        t.endOfRow();
+
+        t.add("Move Forward");
+        t.add("Key Press W");
+        t.endOfRow();
+
+        t.add("Move Backwards");
+        t.add("Key Press S");
+        t.endOfRow();
+
+        t.add("Move Left");
+        t.add("Key Press A");
+        t.endOfRow();
+
+        t.add("Move Right");
+        t.add("Key Press D");
+        t.endOfRow();
+
+        t.add("Look Around");
+        t.add("Use your Mouse");
+        t.endOfRow();
+
+        t.add("Exit");
+        t.add("Key Press ESC");
+        t.endOfRow();
+        t.setAlignment( 2, TextTable::Alignment::RIGHT );
+        std::cout << t << std::endl << "Press Enter to Continue..."<<std::endl;;
         std::cin.ignore();
     }
     LOG("Launcher", "Launching client");

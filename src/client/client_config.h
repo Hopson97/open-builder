@@ -15,6 +15,7 @@ struct ClientConfig {
     int fov = 65;
 
     bool isFpsCapped = true;
+    bool shouldShowInstructions = true;
 
     sf::Time connectionTimeout = sf::milliseconds(10000);
 
