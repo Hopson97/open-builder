@@ -8,9 +8,9 @@ struct ScriptEngine {
     void runLuaScript(const std::string &path);
 
     template <typename... Args>
-    void addTable(const std::string &tableName, Args &&... args)
+    auto addTable(const std::string &tableName, Args &&... args)
     {
-        gameTable.create_named(tableName, std::forward<Args>(args)...);
+        return gameTable.create_named(tableName, std::forward<Args>(args)...);
     }
 
     sol::state lua;

@@ -117,10 +117,6 @@ class Client final : public NetworkHost {
         gl::UniformLocation timeLocation;
     } m_fluidShader;
 
-    struct {
-        gl::Shader program;
-    } m_guiShader;
-
     // For time-based render stuff eg waves in the water
     sf::Clock m_clock;
 

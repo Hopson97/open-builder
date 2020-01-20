@@ -46,8 +46,6 @@ Server::Server(const ServerConfig &config)
             }
         }
     }
-
-    std::cout << "Yeah i am being created\n";
 }
 
 void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)

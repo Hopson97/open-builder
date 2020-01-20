@@ -43,7 +43,11 @@ void deleteChunkRenderable(const ChunkPosition &position,
 Client::Client()
     : NetworkHost("Client")
 {
-    m_lua.addTable("gui");
+    auto guiTable =
+        m_lua.addTable("gui", "addImage", [&](const std::string &image) {
+            m_gui.addImage(image);
+        });
+    m_lua.runLuaScript("game/gui.lua");
 }
 
 bool Client::init(const ClientConfig &config, float aspect)
@@ -72,9 +76,6 @@ bool Client::init(const ClientConfig &config, float aspect)
         m_fluidShader.program.getUniformLocation("projectionViewMatrix");
     m_fluidShader.timeLocation =
         m_fluidShader.program.getUniformLocation("time");
-
-    // GUI Shader
-    m_guiShader.program.create("gui", "gui");
 
     // Texture for the player model
     m_errorSkinTexture.create("skins/error");
@@ -390,7 +391,6 @@ void Client::render()
     glCheck(glDisable(GL_BLEND));
 
     // GUI
-    m_guiShader.program.bind();
     m_gui.render();
 }
 
@@ -408,7 +408,6 @@ void Client::endGame()
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
     m_fluidShader.program.destroy();
-    m_guiShader.program.destroy();
     m_voxelTextures.destroy();
 
     for (auto &chunk : m_chunks.drawables) {

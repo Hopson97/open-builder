@@ -1,0 +1,1 @@
+openbuilder.gui.addImage("crosshair")

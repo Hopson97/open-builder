@@ -5,7 +5,7 @@
 ScriptEngine::ScriptEngine()
     : gameTable(lua["openbuilder"].get_or_create<sol::table>())
 {
-    lua.open_libraries(sol::lib::base);
+    lua.open_libraries(sol::lib::base, sol::lib::package);
 }
 
 void ScriptEngine::runLuaScript(const std::string &path)

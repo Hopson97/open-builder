@@ -6,5 +6,8 @@ out vec4 outColour;
 uniform sampler2D tex;
 
 void main() {
-    outColour = vec4(1, 1, 1, 1);//texture(tex, passTexCoord);
+    outColour = texture(tex, passTexCoord);
+    if (outColour.a == 0) {
+        discard;
+    }
 }
