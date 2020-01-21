@@ -35,7 +35,7 @@ const ChunkPosition &Chunk::getPosition() const
     return m_position;
 }
 
-Chunk::CompressedBlocks Chunk::compress() const
+CompressedBlocks compressBlockData(const BlockArray &blocks)
 {
     CompressedBlocks compressed;
     block_t currentBlock = blocks[0];
@@ -56,15 +56,17 @@ Chunk::CompressedBlocks Chunk::compress() const
     return compressed;
 }
 
-void Chunk::decompress(const Chunk::CompressedBlocks &compressed)
+BlockArray decompressBlockData(const CompressedBlocks &blocks)
 {
+    BlockArray blockData;
     int blockPointer = 0;
-    for (auto &block : compressed) {
+    for (auto &block : blocks) {
         auto type = block.first;
         auto count = block.second;
 
         for (u16 i = 0; i < count; i++) {
-            blocks[blockPointer++] = type;
+            blockData[blockPointer++] = type;
         }
     }
+    return blockData;
 }

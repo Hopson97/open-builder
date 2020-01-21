@@ -4,22 +4,6 @@
 #include <common/world/chunk.h>
 #include <thread>
 
-namespace {
-Chunk::CompressedBlocks getCompressedChunkFromPacket(sf::Packet &packet)
-{
-    u32 size;
-    Chunk::CompressedBlocks compressed;
-    packet >> size;
-    for (u32 i = 0; i < size; i++) {
-        block_t type;
-        u16 count;
-        packet >> type >> count;
-        compressed.emplace_back(type, count);
-    }
-    return compressed;
-}
-} // namespace
-
 void Client::sendPlayerPosition(const glm::vec3 &position)
 {
     sf::Packet packet;
@@ -150,9 +134,18 @@ void Client::onChunkData(sf::Packet &packet)
 
         Chunk &chunk = m_chunks.manager.addChunk(position);
 
+        u32 size;
+        CompressedBlocks compressed;
+        packet >> size;
+        for (u32 i = 0; i < size; i++) {
+            block_t type;
+            u16 count;
+            packet >> type >> count;
+            compressed.emplace_back(type, count);
+        }
+
         // Uncompress the block data
-        auto compressedData = getCompressedChunkFromPacket(packet);
-        chunk.decompress(compressedData);
+        chunk.blocks = decompressBlockData(compressed);
 
         // Add to chunk updates
         m_chunks.updates.push_back(position);
