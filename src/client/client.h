@@ -54,7 +54,7 @@ class Client final : public NetworkHost {
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
     void update(float dt);
-    void render();
+    void render(int width, int height);
     void endGame();
 
     EngineStatus currentStatus() const;

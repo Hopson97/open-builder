@@ -43,12 +43,12 @@ void deleteChunkRenderable(const ChunkPosition &position,
 Client::Client()
     : NetworkHost("Client")
 {
-    auto luaGuiAPI = m_lua.addTable("gui");
-    luaGuiAPI["addImage"] = [&](const GuiImage &img) { m_gui.addImage(img); };
+    auto luaGuiAPI = m_lua.addTable("GUI");
+    luaGuiAPI["addImage"] = [&](sol::userdata img) { m_gui.addImage(img); };
 
-    auto guiImage = luaGuiAPI.new_usertype<GuiImage>("Image");
-    guiImage["setSource"] = &GuiImage::setSource;
+    m_gui.addUsertypes(luaGuiAPI);
 
+    m_lua.lua["update"] = 3;
     m_lua.runLuaScript("game/gui.lua");
 }
 
@@ -309,9 +309,17 @@ void Client::update(float dt)
             }
         }
     }
+
+    // Call update function on the GUI script
+    // Note: This part is quite dangerous, if there's no update() or there's an error
+    //       in the script then it will cause a crash
+    sol::function p_update = m_lua.lua["update"];
+    p_update(dt);
+
+        
 }
 
-void Client::render()
+void Client::render(int width, int height)
 {
     // TODO [Hopson] Clean this up
     if (!m_hasReceivedGameData) {
@@ -393,7 +401,7 @@ void Client::render()
     glCheck(glDisable(GL_BLEND));
 
     // GUI
-    m_gui.render();
+    m_gui.render(width, height);
 }
 
 void Client::endGame()
