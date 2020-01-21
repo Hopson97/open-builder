@@ -44,7 +44,7 @@ Client::Client()
     : NetworkHost("Client")
 {
     auto luaGuiAPI = m_lua.addTable("GUI");
-    luaGuiAPI["addImage"] = [&](GuiImage &img) { m_gui.addImage(img); };
+    luaGuiAPI["addImage"] = [&](sol::userdata img) { m_gui.addImage(img); };
 
     m_gui.addUsertypes(luaGuiAPI);
 
@@ -310,8 +310,9 @@ void Client::update(float dt)
         }
     }
 
+    // Call update function on the GUI script
     sol::function p_update = m_lua.lua["update"];
-    p_update();
+    p_update(dt);
 
         
 }

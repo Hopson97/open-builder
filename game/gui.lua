@@ -1,4 +1,5 @@
 local size = openbuilder.GUI.GDim.new(0.1, 0, 0.1, 0)
+openbuilder.GUI.addImage(size)
 
 for i = 0, 1, 0.1 do
 	local crosshair = openbuilder.GUI.Image.new()
@@ -15,7 +16,7 @@ f_crosshair:setSize(openbuilder.GUI.GDim.new(0, 32, 0, 32))
 openbuilder.GUI.addImage(f_crosshair)
 
 local p = 0
-function update()
+function update(delta)
 	f_crosshair:setPosition(openbuilder.GUI.GDim.new(0.5, -16 + math.sin(p)*5, 0.5, -16 + math.cos(p)*5))
-	p = p + 0.01
+	p = p + (delta * math.pi*2)
 end

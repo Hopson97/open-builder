@@ -41,7 +41,7 @@ class Gui final {
     void processKeypress(sf::Event e);
     void processMouseEvent(sf::Event e);
 
-    void addImage(GuiImage &image);
+    void addImage(sol::userdata image);
 
     void render(int width, int height);
 
@@ -55,5 +55,5 @@ class Gui final {
     } m_guiShader;
 
     gl::VertexArray m_quad;
-    std::vector<GuiImage*> m_images;
+    std::vector<sol::userdata> m_images;
 };
