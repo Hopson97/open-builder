@@ -216,7 +216,9 @@ void Client::onGameRegistryData(sf::Packet &packet)
     // 1. Need to somehow work out the exact amount of textures needed
     // 2. Need to pass in the actual texture pack resolution
     m_voxelTextures.create(numBlocks * 3, 16);
-    const std::string texturePath = "default/textures/blocks/";
+
+    const std::string texturePath =
+        "texture_packs/" + m_texturePack + "/blocks/";
     for (u16 i = 0; i < numBlocks; i++) {
         std::string name;
         std::string textureTop;
@@ -236,13 +238,14 @@ void Client::onGameRegistryData(sf::Packet &packet)
         packet >> isCollidable;
 
         ClientVoxel voxelData;
+        voxelData.id = m_voxelData.getNextId();
         voxelData.name = name;
         voxelData.topTexture = getTexture(texturePath + textureTop);
         voxelData.sideTexture = getTexture(texturePath + textureSide);
         voxelData.bottomTexture = getTexture(texturePath + textureBottom);
 
         voxelData.meshStyle = static_cast<VoxelMeshStyle>(meshStyle);
-        voxelData.meshType = static_cast<VoxelMeshType>(meshType);
+        voxelData.meshType = static_cast<VoxelType>(meshType);
         voxelData.isCollidable = isCollidable;
 
         m_voxelData.addVoxelData(voxelData);

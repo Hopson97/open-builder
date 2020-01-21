@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../world/server_voxel.h"
+#include "../scripting/server_game_data.h"
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/network/net_host.h>
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_registry.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <queue>
-#include <unordered_map>
+
+#include <common/scripting/script_engine.h>
 
 struct ServerConfig;
 
@@ -71,5 +71,6 @@ class Server final : public NetworkHost {
     bool m_isRunning = true;
     const int m_worldSize;
 
-    VoxelRegistry<ServerVoxel> m_voxelRegistry;
+    ScriptEngine m_script;
+    ServerGameData m_gameData;
 };

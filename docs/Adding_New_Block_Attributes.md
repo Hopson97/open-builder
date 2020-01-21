@@ -6,7 +6,7 @@ The example used is if adding a `isCollidable` data type to the blocks.
 
 ## Step 1: Edit the Server Voxel Data
 
-Go to the [`ServerVoxel`](https://github.com/Hopson97/open-builder/blob/master/src/server/world/server_voxel.cpp) object and add the data as needed.
+Go to the [`ServerVoxel`](https://github.com/Hopson97/open-builder/blob/master/src/server/scripting/server_game_data.h) object and add the data as needed.
 
 Example:
 
@@ -14,41 +14,43 @@ Example:
 bool isCollidable = true;
 ```
 
-## Step 2: Load the data
 
-Go to the [`Server class`](https://github.com/Hopson97/open-builder/blob/master/src/server/network/server.cpp) constructor and load the data in where the voxels are loaded from.
+## Step 2: Edit the `blocks.obd` file to add the new attribute
+
+For every block, you need to add the new data in for each one in the [`blocks.lua`](https://github.com/Hopson97/open-builder/blob/master/game/blocks.lua) file.
+
+Example
+
+```
+isCollidable = true
+```
+
+## Step 3: Load the data
+
+Go to [`ServerGameData`](https://github.com/Hopson97/open-builder/blob/master/src/server/scripting/server_game_data.cpp) constructor and load get data from the addVoxel() function
 
 Example:
 
 ```cpp
-voxelData.isCollidable = static_cast<bool>(std::stoi(bd["isCollidable"]));
+voxel.isCollidable = voxelData["collidable"].get<bool>();
 ```
 
-## Step 3: Edit the `blocks.obd` file to add the new attribute
-
-For every block, you need to add the new data in for each one in the [`blocks.obd`](https://github.com/Hopson97/open-builder/blob/master/game/blocks.obd) file.
-
-Example
-
-```
-isCollidable 0
-```
 
 ## Step 4: Update the docs
 
-Go to [`OBD_Blocks.md](https://github.com/Hopson97/open-builder/blob/master/docs/OBD_Blocks.md) and update the relevent sections describing the new attribute.
+Go to [`Lua_Voxels.md](https://github.com/Hopson97/open-builder/blob/master/docs/Lua_Voxels.md) and update the relevent sections describing the new attribute.
 
 Example
 
-In the .obd example:
+In the example:
 
-```
-isCollidable 0
+```lua
+collidable = true,
 ```
 
 In the main table that says the format:
 
-`| isCollidable | Boolean | Whether this voxel can be collided with. 0 = no, 1 = yes |`
+`| collidable   | Boolean | Whether this voxel can be collided with.   |`
 
 
 ## Step 5: Client Voxel Data

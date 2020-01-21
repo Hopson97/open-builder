@@ -12,14 +12,6 @@
 
 #include <SFML/System/Clock.hpp>
 
-template <typename T> void bench(const char *n, T f)
-{
-    sf::Clock c;
-    f();
-    float t = c.restart().asSeconds() * 1000;
-    std::cout << n << ": " << t << '\n';
-}
-
 struct QueuedPacket {
     enum class Style {
         One,
@@ -54,6 +46,7 @@ class NetworkHost {
      * @brief Creates as a client, and connects the host to a server
      *
      * @param ip The IP address of the server
+     * @param timeout How long the client waits for a connection before closing
      * @return std::optional<ENetPeer *> The server peer, might not be
      * successful connection hence optional
      */

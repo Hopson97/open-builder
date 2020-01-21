@@ -1,0 +1,10 @@
+k.jpg -> https://github.com/Hopson97/open-builder/issues/67
+
+Massive help with the world generation algorithms
+
+=====================================================================================
+
+Ruixel -> https://github.com/Ruixel
+
+Added support for custom player skins
+

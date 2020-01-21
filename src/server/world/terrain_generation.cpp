@@ -33,8 +33,18 @@ struct NoiseOptions {
     float offset;
 };
 
+// THANKS! Karasa and K.jpg for help with this algo
+float rounded(const glm::vec2 &coord)
+{
+    auto bump = [](float t) {
+        return glm::max(0.0f, 1.0f - std::pow(t, 6.0f));
+    };
+    float b = bump(coord.x) * bump(coord.y);
+    return b * 0.9f;
+}
+
 float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
-                 const NoiseOptions &options)
+                 const NoiseOptions &options, float seed)
 {
     // Get voxel X/Z positions
     float voxelX = blockPosition.x + chunkPosition.x * CHUNK_SIZE;
@@ -50,62 +60,84 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
         float x = voxelX * frequency / options.smoothness;
         float y = voxelZ * frequency / options.smoothness;
 
-        float noise = glm::simplex(glm::vec2{x, y});
+        float noise = glm::simplex(glm::vec3{x, y, seed});
         noise = (noise + 1.0f) / 2.0f;
         value += noise * amplitude;
         accumulatedAmps += amplitude;
     }
-
-    return ((value / accumulatedAmps)) * options.amplitude + options.offset;
+    return value / accumulatedAmps;
 }
 
 } // namespace
 
-std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position)
+std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
+                                                 float worldSize, float seed)
 {
-    NoiseOptions options;
-    options.amplitude = 70;
-    options.octaves = 6;
-    options.smoothness = 215.f;
-    options.roughness = 0.5f;
-    options.offset = 20.0f;
+    const float WOLRD_SIZE = worldSize * CHUNK_SIZE;
+
+    NoiseOptions firstNoise;
+    firstNoise.amplitude = 105;
+    firstNoise.octaves = 6;
+    firstNoise.smoothness = 205.f;
+    firstNoise.roughness = 0.58f;
+    firstNoise.offset = 18;
+
+    NoiseOptions secondNoise;
+    secondNoise.amplitude = 20;
+    secondNoise.octaves = 4;
+    secondNoise.smoothness = 200;
+    secondNoise.roughness = 0.45f;
+    secondNoise.offset = 0;
+
+    glm::vec2 chunkXZ = {position.x, position.z};
 
     std::array<int, CHUNK_AREA> heightMap;
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
-            heightMap[z * CHUNK_SIZE + x] = static_cast<int>(
-                getNoiseAt({x, z}, {position.x, position.z}, options));
+            float bx = x + position.x * CHUNK_SIZE;
+            float bz = z + position.z * CHUNK_SIZE;
+
+            glm::vec2 coord =
+                (glm::vec2{bx, bz} - WOLRD_SIZE / 2.0f) / WOLRD_SIZE * 2.0f;
+
+            auto noise = getNoiseAt({x, z}, chunkXZ, firstNoise, seed);
+            auto noise2 =
+                getNoiseAt({x, z}, {position.x, position.z}, secondNoise, seed);
+            auto island = rounded(coord) * 1.25;
+            float result = noise * noise2;
+
+            heightMap[z * CHUNK_SIZE + x] =
+                (result * firstNoise.amplitude + firstNoise.offset) * island -
+                5;
         }
     }
+
     return heightMap;
 }
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
-                         int worldSize)
+                         int baseChunk)
 {
-    auto cp = chunk.getPosition();
-    auto cx = cp.x;
-    auto cy = cp.y;
-    auto cz = cp.z;
+    auto base = chunk.getPosition().y - baseChunk;
 
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             int height = heightMap[z * CHUNK_SIZE + x];
             for (int y = 0; y < CHUNK_SIZE; y++) {
-                int blockY = cy * CHUNK_SIZE + y;
+                int blockY = base * CHUNK_SIZE + y;
 
                 if (blockY > height) {
-                    // TODO water
+                    chunk.qSetBlock({x, y, z}, blockY < 32 ? 4 : 0);
                 }
-                else if (blockY == height) {
-                    chunk.qSetBlock({x, y, z}, 1);
+                else if (blockY <= height) {
+                    chunk.qSetBlock({x, y, z}, blockY < 35 ? 5 : 1);
                 }
                 else if (blockY > height - 5) {
                     chunk.qSetBlock({x, y, z}, 2);
                 }
                 else {
-                    chunk.qSetBlock({x, y, z}, 3);
+                    chunk.qSetBlock({x, y, z}, 5);
                 }
             }
         }

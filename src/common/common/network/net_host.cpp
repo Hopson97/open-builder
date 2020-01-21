@@ -4,6 +4,7 @@
 #include "net_constants.h"
 
 #include <SFML/System/Clock.hpp>
+#include <thread>
 
 namespace {
 ENetHost *createHost(const ENetAddress *address, int connections)
@@ -86,8 +87,9 @@ std::optional<ENetPeer *> NetworkHost::createAsClient(const std::string &ip)
     }
 
     auto server = connectHostTo(mp_host, ip);
+
     if (!server) {
-        LOG(m_name.c_str(), "Error: Failed to connect to server (Game Full).");
+        LOG(m_name.c_str(), "Error: Failed to connect to server.");
         return {};
     }
     flush();

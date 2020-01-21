@@ -1,29 +1,34 @@
 # Open Builder Format
 
-Open builder data (.obd) is the data format used by the game for general data such as block defintions and configurations.
+Open builder data (.obd) is the data format used by the game for config stuff
 
-It is very simple, example grass block:
+It is very simple, example config for the client:
 
 ```
-block
-    name grass
-    texture_top grass
-    texture_side grass_side
-    texture_bottom dirt
-    mesh block
-    type solid
+CLIENT_DATA
+    cap_fps 0
+    fps_limit 60
+    fov 90
+
+    fullscreen 0
+    window_width 1280
+    window_height 720
+
+    skin player
+    texture_pack default
 end
+
 ```
 
 The first line defines what the data is, in this case a block defintion.
 
-The lines between the "title" (block) and "end" define the data.
+The lines between the "title" (CLIENT_DATA) and "end" define the data.
 
 Each piece of data is a key-value pair seperated by some whitespace
 
 For example
 
-`name grass` 
+`window_width 1280`
 
-Tells the engine that this block has the name grass.
+Tells the client window is 1280 pixels wide
 

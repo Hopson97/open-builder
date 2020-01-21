@@ -5,6 +5,10 @@
 #include <array>
 #include <common/world/coordinate.h>
 
+glm::mat4 createProjectionViewMatrix(const glm::vec3 &position,
+                                     const glm::vec3 &rotation,
+                                     const glm::mat4 &projection);
+
 /**
  * @brief Rotate a matrix
  *

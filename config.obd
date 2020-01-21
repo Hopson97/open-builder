@@ -8,9 +8,11 @@ CLIENT_DATA
     window_height 900
 
     skin player
-    texture_pack default
+    texture_pack default1
+
+    server_ip LOCAL
 end
 
 SERVER_DATA
-    world_size 16
+    world_size 10
 end

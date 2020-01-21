@@ -66,7 +66,7 @@ enum class ClientCommand : command_t {
     // String: the voxel's side texture
     // String: the voxel's bottom texture
     // u8: The voxels mesh style aka VoxelMeshStyle
-    // u8: The voxels state/type aka VoxelMeshType
+    // u8: The voxels state/type aka VoxelType
     // u8: Whether the block is collidable or not
     GameRegistryData
 };

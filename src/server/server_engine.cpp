@@ -7,14 +7,19 @@
 #include <iostream>
 #include <thread>
 
-void runServerEngine(const ServerConfig &config, sf::Time timeout)
+ServerLauncher::ServerLauncher(const ServerConfig &config, sf::Time timeout)
+    : m_server(config)
+    , m_config(config)
+    , m_timeout(timeout)
 {
-    Server engine(config);
-    if (!engine.createAsServer(config.maxConnections)) {
+}
+
+void ServerLauncher::runServerEngine()
+{
+    if (!m_server.createAsServer(m_config.maxConnections)) {
         std::cout << "Failed to create server.\n";
         return;
     }
-
     std::atomic<bool> serverRunning = true;
     std::atomic<bool> serverConsoleRunning = true;
 
@@ -39,18 +44,18 @@ void runServerEngine(const ServerConfig &config, sf::Time timeout)
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
         // Server updates
-        engine.tick();
-        engine.update();
+        m_server.tick();
+        m_server.update();
 
         // Exit the server if there is no connections
-        if (engine.getConnectedPeerCount() == 0) {
-            serverRunning = clock.getElapsedTime() < timeout;
+        if (m_server.getConnectedPeerCount() == 0) {
+            serverRunning = clock.getElapsedTime() < m_timeout;
         }
         else {
             clock.restart();
         }
     }
-    engine.disconnectAllPeers();
+    m_server.disconnectAllPeers();
     if (serverConsoleRunning) {
         std::cout
             << "Server console is still active.\nPlease type anything to exit."

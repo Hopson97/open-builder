@@ -61,6 +61,10 @@ void loadFromConfigFile(Config &config)
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
     config.client.skinName = clientData["skin"];
     config.client.texturePack = clientData["texture_pack"];
+    config.client.serverIp = clientData["server_ip"];
+    if (config.client.serverIp == "LOCAL") {
+        config.client.serverIp = LOCAL_HOST;
+    }
 
     config.server.worldSize = std::stoi(serverData["world_size"]);
 }
@@ -138,7 +142,8 @@ int exitFailure(const char *message)
 int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
 {
     LOG("Launcher", "Launching server");
-    runServerEngine(config, timeout);
+    ServerLauncher launcher(config, timeout);
+    launcher.runServerEngine();
     LOG("Launcher", "Server has exited.");
     return EXIT_SUCCESS;
 }
@@ -180,12 +185,12 @@ int launchClient(const ClientConfig &config)
  */
 int launchBoth(const Config &config)
 {
-    std::thread serverThread(launchServer, config.server,
-                             sf::milliseconds(5000));
-
-    // Allows some time for the server to set up etc
-    // TODO Improve this to wait until server set up, rather than randime
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    ServerLauncher server(config.server, sf::milliseconds(5000));
+    std::thread serverThread([&server]() {
+        LOG("Launcher", "Launching server");
+        server.runServerEngine();
+    });
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     int exit = launchClient(config.client);
     serverThread.join();
     return exit;
@@ -198,12 +203,13 @@ int launchBoth(const Config &config)
  */
 int launchServerAnd2Players(const Config &config)
 {
-    std::thread serverThread(launchServer, config.server,
-                             sf::milliseconds(20000));
+    ServerLauncher server(config.server, sf::milliseconds(5000));
+    std::thread serverThread([&server]() {
+        LOG("Launcher", "Launching server");
+        server.runServerEngine();
+    });
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    // Allows some time for the server to set up etc
-    // TODO Improve this to wait until server set up, rather than randime
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     std::thread client2(launchClient, config.client);
 
     int exit = launchClient(config.client);

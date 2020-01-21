@@ -1,6 +1,9 @@
 #pragma once
 
+#include <SFML/System/Time.hpp>
 #include <string>
+
+#include <common/network/net_constants.h>
 
 /**
  * @brief Config options for client
@@ -17,4 +20,6 @@ struct ClientConfig {
 
     std::string skinName = "player";
     std::string texturePack = "default";
+
+    std::string serverIp = LOCAL_HOST;
 };
