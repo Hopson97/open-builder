@@ -57,7 +57,6 @@ void GuiImage::setPosition(GDim new_pos)
 
 void GuiImage::setColor(Color3 new_color)
 {
-    std::cout << "new color: " << new_color.r << "\n";
     m_color = new_color;
 }
 
