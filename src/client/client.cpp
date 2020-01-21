@@ -44,10 +44,11 @@ Client::Client()
     : NetworkHost("Client")
 {
     auto luaGuiAPI = m_lua.addTable("GUI");
-    luaGuiAPI["addImage"] = [&](const GuiImage &img) { m_gui.addImage(img); };
+    luaGuiAPI["addImage"] = [&](GuiImage &img) { m_gui.addImage(img); };
 
     m_gui.addUsertypes(luaGuiAPI);
 
+    m_lua.lua["update"] = 3;
     m_lua.runLuaScript("game/gui.lua");
 }
 
@@ -308,6 +309,11 @@ void Client::update(float dt)
             }
         }
     }
+
+    sol::function p_update = m_lua.lua["update"];
+    p_update();
+
+        
 }
 
 void Client::render(int width, int height)

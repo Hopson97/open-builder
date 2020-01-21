@@ -20,7 +20,7 @@ Gui::~Gui()
     m_guiShader.program.destroy();
 
     for (auto &img : m_images) {
-        img.m_image.destroy();
+        img->m_image.destroy();
     }
 }
 
@@ -54,31 +54,31 @@ void Gui::processMouseEvent(sf::Event e)
 {
 }
 
-void Gui::addImage(const GuiImage &image)
+void Gui::addImage(GuiImage &image)
 {
-    m_images.push_back(image);
+    m_images.push_back(&image);
 }
 
 void Gui::render(int width, int height)
 {
-    double pixel_width = 2.f / width;
-    double pixel_height = 2.f / height;
+    float pixel_width = 2.f / width;
+    float pixel_height = 2.f / height;
 
     m_guiShader.program.bind();
     auto d = m_quad.getDrawable();
     d.bind();
-    for (auto &img : m_images) {
+    for (auto img : m_images) {
         glm::mat4 modelMatrix{ 1.0f };
         modelMatrix = glm::translate(modelMatrix,
-            glm::vec3(img.m_position.scale.x*2 - 1 + img.m_position.offset.x*pixel_width,
-            1 - img.m_position.scale.y*-2 - 2 + img.m_position.offset.y * pixel_height, 0));
+            glm::vec3(img->m_position.scale.x*2 - 1 + img->m_position.offset.x*pixel_width,
+            1 - img->m_position.scale.y*-2 - 2 + img->m_position.offset.y * pixel_height, 0));
 
         modelMatrix = glm::scale(modelMatrix, 
-            glm::vec3(img.m_size.scale.x*2 + img.m_size.offset.x * pixel_width,
-            img.m_size.scale.y*2 + img.m_size.offset.y * pixel_height, 1));
+            glm::vec3(img->m_size.scale.x*2 + img->m_size.offset.x * pixel_width,
+            img->m_size.scale.y*2 + img->m_size.offset.y * pixel_height, 1));
 
         gl::loadUniform(m_guiShader.modelLocation, modelMatrix);
-        img.m_image.bind();
+        img->m_image.bind();
         d.draw();
     }
 }
