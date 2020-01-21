@@ -9,6 +9,7 @@ CLIENT_DATA
 
     skin player
     texture_pack default1
+    shouldShowInstructions 1
 
     server_ip LOCAL
 end
