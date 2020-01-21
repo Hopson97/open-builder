@@ -69,7 +69,7 @@ void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
     packet << ClientCommand::ChunkData << chunk.getPosition().x
            << chunk.getPosition().y << chunk.getPosition().z;
 
-    auto compressedChunk = chunk.compress();
+    auto compressedChunk = compressBlockData(chunk.blocks);
     packet << static_cast<u32>(compressedChunk.size());
     for (auto &block : compressedChunk) {
         packet << block.first << block.second;

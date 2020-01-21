@@ -8,7 +8,20 @@
 
 class ChunkManager;
 
-template <typename T> using BlockArray = std::array<T, CHUNK_VOLUME>;
+using BlockArray = std::array<block_t, CHUNK_VOLUME>;
+
+struct BlockData {
+    BlockArray blocks{0};
+};
+
+/**
+ * @brief Compressed chunk block data
+ * Contains a block, followed by how many blocks are exactly the same after
+ * it Eg a chunk like [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 3, 3, 3, 3,
+ * 3, 3, 3, 2, 1] Would get compressed to: [0, 4, 1, 4, 0, 2, 1, 4, 3, 7, 2,
+ * 1]
+ */
+using CompressedBlocks = std::vector<std::pair<block_t, u16>>;
 
 /**
  * @brief Data structure for a "chunk" of blocks of the game
@@ -16,16 +29,6 @@ template <typename T> using BlockArray = std::array<T, CHUNK_VOLUME>;
  */
 class Chunk {
   public:
-    using Blocks = BlockArray<block_t>;
-
-    /**
-     * @brief Compressed chunk block data
-     * Contains a block, followed by how many blocks are exactly the same after
-     * it Eg a chunk like [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 3, 3, 3, 3,
-     * 3, 3, 3, 2, 1] Would get compressed to: [0, 4, 1, 4, 0, 2, 1, 4, 3, 7, 2,
-     * 1]
-     */
-    using CompressedBlocks = std::vector<std::pair<block_t, u16>>;
 
     Chunk(ChunkManager &manager, const ChunkPosition &position);
 
@@ -57,24 +60,25 @@ class Chunk {
     block_t getBlock(const BlockPosition &blockPosition) const;
     const ChunkPosition &getPosition() const;
 
-    /**
-     * @brief Compress the block data of this chunk
-     *
-     * @return CompressedBlocks The compressed block data [See:
-     * CompressedBlocks]
-     */
-    CompressedBlocks compress() const;
-
-    /**
-     * @brief Uncompress block data into this chunk
-     *
-     * @param blocks The compressed block data [See: CompressedBlocks]
-     */
-    void decompress(const CompressedBlocks &blocks);
-
-    Blocks blocks{0};
+    BlockArray blocks{0};
 
   private:
     ChunkManager &mp_manager;
     ChunkPosition m_position;
 };
+
+
+/**
+ * @brief Compress the block data of some block data
+ *
+ * @return CompressedBlocks The compressed block data [See:
+ * CompressedBlocks]
+ */
+CompressedBlocks compressBlockData(const BlockArray& blocks);
+
+/**
+ * @brief Uncompress block data into this chunk
+ *
+ * @param blocks The compressed block data [See: CompressedBlocks]
+ */
+BlockArray decompressBlockData(const CompressedBlocks &blocks);
