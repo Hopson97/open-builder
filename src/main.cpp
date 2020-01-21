@@ -13,8 +13,6 @@
 #include "client/client_config.h"
 #include "server/server_config.h"
 
-#include "client/TextTable.h"
-
 #include <common/network/enet.h>
 #include <common/obd_parser.h>
 
@@ -162,36 +160,19 @@ int launchClient(const ClientConfig &config,bool launchingJustClient)
     if(launchingJustClient && config.shouldShowInstructions){
         std::cout<<"Take a look at the instructions before you play."<<std::endl
         <<"And also remember that the default configurations are on the config.obd file"<<std::endl;
-        TextTable t( '-', '|', '+' );
-        t.add("Action");
-        t.add("Key/Mouse");
-        t.endOfRow();
-
-        t.add("Move Forward");
-        t.add("Key Press W");
-        t.endOfRow();
-
-        t.add("Move Backwards");
-        t.add("Key Press S");
-        t.endOfRow();
-
-        t.add("Move Left");
-        t.add("Key Press A");
-        t.endOfRow();
-
-        t.add("Move Right");
-        t.add("Key Press D");
-        t.endOfRow();
-
-        t.add("Look Around");
-        t.add("Use your Mouse");
-        t.endOfRow();
-
-        t.add("Exit");
-        t.add("Key Press ESC");
-        t.endOfRow();
-        t.setAlignment( 2, TextTable::Alignment::RIGHT );
-        std::cout << t << std::endl << "Press Enter to Continue..."<<std::endl;;
+        // printf("%s \t %s\n","Action","Key/Mouse");
+        const int width = 50;
+        std::cout<<std::setw(width)<<std::left<<"Action"<<"Key/Mouse"<<std::endl;
+        std::cout<<std::setw(width*2)<<std::setfill('-')<<""<<std::endl;
+        std::cout<<std::setfill(' ')<<std::setw(width)<<std::left<<"Move Forward"<<"W"<<std::endl;
+        std::cout<<std::setw(width)<<std::left<<"Move Backwards"<<"S"<<std::endl;
+        std::cout<<std::setw(width)<<std::left<<"Move Left"<<"A"<<std::endl;
+        std::cout<<std::setw(width)<<std::left<<"Move Right"<<"D"<<std::endl;
+        std::cout<<std::setw(width)<<std::left<<"Look Around"<<"Move Mouse"<<std::endl;
+        std::cout<<std::setw(width)<<std::left<<"Sprint"<<"CTRL"<<std::endl;
+        std::cout<<std::setw(width)<<std::left<<"Right CLick"<<"Place A Block"<<std::endl;
+        std::cout<<std::setw(width)<<std::left<<"Left CLick"<<"Removes A Block"<<std::endl;
+        std::cout << "Press Enter to Continue..."<<std::endl;;
         std::cin.ignore();
     }
     LOG("Launcher", "Launching client");
