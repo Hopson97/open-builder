@@ -311,6 +311,8 @@ void Client::update(float dt)
     }
 
     // Call update function on the GUI script
+    // Note: This part is quite dangerous, if there's no update() or there's an error
+    //       in the script then it will cause a crash
     sol::function p_update = m_lua.lua["update"];
     p_update(dt);
 

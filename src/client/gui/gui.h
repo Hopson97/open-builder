@@ -9,24 +9,43 @@
 #include <memory>
 #include <vector>
 
+// Todo: Maybe move these out into their own files 
+
+// Stores the scale and offset of a GUI element in 2 dimensions
 struct GDim {
     sf::Vector2f scale;
     sf::Vector2f offset;
 
     GDim() 
         : scale(sf::Vector2f(0, 0)), offset(sf::Vector2f(0, 0)) {}
+
     GDim(float x_s, float x_o, float y_s, float y_o)
         : scale(sf::Vector2f(x_s, y_s)), offset(sf::Vector2f(x_o, y_o)) {}
 };
 
+// GUI Color, each colour ranges from 0-1 (floats)
+struct Color3 {
+    float r, g, b;
+
+    Color3()                          // Default should be 1,1,1 so scripters don't need
+        : r(1.f), g(1.f), b(1.f) {}   // to set color just to see the image
+                                      
+    Color3(float r, float g, float b)
+        : r(r), g(g), b(b) {}
+};
+
+// GUI Image, 
 struct GuiImage {
     gl::Texture2d m_image;
     GDim m_size;
     GDim m_position;
+    Color3 m_color;
 
+    // Setters (TODO: Getters?)
     void setSource(const std::string &imageSource);
     void setSize(GDim new_size);
     void setPosition(GDim new_pos);
+    void setColor(Color3 new_color);
 };
 
 class Gui final {
@@ -50,8 +69,7 @@ class Gui final {
     struct {
         gl::Shader program;
         gl::UniformLocation modelLocation;
-        gl::UniformLocation positionLocation;
-        gl::UniformLocation scaleLocation;
+        gl::UniformLocation colorLocation;
     } m_guiShader;
 
     gl::VertexArray m_quad;

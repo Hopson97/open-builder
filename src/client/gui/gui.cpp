@@ -12,6 +12,7 @@ Gui::Gui()
     m_guiShader.program.create("gui", "gui");
     m_guiShader.program.bind();
     m_guiShader.modelLocation = m_guiShader.program.getUniformLocation("modelMatrix");
+    m_guiShader.colorLocation = m_guiShader.program.getUniformLocation("color3");
 }
 
 Gui::~Gui()
@@ -29,11 +30,19 @@ void Gui::addUsertypes(sol::table& gui_api)
     auto udim2_type = gui_api.new_usertype<GDim>("GDim",
         sol::constructors < GDim(), GDim(float, float, float, float)>());
 
+    auto color3_type = gui_api.new_usertype<Color3>("Color3",
+        sol::constructors<Color3(), Color3(float, float, float)>());
+    color3_type["r"] = &Color3::r;
+    color3_type["b"] = &Color3::g;
+    color3_type["g"] = &Color3::b;
+
     auto image_type = gui_api.new_usertype<GuiImage>("Image");
 
     image_type["setSource"] = &GuiImage::setSource;
     image_type["setSize"] = &GuiImage::setSize;
     image_type["setPosition"] = &GuiImage::setPosition;
+    image_type["setColor"] = &GuiImage::setColor;
+
 }
 
 void GuiImage::setSize(GDim new_size)
@@ -44,6 +53,12 @@ void GuiImage::setSize(GDim new_size)
 void GuiImage::setPosition(GDim new_pos)
 {
     m_position = new_pos;
+}
+
+void GuiImage::setColor(Color3 new_color)
+{
+    std::cout << "new color: " << new_color.r << "\n";
+    m_color = new_color;
 }
 
 void Gui::processKeypress(sf::Event e)
@@ -83,6 +98,7 @@ void Gui::render(int width, int height)
             img.m_size.scale.y*2 + img.m_size.offset.y * pixel_height, 1));
 
         gl::loadUniform(m_guiShader.modelLocation, modelMatrix);
+        gl::loadUniform(m_guiShader.colorLocation, glm::vec3(img.m_color.r, img.m_color.g, img.m_color.b));
         img.m_image.bind();
         d.draw();
     }
