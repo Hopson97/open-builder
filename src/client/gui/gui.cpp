@@ -45,7 +45,6 @@ void Gui::render()
     }
 }
 
-
 void GuiImage::setSource(const std::string &imageSource)
 {
     if (m_image.textureExists()) {

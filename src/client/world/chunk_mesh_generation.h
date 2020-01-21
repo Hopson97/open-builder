@@ -2,8 +2,8 @@
 
 #include "chunk_mesh.h"
 #include "client_voxel.h"
-#include <common/world/voxel_registry.h>
 #include <common/world/chunk.h>
+#include <common/world/voxel_registry.h>
 
 class Chunk;
 

@@ -29,7 +29,6 @@ using CompressedBlocks = std::vector<std::pair<block_t, u16>>;
  */
 class Chunk {
   public:
-
     Chunk(ChunkManager &manager, const ChunkPosition &position);
 
     /**
@@ -67,14 +66,13 @@ class Chunk {
     ChunkPosition m_position;
 };
 
-
 /**
  * @brief Compress the block data of some block data
  *
  * @return CompressedBlocks The compressed block data [See:
  * CompressedBlocks]
  */
-CompressedBlocks compressBlockData(const BlockArray& blocks);
+CompressedBlocks compressBlockData(const BlockArray &blocks);
 
 /**
  * @brief Uncompress block data into this chunk
