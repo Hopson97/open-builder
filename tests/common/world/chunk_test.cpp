@@ -118,7 +118,7 @@ TEST_CASE("Chunk can be compressed and uncompressed")
         auto compressed = compressBlockData(chunk.blocks);
 
         Chunk& decompressor = manager.addChunk({1, 1, 1});
-        decompressBlockData(compressed);
+        decompressor.blocks = decompressBlockData(compressed);
 
         REQUIRE(decompressor.getBlock(positionA) == blockA);
         REQUIRE(decompressor.getBlock(positionB) == blockB);
