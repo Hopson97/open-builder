@@ -38,7 +38,7 @@ class VertexArray final {
     void addVertexBuffer(int magnitude, const std::vector<GLfloat> &data);
     void addIndexBuffer(const std::vector<GLuint> &indices);
 
-    // private:
+  private:
     std::vector<GLuint> m_bufferObjects;
     GLuint m_handle = 0;
     GLsizei m_indicesCount = 0;

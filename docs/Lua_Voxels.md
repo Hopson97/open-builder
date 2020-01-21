@@ -13,37 +13,38 @@ Example:
 
 ```lua
 openbuilder.data.addVoxel {
-    name = "openbuilder:grass",
-    type = "solid",
-    collidable = true,
+    name = "openbuilder:water",
+    type = openbuilder.VoxelType.Fluid,
+    collidable = false,
     render = {
-        top = "grass",
-        sides = "grass_side",
-        bottom = "dirt",
-        mesh = "block",
+        mesh = openbuilder.MeshStyle.Block,
+        top = "water",
+        sides = "water",
+        bottom = "water",
     },
 }
 ```
 
 Where:
 
-| Key            | Type           | Explanation                                                    |
-|----------------|----------------|----------------------------------------------------------------|
-| name           | String         | The name of the block, used to refer to it in other .lua scripts |
-| type           | String         | The type/ physical state of the block, more info below         |
-| collidable     | Boolean        | Whether this voxel can be collided with.                        |
-| render         | Lua Table      | Some information about how the voxel should be rendered        |
+| Key            | Type           | Default                         | Explanation                                                      | 
+|----------------|----------------|---------------------------------|--------------------------------------------------------|
+| name           | String         | N/A                             | The name of the block, used to refer to it in other .lua scripts |
+| type           | VoxelType      | `openbuilder.VoxelType.Solid`   | The type/ physical state of the block, more info below         |
+| collidable     | Boolean        | `true`                          | Whether this voxel can be collided with.                        |
+| render         | Lua Table      | N/A                             | Some information about how the voxel should be rendered        |
 
 Where the "render" table is defined as:
+| Key       | Type      | Default                       | Explanation                                                      | 
+|-----------|-----------|-------------------------------|--------------------------------------------------------|
+| top       | String    | N/A                           | The name of the texture that should appear on the top face     |
+| sides     | String    | N/A                           | The name of the texture that should appear on the block sides  |
+| bottom    | String    | N/A                           | The name of the texture that should appear on the bottom face  |
+| mesh      | MeshStyle | `openbuilder.MeshStyle.Block` | The style of the mesh, more info below                         |
 
-| top       | String    | The name of the texture that should appear on the top face     |
-| sides     | String    | The name of the texture that should appear on the block sides  |
-| bottom    | String    | The name of the texture that should appear on the bottom face  |
-| mesh      | String    | The style of the mesh, more info below                         |
 
 
-
-## VoxelMeshStyle
+## MeshStyle
 
 This refers to what "shape" the mesh should have.
 
@@ -51,10 +52,10 @@ So far this field accepts the following parameters:
 
 | name  | Explanation        | Example                  |
 |-------|--------------------|--------------------------|
-| block | A cube shaped mesh | Grass, dirt, etc         |
-| cross | An 'X' shaped mesh | Tall grass, flowers, etc |
+| Block | A cube shaped mesh | Grass, dirt, etc         |
+| Cross | An 'X' shaped mesh | Tall grass, flowers, etc |
 
-## VoxelMeshType
+## VoxelType
 
 This refers to what "type" the block is, or rather it's sort of physical state
 
@@ -62,7 +63,7 @@ So far this field accepts the following parameters:
 
 | name  | Explanation                         | Example                  |
 |-------|-------------------------------------|--------------------------|
-| solid | Normal block                        | Grass, dirt, etc         |
-| fluid | Blocks that should act like a fluid | Water, Lava, etc         |
-| flora | Blocks that are just flora          | Tall grass, flowers, etc |
-| gas   | Blocks which are a gas              | Air                      |
+| Solid | Normal block                        | Grass, dirt, etc         |
+| Fluid | Blocks that should act like a fluid | Water, Lava, etc         |
+| Flora | Blocks that are just flora          | Tall grass, flowers, etc |
+| Gas   | Blocks which are a gas              | Air                      |

@@ -2,6 +2,15 @@
 
 #include <common/world/world_constants.h>
 
+ChunkMesh::ChunkMesh(const ChunkPosition &chunkPosition)
+    : position(chunkPosition)
+{
+    vertices.reserve(CHUNK_VOLUME * 2);
+    textureCoords.reserve(CHUNK_VOLUME * 2);
+    indices.reserve(CHUNK_VOLUME * 2);
+    cardinalLights.reserve(CHUNK_VOLUME * 2);
+}
+
 void ChunkMesh::addFace(const MeshFace &face,
                         const BlockPosition &blockPosition, int texture)
 {
@@ -40,4 +49,10 @@ gl::VertexArray ChunkMesh::createBuffer()
     vao.addIndexBuffer(indices);
 
     return vao;
+}
+
+ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition &chunkPosition)
+    : blockMesh(chunkPosition)
+    , fluidMesh(chunkPosition)
+{
 }

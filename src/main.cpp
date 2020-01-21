@@ -62,10 +62,12 @@ void loadFromConfigFile(Config &config)
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
     config.client.fov = std::stoi(clientData["fov"]);
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
-    config.client.connectionTimeout =
-        sf::milliseconds(std::stoi(clientData["connection_timeout"]));
     config.client.skinName = clientData["skin"];
     config.client.texturePack = clientData["texture_pack"];
+    config.client.serverIp = clientData["server_ip"];
+    if (config.client.serverIp == "LOCAL") {
+        config.client.serverIp = LOCAL_HOST;
+    }
 
     config.server.worldSize = std::stoi(serverData["world_size"]);
 }

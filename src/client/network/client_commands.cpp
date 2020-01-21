@@ -194,7 +194,6 @@ void Client::onPlayerSkinReceive(sf::Packet &packet)
 
 void Client::onGameRegistryData(sf::Packet &packet)
 {
-    LOG("Client", "Got data");
     //  ====
     //  Get all blocks from the server
     //
@@ -213,7 +212,6 @@ void Client::onGameRegistryData(sf::Packet &packet)
 
     u16 numBlocks;
     packet >> numBlocks;
-    LOGVAR("Client", "Got blocks: ", (int)numBlocks);
     // todo
     // 1. Need to somehow work out the exact amount of textures needed
     // 2. Need to pass in the actual texture pack resolution
@@ -240,13 +238,14 @@ void Client::onGameRegistryData(sf::Packet &packet)
         packet >> isCollidable;
 
         ClientVoxel voxelData;
+        voxelData.id = m_voxelData.getNextId();
         voxelData.name = name;
         voxelData.topTexture = getTexture(texturePath + textureTop);
         voxelData.sideTexture = getTexture(texturePath + textureSide);
         voxelData.bottomTexture = getTexture(texturePath + textureBottom);
 
         voxelData.meshStyle = static_cast<VoxelMeshStyle>(meshStyle);
-        voxelData.meshType = static_cast<VoxelMeshType>(meshType);
+        voxelData.meshType = static_cast<VoxelType>(meshType);
         voxelData.isCollidable = isCollidable;
 
         m_voxelData.addVoxelData(voxelData);

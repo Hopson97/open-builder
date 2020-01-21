@@ -12,7 +12,7 @@ enum class VoxelMeshStyle : u8 {
     Error,
 };
 
-enum class VoxelMeshType : u8 {
+enum class VoxelType : u8 {
     Solid = 0,
     Fluid = 1,
     Flora = 2,
@@ -20,6 +20,3 @@ enum class VoxelMeshType : u8 {
 
     Error,
 };
-
-VoxelMeshType toVoxelMeshType(const std::string &meshType);
-VoxelMeshStyle toVoxelMeshStyle(const std::string &styleType);

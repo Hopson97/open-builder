@@ -16,6 +16,8 @@
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_registry.h>
 #include <unordered_set>
+#include <common/scripting/script_engine.h>
+#include "gui/gui.h"
 
 #include "world/client_voxel.h"
 #include <common/world/voxel_types.h>
@@ -81,7 +83,6 @@ class Client final : public NetworkHost {
     void onGameRegistryData(sf::Packet &packet);
     // End of network functions
 
-    int findChunkDrawableIndex(const ChunkPosition &position);
     void deleteChunkRenderable(const ChunkPosition &position);
 
     // Network
@@ -110,20 +111,37 @@ class Client final : public NetworkHost {
         gl::UniformLocation projectionViewLocation;
     } m_chunkShader;
 
+    struct {
+        gl::Shader program;
+        gl::UniformLocation projectionViewLocation;
+        gl::UniformLocation timeLocation;
+    } m_fluidShader;
+
+    // For time-based render stuff eg waves in the water
+    sf::Clock m_clock;
+
     // Gameplay/ World
     std::array<Entity, 512> m_entities;
 
     Entity *mp_player = nullptr;
+    Entity m_externalCamera;
 
     struct {
-        std::vector<ChunkMesh> bufferables;
+        std::vector<ChunkMeshCollection> bufferables;
         std::vector<ChunkDrawable> drawables;
+        std::vector<ChunkDrawable> fluidDrawables;
         ChunkManager manager;
         std::vector<ChunkPosition> updates;
         std::vector<BlockUpdate> blockUpdates;
     } m_chunks;
 
     VoxelRegistry<ClientVoxel> m_voxelData;
+
+    // Lua
+    ScriptEngine m_lua;
+
+    //GUI
+    Gui m_gui;
 
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
