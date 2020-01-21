@@ -1,8 +1,8 @@
 #include <common/debug.h>
 #include <cstdlib>
 #include <fstream>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <string>
 #include <thread>
 #include <vector>
@@ -15,7 +15,6 @@
 
 #include <common/network/enet.h>
 #include <common/obd_parser.h>
-
 
 // Enable nvidia
 #ifdef _WIN32
@@ -58,7 +57,8 @@ void loadFromConfigFile(Config &config)
     config.client.windowWidth = std::stoi(clientData["window_width"]);
     config.client.windowHeight = std::stoi(clientData["window_height"]);
     config.client.isFpsCapped = std::stoi(clientData["cap_fps"]);
-    config.client.shouldShowInstructions = std::stoi(clientData["shouldShowInstructions"]);
+    config.client.shouldShowInstructions =
+        std::stoi(clientData["shouldShowInstructions"]);
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
     config.client.fov = std::stoi(clientData["fov"]);
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
@@ -120,8 +120,7 @@ void parseArgs(Config &config,
  */
 int exitSuccess(const char *message = "Normal exit")
 {
-    std::cout << "Engine exited successfully.\"" << message << "\"."
-              << std::endl;
+    std::cout << "Engine exited successfully.\"" << message << "\"." << '\n';
     return EXIT_SUCCESS;
 }
 
@@ -131,8 +130,7 @@ int exitSuccess(const char *message = "Normal exit")
  */
 int exitFailure(const char *message)
 {
-    std::cerr << "Engine exited with error: \"" << message << "\"."
-              << std::endl;
+    std::cerr << "Engine exited with error: \"" << message << "\"." << '\n';
     return EXIT_FAILURE;
 }
 
@@ -151,31 +149,47 @@ int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
     return EXIT_SUCCESS;
 }
 
+void printInstructions()
+{
+    const int width = 20;
+    auto printInstruction = [width](const char *input, const char *output) {
+        std::cout << std::setw(width) << std::left << output << input << '\n';
+    };
+    std::cout << "Take a look at the instructions before you play." << '\n'
+              << "And also remember that the default configurations are on "
+                 "the config.obd file"
+              << '\n';
+
+    std::cout << std::setw(width) << std::left << "Action"
+              << "Key/Mouse" << '\n'
+              << std::setw(width + 10) << std::setfill('-') << "" << '\n'
+              << std::setfill(' ') << std::setw(width) << std::left;
+    printInstruction("W", "Move Forwards");
+    printInstruction("A", "Move Left");
+    printInstruction("S", "Move Back");
+    printInstruction("D", "Move Right");
+
+    printInstruction("CTRL", "Sprint");
+    printInstruction("Right Click", "Place A Block");
+    printInstruction("Left Click", "Removes A Block");
+
+    printInstruction("Move Mouse", "Look");
+
+    printInstruction("ESC", "Exit Game");
+
+    std::cout << "Press Enter to Continue...";
+    std::cin.ignore();
+}
 /**
  * @brief Launches the client
  * @param config Config to be used by the client engine
  * @param launchingJustClient It defines if the instructions should be printed
  * @return int Exit flag (Success, or Failure)
  */
-int launchClient(const ClientConfig &config,bool launchingJustClient)
+int launchClient(const ClientConfig &config, bool launchingJustClient)
 {
-    if(launchingJustClient && config.shouldShowInstructions){
-        std::cout<<"Take a look at the instructions before you play."<<std::endl
-        <<"And also remember that the default configurations are on the config.obd file"<<std::endl;
-        // printf("%s \t %s\n","Action","Key/Mouse");
-        const int width = 50;
-        std::cout<<std::setw(width)<<std::left<<"Action"<<"Key/Mouse"<<std::endl;
-        std::cout<<std::setw(width*2)<<std::setfill('-')<<""<<std::endl;
-        std::cout<<std::setfill(' ')<<std::setw(width)<<std::left<<"Move Forward"<<"W"<<std::endl;
-        std::cout<<std::setw(width)<<std::left<<"Move Backwards"<<"S"<<std::endl;
-        std::cout<<std::setw(width)<<std::left<<"Move Left"<<"A"<<std::endl;
-        std::cout<<std::setw(width)<<std::left<<"Move Right"<<"D"<<std::endl;
-        std::cout<<std::setw(width)<<std::left<<"Look Around"<<"Move Mouse"<<std::endl;
-        std::cout<<std::setw(width)<<std::left<<"Sprint"<<"CTRL"<<std::endl;
-        std::cout<<std::setw(width)<<std::left<<"Right CLick"<<"Place A Block"<<std::endl;
-        std::cout<<std::setw(width)<<std::left<<"Left CLick"<<"Removes A Block"<<std::endl;
-        std::cout << "Press Enter to Continue..."<<std::endl;;
-        std::cin.ignore();
+    if (launchingJustClient && config.shouldShowInstructions) {
+        printInstructions();
     }
     LOG("Launcher", "Launching client");
     switch (runClientEngine(config)) {
@@ -213,7 +227,7 @@ int launchBoth(const Config &config)
         server.runServerEngine();
     });
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    int exit = launchClient(config.client,false);
+    int exit = launchClient(config.client, false);
     serverThread.join();
     return exit;
 }
@@ -232,9 +246,9 @@ int launchServerAnd2Players(const Config &config)
     });
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    std::thread client2(launchClient, config.client,false);
+    std::thread client2(launchClient, config.client, false);
 
-    int exit = launchClient(config.client,false);
+    int exit = launchClient(config.client, false);
 
     client2.join();
     serverThread.join();
@@ -268,7 +282,7 @@ int main(int argc, char **argv)
             return launchServer(config.server);
 
         case LaunchType::Client:
-            return launchClient(config.client,true);
+            return launchClient(config.client, true);
 
         case LaunchType::TwoPlayer:
             return launchServerAnd2Players(config);

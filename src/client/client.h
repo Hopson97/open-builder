@@ -4,6 +4,7 @@
 #include "gl/shader.h"
 #include "gl/textures.h"
 #include "gl/vertex_array.h"
+#include "gui/gui.h"
 #include "maths.h"
 #include "world/chunk_mesh.h"
 #include <SFML/Network/Packet.hpp>
@@ -13,11 +14,10 @@
 #include <common/network/enet.h>
 #include <common/network/net_host.h>
 #include <common/network/net_types.h>
+#include <common/scripting/script_engine.h>
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_registry.h>
 #include <unordered_set>
-#include <common/scripting/script_engine.h>
-#include "gui/gui.h"
 
 #include "world/client_voxel.h"
 #include <common/world/voxel_types.h>
@@ -140,7 +140,7 @@ class Client final : public NetworkHost {
     // Lua
     ScriptEngine m_lua;
 
-    //GUI
+    // GUI
     Gui m_gui;
 
     // Engine-y stuff

@@ -86,7 +86,7 @@ TEST_CASE("The client can interact with the server.")
 
         TestClient client;
         auto serverConnection =
-            client.createAsClient(LOCAL_HOST, sf::milliseconds(500));
+            client.createAsClient(LOCAL_HOST);
 
         REQUIRE(serverConnection.has_value() == true);
         REQUIRE(server.getConnectedPeerCount() == 1);
@@ -108,7 +108,7 @@ TEST_CASE("The client can interact with the server.")
 
         TestClient client;
         auto serverConnection =
-            client.createAsClient(LOCAL_HOST, sf::milliseconds(500));
+            client.createAsClient(LOCAL_HOST);
         client.disconnectFromPeer(*serverConnection);
 
         REQUIRE(server.getConnectedPeerCount() == 0);

@@ -59,7 +59,7 @@ TEST_CASE("Chunk can be compressed and uncompressed")
         SECTION(
             "By default, a chunk is just air, so there is just one block type")
         {
-            auto compressed = chunk.compress();
+            auto compressed = compressBlockData(chunk.blocks);
             REQUIRE(compressed.size() == 1);
             REQUIRE(compressed[0].second == chunk.blocks.size());
         }
@@ -67,7 +67,7 @@ TEST_CASE("Chunk can be compressed and uncompressed")
         SECTION("Two block types")
         {
             chunk.qSetBlock({0, 0, 0}, 1);
-            auto compressed = chunk.compress();
+            auto compressed = compressBlockData(chunk.blocks);
             REQUIRE(compressed.size() == 2);
             REQUIRE(compressed[0].second == 1);
             REQUIRE(compressed[1].second == chunk.blocks.size() - 1);
@@ -93,7 +93,7 @@ TEST_CASE("Chunk can be compressed and uncompressed")
                 chunk.blocks[i] = blockType(rng);
             }
 
-            auto compressed = chunk.compress();
+            auto compressed = compressBlockData(chunk.blocks);
             // yeah no clue how to test this lol
         }
     }
@@ -115,10 +115,10 @@ TEST_CASE("Chunk can be compressed and uncompressed")
         chunk.qSetBlock(positionB, blockB);
         chunk.qSetBlock(positionC, blockC);
 
-        auto compressed = chunk.compress();
+        auto compressed = compressBlockData(chunk.blocks);
 
         Chunk& decompressor = manager.addChunk({1, 1, 1});
-        decompressor.decompress(compressed);
+        decompressor.blocks = decompressBlockData(compressed);
 
         REQUIRE(decompressor.getBlock(positionA) == blockA);
         REQUIRE(decompressor.getBlock(positionB) == blockB);
