@@ -310,7 +310,7 @@ void Client::update(float dt)
     }
 }
 
-void Client::render()
+void Client::render(int width, int height)
 {
     // TODO [Hopson] Clean this up
     if (!m_hasReceivedGameData) {
@@ -392,7 +392,7 @@ void Client::render()
     glCheck(glDisable(GL_BLEND));
 
     // GUI
-    m_gui.render();
+    m_gui.render(width, height);
 }
 
 void Client::endGame()

@@ -43,7 +43,7 @@ class Gui final {
 
     void addImage(const GuiImage &image);
 
-    void render();
+    void render(int width, int height);
 
 
   private:
