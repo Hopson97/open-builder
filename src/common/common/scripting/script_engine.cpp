@@ -3,7 +3,7 @@
 #include <iostream>
 
 ScriptEngine::ScriptEngine()
-    : gameTable(lua["openbuilder"].get_or_create<sol::table>())
+    : gameTable(lua["game"].get_or_create<sol::table>())
 {
     lua.open_libraries(sol::lib::base, sol::lib::math);
 

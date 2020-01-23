@@ -4,7 +4,7 @@ Example: [blocks.lua](https://github.com/Hopson97/open-builder/blob/master/game/
 
 ## Overview
 
-Voxels can be added to the game using the `openbuilder.data` table's `addVoxel` function.
+Voxels can be added to the game using the `game.data` table's `addVoxel` function.
 
 This will add a voxel type to the game.
 
@@ -12,12 +12,12 @@ This will add a voxel type to the game.
 Example:
 
 ```lua
-openbuilder.data.addVoxel {
+game.data.addVoxel {
     name = "openbuilder:water",
-    type = openbuilder.VoxelType.Fluid,
+    type = game.VoxelType.Fluid,
     collidable = false,
     render = {
-        mesh = openbuilder.MeshStyle.Block,
+        mesh = game.MeshStyle.Block,
         top = "water",
         sides = "water",
         bottom = "water",
@@ -30,7 +30,7 @@ Where:
 | Key            | Type           | Default                         | Explanation                                                      | 
 |----------------|----------------|---------------------------------|--------------------------------------------------------|
 | name           | String         | N/A                             | The name of the block, used to refer to it in other .lua scripts |
-| type           | VoxelType      | `openbuilder.VoxelType.Solid`   | The type/ physical state of the block, more info below         |
+| type           | VoxelType      | `game.VoxelType.Solid`   | The type/ physical state of the block, more info below         |
 | collidable     | Boolean        | `true`                          | Whether this voxel can be collided with.                        |
 | render         | Lua Table      | N/A                             | Some information about how the voxel should be rendered        |
 
@@ -40,7 +40,7 @@ Where the "render" table is defined as:
 | top       | String    | N/A                           | The name of the texture that should appear on the top face     |
 | sides     | String    | N/A                           | The name of the texture that should appear on the block sides  |
 | bottom    | String    | N/A                           | The name of the texture that should appear on the bottom face  |
-| mesh      | MeshStyle | `openbuilder.MeshStyle.Block` | The style of the mesh, more info below                         |
+| mesh      | MeshStyle | `game.MeshStyle.Block` | The style of the mesh, more info below                         |
 
 
 

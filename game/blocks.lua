@@ -1,20 +1,20 @@
 
 --  Air Voxel Data
-openbuilder.data.addVoxel({
+game.data.addVoxel({
     name = "openbuilder:air",
     description = "Air",
-    type = openbuilder.VoxelType.Gas,
+    type = game.VoxelType.Gas,
     collidable = false,
     render = {
         top = "error",
         sides = "error",
         bottom ="error",
-        mesh = openbuilder.MeshStyle.None
+        mesh = game.MeshStyle.None
     },
 })
 
 --  Grass Voxel Data
-openbuilder.data.addVoxel {
+game.data.addVoxel {
     name = "openbuilder:grass",
     description = "Grass",
     render = {
@@ -25,7 +25,7 @@ openbuilder.data.addVoxel {
 }
 
 --  Dirt Voxel Data
-openbuilder.data.addVoxel {
+game.data.addVoxel {
     name = "openbuilder:dirt",
     description = "Dirt",
     render = {
@@ -36,7 +36,7 @@ openbuilder.data.addVoxel {
 }
 
 --  Stone Voxel Data
-openbuilder.data.addVoxel {
+game.data.addVoxel {
     name = "openbuilder:stone",
     description = "Stone",
     render = {
@@ -47,10 +47,10 @@ openbuilder.data.addVoxel {
 }
 
 --  Water Voxel Data
-openbuilder.data.addVoxel {
+game.data.addVoxel {
     name = "openbuilder:water",
     description = "Water",
-    type = openbuilder.VoxelType.Fluid,
+    type = game.VoxelType.Fluid,
     collidable = false,
     render = {
         top = "water",
@@ -60,7 +60,7 @@ openbuilder.data.addVoxel {
 }
 
 --  Sand Voxel Data
-openbuilder.data.addVoxel {
+game.data.addVoxel {
     name = "openbuilder:sand",
     description = "Sand",
     collidable = false,
@@ -71,51 +71,51 @@ openbuilder.data.addVoxel {
     },
 }
 
---  Wood Voxel Data
-openbuilder.data.addVoxel {
-    name = "openbuilder:wood",
-    description = "Wood",
-    collidable = false,
-    render = {
-        top = "logtop",
-        sides = "log",
-        bottom = "logtop",
-    },
-}
-
---  Leaf Voxel Data
-openbuilder.data.addVoxel {
-    name = "openbuilder:leaf",
-    description = "Leaf",
-    type = openbuilder.VoxelType.Flora,
-    collidable = false,
-    render = {
-        top = "leaves",
-        sides = "leaves",
-        bottom = "leaves",
-    },
-}
-
---  Coal ore Voxel Data
-openbuilder.data.addVoxel {
-    name = "openbuilder:raw_coal",
-    description = "Raw Coal",
-    collidable = false,
-    render = {
-        top = "coal_ore",
-        sides = "coal_ore",
-        bottom = "coal_ore",
-    },
-}
-
---  Iron ore Voxel Data
-openbuilder.data.addVoxel {
-    name = "openbuilder:iron_ore",
-    description = "Iron Ore",
-    collidable = false,
-    render = {
-        top = "logtop",
-        sides = "log",
-        bottom = "logtop",
-    },
-}
+----  Wood Voxel Data
+--game.data.addVoxel {
+--    name = "openbuilder:wood",
+--    description = "Wood",
+--    collidable = false,
+--    render = {
+--        top = "logtop",
+--        sides = "log",
+--        bottom = "logtop",
+--    },
+--}
+--
+----  Leaf Voxel Data
+--game.data.addVoxel {
+--    name = "openbuilder:leaf",
+--    description = "Leaf",
+--    type = game.VoxelType.Flora,
+--    collidable = false,
+--    render = {
+--        top = "leaves",
+--        sides = "leaves",
+--        bottom = "leaves",
+--    },
+--}
+--
+----  Coal ore Voxel Data
+--game.data.addVoxel {
+--    name = "openbuilder:raw_coal",
+--    description = "Raw Coal",
+--    collidable = false,
+--    render = {
+--        top = "coal_ore",
+--        sides = "coal_ore",
+--        bottom = "coal_ore",
+--    },
+--}
+--
+----  Iron ore Voxel Data
+--game.data.addVoxel {
+--    name = "openbuilder:iron_ore",
+--    description = "Iron Ore",
+--    collidable = false,
+--    render = {
+--        top = "iron_ore",
+--        sides = "iron_ore",
+--        bottom = "iron_ore",
+--    },
+--}

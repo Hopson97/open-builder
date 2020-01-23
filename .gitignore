@@ -11,6 +11,8 @@ open-builder/
 OpenBuilder/
 .zip
 
+texture_packs/ElijahHyper
+
 *.srctrlprj
 *.srctrldb
 *.srctrlbm
