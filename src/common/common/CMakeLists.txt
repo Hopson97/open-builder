@@ -8,6 +8,7 @@ add_library(ob-common
     world/chunk.cpp
     world/chunk_manager.cpp
     world/coordinate.cpp
+    util/md5.cpp
 )
 
 set_flags(ob-common)

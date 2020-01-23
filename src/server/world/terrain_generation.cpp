@@ -6,6 +6,7 @@
 
 #include <ctime>
 #include <glm/gtc/noise.hpp>
+#include <common/util/md5.h>
 
 namespace {
 
@@ -44,7 +45,7 @@ float rounded(const glm::vec2 &coord)
 }
 
 float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
-                 const NoiseOptions &options, float seed)
+                 const NoiseOptions &options, int seed)
 {
     // Get voxel X/Z positions
     float voxelX = blockPosition.x + chunkPosition.x * CHUNK_SIZE;
@@ -60,7 +61,8 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
         float x = voxelX * frequency / options.smoothness;
         float y = voxelZ * frequency / options.smoothness;
 
-        float noise = glm::simplex(glm::vec3{x, y, seed});
+        float *seed_float = reinterpret_cast<float *>(&seed);
+        float noise = glm::simplex(glm::vec3{*seed_float + x, *seed_float + y, *seed_float});
         noise = (noise + 1.0f) / 2.0f;
         value += noise * amplitude;
         accumulatedAmps += amplitude;
@@ -71,7 +73,7 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
 } // namespace
 
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
-                                                 float worldSize, float seed)
+                                                 float worldSize, int seed)
 {
     const float WOLRD_SIZE = worldSize * CHUNK_SIZE;
 
@@ -183,4 +185,9 @@ void makeRandomTerrain(Chunk *chunk)
             }
         }
     }
+}
+
+int generateSeed(std::string input) {
+    MD5 md5 = MD5(input);
+    return md5.integer();
 }
