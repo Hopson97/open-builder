@@ -8,7 +8,7 @@ CLIENT_DATA
     window_height 900
 
     skin player
-    texture_pack default1
+    texture_pack default
     shouldShowInstructions 1
 
     server_ip LOCAL

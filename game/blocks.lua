@@ -1,8 +1,8 @@
---
+
 --  Air Voxel Data
---
 openbuilder.data.addVoxel({
     name = "openbuilder:air",
+    description = "Air",
     type = openbuilder.VoxelType.Gas,
     collidable = false,
     render = {
@@ -13,11 +13,10 @@ openbuilder.data.addVoxel({
     },
 })
 
---
 --  Grass Voxel Data
---
 openbuilder.data.addVoxel {
     name = "openbuilder:grass",
+    description = "Grass",
     render = {
         top = "grass",
         sides = "grass_side",
@@ -25,11 +24,10 @@ openbuilder.data.addVoxel {
     },
 }
 
---
 --  Dirt Voxel Data
---
 openbuilder.data.addVoxel {
     name = "openbuilder:dirt",
+    description = "Dirt",
     render = {
         top = "dirt",
         sides = "dirt",
@@ -37,11 +35,10 @@ openbuilder.data.addVoxel {
     },
 }
 
---
 --  Stone Voxel Data
---
 openbuilder.data.addVoxel {
     name = "openbuilder:stone",
+    description = "Stone",
     render = {
         top = "stone",
         sides = "stone",
@@ -49,11 +46,10 @@ openbuilder.data.addVoxel {
     },
 }
 
---
 --  Water Voxel Data
---
 openbuilder.data.addVoxel {
     name = "openbuilder:water",
+    description = "Water",
     type = openbuilder.VoxelType.Fluid,
     collidable = false,
     render = {
@@ -63,11 +59,10 @@ openbuilder.data.addVoxel {
     },
 }
 
---
 --  Sand Voxel Data
---
 openbuilder.data.addVoxel {
     name = "openbuilder:sand",
+    description = "Sand",
     collidable = false,
     render = {
         top = "sand",
@@ -76,11 +71,10 @@ openbuilder.data.addVoxel {
     },
 }
 
---
 --  Wood Voxel Data
---
 openbuilder.data.addVoxel {
     name = "openbuilder:wood",
+    description = "Wood",
     collidable = false,
     render = {
         top = "logtop",
@@ -89,11 +83,10 @@ openbuilder.data.addVoxel {
     },
 }
 
---
 --  Leaf Voxel Data
---
 openbuilder.data.addVoxel {
     name = "openbuilder:leaf",
+    description = "Leaf",
     type = openbuilder.VoxelType.Flora,
     collidable = false,
     render = {
@@ -103,11 +96,10 @@ openbuilder.data.addVoxel {
     },
 }
 
---
 --  Coal ore Voxel Data
---
 openbuilder.data.addVoxel {
-    name = "openbuilder:coal_ore",
+    name = "openbuilder:raw_coal",
+    description = "Raw Coal",
     collidable = false,
     render = {
         top = "coal_ore",
@@ -116,11 +108,10 @@ openbuilder.data.addVoxel {
     },
 }
 
---
 --  Iron ore Voxel Data
---
 openbuilder.data.addVoxel {
     name = "openbuilder:iron_ore",
+    description = "Iron Ore",
     collidable = false,
     render = {
         top = "logtop",
