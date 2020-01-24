@@ -11,10 +11,10 @@ void makeStepTerrain(Chunk *chunk);
 void makeRandomTerrain(Chunk *chunk);
 
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
-                                                 float worldSize, int seed);
+                                                 float worldSize, float seed);
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
                          int baseChunk);
 
-int generateSeed(std::string input);
+float generateSeed(const std::string &input);
