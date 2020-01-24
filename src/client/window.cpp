@@ -2,6 +2,7 @@
 
 #include "client_config.h"
 #include <SFML/Window/Event.hpp>
+#include <glad/glad.h>
 
 Window::Window(const ClientConfig &config)
 {
@@ -31,6 +32,13 @@ void Window::create(const sf::VideoMode &mode, u32 style)
     settings.antialiasingLevel = 4;
     settings.majorVersion = 3;
     settings.minorVersion = 3;
+    settings.attributeFlags = sf::ContextSettings::Core;
+#ifndef NDEBUG
+    settings.attributeFlags |= sf::ContextSettings::Debug;
+#else
+    if (GLAD_GL_KHR_no_error)
+        settings.attributeFlags |= GL_CONTEXT_FLAG_NO_ERROR_BIT_KHR;
+#endif
 
     window.create(mode, "Open Builder", style, settings);
 }
