@@ -6,6 +6,8 @@
 
 #include <ctime>
 #include <glm/gtc/noise.hpp>
+#include <functional>
+#include <cstring>
 
 namespace {
 
@@ -60,7 +62,7 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
         float x = voxelX * frequency / options.smoothness;
         float y = voxelZ * frequency / options.smoothness;
 
-        float noise = glm::simplex(glm::vec3{x, y, seed});
+        float noise = glm::simplex(glm::vec3{seed + x, seed + y, seed});
         noise = (noise + 1.0f) / 2.0f;
         value += noise * amplitude;
         accumulatedAmps += amplitude;
@@ -183,4 +185,13 @@ void makeRandomTerrain(Chunk *chunk)
             }
         }
     }
+}
+
+float generateSeed(const std::string &input) { 
+    std::hash<std::string> strhash;
+    
+    float seed_float;
+    uint32_t hash = strhash(input);
+    std::memcpy(&seed_float, &hash, sizeof(float));
+    return seed_float;
 }
