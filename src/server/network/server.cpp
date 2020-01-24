@@ -159,14 +159,14 @@ void Server::onPeerConnect(ENetPeer *peer)
         announcement << ClientCommand::PlayerJoin << id;
         broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);
 
-        //Run Lua callbacks for a player joining the game
+        // Run Lua callbacks for a player joining the game
         auto callback = m_script.getLuaFunction("runPlayerJoinCallback");
         callback(m_entities[id]);
 
         // Send the spawn chunks
         sf::Packet spawn;
         auto &player = m_entities[id];
-        //player.position = findPlayerSpawnPosition();
+        // player.position = findPlayerSpawnPosition();
         player.m_skinData.resize(8192);
         spawn << ClientCommand::SpawnPoint << player.position.x
               << player.position.y << player.position.z;

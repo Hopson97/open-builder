@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@master
       - name: Install dependencies
-        run: sudo bash scripts/install.sh --no-build
+        run: sudo apt install libsfml-dev cmake
       - name: Normal build
         run: sh scripts/build.sh
       - name: Normal build unit tests
