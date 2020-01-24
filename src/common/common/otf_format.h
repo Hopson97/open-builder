@@ -1,15 +1,8 @@
 #pragma once
 
-#include <cassert>
-#include <fstream>
 #include <map>
-#include <memory>
-#include <sstream>
-#include <string>
 #include <vector>
-#include <zlib.h>
-
-#include <iostream>
+#include <string>
 
 /**
  * Open-Builder Tag Format (otf)

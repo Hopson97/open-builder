@@ -1,5 +1,11 @@
 #include "otf_format.h"
 
+#include <fstream>
+#include <sstream>
+#include <cstring>
+#include <zlib.h>
+#include <cassert>
+
 int compress(std::istream &src, std::ostream &dest, int level)
 {
     int ret, flush;
@@ -93,21 +99,19 @@ int decompress(std::istream &src, std::ostream &dest)
     return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
 }
 
-void zerr(int ret)
+std::string getZError(int ret)
 {
     switch (ret) {
         case Z_STREAM_ERROR:
-            std::cerr << "invalid compression level" << std::endl;
-            break;
+            return "invalid compression level";
         case Z_DATA_ERROR:
-            std::cerr << "invalid or incomplete deflate data" << std::endl;
-            break;
+            return "invalid or incomplete deflate data";
         case Z_MEM_ERROR:
-            std::cerr << "out of memory" << std::endl;
-            break;
+            return "out of memory";
         case Z_VERSION_ERROR:
-            std::cerr << "zlib version mismatch!" << std::endl;
-            break;
+            return "zlib version mismatch!";
+        default:
+            return "";
     }
 }
 
@@ -139,14 +143,16 @@ void writeLong(std::ostream &stream, uint64_t value)
 
 void writeFloat(std::ostream &stream, float value)
 {
-    uint32_t *data = reinterpret_cast<uint32_t *>(&value);
-    writeInt(stream, *data);
+    uint32_t data;
+    std::memcpy(&data, &value, 4);
+    writeInt(stream, data);
 }
 
 void writeDouble(std::ostream &stream, double value)
 {
-    uint64_t *data = reinterpret_cast<uint64_t *>(&value);
-    writeLong(stream, *data);
+    uint64_t data;
+    std::memcpy(&data, &value, 8);
+    writeLong(stream, data);
 }
 
 uint16_t readShort(std::istream &stream)
@@ -181,13 +187,17 @@ uint64_t readLong(std::istream &stream)
 float readFloat(std::istream &stream)
 {
     uint32_t data = readInt(stream);
-    return *reinterpret_cast<float *>(&data);
+    float result;
+    std::memcpy(&result, &data, 4);
+    return result;
 }
 
 double readDouble(std::istream &stream)
 {
     uint64_t data = readLong(stream);
-    return *reinterpret_cast<double *>(&data);
+    double result;
+    std::memcpy(&result, &data, 8);
+    return result;
 }
 
 void writeString(std::ostream &stream, std::string value)
@@ -703,8 +713,9 @@ Tag *readFile(std::string filename, bool compresion)
     }
     else {
         std::stringstream stream;
-        if (decompress(file, stream) != Z_OK) {
-            abort();
+        int error;
+        if ((error = decompress(file, stream)) != Z_OK) {
+            throw getZError(error);
         }
 
         stream.seekg(0, std::ios::beg);
@@ -725,8 +736,9 @@ void writeFile(std::string filename, Tag *tag, bool compresion)
         tag->write(stream);
 
         stream.seekg(0, std::ios::beg);
-        if (compress(stream, file, Z_DEFAULT_COMPRESSION) != Z_OK) {
-            abort();
+        int error;
+        if ((error = compress(stream, file, Z_DEFAULT_COMPRESSION)) != Z_OK) {
+            throw getZError(error);
         }
     }
     file.close();
