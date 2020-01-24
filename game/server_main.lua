@@ -1,9 +1,9 @@
 
 -- Callbacks for events
-
 game.playerJoinCallbacks = {}
 
---Callback must take in "player" userdata
+--Register an event for a player joining the game
+--callback: function(player)
 function game.onPlayerJoin(callback)
     table.insert(game.playerJoinCallbacks, callback)
 end
@@ -11,13 +11,10 @@ end
 local function spawnPlayer(player)
     local cs = game.world.CHUNK_SIZE
     local ws = game.world.WORLD_SIZE
-    
     local x = (ws * cs) / 2
     local z = x
-
-    
+    player:setPosition(x, 100, z);
 end
-
 
 --Run callback functions
 function game.runPlayerJoinCallback(player)
@@ -28,6 +25,5 @@ function game.runPlayerJoinCallback(player)
 end
 
 game.onPlayerJoin(spawnPlayer)
-
 
 dofile("game/blocks.lua")
