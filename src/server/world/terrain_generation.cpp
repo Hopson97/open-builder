@@ -61,8 +61,9 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
         float x = voxelX * frequency / options.smoothness;
         float y = voxelZ * frequency / options.smoothness;
 
-        float *seed_float = reinterpret_cast<float *>(&seed);
-        float noise = glm::simplex(glm::vec3{*seed_float + x, *seed_float + y, *seed_float});
+        float seed_float;
+        std::memcpy(&seed_float, &seed, sizeof(float));
+        float noise = glm::simplex(glm::vec3{seed_float + x, seed_float + y, seed_float});
         noise = (noise + 1.0f) / 2.0f;
         value += noise * amplitude;
         accumulatedAmps += amplitude;
@@ -187,7 +188,7 @@ void makeRandomTerrain(Chunk *chunk)
     }
 }
 
-int generateSeed(std::string input) {
+int generateSeed(const std::string input) {
     MD5 md5 = MD5(input);
     return md5.integer();
 }
