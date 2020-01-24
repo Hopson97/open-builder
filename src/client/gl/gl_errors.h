@@ -14,6 +14,6 @@
 
 void glCheckError(const char *file, unsigned int line,
                   const char *expression);
-void iniGLDebug();
+void initGLDebug();
 
 // clang-format on
