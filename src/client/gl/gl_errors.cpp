@@ -83,7 +83,7 @@ void initGLDebug()
 #ifndef NDEBUG
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // disable if in release
 #endif
-    glDebugMessageCallback(gl_debug_callback, nullptr);
+    glDebugMessageCallback(glDebugCallback, nullptr);
 
     // this disables messages printed for successfully compiled shaders
     glDebugMessageControl(GL_DEBUG_SOURCE_SHADER_COMPILER, GL_DEBUG_TYPE_OTHER,
