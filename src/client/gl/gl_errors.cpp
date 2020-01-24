@@ -3,7 +3,8 @@
 #include <glad/glad.h>
 #include <iostream>
 
-void glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id,
+                               GLenum severity,
                        GLsizei length, const char *message, const void *)
 {
 
@@ -79,8 +80,8 @@ void glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 
 void initGLDebug()
 {
-    glEnable(GL_DEBUG_OUTPUT);
 #ifndef NDEBUG
+    glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // disable if in release
 #endif
     glDebugMessageCallback(glDebugCallback, nullptr);
