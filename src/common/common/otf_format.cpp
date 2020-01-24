@@ -694,7 +694,7 @@ VectorTag::~VectorTag()
     }
 }
 
-Tag *readFile(std::string filename, bool compresion = true)
+Tag *readFile(std::string filename, bool compresion)
 {
     std::ifstream file(filename, std::ios::binary);
     Tag *tag;
@@ -714,7 +714,7 @@ Tag *readFile(std::string filename, bool compresion = true)
     return tag;
 }
 
-void writeFile(std::string filename, Tag *tag, bool compresion = true)
+void writeFile(std::string filename, Tag *tag, bool compresion)
 {
     std::ofstream file(filename, std::ios::binary);
     if (!compresion) {

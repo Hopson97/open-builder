@@ -1,13 +1,13 @@
 #pragma once
 
+#include <cassert>
 #include <fstream>
 #include <map>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <cassert>
 #include <zlib.h>
-#include <sstream>
 
 #include <iostream>
 
@@ -146,6 +146,6 @@ class VectorTag : public Tag {
     std::vector<Tag *> data;
 };
 
-Tag *readFile(std::string filename);
+Tag *readFile(std::string filename, bool compression = true);
 
-void writeFile(std::string filename, Tag *tag);
+void writeFile(std::string filename, Tag *tag, bool compression = true);
