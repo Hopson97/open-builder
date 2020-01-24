@@ -9,11 +9,14 @@ function game.onPlayerJoin(callback)
 end
 
 local function spawnPlayer(player)
-    print(game.world.WORLD_SIZE)
+    local cs = game.world.CHUNK_SIZE
+    local ws = game.world.WORLD_SIZE
+    
+    local x = (ws * cs) / 2
+    local z = x
+
+    
 end
-
-
-
 
 
 --Run callback functions

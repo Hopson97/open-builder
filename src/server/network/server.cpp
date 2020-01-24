@@ -38,6 +38,9 @@ Server::Server(const ServerConfig &config)
         }
     );
 
+    auto entity = m_script.lua.new_usertype<ServerEntity>("Player");
+    entity["setPosition"] = &ServerEntity::setPosition;
+
     m_script.runLuaScript("game/server_main.lua");
     // clang-format on
 

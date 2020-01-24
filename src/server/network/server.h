@@ -18,6 +18,11 @@ struct ServerEntity {
 
     std::vector<sf::Uint8> m_skinData;
     bool hasSkin = false;
+
+    void setPosition(float x, float y, float z)
+    {
+        position = {x, y, z};
+    }
 };
 
 struct ConnectedClient {
