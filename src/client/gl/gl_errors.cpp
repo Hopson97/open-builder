@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <iostream>
 
-void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity,
+void glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
                        GLsizei length, const char *message, const void *)
 {
 
@@ -77,7 +77,7 @@ void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity,
             sev, type_str, src, length, message);
 }
 
-void init_debug()
+void initGLDebug()
 {
     glEnable(GL_DEBUG_OUTPUT);
 #ifndef NDEBUG
