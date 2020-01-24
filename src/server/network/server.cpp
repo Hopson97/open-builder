@@ -30,13 +30,21 @@ Server::Server(const ServerConfig &config)
         "Flora", VoxelType::Flora,
         "Gas", VoxelType::Gas);
 
-    m_script.runLuaScript("game/blocks.lua");
+    m_script.addTable("world",
+        "CHUNK_SIZE", CHUNK_SIZE,
+        "WORLD_SIZE", m_worldSize,
+        "getBlock", [&](int x, int y, int z) {
+            m_world.chunks.getBlock({x, y, z});
+        }
+    );
+
+    m_script.runLuaScript("game/server_main.lua");
     // clang-format on
 
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
-            std::array<int, CHUNK_AREA> heightMap =
-                createChunkHeightMap({x, 0, z}, (float)m_worldSize, generateSeed("test"));
+            std::array<int, CHUNK_AREA> heightMap = createChunkHeightMap(
+                {x, 0, z}, (float)m_worldSize, generateSeed("test"));
             int maxHeight =
                 *std::max_element(heightMap.cbegin(), heightMap.cend());
             for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
@@ -144,6 +152,9 @@ void Server::onPeerConnect(ENetPeer *peer)
         sf::Packet announcement;
         announcement << ClientCommand::PlayerJoin << id;
         broadcastToPeers(announcement, 0, ENET_PACKET_FLAG_RELIABLE);
+
+        auto callback = m_script.getLuaFunction("runPlayerJoinCallback");
+        callback(50);
 
         // Send the spawn chunks
         sf::Packet spawn;

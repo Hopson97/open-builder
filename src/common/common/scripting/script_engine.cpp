@@ -5,7 +5,7 @@
 ScriptEngine::ScriptEngine()
     : gameTable(lua["game"].get_or_create<sol::table>())
 {
-    lua.open_libraries(sol::lib::base, sol::lib::math);
+    lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::table);
 
 }
 
@@ -28,4 +28,9 @@ void ScriptEngine::runLuaScript(const std::string &path)
         std::cerr << "Lua script file invalid: " << path
                   << "Error: " << err.what() << '\n';
     }
+}
+
+ sol::function ScriptEngine::getLuaFunction(const char *functionName)
+{
+    return gameTable[functionName];
 }
