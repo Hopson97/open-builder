@@ -13,6 +13,8 @@ jobs:
       steps:
       - name: Checkout code
         uses: actions/checkout@master
+      - name: Update dependencies
+        run: sudo apt update
       - name: Install dependencies
         run: sudo apt install libsfml-dev cmake
       - name: Normal build
