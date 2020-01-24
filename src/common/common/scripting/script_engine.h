@@ -1,21 +1,23 @@
 #pragma once
 
-#include <sol/sol.hpp>
-#include <optional>
 #include <iostream>
+#include <optional>
+#include <sol/sol.hpp>
 
 struct ScriptEngine {
     ScriptEngine();
 
-    void runLuaScript(const std::string &path);
+    bool runString(const std::string &script);
+    bool runFile(const std::string &path);
 
     sol::function getLuaFunction(const char *functionName);
 
     template <typename Return, typename... Args>
-    std::optional<Return> runLuaFunctionSafe(const char *functionName, Args &&... args)
+    std::optional<Return> runLuaFunctionSafe(const char *functionName,
+                                             Args &&... args)
     {
         sol::protected_function f = gameTable[functionName];
-        sol::protected_function_result result = f(-500);
+        sol::protected_function_result result = f(std::forward<Args>(args)...);
 
         if (result.valid()) {
             // Call succeeded
@@ -25,7 +27,8 @@ struct ScriptEngine {
         else {
             sol::error err = result;
             std::string what = err.what();
-            std::cout << "Error running function:" << functionName << " Message: " << what << std::endl;
+            std::cout << "Error running function:" << functionName
+                      << " Message: " << what << std::endl;
             return {};
         }
     }

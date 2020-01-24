@@ -6,10 +6,24 @@ ScriptEngine::ScriptEngine()
     : gameTable(lua["game"].get_or_create<sol::table>())
 {
     lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::table);
-
 }
 
-void ScriptEngine::runLuaScript(const std::string &path)
+bool ScriptEngine::runString(const std::string &script)
+{
+    auto result = lua.script(
+        script, []([[maybe_unused]] auto L, auto res) { return res; });
+
+    if (result.valid()) {
+        std::cout << "Script string ran sucessfully." << '\n';
+    }
+    else {
+        sol::error err = script;
+        std::cerr << "Lua script string invalid. Error: " << err.what() << '\n';
+    }
+    return result.valid();
+}
+
+bool ScriptEngine::runFile(const std::string &path)
 {
     auto script = lua.load_file(path);
     if (script.valid()) {
@@ -17,6 +31,7 @@ void ScriptEngine::runLuaScript(const std::string &path)
 
         if (result.valid()) {
             std::cout << "Script ran sucessfully: " << path << '\n';
+            return true;
         }
         else {
             sol::error err = result;
@@ -28,9 +43,10 @@ void ScriptEngine::runLuaScript(const std::string &path)
         std::cerr << "Lua script file invalid: " << path
                   << "Error: " << err.what() << '\n';
     }
+    return false;
 }
 
- sol::function ScriptEngine::getLuaFunction(const char *functionName)
+sol::function ScriptEngine::getLuaFunction(const char *functionName)
 {
     return gameTable[functionName];
 }

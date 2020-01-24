@@ -9,7 +9,7 @@ ServerGameData::ServerGameData()
 void ServerGameData::addVoxel(const sol::table &voxelData)
 {
     ServerVoxel voxel;
-    
+
     if (voxelData["collidable"].valid()) {
         voxel.isCollidable = voxelData["collidable"].get<bool>();
     }

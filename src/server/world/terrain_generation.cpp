@@ -4,10 +4,10 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <ctime>
-#include <glm/gtc/noise.hpp>
-#include <functional>
 #include <cstring>
+#include <ctime>
+#include <functional>
+#include <glm/gtc/noise.hpp>
 
 namespace {
 
@@ -187,9 +187,10 @@ void makeRandomTerrain(Chunk *chunk)
     }
 }
 
-float generateSeed(const std::string &input) { 
+float generateSeed(const std::string &input)
+{
     std::hash<std::string> strhash;
-    
+
     float seed_float;
     uint32_t hash = strhash(input);
     std::memcpy(&seed_float, &hash, sizeof(float));

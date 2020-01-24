@@ -49,7 +49,7 @@ Client::Client()
     m_gui.addUsertypes(luaGuiAPI);
 
     m_lua.lua["update"] = 3;
-    m_lua.runLuaScript("game/gui.lua");
+    m_lua.runFile("game/gui.lua");
 }
 
 bool Client::init(const ClientConfig &config, float aspect)
@@ -311,12 +311,11 @@ void Client::update(float dt)
     }
 
     // Call update function on the GUI script
-    // Note: This part is quite dangerous, if there's no update() or there's an error
+    // Note: This part is quite dangerous, if there's no update() or there's an
+    // error
     //       in the script then it will cause a crash
-   // sol::function p_update = m_lua.lua["update"];
-   // p_update(dt);
-
-        
+    // sol::function p_update = m_lua.lua["update"];
+    // p_update(dt);
 }
 
 void Client::render(int width, int height)
