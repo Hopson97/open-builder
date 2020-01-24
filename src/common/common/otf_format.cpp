@@ -30,7 +30,7 @@ int compress(std::istream &src, std::ostream &dest, int level)
             assert(ret != Z_STREAM_ERROR);
             have = CHUNK - strm.avail_out;
             dest.write(reinterpret_cast<char *>(out), have);
-            if(dest.bad()) {
+            if (dest.bad()) {
                 (void)deflateEnd(&strm);
                 return Z_ERRNO;
             }
@@ -41,8 +41,6 @@ int compress(std::istream &src, std::ostream &dest, int level)
     (void)deflateEnd(&strm);
     return Z_OK;
 }
-
-
 
 int decompress(std::istream &src, std::ostream &dest)
 {
@@ -696,27 +694,40 @@ VectorTag::~VectorTag()
     }
 }
 
-Tag *readFile(std::string filename)
+Tag *readFile(std::string filename, bool compresion = true)
 {
     std::ifstream file(filename, std::ios::binary);
-    std::stringstream stream;
-    decompress(file, stream);
-    stream.seekg(0, std::ios::beg);
+    Tag *tag;
+    if (!compresion) {
+        tag = Tag::read(file);
+    }
+    else {
+        std::stringstream stream;
+        if (decompress(file, stream) != Z_OK) {
+            abort();
+        }
 
-    Tag *tag = Tag::read(stream);
+        stream.seekg(0, std::ios::beg);
+        tag = Tag::read(stream);
+    }
     file.close();
     return tag;
 }
 
-void writeFile(std::string filename, Tag *tag)
+void writeFile(std::string filename, Tag *tag, bool compresion = true)
 {
-    std::stringstream stream;
-    tag->write(stream);
-    stream.seekg(0, std::ios::beg);
-
     std::ofstream file(filename, std::ios::binary);
-    if (compress(stream, file, Z_DEFAULT_COMPRESSION) != Z_OK) {
-        abort();
+    if (!compresion) {
+        tag->write(file);
+    }
+    else {
+        std::stringstream stream;
+        tag->write(stream);
+
+        stream.seekg(0, std::ios::beg);
+        if (compress(stream, file, Z_DEFAULT_COMPRESSION) != Z_OK) {
+            abort();
+        }
     }
     file.close();
 }
