@@ -23,6 +23,7 @@ Server::Server(const ServerConfig &config)
     auto data = m_script.addTable("data");
     data["addVoxel"] = [&](const sol::table &voxelDef) { m_voxelData.addVoxel(voxelDef); };
     data["addBiome"] = [&](const sol::table &biomeDef) { m_biomeData.addBiome(biomeDef); };
+    data["setBiomeMap"] = [&](const sol::table &biomeMapper) { m_biomeData.setBiomeMapper(biomeMapper); };
 
     m_script.addTable("MeshStyle",
         "Block", VoxelMeshStyle::Block,
@@ -61,7 +62,7 @@ Server::Server(const ServerConfig &config)
     }
 
     // clang-format on
-    float seed = generateSeed("test");
+    float seed = 9095.0f; // generateSeed("test");
     float size = static_cast<float>(m_worldSize);
 
     for (int z = 0; z < m_worldSize; z++) {

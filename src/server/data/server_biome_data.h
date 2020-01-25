@@ -34,12 +34,16 @@ class BiomeData {
   public:
     BiomeData(const VoxelData &voxelData);
     void addBiome(const sol::table &table);
+    void setBiomeMapper(const sol::table &table);
 
-    int getBiomeId(std::string &voxelName) const;
+    int getBiomeIdFromMapper(float value) const;
+
+    int getBiomeId(const std::string &biomeName) const;
     const BiomeDefinition &getBiomeData(int biomeId) const;
 
   private:
     std::vector<BiomeDefinition> m_biomes;
+    std::vector<std::pair<int, int>> m_biomeMapper;
 
     const VoxelData *mp_voxelData;
 };

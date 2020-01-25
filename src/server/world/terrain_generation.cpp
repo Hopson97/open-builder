@@ -50,7 +50,7 @@ float getNoiseAt(const glm::vec2 &voxelPos, const NoiseParameters &options,
         float x = voxelPos.x * frequency / options.smoothness;
         float y = voxelPos.y * frequency / options.smoothness;
 
-        float noise = glm::simplex(glm::vec3{seed + x, seed + y, seed});
+        float noise = glm::simplex(glm::vec3{x, y, seed});
         noise = (noise + 1.0f) / 2.0f;
         value += noise * amplitude;
         accumulatedAmps += amplitude;
@@ -64,19 +64,17 @@ std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition &position,
                                            float seed, const BiomeData &biomes)
 {
     NoiseParameters biomeNoise;
-    biomeNoise.smoothness = 75;
-    biomeNoise.roughness = 0.4;
-    biomeNoise.octaves = 3;
+    biomeNoise.smoothness = 300;
+    biomeNoise.roughness = 0.8;
+    biomeNoise.octaves = 5;
     std::array<int, CHUNK_AREA> biomeMap;
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             float bx = x + position.x * CHUNK_SIZE;
             float bz = z + position.z * CHUNK_SIZE;
             glm::vec2 blockPos{bx, bz};
-            float value = getNoiseAt(blockPos, biomeNoise, seed);
-            // Todo use the biome map (aka BiomeData) here to get the biome
-            // types from the noise output
-            biomeMap[z * CHUNK_SIZE + x] = value > 0.5 ? 0 : 1;
+            float value = getNoiseAt(blockPos, biomeNoise, seed / 2.0f) * 100;
+            biomeMap[z * CHUNK_SIZE + x] = biomes.getBiomeIdFromMapper(value);
         }
     }
     return biomeMap;
@@ -147,7 +145,7 @@ void createSmoothTerrain(Chunk &chunk,
                     chunk.qSetBlock(bp, biome.undergroundVoxel);
                 }
                 else {
-                    chunk.qSetBlock(bp, 5);
+                    chunk.qSetBlock(bp, 3);
                 }
             }
         }
