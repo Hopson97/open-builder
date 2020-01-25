@@ -21,7 +21,6 @@ function (set_flags target)
         target_compile_options(${target} 
             PRIVATE 
             /W4 
-            /WX
         )
     else()
         target_compile_options(${target} 
