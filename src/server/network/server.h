@@ -43,8 +43,6 @@ class Server final : public NetworkHost {
     void update();
 
   private:
-    glm::vec3 findPlayerSpawnPosition();
-
     void sendChunk(peer_id_t peerId, const ChunkPosition &chunk);
     void sendPlayerSkin(peer_id_t peerId,
                         std::optional<peer_id_t> toPeer = std::nullopt);

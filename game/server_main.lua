@@ -13,7 +13,11 @@ local function spawnPlayer(player)
     local ws = game.world.WORLD_SIZE
     local x = (ws * cs) / 2
     local z = x
-    player:setPosition(x, 100, z);
+    local y = 0
+    while game.world.getBlock(x, y, z) ~= 0 and  game.world.getBlock(x, y + 1, z) ~= 0 do
+        y = y + 1
+    end
+    player:setPosition(x, y + 3, z);
 end
 
 --Run callback functions
@@ -26,4 +30,4 @@ end
 
 game.onPlayerJoin(spawnPlayer)
 
-dofile("game/blocks.lua")
+dofile("game/voxel_types.lua")

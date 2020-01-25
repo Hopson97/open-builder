@@ -34,7 +34,7 @@ Server::Server(const ServerConfig &config)
         "CHUNK_SIZE", CHUNK_SIZE,
         "WORLD_SIZE", m_worldSize,
         "getBlock", [&](int x, int y, int z) {
-            m_world.chunks.getBlock({x, y, z});
+           return m_world.chunks.getBlock({x, y, z});
         }
     );
 
@@ -166,7 +166,6 @@ void Server::onPeerConnect(ENetPeer *peer)
         // Send the spawn chunks
         sf::Packet spawn;
         auto &player = m_entities[id];
-        // player.position = findPlayerSpawnPosition();
         player.m_skinData.resize(8192);
         spawn << ClientCommand::SpawnPoint << player.position.x
               << player.position.y << player.position.z;
@@ -350,26 +349,4 @@ void Server::removePeer(u32 connectionId)
 
         itr->entityId = 0;
     }
-}
-
-glm::vec3 Server::findPlayerSpawnPosition()
-{
-    int x = (CHUNK_SIZE * m_worldSize) / 2;
-    int z = (CHUNK_SIZE * m_worldSize) / 2;
-
-    for (int chunkY = m_worldSize - 1; chunkY >= 0; chunkY--) {
-        auto chunkPosition = worldToChunkPosition({x, 0, z});
-        chunkPosition.y = chunkY;
-        auto &spawn = m_world.chunks.getChunk(chunkPosition);
-
-        for (int blockY = CHUNK_SIZE - 1; blockY >= 0; blockY--) {
-            auto blockPosition = toLocalBlockPosition({x, 0, z});
-            blockPosition.y = blockY;
-            if (spawn.qGetBlock(blockPosition) == 1) {
-                auto worldY = chunkY * CHUNK_SIZE + blockY + 3;
-                return {x, worldY, z};
-            }
-        }
-    }
-    return {x, CHUNK_SIZE * m_worldSize, z};
 }
