@@ -27,14 +27,6 @@ float trilinearInterpolation(float blf, float blb, float brf, float brb,
 }
 */
 
-struct NoiseOptions {
-    int octaves;
-    float amplitude;
-    float smoothness;
-    float roughness;
-    float offset;
-};
-
 // THANKS! Karasa and K.jpg for help with this algo
 float rounded(const glm::vec2 &coord)
 {
@@ -68,16 +60,36 @@ float getNoiseAt(const glm::vec2 &voxelPos, const NoiseParameters &options,
 
 } // namespace
 
-std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
-                                                 float worldSize, float seed,
-                                                 const BiomeData &biomes)
+std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition &position,
+                                           float seed, const BiomeData &biomes)
+{
+    NoiseParameters biomeNoise;
+    biomeNoise.smoothness = 75;
+    biomeNoise.roughness = 0.4;
+    biomeNoise.octaves = 3;
+    std::array<int, CHUNK_AREA> biomeMap;
+    for (int z = 0; z < CHUNK_SIZE; z++) {
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            float bx = x + position.x * CHUNK_SIZE;
+            float bz = z + position.z * CHUNK_SIZE;
+            glm::vec2 blockPos{bx, bz};
+            float value = getNoiseAt(blockPos, biomeNoise, seed);
+            // Todo use the biome map (aka BiomeData) here to get the biome
+            // types from the noise output
+            biomeMap[z * CHUNK_SIZE + x] = value > 0.5 ? 0 : 1;
+        }
+    }
+    return biomeMap;
+}
+
+std::array<int, CHUNK_AREA>
+createChunkHeightMap(const ChunkPosition &position,
+                     const std::array<int, CHUNK_AREA> &biomeMap,
+                     float worldSize, float seed, const BiomeData &biomes)
 {
     const float WOLRD_SIZE = worldSize * CHUNK_SIZE;
 
     // TODO Create biome map
-    auto &biome = biomes.getBiomeData(0);
-    auto &pnoise = biome.primaryNoise;
-    auto &snoise = biome.secondaryNoise;
 
     std::array<int, CHUNK_AREA> heightMap;
     for (int z = 0; z < CHUNK_SIZE; z++) {
@@ -87,6 +99,10 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
             glm::vec2 blockPos{bx, bz};
             glm::vec2 coord =
                 (glm::vec2{bx, bz} - WOLRD_SIZE / 2.0f) / WOLRD_SIZE * 2.0f;
+
+            auto &biome = biomes.getBiomeData(biomeMap[z * CHUNK_SIZE + x]);
+            auto &pnoise = biome.primaryNoise;
+            auto &snoise = biome.secondaryNoise;
 
             auto primary = getNoiseAt(blockPos, pnoise, seed);
             auto secondary = getNoiseAt(blockPos, snoise, seed);
@@ -105,10 +121,9 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
+                         const std::array<int, CHUNK_AREA> &biomeMap,
                          int baseChunk, const BiomeData &biomes)
 {
-    // TODO Use biome map
-    auto &biome = biomes.getBiomeData(0);
     auto base = chunk.getPosition().y - baseChunk;
 
     for (int z = 0; z < CHUNK_SIZE; z++) {
@@ -117,6 +132,8 @@ void createSmoothTerrain(Chunk &chunk,
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 BlockPosition bp{x, y, z};
                 int by = base * CHUNK_SIZE + y;
+
+                auto &biome = biomes.getBiomeData(biomeMap[z * CHUNK_SIZE + x]);
 
                 if (by > height) {
                     chunk.qSetBlock(bp, by < WATER_LEVEL ? 4 : 0);
