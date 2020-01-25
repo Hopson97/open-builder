@@ -64,8 +64,8 @@ std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition &position,
                                            float seed, const BiomeData &biomes)
 {
     NoiseParameters biomeNoise;
-    biomeNoise.smoothness = 300;
-    biomeNoise.roughness = 0.8;
+    biomeNoise.smoothness = 300.0f;
+    biomeNoise.roughness = 0.8f;
     biomeNoise.octaves = 5;
     std::array<int, CHUNK_AREA> biomeMap;
     for (int z = 0; z < CHUNK_SIZE; z++) {
@@ -85,15 +85,15 @@ createChunkHeightMap(const ChunkPosition &position,
                      const std::array<int, CHUNK_AREA> &biomeMap,
                      float worldSize, float seed, const BiomeData &biomes)
 {
-    const float WOLRD_SIZE = worldSize * CHUNK_SIZE;
+    const float WOLRD_SIZE = (worldSize) * CHUNK_SIZE;
 
     // TODO Create biome map
 
     std::array<int, CHUNK_AREA> heightMap;
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
-            float bx = x + position.x * CHUNK_SIZE;
-            float bz = z + position.z * CHUNK_SIZE;
+            float bx = x + (position.x) * CHUNK_SIZE;
+            float bz = z + (position.z) * CHUNK_SIZE;
             glm::vec2 blockPos{bx, bz};
             glm::vec2 coord =
                 (glm::vec2{bx, bz} - WOLRD_SIZE / 2.0f) / WOLRD_SIZE * 2.0f;

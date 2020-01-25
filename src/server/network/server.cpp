@@ -57,11 +57,10 @@ Server::Server(const ServerConfig &config)
             std::string luaMain = "main.lua";
             auto path = fs::path(entry) / fs::path("main.lua");
             m_script.runFile(path.string());
-            std::cout << entry << std::endl;
         }
     }
-
     // clang-format on
+
     float seed = 9095.0f; // generateSeed("test");
     float size = static_cast<float>(m_worldSize);
 

@@ -386,18 +386,24 @@ void Client::render(int width, int height)
     }
 
     // Render fluid mesh
-    m_fluidShader.program.bind();
-    gl::loadUniform(m_fluidShader.timeLocation,
-                    m_clock.getElapsedTime().asSeconds());
-    gl::loadUniform(m_fluidShader.projectionViewLocation, playerProjectionView);
+    //  m_fluidShader.program.bind();
+    // gl::loadUniform(m_fluidShader.timeLocation,
+    //                  m_clock.getElapsedTime().asSeconds());
+    //    gl::loadUniform(m_fluidShader.projectionViewLocation,
+    //    playerProjectionView);
 
     glCheck(glEnable(GL_BLEND));
+    if (m_chunks.manager.getBlock(toBlockPosition(mp_player->position)) == 4) {
+        glCheck(glCullFace(GL_FRONT));
+    }
+    
     for (const auto &chunk : m_chunks.fluidDrawables) {
         if (m_frustum.chunkIsInFrustum(chunk.position)) {
             chunk.vao.getDrawable().bindAndDraw();
         }
     }
     glCheck(glDisable(GL_BLEND));
+    glCheck(glCullFace(GL_BACK));
 
     // GUI
     m_gui.render(width, height);

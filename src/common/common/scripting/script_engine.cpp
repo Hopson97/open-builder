@@ -10,8 +10,10 @@ ScriptEngine::ScriptEngine()
 
 bool ScriptEngine::runString(const std::string &script)
 {
-    auto result = lua.script(
-        script, []([[maybe_unused]] auto L, auto res) { return res; });
+    auto result = lua.script(script, [](auto L, auto res) {
+        (void)L;
+        return res;
+    });
 
     if (result.valid()) {
         std::cout << "Script string ran sucessfully." << '\n';

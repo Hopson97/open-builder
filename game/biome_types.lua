@@ -2,9 +2,9 @@
 game.data.addBiome({
     name = "openbuilder_grassland",
     description = "Grassland",
-    topVoxel = "openbuilder:grass",
-    undergroundVoxel = "openbuilder:dirt",
-    beachVoxel = "openbuilder:sand",
+    topVoxel = "openbuilder_grass",
+    undergroundVoxel = "openbuilder_dirt",
+    beachVoxel = "openbuilder_sand",
     beachHeight = 3,
     depth = 5,
     primaryNoise = {
@@ -27,9 +27,9 @@ game.data.addBiome({
 game.data.addBiome({
     name = "openbuilder_desert",
     description = "Desert",
-    topVoxel = "openbuilder:sand",
-    undergroundVoxel = "openbuilder:sand",
-    beachVoxel = "openbuilder:dirt",
+    topVoxel = "openbuilder_sand",
+    undergroundVoxel = "openbuilder_sand",
+    beachVoxel = "openbuilder_dirt",
     beachHeight = 1,
     depth = 5,
     primaryNoise = {
@@ -49,6 +49,5 @@ game.data.addBiome({
 })
 
 game.data.setBiomeMap {
-    openbuilder_grassland = 45,
-    openbuilder_desert = 0
+    openbuilder_grassland = 0,
 }
