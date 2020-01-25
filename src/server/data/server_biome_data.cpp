@@ -24,17 +24,20 @@ void BiomeData::addBiome(const sol::table &table)
 {
     BiomeDefinition biome;
     biome.primaryNoise = readNoiseParameters(table["primaryNoise"]);
-    biome.primaryNoise = readNoiseParameters(table["secondaryNoise"]);
+    biome.secondaryNoise = readNoiseParameters(table["secondaryNoise"]);
 
     biome.name = table["name"].get<std::string>();
     biome.description = table["description"].get<std::string>();
     biome.depth = table["depth"].get<int>();
+    biome.beachHeight = table["beachHeight"].get<int>();
 
     auto topVoxel = table["topVoxel"].get<std::string>();
     auto undergroundVoxel = table["topVoxel"].get<std::string>();
+    auto beachVoxel = table["beachVoxel"].get<std::string>();
 
     biome.topVoxel = mp_voxelData->getVoxelId(topVoxel);
     biome.undergroundVoxel = mp_voxelData->getVoxelId(undergroundVoxel);
+    biome.beachVoxel = mp_voxelData->getVoxelId(beachVoxel);
 
     m_biomes.push_back(biome);
 }

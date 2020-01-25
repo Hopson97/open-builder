@@ -20,10 +20,9 @@ Server::Server(const ServerConfig &config)
 {
 
     // clang-format off
-    m_script.addTable("data", 
-        "addVoxel", [&](const sol::table &voxelDef) { m_voxelData.addVoxel(voxelDef); },
-        "addBiome", [&](const sol::table &biomeDef) { m_biomeData.addBiome(biomeDef); });
-
+    auto data = m_script.addTable("data");
+    data["addVoxel"] = [&](const sol::table &voxelDef) { m_voxelData.addVoxel(voxelDef); };
+    data["addBiome"] = [&](const sol::table &biomeDef) { m_biomeData.addBiome(biomeDef); };
 
     m_script.addTable("MeshStyle",
         "Block", VoxelMeshStyle::Block,
@@ -65,13 +64,14 @@ Server::Server(const ServerConfig &config)
 
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
-            std::array<int, CHUNK_AREA> heightMap = createChunkHeightMap(
-                {x, 0, z}, (float)m_worldSize, generateSeed("test"));
+            std::array<int, CHUNK_AREA> heightMap =
+                createChunkHeightMap({x, 0, z}, (float)m_worldSize,
+                                     generateSeed("test"), m_biomeData);
             int maxHeight =
                 *std::max_element(heightMap.cbegin(), heightMap.cend());
             for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
                 Chunk &chunk = m_world.chunks.addChunk({x, y, z});
-                createSmoothTerrain(chunk, heightMap, 0);
+                createSmoothTerrain(chunk, heightMap, 0, m_biomeData);
                 m_world.chunks.ensureNeighbours({x, y, z});
             }
         }

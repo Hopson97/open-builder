@@ -4,11 +4,11 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "../data/server_biome_data.h"
 #include <cstring>
 #include <ctime>
 #include <functional>
 #include <glm/gtc/noise.hpp>
-
 namespace {
 
 /*
@@ -45,13 +45,9 @@ float rounded(const glm::vec2 &coord)
     return b * 0.9f;
 }
 
-float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
-                 const NoiseOptions &options, float seed)
+float getNoiseAt(const glm::vec2 &voxelPos, const NoiseParameters &options,
+                 float seed)
 {
-    // Get voxel X/Z positions
-    float voxelX = blockPosition.x + chunkPosition.x * CHUNK_SIZE;
-    float voxelZ = blockPosition.y + chunkPosition.y * CHUNK_SIZE;
-
     // Begin iterating through the octaves
     float value = 0;
     float accumulatedAmps = 0;
@@ -59,8 +55,8 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
         float frequency = glm::pow(2.0f, i);
         float amplitude = glm::pow(options.roughness, i);
 
-        float x = voxelX * frequency / options.smoothness;
-        float y = voxelZ * frequency / options.smoothness;
+        float x = voxelPos.x * frequency / options.smoothness;
+        float y = voxelPos.y * frequency / options.smoothness;
 
         float noise = glm::simplex(glm::vec3{seed + x, seed + y, seed});
         noise = (noise + 1.0f) / 2.0f;
@@ -73,44 +69,34 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
 } // namespace
 
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
-                                                 float worldSize, float seed)
+                                                 float worldSize, float seed,
+                                                 const BiomeData &biomes)
 {
     const float WOLRD_SIZE = worldSize * CHUNK_SIZE;
 
-    NoiseOptions firstNoise;
-    firstNoise.amplitude = 105;
-    firstNoise.octaves = 6;
-    firstNoise.smoothness = 205.f;
-    firstNoise.roughness = 0.58f;
-    firstNoise.offset = 18;
-
-    NoiseOptions secondNoise;
-    secondNoise.amplitude = 20;
-    secondNoise.octaves = 4;
-    secondNoise.smoothness = 200;
-    secondNoise.roughness = 0.45f;
-    secondNoise.offset = 0;
-
-    glm::vec2 chunkXZ = {position.x, position.z};
+    // TODO Create biome map
+    auto &biome = biomes.getBiomeData(0);
+    auto &pnoise = biome.primaryNoise;
+    auto &snoise = biome.secondaryNoise;
 
     std::array<int, CHUNK_AREA> heightMap;
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             float bx = x + position.x * CHUNK_SIZE;
             float bz = z + position.z * CHUNK_SIZE;
-
+            glm::vec2 blockPos{bx, bz};
             glm::vec2 coord =
                 (glm::vec2{bx, bz} - WOLRD_SIZE / 2.0f) / WOLRD_SIZE * 2.0f;
 
-            auto noise = getNoiseAt({x, z}, chunkXZ, firstNoise, seed);
-            auto noise2 =
-                getNoiseAt({x, z}, {position.x, position.z}, secondNoise, seed);
+            auto primary = getNoiseAt(blockPos, pnoise, seed);
+            auto secondary = getNoiseAt(blockPos, snoise, seed);
             auto island = rounded(coord) * 1.25;
-            float result = noise * noise2;
+            float result = primary * secondary;
 
-            heightMap[z * CHUNK_SIZE + x] =
-                (result * firstNoise.amplitude + firstNoise.offset) * island -
-                5;
+            float height =
+                (result * pnoise.amplitude + pnoise.offset) * island - 5;
+
+            heightMap[z * CHUNK_SIZE + x] = height;
         }
     }
 
@@ -119,27 +105,32 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
-                         int baseChunk)
+                         int baseChunk, const BiomeData &biomes)
 {
+    // TODO Use biome map
+    auto &biome = biomes.getBiomeData(0);
     auto base = chunk.getPosition().y - baseChunk;
 
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             int height = heightMap[z * CHUNK_SIZE + x];
             for (int y = 0; y < CHUNK_SIZE; y++) {
-                int blockY = base * CHUNK_SIZE + y;
+                BlockPosition bp{x, y, z};
+                int by = base * CHUNK_SIZE + y;
 
-                if (blockY > height) {
-                    chunk.qSetBlock({x, y, z}, blockY < 32 ? 4 : 0);
+                if (by > height) {
+                    chunk.qSetBlock(bp, by < WATER_LEVEL ? 4 : 0);
                 }
-                else if (blockY <= height) {
-                    chunk.qSetBlock({x, y, z}, blockY < 35 ? 5 : 1);
+                else if (by == height) {
+                    bool isBeach = by < WATER_LEVEL + biome.beachHeight;
+                    chunk.qSetBlock(bp, isBeach ? biome.beachVoxel
+                                                : biome.topVoxel);
                 }
-                else if (blockY > height - 5) {
-                    chunk.qSetBlock({x, y, z}, 2);
+                else if (by > height - biome.depth) {
+                    chunk.qSetBlock(bp, biome.undergroundVoxel);
                 }
                 else {
-                    chunk.qSetBlock({x, y, z}, 5);
+                    chunk.qSetBlock(bp, 5);
                 }
             }
         }

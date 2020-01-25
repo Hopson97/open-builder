@@ -23,9 +23,11 @@ struct BiomeDefinition {
     std::string description = "N/A";
 
     int depth = 0;
+    int beachHeight = 0;
 
     block_t topVoxel = 0;
     block_t undergroundVoxel = 0;
+    block_t beachVoxel = 0;
 };
 
 class BiomeData {

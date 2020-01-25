@@ -5,16 +5,18 @@
 #include <common/world/world_constants.h>
 
 class Chunk;
+class BiomeData;
 
 void makeFlatTerrain(Chunk *chunk, int worldSize);
 void makeStepTerrain(Chunk *chunk);
 void makeRandomTerrain(Chunk *chunk);
 
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
-                                                 float worldSize, float seed);
+                                                 float worldSize, float seed,
+                                                 const BiomeData &biomes);
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
-                         int baseChunk);
+                         int baseChunk, const BiomeData &biomes);
 
 float generateSeed(const std::string &input);
