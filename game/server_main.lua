@@ -17,3 +17,4 @@ function game.runPlayerJoinCallback(player)
 end
 
 dofile("game/voxel_types.lua")
+dofile("game/biome_types.lua")

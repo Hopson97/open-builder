@@ -1,12 +1,8 @@
-#include "server_game_data.h"
+#include "server_voxel_data.h"
 
 #include <common/debug.h>
 
-ServerGameData::ServerGameData()
-{
-}
-
-void ServerGameData::addVoxel(const sol::table &voxelData)
+void VoxelData::addVoxel(const sol::table &voxelData)
 {
     ServerVoxel voxel;
 
@@ -28,7 +24,24 @@ void ServerGameData::addVoxel(const sol::table &voxelData)
     m_voxelDataList.push_back(voxel);
 }
 
-const VoxelDataList &ServerGameData::voxelData() const
+const std::vector<ServerVoxel> &VoxelData::voxelData() const
 {
     return m_voxelDataList;
+}
+
+block_t VoxelData::getVoxelId(std::string &voxelName) const
+{
+    for (block_t i = 0; i < m_voxelDataList.size(); i++) {
+        if (m_voxelDataList[i].name == voxelName) {
+            return i;
+        }
+    }
+    //Return air on fail
+    return 0;
+}
+
+const ServerVoxel &VoxelData::getVoxelData(block_t blockId) const
+{
+    //TODO Maybe change to operator [] eventually
+    return m_voxelDataList.at(blockId);
 }

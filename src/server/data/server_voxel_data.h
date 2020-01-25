@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include <common/world/world_constants.h>
+
 struct ServerVoxel {
     std::string name;
     std::string topTexture;
@@ -17,16 +19,17 @@ struct ServerVoxel {
     bool isCollidable = true;
 };
 
-using VoxelDataList = std::vector<ServerVoxel>;
-
-class ServerGameData {
+class VoxelData {
   public:
-    ServerGameData();
-
     void addVoxel(const sol::table &table);
 
-    const VoxelDataList &voxelData() const;
+    const std::vector<ServerVoxel> &voxelData() const;
+
+    block_t getVoxelId(std::string &voxelName) const;
+    const ServerVoxel &getVoxelData(block_t blockId) const;
 
   private:
-    VoxelDataList m_voxelDataList;
+    std::vector<ServerVoxel> m_voxelDataList;
 };
+
+

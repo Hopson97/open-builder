@@ -1,6 +1,7 @@
 
 add_library(ob-server
-    scripting/server_game_data.cpp
+    data/server_voxel_data.cpp
+    data/server_biome_data.cpp
     server_engine.cpp
     network/server.cpp
     world/terrain_generation.cpp

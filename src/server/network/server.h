@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../scripting/server_game_data.h"
+#include "../data/server_voxel_data.h"
+#include "../data/server_biome_data.h"
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/network/net_host.h>
 #include <common/world/chunk_manager.h>
-#include <common/world/voxel_registry.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <common/scripting/script_engine.h>
@@ -75,5 +75,6 @@ class Server final : public NetworkHost {
     const int m_worldSize;
 
     ScriptEngine m_script;
-    ServerGameData m_gameData;
+    VoxelData m_voxelData;
+    BiomeData m_biomeData;
 };

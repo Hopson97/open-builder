@@ -4,8 +4,8 @@
 #include <SFML/System/Clock.hpp>
 #include <algorithm>
 #include <common/debug.h>
-#include <thread>
 #include <filesystem>
+#include <thread>
 
 #include "../world/terrain_generation.h"
 
@@ -20,7 +20,9 @@ Server::Server(const ServerConfig &config)
 
     // clang-format off
     m_script.addTable("data", 
-        "addVoxel", [&](const sol::table &voxelDef) { m_gameData.addVoxel(voxelDef); });
+        "addVoxel", [&](const sol::table &voxelDef) { m_voxelData.addVoxel(voxelDef); },
+        "addBiomeParameters", [&](const sol::table &voxelDef) { m_voxelData.addVoxel(voxelDef); });
+
 
     m_script.addTable("MeshStyle",
         "Block", VoxelMeshStyle::Block,
@@ -58,7 +60,6 @@ Server::Server(const ServerConfig &config)
         }
     }
 
-    
     // clang-format on
 
     for (int z = 0; z < m_worldSize; z++) {
@@ -132,7 +133,7 @@ void Server::sendGameData(peer_id_t peerId)
     sf::Packet packet;
     packet << ClientCommand::GameRegistryData;
 
-    auto &data = m_gameData.voxelData();
+    auto &data = m_voxelData.voxelData();
     packet << static_cast<u16>(data.size());
     for (auto &voxel : data) {
         u8 mesh = static_cast<u8>(voxel.meshStyle);
