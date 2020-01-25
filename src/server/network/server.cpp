@@ -5,10 +5,13 @@
 #include <algorithm>
 #include <common/debug.h>
 #include <thread>
+#include <filesystem>
 
 #include "../world/terrain_generation.h"
 
 #include <common/obd_parser.h>
+
+namespace fs = std::filesystem;
 
 Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
@@ -38,13 +41,24 @@ Server::Server(const ServerConfig &config)
         }
     );
 
-    auto cud = m_script.lua.new_usertype<Chunk>("Chunk");
+    m_script.runFile("game/server_main.lua");
+
+    auto cud = m_script.addType<Chunk>("Chunk");
     cud["fastGetBlock"] = &Chunk::qGetBlock; 
 
-    auto entity = m_script.lua.new_usertype<ServerEntity>("Player");
+    auto entity = m_script.addType<ServerEntity>("Entity");
     entity["setPosition"] = &ServerEntity::setPosition;
 
-    m_script.runFile("game/server_main.lua");
+    for (auto entry : fs::directory_iterator("mods")) {
+        if (entry.is_directory()) {
+            std::string luaMain = "main.lua";
+            auto path = fs::path(entry) / fs::path("main.lua");
+            m_script.runFile(path.string());
+            std::cout << entry << std::endl;
+        }
+    }
+
+    
     // clang-format on
 
     for (int z = 0; z < m_worldSize; z++) {
