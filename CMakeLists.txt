@@ -5,6 +5,12 @@ project(open-builder
     VERSION 1.0
 )
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+# Make the bin folder the "deploy" folder
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+endif()
+
 function (set_flags target)
     #Set C++17
     target_compile_features(${target} 

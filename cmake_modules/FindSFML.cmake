@@ -17,6 +17,31 @@ find_path(SFML_INCLUDE_DIR SFML/Config.hpp
           PATH_SUFFIXES include
           PATHS ${FIND_SFML_PATHS})
 
+# Added to module, not in original
+# Used for shipping the game.
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    find_path(SFML_BIN_DIR openal32.dll
+          PATH_SUFFIXES bin
+          PATHS ${FIND_SFML_PATHS})
+    if(SFML_BIN_DIR)
+        message(STATUS "Found binary release at ${SFML_BIN_DIR}")
+        # Now seperate all the release/debug dll's
+        foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
+            string(TOLOWER ${FIND_SFML_COMPONENT} FIND_SFML_COMPONENT_LOWER)
+            set(FIND_SFML_COMPONENT_NAME sfml-${FIND_SFML_COMPONENT_LOWER})
+            if(CMAKE_BUILD_TYPE MATCHES Debug)
+                # Set debug dll's'
+                list(APPEND SFML_BINARIES ${FIND_SFML_COMPONENT_NAME}-d-2.dll)
+            else()
+                # Set release dll's
+                list(APPEND SFML_BINARIES ${FIND_SFML_COMPONENT_NAME}-2.dll)
+            endif()
+        endforeach()
+    else()
+        message(SEND_ERROR "Could not find SFML dll's!")
+    endif()
+endif()
+
 set(SFML_VERSION_OK TRUE)
 if(SFML_FIND_VERSION AND SFML_INCLUDE_DIR)
     if("${SFML_INCLUDE_DIR}" MATCHES "SFML.framework")
