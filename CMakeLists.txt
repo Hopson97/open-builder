@@ -55,6 +55,7 @@ function (link_exe target)
         ob-server
         glad
         enet
+        stdc++fs
         ${CMAKE_DL_LIBS}
     )
 endfunction(link_exe)
