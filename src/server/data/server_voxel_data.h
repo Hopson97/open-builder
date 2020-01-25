@@ -31,5 +31,3 @@ class VoxelData {
   private:
     std::vector<ServerVoxel> m_voxelDataList;
 };
-
-

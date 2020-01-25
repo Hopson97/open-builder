@@ -16,12 +16,13 @@ namespace fs = std::filesystem;
 Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
+    , m_biomeData(m_voxelData)
 {
 
     // clang-format off
     m_script.addTable("data", 
         "addVoxel", [&](const sol::table &voxelDef) { m_voxelData.addVoxel(voxelDef); },
-        "addBiomeParameters", [&](const sol::table &voxelDef) { m_voxelData.addVoxel(voxelDef); });
+        "addBiome", [&](const sol::table &biomeDef) { m_biomeData.addBiome(biomeDef); });
 
 
     m_script.addTable("MeshStyle",

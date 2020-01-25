@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../data/server_voxel_data.h"
 #include "../data/server_biome_data.h"
+#include "../data/server_voxel_data.h"
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/network/net_host.h>

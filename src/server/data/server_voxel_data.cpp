@@ -36,12 +36,12 @@ block_t VoxelData::getVoxelId(std::string &voxelName) const
             return i;
         }
     }
-    //Return air on fail
+    // Return air on fail
     return 0;
 }
 
 const ServerVoxel &VoxelData::getVoxelData(block_t blockId) const
 {
-    //TODO Maybe change to operator [] eventually
+    // TODO Maybe change to operator [] eventually
     return m_voxelDataList.at(blockId);
 }

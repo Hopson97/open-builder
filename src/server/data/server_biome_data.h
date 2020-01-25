@@ -1,9 +1,11 @@
-#pragma once 
+#pragma once
 
-#include <sol/sol.hpp>
 #include <common/world/world_constants.h>
+#include <sol/sol.hpp>
 #include <string>
 #include <vector>
+
+class VoxelData;
 
 struct NoiseParameters {
     int octaves = 0;
@@ -18,6 +20,7 @@ struct BiomeDefinition {
     NoiseParameters secondaryNoise;
 
     std::string name = "Unknown";
+    std::string description = "N/A";
 
     int depth = 0;
 
@@ -25,14 +28,16 @@ struct BiomeDefinition {
     block_t undergroundVoxel = 0;
 };
 
-
 class BiomeData {
   public:
-    void addBiome(sol::table biomeDefinition);
+    BiomeData(const VoxelData &voxelData);
+    void addBiome(const sol::table &table);
 
     int getBiomeId(std::string &voxelName) const;
     const BiomeDefinition &getBiomeData(int biomeId) const;
 
   private:
     std::vector<BiomeDefinition> m_biomes;
+
+    const VoxelData *mp_voxelData;
 };
