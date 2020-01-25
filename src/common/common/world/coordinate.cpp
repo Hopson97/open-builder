@@ -1,6 +1,7 @@
 #include "coordinate.h"
 
 #include "world_constants.h"
+#include <cmath>
 
 int toLocalBlockIndex(const BlockPosition &position)
 {
@@ -43,8 +44,8 @@ BlockPosition toGlobalBlockPosition(const BlockPosition &blockPosition,
 
 BlockPosition toBlockPosition(const glm::vec3 &vec)
 {
-    auto x = static_cast<i32>(vec.x);
-    auto y = static_cast<i32>(vec.y);
-    auto z = static_cast<i32>(vec.z);
+    auto x = static_cast<i32>(std::floor(vec.x));
+    auto y = static_cast<i32>(std::floor(vec.y));
+    auto z = static_cast<i32>(std::floor(vec.z));
     return {x, y, z};
 }
