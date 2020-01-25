@@ -27,3 +27,8 @@ target_link_libraries(ob-client
     ${SFML_DEPENDENCIES}
     ${CMAKE_DL_LIBS}
 )
+
+target_include_directories(ob-client
+PRIVATE
+${SFML_INCLUDE_DIR}
+)

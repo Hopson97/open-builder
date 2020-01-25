@@ -19,3 +19,8 @@ target_link_libraries(ob-common
     ${SFML_DEPENDENCIES}
     ${CMAKE_DL_LIBS}
 )
+
+target_include_directories(ob-common
+PUBLIC
+${SFML_INCLUDE_DIR}
+)
