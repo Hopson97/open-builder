@@ -13,10 +13,10 @@ class Drawable final {
   public:
     Drawable(GLuint vao, GLsizei indices);
 
-    void bindAndDraw() const;
+    void bindAndDraw(GLenum drawMode = GL_TRIANGLES) const;
 
     void bind() const;
-    void draw() const;
+    void draw(GLenum drawMode = GL_TRIANGLES) const;
 
   private:
     const GLuint m_handle = 0;

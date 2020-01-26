@@ -33,6 +33,16 @@ void translateMatrix(glm::mat4 &matrix, const glm::vec3 &offset)
     matrix = glm::translate(matrix, offset);
 }
 
+void scaleMatrix(glm::mat4 &matrix, const glm::vec3 &scalars)
+{
+    matrix = glm::scale(matrix, scalars);
+}
+
+void scaleMatrix(glm::mat4 &matrix, float scalar)
+{
+    scaleMatrix(matrix, {scalar, scalar, scalar});
+}
+
 glm::vec3 forwardsVector(const glm::vec3 &rotation)
 {
     float yaw = glm::radians(rotation.y + 90);
