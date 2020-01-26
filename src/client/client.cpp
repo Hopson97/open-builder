@@ -445,12 +445,6 @@ void Client::render(int width, int height)
 
 void Client::endGame()
 {
-    // Destroy all player skins
-    m_basicShader.program.destroy();
-    m_chunkShader.program.destroy();
-    m_fluidShader.program.destroy();
-    m_selectionShader.program.destroy();
-
     NetworkHost::disconnectFromPeer(mp_serverPeer);
 }
 

@@ -6,6 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <common/macros.h>
+
 namespace gl {
 /**
  * @brief A uniform location in a shader
@@ -19,6 +21,12 @@ struct UniformLocation final {
  */
 class Shader final {
   public:
+    Shader() = default;
+    ~Shader();
+
+    Shader(Shader &&other);
+    Shader &operator=(Shader &&other);
+
     void create(const std::string &vertexFile, const std::string &fragmentFile);
     void destroy();
     void bind() const;
@@ -27,6 +35,9 @@ class Shader final {
 
   private:
     GLuint m_handle = 0;
+
+  public:
+    NON_COPYABLE(Shader)
 };
 
 // Functons for shaders
