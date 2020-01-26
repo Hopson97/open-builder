@@ -26,6 +26,22 @@ void rotateMatrix(glm::mat4 &matrix, const glm::vec3 &degrees);
 void translateMatrix(glm::mat4 &matrix, const glm::vec3 &offset);
 
 /**
+ * @brief Scales a matrix
+ *
+ * @param matrix The matrix to scale
+ * @param scalars The amount to scale each axis by
+ */
+void scaleMatrix(glm::mat4 &matrix, const glm::vec3 &scalars);
+
+/**
+ * @brief Scales a matrix
+ *
+ * @param matrix The matrix to scale
+ * @param scalar The amount to scale the whole matrix by
+ */
+void scaleMatrix(glm::mat4 &matrix, float scalar);
+
+/**
  * @brief Creates a forwards-facing vector
  *
  * @param rotation The rotation axis to base the result on
