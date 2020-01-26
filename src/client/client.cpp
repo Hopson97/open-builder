@@ -38,6 +38,16 @@ void deleteChunkRenderable(const ChunkPosition &position,
         drawables.pop_back();
     }
 }
+
+void renderChunks(const std::vector<ChunkDrawable> &chunks,
+                  const ViewFrustum &frustum)
+{
+    for (const auto &chunk : chunks) {
+        if (frustum.chunkIsInFrustum(chunk.position)) {
+            chunk.vao.getDrawable().bindAndDraw();
+        }
+    }
+}
 } // namespace
 
 Client::Client()
@@ -401,24 +411,16 @@ void Client::render(int width, int height)
     m_chunkShader.program.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, playerProjectionView);
 
-    for (const auto &chunk : m_chunks.drawables) {
-        if (m_frustum.chunkIsInFrustum(chunk.position)) {
-            chunk.vao.getDrawable().bindAndDraw();
-        }
-    }
+    renderChunks(m_chunks.drawables, m_frustum);
 
     // Render fluid mesh
+    glCheck(glEnable(GL_BLEND));
     m_fluidShader.program.bind();
     gl::loadUniform(m_fluidShader.timeLocation,
                     m_clock.getElapsedTime().asSeconds());
     gl::loadUniform(m_fluidShader.projectionViewLocation, playerProjectionView);
-
-    glCheck(glEnable(GL_BLEND));
-    for (const auto &chunk : m_chunks.fluidDrawables) {
-        if (m_frustum.chunkIsInFrustum(chunk.position)) {
-            chunk.vao.getDrawable().bindAndDraw();
-        }
-    }
+    renderChunks(m_chunks.fluidDrawables, m_frustum);
+    glCheck(glDisable(GL_BLEND));
 
     if (m_blockSelected) {
         glCheck(glEnable(GL_LINE_SMOOTH));
@@ -436,7 +438,6 @@ void Client::render(int width, int height)
                         playerProjectionView);
         m_selectionBox.getDrawable().bindAndDraw(GL_LINES);
     }
-    glCheck(glDisable(GL_BLEND));
 
     // GUI
     m_gui.render(width, height);
