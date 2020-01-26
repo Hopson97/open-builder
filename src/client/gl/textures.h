@@ -2,7 +2,6 @@
 
 #include <SFML/Graphics/Image.hpp>
 #include <array>
-#include <common/macros.h>
 #include <glad/glad.h>
 #include <string>
 
@@ -34,6 +33,9 @@ class Texture2d final {
     Texture2d(Texture2d &&other);
     Texture2d &operator=(Texture2d &&other);
 
+    Texture2d(const Texture2d&) = delete;
+    Texture2d& operator=(const Texture2d&) = delete;
+
     void create(const std::string &file);
     void create(unsigned int width, unsigned int height,
                 const sf::Uint8 *pixels);
@@ -46,9 +48,6 @@ class Texture2d final {
 
     GLuint m_handle = 0;
     bool m_hasTexture = false;
-
-  public:
-    NON_COPYABLE(Texture2d)
 };
 
 class TextureArray final {
@@ -58,6 +57,9 @@ class TextureArray final {
 
     TextureArray(TextureArray &&other);
     TextureArray &operator=(TextureArray &&other);
+
+    TextureArray(const TextureArray&) = delete;
+    TextureArray& operator=(const TextureArray&) = delete;
 
     void create(GLsizei numTextures, GLsizei textureSize);
     GLuint addTexture(const std::string &file);
@@ -71,9 +73,6 @@ class TextureArray final {
     GLuint m_textureCount = 0;
     GLuint m_maxTextures = 0;
     GLuint m_textureSize = 0;
-
-  public:
-    NON_COPYABLE(TextureArray)
 };
 
 sf::Image loadRawImageFile(const std::string &file);

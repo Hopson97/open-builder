@@ -2,10 +2,8 @@
 
 #include <glad/glad.h>
 #include <vector>
-#include <common/macros.h>
 
 namespace gl {
-
 /**
  * @brief Minimal information for drawing with glDrawElements
  *
@@ -35,6 +33,9 @@ class VertexArray final {
     VertexArray(VertexArray &&other);
     VertexArray &operator=(VertexArray &&other);
 
+    VertexArray(const VertexArray&) = delete;
+    VertexArray& operator=(const VertexArray&) = delete;
+
     void create();
     void destroy();
     void bind() const;
@@ -51,8 +52,5 @@ class VertexArray final {
     std::vector<GLuint> m_bufferObjects;
     GLuint m_handle = 0;
     GLsizei m_indicesCount = 0;
-
-  public:
-    NON_COPYABLE(VertexArray)
 };
 } // namespace gl
