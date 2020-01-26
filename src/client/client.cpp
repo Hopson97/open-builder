@@ -446,19 +446,11 @@ void Client::render(int width, int height)
 void Client::endGame()
 {
     // Destroy all player skins
-    m_cube.destroy();
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
     m_fluidShader.program.destroy();
     m_selectionShader.program.destroy();
-    
-    for (auto &chunk : m_chunks.drawables) {
-        chunk.vao.destroy();
-    }
-    for (auto &chunk : m_chunks.fluidDrawables) {
-        chunk.vao.destroy();
-    }
-    m_selectionBox.destroy();
+
     NetworkHost::disconnectFromPeer(mp_serverPeer);
 }
 

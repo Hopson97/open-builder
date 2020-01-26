@@ -41,7 +41,6 @@ gl::VertexArray ChunkMesh::createBuffer()
 {
 
     gl::VertexArray vao;
-    vao.create();
     vao.bind();
     vao.addVertexBuffer(3, vertices);
     vao.addVertexBuffer(3, textureCoords);

@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 #include <vector>
+#include <common/macros.h>
 
 namespace gl {
 
@@ -28,6 +29,12 @@ class Drawable final {
  */
 class VertexArray final {
   public:
+    VertexArray();
+    ~VertexArray();
+
+    VertexArray(VertexArray &&other);
+    VertexArray &operator=(VertexArray &&other);
+
     void create();
     void destroy();
     void bind() const;
@@ -39,8 +46,13 @@ class VertexArray final {
     void addIndexBuffer(const std::vector<GLuint> &indices);
 
   private:
+    void reset();
+
     std::vector<GLuint> m_bufferObjects;
     GLuint m_handle = 0;
     GLsizei m_indicesCount = 0;
+
+  public:
+    NON_COPYABLE(VertexArray)
 };
 } // namespace gl
