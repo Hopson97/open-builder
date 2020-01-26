@@ -420,7 +420,6 @@ void Client::render(int width, int height)
                     m_clock.getElapsedTime().asSeconds());
     gl::loadUniform(m_fluidShader.projectionViewLocation, playerProjectionView);
     renderChunks(m_chunks.fluidDrawables, m_frustum);
-    glCheck(glDisable(GL_BLEND));
 
     if (m_blockSelected) {
         glCheck(glEnable(GL_LINE_SMOOTH));
@@ -438,6 +437,7 @@ void Client::render(int width, int height)
                         playerProjectionView);
         m_selectionBox.getDrawable().bindAndDraw(GL_LINES);
     }
+    glCheck(glDisable(GL_BLEND));
 
     // GUI
     m_gui.render(width, height);
