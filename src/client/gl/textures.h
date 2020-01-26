@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/Image.hpp>
 #include <array>
+#include <common/macros.h>
 #include <glad/glad.h>
 #include <string>
 
@@ -27,6 +28,12 @@ class CubeTexture final {
  */
 class Texture2d final {
   public:
+    Texture2d();
+    ~Texture2d();
+
+    Texture2d(Texture2d &&other);
+    Texture2d &operator=(Texture2d &&other);
+
     void create(const std::string &file);
     void create(unsigned int width, unsigned int height,
                 const sf::Uint8 *pixels);
@@ -35,22 +42,38 @@ class Texture2d final {
     bool textureExists() const;
 
   private:
+    void reset();
+
     GLuint m_handle = 0;
     bool m_hasTexture = false;
+
+  public:
+    NON_COPYABLE(Texture2d)
 };
 
 class TextureArray final {
   public:
+    TextureArray();
+    ~TextureArray();
+
+    TextureArray(TextureArray &&other);
+    TextureArray &operator=(TextureArray &&other);
+
     void create(GLsizei numTextures, GLsizei textureSize);
     GLuint addTexture(const std::string &file);
     void destroy();
     void bind() const;
 
   private:
+    void reset();
+
     GLuint m_handle = 0;
     GLuint m_textureCount = 0;
     GLuint m_maxTextures = 0;
     GLuint m_textureSize = 0;
+
+  public:
+    NON_COPYABLE(TextureArray)
 };
 
 sf::Image loadRawImageFile(const std::string &file);

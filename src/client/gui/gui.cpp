@@ -86,7 +86,7 @@ void Gui::render(int width, int height)
     auto d = m_quad.getDrawable();
     d.bind();
     for (auto& g_img : m_images) {
-        auto img = g_img.as<GuiImage>();
+        auto& img = g_img.as<GuiImage>();
         glm::mat4 modelMatrix{ 1.0f };
         modelMatrix = glm::translate(modelMatrix,
             glm::vec3(img.m_position.scale.x*2 - 1 + img.m_position.offset.x*pixel_width,
