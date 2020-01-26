@@ -49,7 +49,7 @@ void renderChunks(const std::vector<ChunkDrawable> &chunks,
     }
 }
 
-bool blockIsBreakable(VoxelType voxelType) {
+bool isVoxelSelectable(VoxelType voxelType) {
     return voxelType == VoxelType::Solid || voxelType == VoxelType::Flora;
 }
 } // namespace
@@ -192,7 +192,7 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
     for (; ray.getLength() < 8; ray.step()) {
         auto rayBlockPosition = toBlockPosition(ray.getEndpoint());
         auto& voxel = m_voxelData.getVoxelData(m_chunks.manager.getBlock(rayBlockPosition));
-        if (blockIsBreakable(voxel.type)) {
+        if (isVoxelSelectable(voxel.type)) {
             BlockUpdate blockUpdate;
             blockUpdate.block = button == sf::Mouse::Left ? 0 : 1;
             blockUpdate.position = button == sf::Mouse::Left
@@ -341,7 +341,7 @@ void Client::update(float dt)
     for (; ray.getLength() < 8; ray.step()) {
         auto rayBlockPosition = toBlockPosition(ray.getEndpoint());
         auto& voxel = m_voxelData.getVoxelData(m_chunks.manager.getBlock(rayBlockPosition));
-        if (blockIsBreakable(voxel.type)) {
+        if (isVoxelSelectable(voxel.type)) {
             m_currentSelectedBlockPos = rayBlockPosition;
             m_blockSelected = true;
             break;
