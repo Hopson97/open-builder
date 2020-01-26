@@ -30,8 +30,8 @@ struct Color3 {
     Color3()                          // Default should be 1,1,1 so scripters don't need
         : r(1.f), g(1.f), b(1.f) {}   // to set color just to see the image
                                       
-    Color3(float r, float g, float b)
-        : r(r), g(g), b(b) {}
+    Color3(float r_in, float g_in, float b_in)
+        : r(r_in), g(g_in), b(b_in) {}
 };
 
 // GUI Image, 
