@@ -67,6 +67,16 @@ bool Client::init(const ClientConfig &config, float aspect)
     // OpenGL stuff
     m_cube = makeCubeVertexArray(1, 2, 1);
 
+    selectionBox = makeWireCubeVertexArray(1, 1, 1);
+
+    // Selection box shader
+    m_selectionShader.program.create("selection", "selection");
+    m_selectionShader.program.bind();
+    m_selectionShader.modelLocation =
+        m_selectionShader.program.getUniformLocation("modelMatrix");
+    m_selectionShader.projectionViewLocation =
+        m_selectionShader.program.getUniformLocation("projectionViewMatrix");
+
     // Basic shader
     m_basicShader.program.create("static", "static");
     m_basicShader.program.bind();
@@ -320,13 +330,24 @@ void Client::update(float dt)
         }
     }
 
-    // Call update function on the GUI script
-    // Note: This part is quite dangerous, if there's no update() or there's an error
-    //       in the script then it will cause a crash
-   // sol::function p_update = m_lua.lua["update"];
-   // p_update(dt);
+    m_blockSelected = false;
+    Ray ray(mp_player->position, mp_player->rotation);
 
-        
+    for (; ray.getLength() < 8; ray.step()) {
+        auto rayBlockPosition = toBlockPosition(ray.getEndpoint());
+        if (m_chunks.manager.getBlock(rayBlockPosition) > 0) {
+            m_currentSelectedBlockPos = rayBlockPosition;
+            m_blockSelected = true;
+            break;
+        }
+    }
+
+    // Call update function on the GUI script
+    // Note: This part is quite dangerous, if there's no update() or there's an
+    // error
+    //       in the script then it will cause a crash
+    // sol::function p_update = m_lua.lua["update"];
+    // p_update(dt);
 }
 
 void Client::render(int width, int height)
@@ -398,10 +419,25 @@ void Client::render(int width, int height)
     gl::loadUniform(m_fluidShader.timeLocation,
                     m_clock.getElapsedTime().asSeconds());
     gl::loadUniform(m_fluidShader.projectionViewLocation, playerProjectionView);
-
     renderChunks(m_chunks.fluidDrawables, m_frustum);
-
     glCheck(glDisable(GL_BLEND));
+
+    if (m_blockSelected) {
+        glCheck(glEnable(GL_LINE_SMOOTH));
+        glCheck(glLineWidth(2.0));
+        m_selectionShader.program.bind();
+        glm::mat4 modelMatrix{1.0};
+        float size = 1.005;
+        translateMatrix(modelMatrix,
+                        {m_currentSelectedBlockPos.x - (size - 1) / 2,
+                         m_currentSelectedBlockPos.y - (size - 1) / 2,
+                         m_currentSelectedBlockPos.z - (size - 1) / 2});
+        scaleMatrix(modelMatrix, size);
+        gl::loadUniform(m_selectionShader.modelLocation, modelMatrix);
+        gl::loadUniform(m_selectionShader.projectionViewLocation,
+                        playerProjectionView);
+        m_selectionBox.getDrawable().bindAndDraw(GL_LINES);
+    }
 
     // GUI
     m_gui.render(width, height);
@@ -421,6 +457,7 @@ void Client::endGame()
     m_basicShader.program.destroy();
     m_chunkShader.program.destroy();
     m_fluidShader.program.destroy();
+    m_selectionShader.program.destroy();
     m_voxelTextures.destroy();
 
     for (auto &chunk : m_chunks.drawables) {
@@ -429,6 +466,7 @@ void Client::endGame()
     for (auto &chunk : m_chunks.fluidDrawables) {
         chunk.vao.destroy();
     }
+    selectionBox.destroy();
     NetworkHost::disconnectFromPeer(mp_serverPeer);
 }
 

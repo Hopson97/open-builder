@@ -30,10 +30,10 @@ Drawable::Drawable(GLuint vao, GLsizei indices)
 {
 }
 
-void Drawable::bindAndDraw() const
+void Drawable::bindAndDraw(GLenum drawMode) const
 {
     bind();
-    draw();
+    draw(drawMode);
 }
 
 void Drawable::bind() const
@@ -41,10 +41,9 @@ void Drawable::bind() const
     glCheck(glBindVertexArray(m_handle));
 }
 
-void Drawable::draw() const
+void Drawable::draw(GLenum drawMode) const
 {
-    glCheck(
-        glDrawElements(GL_TRIANGLES, m_indicesCount, GL_UNSIGNED_INT, nullptr));
+    glCheck(glDrawElements(drawMode, m_indicesCount, GL_UNSIGNED_INT, nullptr));
 }
 
 void VertexArray::create()
