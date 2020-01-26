@@ -60,13 +60,13 @@ Shader::~Shader()
 }
 
 Shader::Shader(Shader &&other)
-    : m_handle(other.m_handle)
 {
-    other.m_handle = 0;
+    *this = std::move(other);
 }
 
 Shader &Shader::operator=(Shader &&other)
 {
+    destroy();
     m_handle = other.m_handle;
     other.m_handle = 0;
     return *this;

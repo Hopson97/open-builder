@@ -60,15 +60,13 @@ VertexArray::~VertexArray()
 }
 
 VertexArray::VertexArray(VertexArray &&other)
-    : m_bufferObjects(std::move(other.m_bufferObjects))
-    , m_handle(other.m_handle)
-    , m_indicesCount(other.m_indicesCount)
 {
-    other.reset();
+    *this = std::move(other);
 }
 
 VertexArray &VertexArray::operator=(VertexArray &&other)
 {
+    destroy();
     m_bufferObjects = std::move(other.m_bufferObjects);
     m_handle = other.m_handle;
     m_indicesCount = other.m_indicesCount;

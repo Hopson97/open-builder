@@ -90,14 +90,13 @@ Texture2d::~Texture2d()
 }
 
 Texture2d::Texture2d(Texture2d &&other)
-    : m_handle(other.m_handle)
-    , m_hasTexture(other.m_hasTexture)
 {
-    other.reset();
+    *this = std::move(other);
 }
 
 Texture2d &Texture2d::operator=(Texture2d &&other)
 {
+    destroy();
     m_hasTexture = other.m_hasTexture;
     m_handle = other.m_handle;
     other.reset();
@@ -191,16 +190,13 @@ TextureArray::~TextureArray()
 }
 
 TextureArray::TextureArray(TextureArray &&other)
-    : m_handle(other.m_handle)
-    , m_textureCount(other.m_textureCount)
-    , m_maxTextures(other.m_maxTextures)
-    , m_textureSize(other.m_textureSize)
 {
-    other.reset();
+    *this = std::move(other);
 }
 
 TextureArray &TextureArray::operator=(TextureArray &&other)
 {
+    destroy();
     m_handle = other.m_handle;
     m_textureCount = other.m_textureCount;
     m_maxTextures = other.m_maxTextures;
