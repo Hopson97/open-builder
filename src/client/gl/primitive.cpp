@@ -48,6 +48,31 @@ gl::VertexArray makeCubeVertexArray(GLfloat width, GLfloat height,
     return vao;
 }
 
+gl::VertexArray makeWireCubeVertexArray(GLfloat width, GLfloat height,
+                                        GLfloat depth)
+{
+    float w = width;
+    float h = height;
+    float d = depth;
+    std::vector<GLfloat> vertices = {
+        // Front
+        w, h, d, 0, h, d, 0, 0, d, w, 0, d,
+        // Back
+        w, h, 0, 0, h, 0, 0, 0, 0, w, 0, 0
+        // this just stops clang format from making the array long
+    };
+    std::vector<GLuint> indices = {0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6,
+                                   6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7};
+
+    gl::VertexArray vao;
+    vao.create();
+    vao.bind();
+    vao.addVertexBuffer(3, vertices);
+    vao.addIndexBuffer(indices);
+
+    return vao;
+}
+
 gl::VertexArray makeQuadVertexArray(GLfloat relativeWidth,
                                     GLfloat relativeHeight)
 {

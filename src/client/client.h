@@ -94,6 +94,8 @@ class Client final : public NetworkHost {
 
     gl::VertexArray m_cube;
 
+    gl::VertexArray m_selectionBox;
+
     gl::Texture2d m_errorSkinTexture;
     sf::Image m_rawPlayerSkin;
 
@@ -104,12 +106,19 @@ class Client final : public NetworkHost {
         gl::Shader program;
         gl::UniformLocation modelLocation;
         gl::UniformLocation projectionViewLocation;
-    } m_basicShader;
+    } 
+    m_basicShader;
 
     struct {
         gl::Shader program;
         gl::UniformLocation projectionViewLocation;
     } m_chunkShader;
+
+    struct {
+        gl::Shader program;
+        gl::UniformLocation modelLocation;
+        gl::UniformLocation projectionViewLocation;
+    } m_selectionShader;
 
     struct {
         gl::Shader program;
@@ -122,6 +131,9 @@ class Client final : public NetworkHost {
 
     // Gameplay/ World
     std::array<Entity, 512> m_entities;
+
+    BlockPosition m_currentSelectedBlockPos;
+    bool m_blockSelected;
 
     Entity *mp_player = nullptr;
     Entity m_externalCamera;
