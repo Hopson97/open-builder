@@ -45,6 +45,6 @@ TEST_CASE("Script engine tests")
     {
         script.runLuaString(SCRIPT);
         auto result = script.runLuaFunctionSafe<int>("cube", 5);
-        REQUIRE(!result);
+        REQUIRE(!result.has_value());
     }
 }

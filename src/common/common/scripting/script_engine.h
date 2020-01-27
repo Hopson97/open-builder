@@ -20,6 +20,16 @@ struct ScriptEngine {
      */
     sol::function getLuaFunction(const char *functionName);
 
+    /**
+     * @brief Runs a Lua function in a safe manner
+     * Like 'getLuaFunction', this would be a function in that belongs to
+     * OpenBuilder, aka one in the 'game' global lua table
+     * @tparam R Return type of the lua function
+     * @tparam Args Arguments into the function
+     * @param functionName
+     * @param args
+     * @return std::optional<R>
+     */
     template <typename R, typename... Args>
     std::optional<R> runLuaFunctionSafe(const char *functionName,
                                         Args &&... args);
@@ -49,6 +59,7 @@ std::optional<R> ScriptEngine::runLuaFunctionSafe(const char *functionName,
         sol::error err = result;
         std::cout << "Error running function:" << functionName
                   << " Message: " << err.what() << '\n';
+        return {};
     }
 }
 
