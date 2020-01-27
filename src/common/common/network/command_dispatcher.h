@@ -11,8 +11,7 @@ class CommandDispatcher {
 
     CommandDispatcher()
     :   m_commands  (static_cast<size_t>(CommandType::COUNT))
-    {
-        
+    {    
     }
 
     void addCommand(CommandType command, CommandHandler handler)
@@ -20,10 +19,8 @@ class CommandDispatcher {
         m_commands[static_cast<command_t>(command)] = handler;
     }
 
-    void execute(Handler& handler, sf::Packet& packet)
+    void execute(Handler& handler, command_t command, sf::Packet& packet)
     {
-        command_t command;
-        packet >> command;
         (handler.*(m_commands[command]))(packet);
     }
 

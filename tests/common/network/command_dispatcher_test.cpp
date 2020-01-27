@@ -1,6 +1,7 @@
 #include <catch2/catch.hpp>
 
 #include <common/network/command_dispatcher.h>
+#include <common/network/net_command.h>
 
 enum class Command 
 {
@@ -19,9 +20,9 @@ class Handler
           m_dispatcher.addCommand(Command::Subtract, &Handler::onSubtract);
       }  
 
-      void handle(sf::Packet& packet)
+      void handle(command_t command, sf::Packet& packet)
       {
-          m_dispatcher.execute(*this, packet);
+          m_dispatcher.execute(*this, command, packet);
       }
 
       u8 counter = 0;
@@ -54,7 +55,11 @@ TEST_CASE("Command dispatcher tests")
         u8 adder = 2;
         sf::Packet packet;
         packet << static_cast<command_t>(Command::Add) << adder;
-        handler.handle(packet);
+
+        //This would be done by net handler
+        command_t command;
+        packet >> command;
+        handler.handle(command, packet);
 
         REQUIRE(handler.counter == adder);
     }
@@ -66,12 +71,20 @@ TEST_CASE("Command dispatcher tests")
         {
             sf::Packet packet;
             packet << static_cast<command_t>(Command::Add) << adder;
-            handler.handle(packet);
+
+            //This would be done by net handler
+            command_t command;
+            packet >> command;
+            handler.handle(command, packet);
         }
         {
             sf::Packet packet;
             packet << static_cast<command_t>(Command::Subtract) << subber;
-            handler.handle(packet);
+
+            //This would be done by net handler
+            command_t command;
+            packet >> command;
+            handler.handle(command, packet);
         }
         REQUIRE(handler.counter == (adder - subber));
     }
