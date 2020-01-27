@@ -8,6 +8,16 @@ struct ScriptEngine {
     bool runLuaString(const std::string &script);
     bool runLuaFile(const std::string &path);
 
+    /**
+     * @brief Gets a Lua function
+     *  This would be a function that already exists, usually by running the
+     * .lua script files Bare in mind, it will only find functions that belong
+     * to OpenBuilder (aka in 'game' lua global table)
+     * @param functionName The name of the function to find
+     * @return sol::function The Lua function
+     */
+    sol::function getLuaFunction(const char *functionName);
+
     template <typename... Args>
     auto addTable(const std::string &tableName, Args &&... args);
 

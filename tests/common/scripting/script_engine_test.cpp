@@ -25,4 +25,12 @@ TEST_CASE("Script engine tests")
     {
         REQUIRE(script.runLuaString(SCRIPT));
     }
+
+    SECTION("Lua functions can be found and ran")
+    {
+        script.runLuaString(SCRIPT);
+        auto square = script.getLuaFunction("square");
+        int result = square(5);
+        REQUIRE(result == 25);
+    }
 }

@@ -46,3 +46,8 @@ bool ScriptEngine::runLuaFile(const std::string &path)
         return false;
     }
 }
+
+sol::function ScriptEngine::getLuaFunction(const char *functionName)
+{
+    return gameTable[functionName];
+}
