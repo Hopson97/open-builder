@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+#include <optional>
 #include <sol/sol.hpp>
 
 struct ScriptEngine {
@@ -18,6 +20,10 @@ struct ScriptEngine {
      */
     sol::function getLuaFunction(const char *functionName);
 
+    template <typename R, typename... Args>
+    std::optional<R> runLuaFunctionSafe(const char *functionName,
+                                        Args &&... args);
+
     template <typename... Args>
     auto addTable(const std::string &tableName, Args &&... args);
 
@@ -27,6 +33,24 @@ struct ScriptEngine {
     sol::state lua;
     sol::table gameTable;
 };
+
+template <typename R, typename... Args>
+std::optional<R> ScriptEngine::runLuaFunctionSafe(const char *functionName,
+                                                  Args &&... args)
+{
+    sol::protected_function function = gameTable[functionName];
+    sol::protected_function_result result =
+        function(std::forward<Args>(args)...);
+    if (result.valid()) {
+        R res = result;
+        return res;
+    }
+    else {
+        sol::error err = result;
+        std::cout << "Error running function:" << functionName
+                  << " Message: " << err.what() << '\n';
+    }
+}
 
 template <typename T, typename... Args>
 auto ScriptEngine::addType(const std::string &name, Args &&... args)

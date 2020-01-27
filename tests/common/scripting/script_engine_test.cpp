@@ -33,4 +33,18 @@ TEST_CASE("Script engine tests")
         int result = square(5);
         REQUIRE(result == 25);
     }
+
+    SECTION("Functions can be found safely")
+    {
+        script.runLuaString(SCRIPT);
+        auto result = script.runLuaFunctionSafe<int>("square", 5);
+        REQUIRE(*result == 25);
+    }
+
+    SECTION("Functions that do not exist can be ID'd")
+    {
+        script.runLuaString(SCRIPT);
+        auto result = script.runLuaFunctionSafe<int>("cube", 5);
+        REQUIRE(!result);
+    }
 }
