@@ -14,7 +14,7 @@ void ServerGameData::addVoxel(const sol::table &voxelData)
         voxel.isCollidable = voxelData["collidable"].get<bool>();
     }
     if (voxelData["type"].valid()) {
-        voxel.meshType = voxelData["type"].get<VoxelType>();
+        voxel.type = voxelData["type"].get<VoxelType>();
     }
     if (voxelData["render"]["mesh"].valid()) {
         voxel.meshStyle = voxelData["render"]["mesh"].get<VoxelMeshStyle>();

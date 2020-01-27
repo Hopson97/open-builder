@@ -108,7 +108,7 @@ void Server::sendGameData(peer_id_t peerId)
     packet << static_cast<u16>(data.size());
     for (auto &voxel : data) {
         u8 mesh = static_cast<u8>(voxel.meshStyle);
-        u8 type = static_cast<u8>(voxel.meshType);
+        u8 type = static_cast<u8>(voxel.type);
         u8 isCollidable = static_cast<u8>(voxel.isCollidable);
         packet << voxel.name;
         packet << voxel.topTexture;

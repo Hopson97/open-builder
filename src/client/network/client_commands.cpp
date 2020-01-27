@@ -219,7 +219,7 @@ void Client::onGameRegistryData(sf::Packet &packet)
         std::string textureBottom;
 
         u8 meshStyle = 0;
-        u8 meshType = 0;
+        u8 type = 0;
         u8 isCollidable = 0;
 
         packet >> name;
@@ -227,7 +227,7 @@ void Client::onGameRegistryData(sf::Packet &packet)
         packet >> textureSide;
         packet >> textureBottom;
         packet >> meshStyle;
-        packet >> meshType;
+        packet >> type;
         packet >> isCollidable;
 
         ClientVoxel voxelData;
@@ -238,7 +238,7 @@ void Client::onGameRegistryData(sf::Packet &packet)
         voxelData.bottomTexture = getTexture(texturePath + textureBottom);
 
         voxelData.meshStyle = static_cast<VoxelMeshStyle>(meshStyle);
-        voxelData.meshType = static_cast<VoxelType>(meshType);
+        voxelData.type = static_cast<VoxelType>(type);
         voxelData.isCollidable = isCollidable;
 
         m_voxelData.addVoxelData(voxelData);

@@ -39,7 +39,7 @@ ChunkMeshCollection makeChunkMesh(const Chunk &chunk,
                 if (voxel > 0) {
 
                     auto &voxData = voxelData.getVoxelData(voxel);
-                    ChunkMesh *mesh = voxData.meshType == VoxelType::Solid
+                    ChunkMesh *mesh = voxData.type == VoxelType::Solid
                                           ? &meshes.blockMesh
                                           : &meshes.fluidMesh;
 
