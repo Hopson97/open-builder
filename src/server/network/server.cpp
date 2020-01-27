@@ -30,7 +30,7 @@ Server::Server(const ServerConfig &config)
         "Flora", VoxelType::Flora,
         "Gas", VoxelType::Gas);
 
-    m_script.runLuaScript("game/blocks.lua");
+    m_script.runLuaFile("game/blocks.lua");
     // clang-format on
 
     for (int z = 0; z < m_worldSize; z++) {
