@@ -5,7 +5,8 @@
 struct ScriptEngine {
     ScriptEngine();
 
-    void runLuaScript(const std::string &path);
+    bool runLuaString(const std::string &script);
+    bool runLuaFile(const std::string &path);
 
     template <typename... Args>
     auto addTable(const std::string &tableName, Args &&... args);
