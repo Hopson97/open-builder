@@ -7,6 +7,7 @@
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_registry.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <common/network/command_dispatcher.h>
 
 #include <common/scripting/script_engine.h>
 
@@ -51,9 +52,9 @@ class Server final : public NetworkHost {
     void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
                           command_t command) override;
 
-    void handleCommandPlayerPosition(sf::Packet &packet);
-    void handleCommandBlockEdit(sf::Packet &packet);
-    void handleCommandPlayerSkin(sf::Packet &packet);
+    void onPlayerPosition(sf::Packet &packet);
+    void onBlockEdit(sf::Packet &packet);
+    void onPlayerSkin(sf::Packet &packet);
 
     int findEmptySlot() const;
 
@@ -73,4 +74,6 @@ class Server final : public NetworkHost {
 
     ScriptEngine m_script;
     ServerGameData m_gameData;
+
+    CommandDispatcher<Server, ServerCommand> m_commandDispatcher;
 };
