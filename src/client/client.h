@@ -106,8 +106,7 @@ class Client final : public NetworkHost {
         gl::Shader program;
         gl::UniformLocation modelLocation;
         gl::UniformLocation projectionViewLocation;
-    } 
-    m_basicShader;
+    } m_basicShader;
 
     struct {
         gl::Shader program;

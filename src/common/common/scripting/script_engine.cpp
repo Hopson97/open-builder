@@ -6,7 +6,6 @@ ScriptEngine::ScriptEngine()
     : gameTable(lua["game"].get_or_create<sol::table>())
 {
     lua.open_libraries(sol::lib::base, sol::lib::math);
-
 }
 
 void ScriptEngine::runLuaScript(const std::string &path)
