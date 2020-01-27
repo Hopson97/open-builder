@@ -13,7 +13,7 @@ Example:
 
 ```lua
 game.data.addVoxel {
-    name = "openbuilder:water",
+    name = "openbuilder_water",
     type = game.VoxelType.Fluid,
     collidable = false,
     render = {

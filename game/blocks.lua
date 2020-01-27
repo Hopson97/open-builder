@@ -1,7 +1,7 @@
 
 --  Air Voxel Data
 game.data.addVoxel({
-    name = "openbuilder:air",
+    name = "openbuilder_air",
     description = "Air",
     type = game.VoxelType.Gas,
     collidable = false,
@@ -15,7 +15,7 @@ game.data.addVoxel({
 
 --  Grass Voxel Data
 game.data.addVoxel {
-    name = "openbuilder:grass",
+    name = "openbuilder_grass",
     description = "Grass",
     render = {
         top = "grass",
@@ -26,7 +26,7 @@ game.data.addVoxel {
 
 --  Dirt Voxel Data
 game.data.addVoxel {
-    name = "openbuilder:dirt",
+    name = "openbuilder_dirt",
     description = "Dirt",
     render = {
         top = "dirt",
@@ -37,7 +37,7 @@ game.data.addVoxel {
 
 --  Stone Voxel Data
 game.data.addVoxel {
-    name = "openbuilder:stone",
+    name = "openbuilder_stone",
     description = "Stone",
     render = {
         top = "stone",
@@ -48,7 +48,7 @@ game.data.addVoxel {
 
 --  Water Voxel Data
 game.data.addVoxel {
-    name = "openbuilder:water",
+    name = "openbuilder_water",
     description = "Water",
     type = game.VoxelType.Fluid,
     collidable = false,
@@ -61,7 +61,7 @@ game.data.addVoxel {
 
 --  Sand Voxel Data
 game.data.addVoxel {
-    name = "openbuilder:sand",
+    name = "openbuilder_sand",
     description = "Sand",
     collidable = false,
     render = {
@@ -73,7 +73,7 @@ game.data.addVoxel {
 
 ----  Wood Voxel Data
 --game.data.addVoxel {
---    name = "openbuilder:wood",
+--    name = "openbuilder_wood",
 --    description = "Wood",
 --    collidable = false,
 --    render = {
@@ -85,7 +85,7 @@ game.data.addVoxel {
 --
 ----  Leaf Voxel Data
 --game.data.addVoxel {
---    name = "openbuilder:leaf",
+--    name = "openbuilder_leaf",
 --    description = "Leaf",
 --    type = game.VoxelType.Flora,
 --    collidable = false,
@@ -98,7 +98,7 @@ game.data.addVoxel {
 --
 ----  Coal ore Voxel Data
 --game.data.addVoxel {
---    name = "openbuilder:raw_coal",
+--    name = "openbuilder_raw_coal",
 --    description = "Raw Coal",
 --    collidable = false,
 --    render = {
@@ -110,7 +110,7 @@ game.data.addVoxel {
 --
 ----  Iron ore Voxel Data
 --game.data.addVoxel {
---    name = "openbuilder:iron_ore",
+--    name = "openbuilder_iron_ore",
 --    description = "Iron Ore",
 --    collidable = false,
 --    render = {
