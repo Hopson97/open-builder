@@ -424,7 +424,6 @@ void Client::render(int width, int height)
     }
     m_chunks.bufferables.clear();
 
-    // TODO [Hopson] -> DRY this code VVVV
     // Render solid chunk blocks
     m_chunkShader.program.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, playerProjectionView);
@@ -456,8 +455,12 @@ void Client::render(int width, int height)
     gl::loadUniform(m_fluidShader.timeLocation,
                     m_clock.getElapsedTime().asSeconds());
     gl::loadUniform(m_fluidShader.projectionViewLocation, playerProjectionView);
+    if (m_chunks.manager.getBlock(toBlockPosition(mp_player->position)) == 4) {
+        glCheck(glCullFace(GL_FRONT));
+    }
     renderChunks(m_chunks.fluidDrawables, m_frustum);
     glCheck(glDisable(GL_BLEND));
+    glCheck(glCullFace(GL_BACK));
 
     // GUI
     m_gui.render(width, height);
