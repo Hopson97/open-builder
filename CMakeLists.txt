@@ -101,6 +101,7 @@ add_executable(tests
     tests/common/world/chunk_test.cpp
     tests/common/network/net_host_test.cpp
     tests/common/obd_parser_test.cpp
+    tests/common/scripting/script_engine_test.cpp
 )
 
 include_dirs(tests)
