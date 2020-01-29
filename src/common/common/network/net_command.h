@@ -70,7 +70,7 @@ enum class ClientCommand : command_t {
     // u8: Whether the block is collidable or not
     GameRegistryData,
 
-    // Used for creation of command array
+    // For getting the number of commands, used by CommandDispatcher
     COUNT,
 };
 
@@ -95,7 +95,7 @@ enum class ServerCommand : command_t {
     // u8[8192]: Imaga Data in RGBA format (Should be 8kb)
     PlayerSkin,
 
-    // Used for creation of command array
+    // For getting the number of commands, used by CommandDispatcher
     COUNT,
 };
 
