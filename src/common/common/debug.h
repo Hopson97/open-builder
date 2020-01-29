@@ -25,7 +25,8 @@ class DebugLogger final {
         std::cout << file << ": " << line << " - " << item << std::endl;
     }*/
 
-    template <typename T> void log(const char *where, const T &item)
+    template <typename T>
+    void log(const char *where, const T &item)
     {
         std::cout << where << ":\n" << item << "\n\n";
     }

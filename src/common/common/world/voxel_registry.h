@@ -6,7 +6,8 @@
 #include "../world/world_constants.h"
 
 //@TODO Change the .at to be operator []
-template <typename VoxelDataType> class VoxelRegistry {
+template <typename VoxelDataType>
+class VoxelRegistry {
   public:
     void addVoxelData(const VoxelDataType &voxel)
     {

@@ -18,6 +18,7 @@
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_registry.h>
 #include <unordered_set>
+#include <common/network/command_dispatcher.h>
 
 #include "world/client_voxel.h"
 #include <common/world/voxel_types.h>
@@ -72,6 +73,7 @@ class Client final : public NetworkHost {
     void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
                           command_t command) override;
 
+
     void onPlayerJoin(sf::Packet &packet);
     void onPlayerLeave(sf::Packet &packet);
     void onSnapshot(sf::Packet &packet);
@@ -87,6 +89,7 @@ class Client final : public NetworkHost {
 
     // Network
     ENetPeer *mp_serverPeer = nullptr;
+    CommandDispatcher<Client, ClientCommand> m_commandDispatcher;
     bool m_hasReceivedGameData = false;
 
     // Rendering/ OpenGL stuff

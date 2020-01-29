@@ -14,6 +14,9 @@ Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
 {
+    m_commandDispatcher.addCommand(ServerCommand::BlockEdit, &Server::onBlockEdit);
+    m_commandDispatcher.addCommand(ServerCommand::PlayerPosition, &Server::onPlayerPosition);
+    m_commandDispatcher.addCommand(ServerCommand::PlayerSkin, &Server::onPlayerSkin);
 
     // clang-format off
     m_script.addTable("data", 
@@ -30,7 +33,7 @@ Server::Server(const ServerConfig &config)
         "Flora", VoxelType::Flora,
         "Gas", VoxelType::Gas);
 
-    m_script.runLuaScript("game/server/main.lua");
+    m_script.runLuaFile("game/server/main.lua");
     // clang-format on
 
     for (int z = 0; z < m_worldSize; z++) {
@@ -194,22 +197,10 @@ void Server::onPeerTimeout(ENetPeer *peer)
 void Server::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
                               sf::Packet &packet, command_t command)
 {
-    switch (static_cast<ServerCommand>(command)) {
-        case ServerCommand::PlayerPosition:
-            handleCommandPlayerPosition(packet);
-            break;
-
-        case ServerCommand::BlockEdit:
-            handleCommandBlockEdit(packet);
-            break;
-
-        case ServerCommand::PlayerSkin:
-            handleCommandPlayerSkin(packet);
-            break;
-    }
+    m_commandDispatcher.execute(*this, command, packet);
 }
 
-void Server::handleCommandPlayerPosition(sf::Packet &packet)
+void Server::onPlayerPosition(sf::Packet &packet)
 {
     peer_id_t id = 0;
     packet >> id;
@@ -217,7 +208,7 @@ void Server::handleCommandPlayerPosition(sf::Packet &packet)
         m_entities[id].position.z;
 }
 
-void Server::handleCommandBlockEdit(sf::Packet &packet)
+void Server::onBlockEdit(sf::Packet &packet)
 {
     BlockPosition position;
     block_t block;
@@ -225,7 +216,7 @@ void Server::handleCommandBlockEdit(sf::Packet &packet)
     m_world.blockUpdates.push_back({position, block});
 }
 
-void Server::handleCommandPlayerSkin(sf::Packet &packet)
+void Server::onPlayerSkin(sf::Packet &packet)
 {
     LOGVAR("Server",
            "Received player skin, packet size: ", (int)packet.getDataSize());
