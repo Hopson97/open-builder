@@ -52,42 +52,7 @@ void Client::onPeerTimeout([[maybe_unused]] ENetPeer *peer)
 void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
                               sf::Packet &packet, command_t command)
 {
-    switch (static_cast<ClientCommand>(command)) {
-        case ClientCommand::PlayerJoin:
-            onPlayerJoin(packet);
-            break;
-
-        case ClientCommand::PlayerLeave:
-            onPlayerLeave(packet);
-            break;
-
-        case ClientCommand::Snapshot:
-            onSnapshot(packet);
-            break;
-
-        case ClientCommand::ChunkData:
-            onChunkData(packet);
-            break;
-
-        case ClientCommand::SpawnPoint:
-            onSpawnPoint(packet);
-            break;
-
-        case ClientCommand::BlockUpdate:
-            onBlockUpdate(packet);
-            break;
-
-        case ClientCommand::NewPlayerSkin:
-            onPlayerSkinReceive(packet);
-            break;
-
-        case ClientCommand::GameRegistryData:
-            onGameRegistryData(packet);
-            break;
-
-        case ClientCommand::PeerId:
-            break;
-    }
+    m_commandDispatcher.execute(*this, command, packet);
 }
 
 void Client::onPlayerJoin(sf::Packet &packet)
