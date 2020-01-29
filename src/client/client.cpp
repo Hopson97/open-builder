@@ -73,7 +73,7 @@ Client::Client()
     m_gui.addUsertypes(luaGuiAPI);
 
     m_lua.lua["update"] = 3;
-    m_lua.runLuaFile("game/gui.lua");
+    m_lua.runLuaFile("game/client/main.lua");
 }
 
 bool Client::init(const ClientConfig &config, float aspect)
