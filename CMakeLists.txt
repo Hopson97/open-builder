@@ -102,6 +102,7 @@ add_executable(tests
     tests/common/network/net_host_test.cpp
     tests/common/network/command_dispatcher_test.cpp
     tests/common/obd_parser_test.cpp
+    tests/common/scripting/script_engine_test.cpp
 )
 
 include_dirs(tests)
