@@ -31,7 +31,7 @@ struct GDim {
 
 // GUI Image,
 struct GuiImage {
-    gl::Texture2d m_image;
+    gl::Texture2d texture;
 
     glm::vec2 position;
     glm::vec2 size;
@@ -57,7 +57,7 @@ class Gui final {
 
     void addImage(sol::userdata image);
 
-    void render(int width, int height);
+    void render(float width, float height);
 
   private:
     struct {

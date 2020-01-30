@@ -2,6 +2,7 @@
 #include "../gl/primitive.h"
 #include "../gl/shader.h"
 #include "../maths.h"
+#include <common/debug.h>
 
 #include <iostream>
 
@@ -11,10 +12,10 @@
 
 void GuiImage::setSource(const std::string &imageSource)
 {
-    if (m_image.textureExists()) {
-        m_image.destroy();
+    if (texture.textureExists()) {
+        texture.destroy();
     }
-    m_image.create(imageSource);
+    texture.create(imageSource);
 }
 
 void GuiImage::setSize(float width, float height)
@@ -47,7 +48,7 @@ Gui::Gui(float windowWidth, float windowHeight)
         glm::ortho(0.0f, windowWidth, 0.0f, windowHeight, -1.0f, 1.0f);
 
     m_guiShader.projectionLocation =
-        m_guiShader.program.getUniformLocation("projection");
+        m_guiShader.program.getUniformLocation("projectionMatrix");
 
     gl::loadUniform(m_guiShader.projectionLocation, m_orthoMatrix);
 }
@@ -73,14 +74,38 @@ void Gui::addImage(sol::userdata image)
     m_images.push_back(image);
 }
 
-void Gui::render(int width, int height)
+void Gui::render(float width, float height)
 {
+    width /= 100.0f;
+    height /= 100.0f;
     m_guiShader.program.bind();
     auto d = m_quad.getDrawable();
     d.bind();
 
     for (auto &img : m_images) {
         auto &image = img.as<GuiImage>();
+        image.texture.bind();
+
+        glm::vec2 size;
+        size.x = image.size.x * width;
+        size.y = size.x;//image.size.y * height;
+
+        glm::vec2 pos;
+        pos.x = image.position.x * width - size.x / 2;
+        pos.y = image.position.y * height - size.y / 2;
+
+
+        glm::mat4 modelMatrix{1.0f};
+        modelMatrix = glm::translate(modelMatrix, {pos.x, pos.y, 0.0f});
+        modelMatrix = glm::scale(modelMatrix, {size.x, size.y, 0.0f});
+
+        gl::loadUniform(m_guiShader.projectionLocation, m_orthoMatrix);
+        gl::loadUniform(m_guiShader.modelLocation, modelMatrix);
+        gl::loadUniform(m_guiShader.colorLocation, image.colour);
+
+        std::cout << pos << " " << size << '\n';
+
+        d.draw();
     }
 }
 
