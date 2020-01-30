@@ -4,11 +4,13 @@
 #include <string>
 
 #include <glad/glad.h>
+#include <common\world\world_constants.h>
+#include <vector>
+#include <unordered_map>
 
 enum class VoxelMeshStyle : u8 {
     Block = 0,
     Cross = 1,
-
     None = 2,
 
     Error,
@@ -24,15 +26,16 @@ enum class VoxelType : u8 {
 };
 
 struct VoxelData {
+    block_t id = 0;
     std::string name;
     std::string topTexture;
     std::string sideTexture;
     std::string bottomTexture;
 
     //Client only
-    GLuint topTexture = 0;
-    GLuint sideTexture = 0;
-    GLuint bottomTexture = 0;
+    GLuint topTextureId = 0;
+    GLuint sideTextureId = 0;
+    GLuint bottomTextureId = 0;
 
     VoxelMeshStyle meshStyle = VoxelMeshStyle::Block;
     VoxelType type = VoxelType::Solid;

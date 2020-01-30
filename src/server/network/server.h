@@ -5,7 +5,6 @@
 #include <array>
 #include <common/network/net_host.h>
 #include <common/world/chunk_manager.h>
-#include <common/world/voxel_registry.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <common/network/command_dispatcher.h>
 

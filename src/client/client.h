@@ -16,12 +16,9 @@
 #include <common/network/net_types.h>
 #include <common/scripting/script_engine.h>
 #include <common/world/chunk_manager.h>
-#include <common/world/voxel_registry.h>
+#include <common/world/voxel_data.h>
 #include <unordered_set>
 #include <common/network/command_dispatcher.h>
-
-#include "world/client_voxel.h"
-#include <common/world/voxel_types.h>
 
 class Keyboard;
 
@@ -149,7 +146,7 @@ class Client final : public NetworkHost {
         std::vector<BlockUpdate> blockUpdates;
     } m_chunks;
 
-    VoxelRegistry<ClientVoxel> m_voxelData;
+    VoxelDataManager m_voxelData;
 
     // Lua
     ScriptEngine m_lua;

@@ -3,8 +3,9 @@
 block_t VoxelDataManager::addVoxelData(const VoxelData &voxel)
 {
     m_voxelMap.emplace(voxel.name, m_voxels.size());
-    m_voxels.push_back(voxel);
-    return m_voxels.size() - 1;
+    auto& data = m_voxels.emplace_back(voxel);
+    data.id = m_voxels.size() - 1;
+    return data.id;
 }
 
 const VoxelData &VoxelDataManager::getVoxelData(block_t id) const
