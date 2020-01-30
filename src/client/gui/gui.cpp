@@ -32,7 +32,7 @@ void GuiImage::setColour(float r, float g, float b)
     colour = {r, g, b};
 }
 
-Gui::Gui()
+Gui::Gui(float windowWidth, float windowHeight)
     : m_quad(makeQuadVertexArray(1.f, 1.f))
 {
     // GUI Shader
@@ -41,7 +41,15 @@ Gui::Gui()
     m_guiShader.modelLocation =
         m_guiShader.program.getUniformLocation("modelMatrix");
     m_guiShader.colorLocation =
-        m_guiShader.program.getUniformLocation("color3");
+        m_guiShader.program.getUniformLocation("colour");
+
+    m_orthoMatrix =
+        glm::ortho(0.0f, windowWidth, 0.0f, windowHeight, -1.0f, 1.0f);
+
+    m_guiShader.projectionLocation =
+        m_guiShader.program.getUniformLocation("projection");
+
+    gl::loadUniform(m_guiShader.projectionLocation, m_orthoMatrix);
 }
 
 void Gui::addUsertypes(sol::table &gui_api)

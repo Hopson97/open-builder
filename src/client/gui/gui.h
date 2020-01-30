@@ -49,7 +49,7 @@ struct GuiImage {
 
 class Gui final {
   public:
-    Gui();
+    Gui(float windowWidth, float windowHeight);
 
     void addUsertypes(sol::table &m_lua);
     void processKeypress(sf::Event e);
@@ -62,10 +62,12 @@ class Gui final {
   private:
     struct {
         gl::Shader program;
+        gl::UniformLocation projectionLocation;
         gl::UniformLocation modelLocation;
         gl::UniformLocation colorLocation;
     } m_guiShader;
 
+    glm::mat4 m_orthoMatrix;
     gl::VertexArray m_quad;
     std::vector<sol::userdata> m_images;
 };

@@ -55,8 +55,9 @@ bool isVoxelSelectable(VoxelType voxelType)
 }
 } // namespace
 
-Client::Client()
+Client::Client(const ClientConfig &config)
     : NetworkHost("Client")
+    , m_gui(config.windowWidth, config.windowHeight)
 {
     // clang-format off
     m_commandDispatcher.addCommand(ClientCommand::BlockUpdate, &Client::onBlockUpdate);

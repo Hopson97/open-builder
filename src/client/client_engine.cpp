@@ -54,7 +54,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    Client gameClient;
+    Client gameClient(config);
     Keyboard keyboard;
     EngineStatus status = EngineStatus::Ok;
     FPSCounter counter;
