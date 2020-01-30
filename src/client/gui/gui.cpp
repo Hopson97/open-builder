@@ -23,21 +23,20 @@ void Gui::addUsertypes(sol::table &gui_api)
         "GDim", sol::constructors<GDim(), GDim(float, float, float, float)>());
 
     auto guiImage = gui_api.new_usertype<GuiImage>("Image");
-
     guiImage["setSource"] = &GuiImage::setSource;
     guiImage["setSize"] = &GuiImage::setSize;
     guiImage["setPosition"] = &GuiImage::setPosition;
     guiImage["setColor"] = &GuiImage::setColour;
 }
 
-void GuiImage::setSize(GDim new_size)
+void GuiImage::setSize(float width, float height)
 {
-    m_size = new_size;
+    size = {width, height};
 }
 
-void GuiImage::setPosition(GDim new_pos)
+void GuiImage::setPosition(float x, float y)
 {
-    m_position = new_pos;
+    position = {x, y};
 }
 
 void GuiImage::setColour(float r, float g, float b)
@@ -62,6 +61,18 @@ void Gui::addImage(sol::userdata image)
     m_images.push_back(image);
 }
 
+void Gui::render(int width, int height)
+{
+    m_guiShader.program.bind();
+    auto d = m_quad.getDrawable();
+    d.bind();
+
+    for (auto &img : m_images) {
+        auto &image = img.as<GuiImage>();
+    }
+}
+
+/*
 void Gui::render(int width, int height)
 {
     float pixel_width = 2.f / width;
@@ -94,6 +105,7 @@ void Gui::render(int width, int height)
         d.draw();
     }
 }
+*/
 
 void GuiImage::setSource(const std::string &imageSource)
 {
