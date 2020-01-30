@@ -1,6 +1,6 @@
 #pragma once
 
-#include <common/world/voxel_types.h>
+#include <common/world/voxel_data.h>
 #include <sol/sol.hpp>
 #include <string>
 #include <vector>
