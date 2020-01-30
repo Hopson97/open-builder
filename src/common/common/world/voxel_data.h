@@ -4,7 +4,7 @@
 #include <string>
 
 #include <glad/glad.h>
-#include <common\world\world_constants.h>
+#include "world_constants.h"
 #include <vector>
 #include <unordered_map>
 
