@@ -3,7 +3,7 @@
 block_t VoxelDataManager::addVoxelData(const VoxelData &voxel)
 {
     m_voxelMap.emplace(voxel.name, m_voxels.size());
-    auto& data = m_voxels.emplace_back(voxel);
+    auto &data = m_voxels.emplace_back(voxel);
     data.id = m_voxels.size() - 1;
     return data.id;
 }

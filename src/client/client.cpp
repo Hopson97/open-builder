@@ -58,14 +58,22 @@ bool isVoxelSelectable(VoxelType voxelType)
 Client::Client()
     : NetworkHost("Client")
 {
-    m_commandDispatcher.addCommand(ClientCommand::BlockUpdate, &Client::onBlockUpdate);
-    m_commandDispatcher.addCommand(ClientCommand::ChunkData, &Client::onChunkData);
-    m_commandDispatcher.addCommand(ClientCommand::GameRegistryData, &Client::onGameRegistryData);
-    m_commandDispatcher.addCommand(ClientCommand::PlayerJoin, &Client::onPlayerJoin);
-    m_commandDispatcher.addCommand(ClientCommand::PlayerLeave, &Client::onPlayerLeave);
-    m_commandDispatcher.addCommand(ClientCommand::Snapshot, &Client::onSnapshot);
-    m_commandDispatcher.addCommand(ClientCommand::SpawnPoint, &Client::onSpawnPoint);
-    m_commandDispatcher.addCommand(ClientCommand::NewPlayerSkin, &Client::onPlayerSkinReceive);
+    m_commandDispatcher.addCommand(ClientCommand::BlockUpdate,
+                                   &Client::onBlockUpdate);
+    m_commandDispatcher.addCommand(ClientCommand::ChunkData,
+                                   &Client::onChunkData);
+    m_commandDispatcher.addCommand(ClientCommand::GameRegistryData,
+                                   &Client::onGameRegistryData);
+    m_commandDispatcher.addCommand(ClientCommand::PlayerJoin,
+                                   &Client::onPlayerJoin);
+    m_commandDispatcher.addCommand(ClientCommand::PlayerLeave,
+                                   &Client::onPlayerLeave);
+    m_commandDispatcher.addCommand(ClientCommand::Snapshot,
+                                   &Client::onSnapshot);
+    m_commandDispatcher.addCommand(ClientCommand::SpawnPoint,
+                                   &Client::onSpawnPoint);
+    m_commandDispatcher.addCommand(ClientCommand::NewPlayerSkin,
+                                   &Client::onPlayerSkinReceive);
 
     auto luaGuiAPI = m_lua.addTable("GUI");
     luaGuiAPI["addImage"] = [&](sol::userdata img) { m_gui.addImage(img); };

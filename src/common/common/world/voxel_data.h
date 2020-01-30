@@ -3,10 +3,10 @@
 #include "../types.h"
 #include <string>
 
-#include <glad/glad.h>
 #include "world_constants.h"
-#include <vector>
+#include <glad/glad.h>
 #include <unordered_map>
+#include <vector>
 
 enum class VoxelMeshStyle : u8 {
     Block = 0,
@@ -32,7 +32,7 @@ struct VoxelData {
     std::string sideTexture;
     std::string bottomTexture;
 
-    //Client only
+    // Client only
     GLuint topTextureId = 0;
     GLuint sideTextureId = 0;
     GLuint bottomTextureId = 0;

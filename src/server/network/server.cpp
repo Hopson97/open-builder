@@ -26,8 +26,7 @@ Server::Server(const ServerConfig &config)
         VoxelData voxel;
 
         std::cout << "Created voxel\n";
-        if (voxelData["collidable"].valid())
-        {
+        if (voxelData["collidable"].valid()) {
             voxel.isCollidable = voxelData["collidable"].get<bool>();
         }
         if (voxelData["type"].valid()) {
