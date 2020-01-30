@@ -33,6 +33,11 @@ void GuiImage::setColour(float r, float g, float b)
     colour = {r, g, b};
 }
 
+void GuiImage::setPixelOffset(float x, float y)
+{
+    pixelOffset = {x, y};
+}
+
 Gui::Gui(float windowWidth, float windowHeight)
     : m_quad(makeQuadVertexArray(1.f, 1.f))
 {
@@ -62,6 +67,7 @@ void Gui::addUsertypes(sol::table &gui_api)
     guiImage["setSource"] = &GuiImage::setSource;
     guiImage["setSize"] = &GuiImage::setSize;
     guiImage["setPosition"] = &GuiImage::setPosition;
+    guiImage["setPixelOffset"] = &GuiImage::setPixelOffset;
     guiImage["setColor"] = &GuiImage::setColour;
 }
 
@@ -86,14 +92,13 @@ void Gui::render(float width, float height)
         auto &image = img.as<GuiImage>();
         image.texture.bind();
 
-        glm::vec2 size;
-        size.x = image.size.x * width;
-        size.y = size.x;//image.size.y * height;
+        glm::vec2 size = image.size;
 
         glm::vec2 pos;
-        pos.x = image.position.x * width - size.x / 2;
-        pos.y = image.position.y * height - size.y / 2;
+        pos.x = image.position.x * width;
+        pos.y = image.position.y * height;
 
+        pos += image.pixelOffset;
 
         glm::mat4 modelMatrix{1.0f};
         modelMatrix = glm::translate(modelMatrix, {pos.x, pos.y, 0.0f});

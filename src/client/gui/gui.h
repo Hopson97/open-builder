@@ -33,9 +33,10 @@ struct GDim {
 struct GuiImage {
     gl::Texture2d texture;
 
-    glm::vec2 position;
-    glm::vec2 size;
-    glm::vec3 colour;
+    glm::vec2 position{0.0f};
+    glm::vec2 pixelOffset{0.0f};
+    glm::vec2 size{0.0f};
+    glm::vec3 colour{0.0f};
 
     // GDim m_size;
     // GDim m_position;
@@ -44,6 +45,7 @@ struct GuiImage {
     void setSource(const std::string &imageSource);
     void setSize(float width, float height);
     void setPosition(float x, float y);
+    void setPixelOffset(float x, float y);
     void setColour(float r, float g, float b);
 };
 
