@@ -5,6 +5,33 @@
 
 #include <iostream>
 
+//
+//  GUI Image
+//
+
+void GuiImage::setSource(const std::string &imageSource)
+{
+    if (m_image.textureExists()) {
+        m_image.destroy();
+    }
+    m_image.create(imageSource);
+}
+
+void GuiImage::setSize(float width, float height)
+{
+    size = {width, height};
+}
+
+void GuiImage::setPosition(float x, float y)
+{
+    position = {x, y};
+}
+
+void GuiImage::setColour(float r, float g, float b)
+{
+    colour = {r, g, b};
+}
+
 Gui::Gui()
     : m_quad(makeQuadVertexArray(1.f, 1.f))
 {
@@ -27,29 +54,6 @@ void Gui::addUsertypes(sol::table &gui_api)
     guiImage["setSize"] = &GuiImage::setSize;
     guiImage["setPosition"] = &GuiImage::setPosition;
     guiImage["setColor"] = &GuiImage::setColour;
-}
-
-void GuiImage::setSize(float width, float height)
-{
-    size = {width, height};
-}
-
-void GuiImage::setPosition(float x, float y)
-{
-    position = {x, y};
-}
-
-void GuiImage::setColour(float r, float g, float b)
-{
-    colour = {r, g, b};
-}
-
-void Gui::processKeypress(sf::Event e)
-{
-}
-
-void Gui::processMouseEvent(sf::Event e)
-{
 }
 
 void Gui::addImage(sol::userdata image)
@@ -106,11 +110,3 @@ void Gui::render(int width, int height)
     }
 }
 */
-
-void GuiImage::setSource(const std::string &imageSource)
-{
-    if (m_image.textureExists()) {
-        m_image.destroy();
-    }
-    m_image.create(imageSource);
-}

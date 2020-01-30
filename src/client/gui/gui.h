@@ -32,13 +32,13 @@ struct GDim {
 // GUI Image,
 struct GuiImage {
     gl::Texture2d m_image;
-    
+
     glm::vec2 position;
     glm::vec2 size;
     glm::vec3 colour;
 
-    //GDim m_size;
-    //GDim m_position;
+    // GDim m_size;
+    // GDim m_position;
 
     // Setters (TODO: Getters?)
     void setSource(const std::string &imageSource);
