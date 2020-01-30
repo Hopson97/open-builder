@@ -17,17 +17,8 @@ Gui::Gui()
         m_guiShader.program.getUniformLocation("color3");
 }
 
-Gui::~Gui()
-{
-    m_quad.destroy();
-    m_guiShader.program.destroy();
 
-    for (auto &img : m_images) {
-        img.as<GuiImage>().m_image.destroy();
-    }
-}
-
-void Gui::addUsertypes(sol::table &gui_api)
+void Gui::addUsertypes(sol::table& gui_api)
 {
     auto udim2_type = gui_api.new_usertype<GDim>(
         "GDim", sol::constructors<GDim(), GDim(float, float, float, float)>());
@@ -86,8 +77,9 @@ void Gui::render(int width, int height)
     m_guiShader.program.bind();
     auto d = m_quad.getDrawable();
     d.bind();
+
     for (auto &g_img : m_images) {
-        auto img = g_img.as<GuiImage>();
+        auto& img = g_img.as<GuiImage>();
         glm::mat4 modelMatrix{1.0f};
         modelMatrix = glm::translate(
             modelMatrix, glm::vec3(img.m_position.scale.x * 2 - 1 +

@@ -47,18 +47,46 @@ void Drawable::draw(GLenum drawMode) const
     glCheck(glDrawElements(drawMode, m_indicesCount, GL_UNSIGNED_INT, nullptr));
 }
 
-void VertexArray::create()
+//
+//  Vertex array
+//
+VertexArray::VertexArray()
 {
     glCheck(glGenVertexArrays(1, &m_handle));
+}
+
+VertexArray::~VertexArray()
+{
+    destroy();
+}
+
+VertexArray::VertexArray(VertexArray &&other)
+{
+    *this = std::move(other);
+}
+
+VertexArray &VertexArray::operator=(VertexArray &&other)
+{
+    destroy();
+    m_bufferObjects = std::move(other.m_bufferObjects);
+    m_handle = other.m_handle;
+    m_indicesCount = other.m_indicesCount;
+    other.reset();
+    return *this;
+}
+
+void VertexArray::create()
+{
+    if (!m_handle) {
+        glCheck(glGenVertexArrays(1, &m_handle));
+    }
 }
 
 void VertexArray::destroy()
 {
     glCheck(glDeleteVertexArrays(1, &m_handle));
     glCheck(glDeleteBuffers(m_bufferObjects.size(), m_bufferObjects.data()));
-    m_bufferObjects.clear();
-    m_handle = 0;
-    m_indicesCount = 0;
+    reset();
 }
 
 void VertexArray::bind() const
@@ -107,6 +135,13 @@ void VertexArray::addIndexBuffer(const std::vector<GLuint> &indices)
 
     m_bufferObjects.push_back(elementBuffer);
     m_indicesCount = indices.size();
+}
+
+void VertexArray::reset()
+{
+    m_bufferObjects.clear();
+    m_handle = 0;
+    m_indicesCount = 0;
 }
 
 } // namespace gl

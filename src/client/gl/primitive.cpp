@@ -39,7 +39,6 @@ gl::VertexArray makeCubeVertexArray(GLfloat width, GLfloat height,
     }
 
     gl::VertexArray vao;
-    vao.create();
     vao.bind();
     vao.addVertexBuffer(3, vertices);
     vao.addVertexBuffer(2, textureCoords);
@@ -65,7 +64,6 @@ gl::VertexArray makeWireCubeVertexArray(GLfloat width, GLfloat height,
                                    6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7};
 
     gl::VertexArray vao;
-    vao.create();
     vao.bind();
     vao.addVertexBuffer(3, vertices);
     vao.addIndexBuffer(indices);
@@ -88,7 +86,6 @@ gl::VertexArray makeQuadVertexArray(GLfloat relativeWidth,
                                           1.0f, 1.0f, 0.0f, 1.0f};
 
     gl::VertexArray vao;
-    vao.create();
     vao.bind();
     vao.addVertexBuffer(2, vertices);
     vao.addVertexBuffer(2, textureCoords);

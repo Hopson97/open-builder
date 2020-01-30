@@ -54,6 +54,24 @@ GLuint linkProgram(GLuint vertexShaderID, GLuint fragmentShaderID)
 
 namespace gl {
 
+Shader::~Shader()
+{
+    destroy();
+}
+
+Shader::Shader(Shader &&other)
+{
+    *this = std::move(other);
+}
+
+Shader &Shader::operator=(Shader &&other)
+{
+    destroy();
+    m_handle = other.m_handle;
+    other.m_handle = 0;
+    return *this;
+}
+
 void Shader::create(const std::string &vertexFile,
                     const std::string &fragmentFile)
 {

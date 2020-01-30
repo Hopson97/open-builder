@@ -78,9 +78,33 @@ void CubeTexture::bind() const
 //
 //  Texture 2D
 //
+
+Texture2d::Texture2d()
+    : m_handle{createTexture()}
+{
+}
+
+Texture2d::~Texture2d()
+{
+    destroy();
+}
+
+Texture2d::Texture2d(Texture2d &&other)
+{
+    *this = std::move(other);
+}
+
+Texture2d &Texture2d::operator=(Texture2d &&other)
+{
+    destroy();
+    m_hasTexture = other.m_hasTexture;
+    m_handle = other.m_handle;
+    other.reset();
+    return *this;
+}
+
 void Texture2d::create(const std::string &file)
 {
-    m_handle = createTexture();
     bind();
 
     auto path = "res/" + file + ".png";
@@ -98,7 +122,9 @@ void Texture2d::create(const std::string &file)
 void Texture2d::create(unsigned int width, unsigned int height,
                        const sf::Uint8 *pixels)
 {
-    m_handle = createTexture();
+    if (!m_handle) {
+        m_handle = createTexture();
+    }
     bind();
 
     sf::Image img;
@@ -144,12 +170,46 @@ sf::Image loadRawImageFile(const std::string &file)
     return img;
 }
 
+void Texture2d::reset()
+{
+    m_handle = 0;
+    m_hasTexture = false;
+}
+
 //
 //  Texture Array
 //
+TextureArray::TextureArray()
+    : m_handle{createTexture()}
+{
+}
+
+TextureArray::~TextureArray()
+{
+    destroy();
+}
+
+TextureArray::TextureArray(TextureArray &&other)
+{
+    *this = std::move(other);
+}
+
+TextureArray &TextureArray::operator=(TextureArray &&other)
+{
+    destroy();
+    m_handle = other.m_handle;
+    m_textureCount = other.m_textureCount;
+    m_maxTextures = other.m_maxTextures;
+    m_textureSize = other.m_textureSize;
+    other.reset();
+    return *this;
+}
+
 void TextureArray::create(GLsizei numTextures, GLsizei textureSize)
 {
-    m_handle = createTexture();
+    if (!m_handle) {
+        m_handle = createTexture();
+    }
     bind();
 
     m_maxTextures = numTextures;
@@ -207,6 +267,14 @@ void TextureArray::destroy()
 void TextureArray::bind() const
 {
     glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_handle));
+}
+
+void TextureArray::reset()
+{
+    m_handle = 0;
+    m_textureCount = 0;
+    m_maxTextures = 0;
+    m_textureSize = 0;
 }
 
 } // namespace gl

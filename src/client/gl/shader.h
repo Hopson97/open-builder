@@ -19,6 +19,15 @@ struct UniformLocation final {
  */
 class Shader final {
   public:
+    Shader() = default;
+    ~Shader();
+
+    Shader(Shader &&other);
+    Shader &operator=(Shader &&other);
+
+    Shader(const Shader&) = delete;
+    Shader& operator=(const Shader&) = delete;
+
     void create(const std::string &vertexFile, const std::string &fragmentFile);
     void destroy();
     void bind() const;
