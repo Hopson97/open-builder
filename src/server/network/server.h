@@ -1,15 +1,13 @@
 #pragma once
 
-#include "../scripting/server_game_data.h"
 #include <SFML/System/Time.hpp>
 #include <array>
-#include <common/network/net_host.h>
-#include <common/world/chunk_manager.h>
-#include <common/world/voxel_registry.h>
-#include <glm/gtc/matrix_transform.hpp>
 #include <common/network/command_dispatcher.h>
-
+#include <common/network/net_host.h>
 #include <common/scripting/script_engine.h>
+#include <common/world/chunk_manager.h>
+#include <common/world/voxel_data.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 struct ServerConfig;
 
@@ -73,7 +71,7 @@ class Server final : public NetworkHost {
     const int m_worldSize;
 
     ScriptEngine m_script;
-    ServerGameData m_gameData;
+    VoxelDataManager m_voxelData;
 
     CommandDispatcher<Server, ServerCommand> m_commandDispatcher;
 };

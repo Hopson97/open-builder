@@ -14,27 +14,46 @@ Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
 {
+    // clang-format off
     m_commandDispatcher.addCommand(ServerCommand::BlockEdit, &Server::onBlockEdit);
     m_commandDispatcher.addCommand(ServerCommand::PlayerPosition, &Server::onPlayerPosition);
     m_commandDispatcher.addCommand(ServerCommand::PlayerSkin, &Server::onPlayerSkin);
+    // clang-format on
 
-    // clang-format off
-    m_script.addTable("data", 
-        "addVoxel", [&](const sol::table &voxelDef) { m_gameData.addVoxel(voxelDef); });
+    auto data = m_script.addTable("data");
+    data["addVoxel"] = [&](const sol::table &voxelData) {
+        VoxelData voxel;
 
-    m_script.addTable("MeshStyle",
-        "Block", VoxelMeshStyle::Block,
-        "Cross", VoxelMeshStyle::Cross,
-        "None", VoxelMeshStyle::None);
+        std::cout << "Created voxel\n";
+        if (voxelData["collidable"].valid()) {
+            voxel.isCollidable = voxelData["collidable"].get<bool>();
+        }
+        if (voxelData["type"].valid()) {
+            voxel.type = voxelData["type"].get<VoxelType>();
+        }
+        if (voxelData["render"]["mesh"].valid()) {
+            voxel.meshStyle = voxelData["render"]["mesh"].get<VoxelMeshStyle>();
+        }
 
-    m_script.addTable("VoxelType",
-        "Solid", VoxelType::Solid,
-        "Fluid", VoxelType::Fluid,
-        "Flora", VoxelType::Flora,
-        "Gas", VoxelType::Gas);
+        voxel.name = voxelData["name"].get<std::string>();
+        voxel.topTexture = voxelData["render"]["top"].get<std::string>();
+        voxel.sideTexture = voxelData["render"]["sides"].get<std::string>();
+        voxel.bottomTexture = voxelData["render"]["bottom"].get<std::string>();
+
+        m_voxelData.addVoxelData(voxel);
+    };
+
+    auto meshStyle = m_script.addTable("MeshStyle");
+    meshStyle["Block"] = VoxelMeshStyle::Block;
+    meshStyle["Cross"] = VoxelMeshStyle::Cross;
+    meshStyle["None"] = VoxelMeshStyle::None;
+
+    auto voxelType = m_script.addTable("VoxelType");
+    voxelType["Solid"] = VoxelType::Solid;
+    voxelType["Fluid"] = VoxelType::Fluid;
+    voxelType["Gas"] = VoxelType::Gas;
 
     m_script.runLuaFile("game/server/main.lua");
-    // clang-format on
 
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
@@ -107,7 +126,7 @@ void Server::sendGameData(peer_id_t peerId)
     sf::Packet packet;
     packet << ClientCommand::GameRegistryData;
 
-    auto &data = m_gameData.voxelData();
+    auto &data = m_voxelData.getVoxelData();
     packet << static_cast<u16>(data.size());
     for (auto &voxel : data) {
         u8 mesh = static_cast<u8>(voxel.meshStyle);

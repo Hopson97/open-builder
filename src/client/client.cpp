@@ -58,6 +58,7 @@ bool isVoxelSelectable(VoxelType voxelType)
 Client::Client()
     : NetworkHost("Client")
 {
+    // clang-format off
     m_commandDispatcher.addCommand(ClientCommand::BlockUpdate, &Client::onBlockUpdate);
     m_commandDispatcher.addCommand(ClientCommand::ChunkData, &Client::onChunkData);
     m_commandDispatcher.addCommand(ClientCommand::GameRegistryData, &Client::onGameRegistryData);
@@ -66,6 +67,7 @@ Client::Client()
     m_commandDispatcher.addCommand(ClientCommand::Snapshot, &Client::onSnapshot);
     m_commandDispatcher.addCommand(ClientCommand::SpawnPoint, &Client::onSpawnPoint);
     m_commandDispatcher.addCommand(ClientCommand::NewPlayerSkin, &Client::onPlayerSkinReceive);
+    // clang-format on
 
     auto luaGuiAPI = m_lua.addTable("GUI");
     luaGuiAPI["addImage"] = [&](sol::userdata img) { m_gui.addImage(img); };
