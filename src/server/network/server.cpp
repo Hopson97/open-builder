@@ -14,12 +14,11 @@ Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
 {
-    m_commandDispatcher.addCommand(ServerCommand::BlockEdit,
-                                   &Server::onBlockEdit);
-    m_commandDispatcher.addCommand(ServerCommand::PlayerPosition,
-                                   &Server::onPlayerPosition);
-    m_commandDispatcher.addCommand(ServerCommand::PlayerSkin,
-                                   &Server::onPlayerSkin);
+    // clang-format off
+    m_commandDispatcher.addCommand(ServerCommand::BlockEdit, &Server::onBlockEdit);
+    m_commandDispatcher.addCommand(ServerCommand::PlayerPosition, &Server::onPlayerPosition);
+    m_commandDispatcher.addCommand(ServerCommand::PlayerSkin, &Server::onPlayerSkin);
+    // clang-format on
 
     auto data = m_script.addTable("data");
     data["addVoxel"] = [&](const sol::table &voxelData) {
