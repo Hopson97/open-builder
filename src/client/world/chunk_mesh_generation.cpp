@@ -4,6 +4,8 @@
 #include <common/world/chunk.h>
 #include <iostream>
 
+#include <common/world/voxel_data.h>
+
 namespace {
 
 const MeshFace FRONT_FACE = {{1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1}, 0.8f};
@@ -13,7 +15,7 @@ const MeshFace RIGHT_FACE = {{1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0}, 0.6f};
 const MeshFace TOP_FACE = {{1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1}, 1.0f};
 const MeshFace BOTTOM_FACE = {{0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1}, 0.4f};
 
-bool makeFace(const VoxelRegistry<ClientVoxel> &voxelData, block_t thisId,
+bool makeFace(const VoxelDataManager &voxelData, block_t thisId,
               block_t compareId)
 {
     auto &thisBlock = voxelData.getVoxelData(thisId);
@@ -25,7 +27,7 @@ bool makeFace(const VoxelRegistry<ClientVoxel> &voxelData, block_t thisId,
 } // namespace
 
 ChunkMeshCollection makeChunkMesh(const Chunk &chunk,
-                                  const VoxelRegistry<ClientVoxel> &voxelData)
+                                  const VoxelDataManager &voxelData)
 {
     sf::Clock clock;
     ChunkMeshCollection meshes(chunk.getPosition());
@@ -39,7 +41,7 @@ ChunkMeshCollection makeChunkMesh(const Chunk &chunk,
                 if (voxel > 0) {
 
                     auto &voxData = voxelData.getVoxelData(voxel);
-                    ChunkMesh *mesh = voxData.meshType == VoxelType::Solid
+                    ChunkMesh *mesh = voxData.type == VoxelType::Solid
                                           ? &meshes.blockMesh
                                           : &meshes.fluidMesh;
 
@@ -47,42 +49,42 @@ ChunkMeshCollection makeChunkMesh(const Chunk &chunk,
                     if (makeFace(voxelData, voxel,
                                  chunk.getBlock({x - 1, y, z}))) {
                         mesh->addFace(LEFT_FACE, blockPosition,
-                                      voxData.sideTexture);
+                                      voxData.sideTextureId);
                     }
 
                     // Right chunk face
                     if (makeFace(voxelData, voxel,
                                  chunk.getBlock({x + 1, y, z}))) {
                         mesh->addFace(RIGHT_FACE, blockPosition,
-                                      voxData.sideTexture);
+                                      voxData.sideTextureId);
                     }
 
                     // Front chunk face
                     if (makeFace(voxelData, voxel,
                                  chunk.getBlock({x, y, z + 1}))) {
                         mesh->addFace(FRONT_FACE, blockPosition,
-                                      voxData.sideTexture);
+                                      voxData.sideTextureId);
                     }
 
                     // Back chunk face
                     if (makeFace(voxelData, voxel,
                                  chunk.getBlock({x, y, z - 1}))) {
                         mesh->addFace(BACK_FACE, blockPosition,
-                                      voxData.sideTexture);
+                                      voxData.sideTextureId);
                     }
 
                     // Bottom chunk face
                     if (makeFace(voxelData, voxel,
                                  chunk.getBlock({x, y - 1, z}))) {
                         mesh->addFace(BOTTOM_FACE, blockPosition,
-                                      voxData.bottomTexture);
+                                      voxData.bottomTextureId);
                     }
 
                     // Top chunk face
                     if (makeFace(voxelData, voxel,
                                  chunk.getBlock({x, y + 1, z}))) {
                         mesh->addFace(TOP_FACE, blockPosition,
-                                      voxData.topTexture);
+                                      voxData.topTextureId);
                     }
                 }
             }

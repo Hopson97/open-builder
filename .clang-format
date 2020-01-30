@@ -12,3 +12,5 @@ BreakConstructorInitializersBeforeComma: true
 AllowShortFunctionsOnASingleLine: None
 
 ColumnLimit: 80
+
+AlwaysBreakTemplateDeclarations: true

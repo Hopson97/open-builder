@@ -11,7 +11,8 @@ GLuint genVbo()
     return vertexBuffer;
 }
 
-template <typename T> void bufferData(const std::vector<T> &data)
+template <typename T>
+void bufferData(const std::vector<T> &data)
 {
     glCheck(glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(T), data.data(),
                          GL_STATIC_DRAW));

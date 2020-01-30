@@ -11,16 +11,14 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Window.hpp>
+#include <common/network/command_dispatcher.h>
 #include <common/network/enet.h>
 #include <common/network/net_host.h>
 #include <common/network/net_types.h>
 #include <common/scripting/script_engine.h>
 #include <common/world/chunk_manager.h>
-#include <common/world/voxel_registry.h>
+#include <common/world/voxel_data.h>
 #include <unordered_set>
-
-#include "world/client_voxel.h"
-#include <common/world/voxel_types.h>
 
 class Keyboard;
 
@@ -87,6 +85,7 @@ class Client final : public NetworkHost {
 
     // Network
     ENetPeer *mp_serverPeer = nullptr;
+    CommandDispatcher<Client, ClientCommand> m_commandDispatcher;
     bool m_hasReceivedGameData = false;
 
     // Rendering/ OpenGL stuff
@@ -146,7 +145,7 @@ class Client final : public NetworkHost {
         std::vector<BlockUpdate> blockUpdates;
     } m_chunks;
 
-    VoxelRegistry<ClientVoxel> m_voxelData;
+    VoxelDataManager m_voxelData;
 
     // Lua
     ScriptEngine m_lua;

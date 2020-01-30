@@ -68,7 +68,10 @@ enum class ClientCommand : command_t {
     // u8: The voxels mesh style aka VoxelMeshStyle
     // u8: The voxels state/type aka VoxelType
     // u8: Whether the block is collidable or not
-    GameRegistryData
+    GameRegistryData,
+
+    // For getting the number of commands, used by CommandDispatcher
+    COUNT,
 };
 
 /**
@@ -91,6 +94,9 @@ enum class ServerCommand : command_t {
     // Data:
     // u8[8192]: Imaga Data in RGBA format (Should be 8kb)
     PlayerSkin,
+
+    // For getting the number of commands, used by CommandDispatcher
+    COUNT,
 };
 
 template <typename CommandType>

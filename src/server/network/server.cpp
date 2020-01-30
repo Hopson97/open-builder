@@ -14,29 +14,51 @@ Server::Server(const ServerConfig &config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
 {
-
     // clang-format off
-    m_script.addTable("data", 
-        "addVoxel", [&](const sol::table &voxelDef) { m_gameData.addVoxel(voxelDef); });
-
-    m_script.addTable("MeshStyle",
-        "Block", VoxelMeshStyle::Block,
-        "Cross", VoxelMeshStyle::Cross,
-        "None", VoxelMeshStyle::None);
-
-    m_script.addTable("VoxelType",
-        "Solid", VoxelType::Solid,
-        "Fluid", VoxelType::Fluid,
-        "Flora", VoxelType::Flora,
-        "Gas", VoxelType::Gas);
-
-    m_script.runLuaScript("game/blocks.lua");
+    m_commandDispatcher.addCommand(ServerCommand::BlockEdit, &Server::onBlockEdit);
+    m_commandDispatcher.addCommand(ServerCommand::PlayerPosition, &Server::onPlayerPosition);
+    m_commandDispatcher.addCommand(ServerCommand::PlayerSkin, &Server::onPlayerSkin);
     // clang-format on
+
+    auto data = m_script.addTable("data");
+    data["addVoxel"] = [&](const sol::table &voxelData) {
+        VoxelData voxel;
+
+        std::cout << "Created voxel\n";
+        if (voxelData["collidable"].valid()) {
+            voxel.isCollidable = voxelData["collidable"].get<bool>();
+        }
+        if (voxelData["type"].valid()) {
+            voxel.type = voxelData["type"].get<VoxelType>();
+        }
+        if (voxelData["render"]["mesh"].valid()) {
+            voxel.meshStyle = voxelData["render"]["mesh"].get<VoxelMeshStyle>();
+        }
+
+        voxel.name = voxelData["name"].get<std::string>();
+        voxel.topTexture = voxelData["render"]["top"].get<std::string>();
+        voxel.sideTexture = voxelData["render"]["sides"].get<std::string>();
+        voxel.bottomTexture = voxelData["render"]["bottom"].get<std::string>();
+
+        m_voxelData.addVoxelData(voxel);
+    };
+
+    auto meshStyle = m_script.addTable("MeshStyle");
+    meshStyle["Block"] = VoxelMeshStyle::Block;
+    meshStyle["Cross"] = VoxelMeshStyle::Cross;
+    meshStyle["None"] = VoxelMeshStyle::None;
+
+    auto voxelType = m_script.addTable("VoxelType");
+    voxelType["Solid"] = VoxelType::Solid;
+    voxelType["Fluid"] = VoxelType::Fluid;
+    voxelType["Gas"] = VoxelType::Gas;
+
+    m_script.runLuaFile("game/server/main.lua");
 
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
-            std::array<int, CHUNK_AREA> heightMap =
-                createChunkHeightMap({x, 0, z}, (float)m_worldSize, generateSeed("test"));
+            std::array<int, CHUNK_AREA> heightMap = createChunkHeightMap(
+                {x, 0, z}, (float)m_worldSize, generateSeed("test"));
             int maxHeight =
                 *std::max_element(heightMap.cbegin(), heightMap.cend());
             for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
@@ -104,11 +126,11 @@ void Server::sendGameData(peer_id_t peerId)
     sf::Packet packet;
     packet << ClientCommand::GameRegistryData;
 
-    auto &data = m_gameData.voxelData();
+    auto &data = m_voxelData.getVoxelData();
     packet << static_cast<u16>(data.size());
     for (auto &voxel : data) {
         u8 mesh = static_cast<u8>(voxel.meshStyle);
-        u8 type = static_cast<u8>(voxel.meshType);
+        u8 type = static_cast<u8>(voxel.type);
         u8 isCollidable = static_cast<u8>(voxel.isCollidable);
         packet << voxel.name;
         packet << voxel.topTexture;
@@ -194,22 +216,10 @@ void Server::onPeerTimeout(ENetPeer *peer)
 void Server::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
                               sf::Packet &packet, command_t command)
 {
-    switch (static_cast<ServerCommand>(command)) {
-        case ServerCommand::PlayerPosition:
-            handleCommandPlayerPosition(packet);
-            break;
-
-        case ServerCommand::BlockEdit:
-            handleCommandBlockEdit(packet);
-            break;
-
-        case ServerCommand::PlayerSkin:
-            handleCommandPlayerSkin(packet);
-            break;
-    }
+    m_commandDispatcher.execute(*this, command, packet);
 }
 
-void Server::handleCommandPlayerPosition(sf::Packet &packet)
+void Server::onPlayerPosition(sf::Packet &packet)
 {
     peer_id_t id = 0;
     packet >> id;
@@ -217,7 +227,7 @@ void Server::handleCommandPlayerPosition(sf::Packet &packet)
         m_entities[id].position.z;
 }
 
-void Server::handleCommandBlockEdit(sf::Packet &packet)
+void Server::onBlockEdit(sf::Packet &packet)
 {
     BlockPosition position;
     block_t block;
@@ -225,7 +235,7 @@ void Server::handleCommandBlockEdit(sf::Packet &packet)
     m_world.blockUpdates.push_back({position, block});
 }
 
-void Server::handleCommandPlayerSkin(sf::Packet &packet)
+void Server::onPlayerSkin(sf::Packet &packet)
 {
     LOGVAR("Server",
            "Received player skin, packet size: ", (int)packet.getDataSize());

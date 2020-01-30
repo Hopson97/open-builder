@@ -48,18 +48,34 @@ void renderChunks(const std::vector<ChunkDrawable> &chunks,
         }
     }
 }
+
+bool isVoxelSelectable(VoxelType voxelType)
+{
+    return voxelType == VoxelType::Solid || voxelType == VoxelType::Flora;
+}
 } // namespace
 
 Client::Client()
     : NetworkHost("Client")
 {
+    // clang-format off
+    m_commandDispatcher.addCommand(ClientCommand::BlockUpdate, &Client::onBlockUpdate);
+    m_commandDispatcher.addCommand(ClientCommand::ChunkData, &Client::onChunkData);
+    m_commandDispatcher.addCommand(ClientCommand::GameRegistryData, &Client::onGameRegistryData);
+    m_commandDispatcher.addCommand(ClientCommand::PlayerJoin, &Client::onPlayerJoin);
+    m_commandDispatcher.addCommand(ClientCommand::PlayerLeave, &Client::onPlayerLeave);
+    m_commandDispatcher.addCommand(ClientCommand::Snapshot, &Client::onSnapshot);
+    m_commandDispatcher.addCommand(ClientCommand::SpawnPoint, &Client::onSpawnPoint);
+    m_commandDispatcher.addCommand(ClientCommand::NewPlayerSkin, &Client::onPlayerSkinReceive);
+    // clang-format on
+
     auto luaGuiAPI = m_lua.addTable("GUI");
     luaGuiAPI["addImage"] = [&](sol::userdata img) { m_gui.addImage(img); };
 
     m_gui.addUsertypes(luaGuiAPI);
 
     m_lua.lua["update"] = 3;
-    m_lua.runLuaScript("game/gui.lua");
+    m_lua.runLuaFile("game/client/main.lua");
 }
 
 bool Client::init(const ClientConfig &config, float aspect)
@@ -187,7 +203,9 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
     // Step the ray until it hits a block/ reaches maximum length
     for (; ray.getLength() < 8; ray.step()) {
         auto rayBlockPosition = toBlockPosition(ray.getEndpoint());
-        if (m_chunks.manager.getBlock(rayBlockPosition) > 0) {
+        auto &voxel = m_voxelData.getVoxelData(
+            m_chunks.manager.getBlock(rayBlockPosition));
+        if (isVoxelSelectable(voxel.type)) {
             BlockUpdate blockUpdate;
             blockUpdate.block = button == sf::Mouse::Left ? 0 : 1;
             blockUpdate.position = button == sf::Mouse::Left
@@ -335,7 +353,9 @@ void Client::update(float dt)
 
     for (; ray.getLength() < 8; ray.step()) {
         auto rayBlockPosition = toBlockPosition(ray.getEndpoint());
-        if (m_chunks.manager.getBlock(rayBlockPosition) > 0) {
+        auto &voxel = m_voxelData.getVoxelData(
+            m_chunks.manager.getBlock(rayBlockPosition));
+        if (isVoxelSelectable(voxel.type)) {
             m_currentSelectedBlockPos = rayBlockPosition;
             m_blockSelected = true;
             break;
@@ -406,21 +426,15 @@ void Client::render(int width, int height)
     }
     m_chunks.bufferables.clear();
 
-    // TODO [Hopson] -> DRY this code VVVV
     // Render solid chunk blocks
     m_chunkShader.program.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, playerProjectionView);
 
     renderChunks(m_chunks.drawables, m_frustum);
 
-    // Render fluid mesh
     glCheck(glEnable(GL_BLEND));
-    m_fluidShader.program.bind();
-    gl::loadUniform(m_fluidShader.timeLocation,
-                    m_clock.getElapsedTime().asSeconds());
-    gl::loadUniform(m_fluidShader.projectionViewLocation, playerProjectionView);
-    renderChunks(m_chunks.fluidDrawables, m_frustum);
 
+    // Render selection box
     if (m_blockSelected) {
         glCheck(glEnable(GL_LINE_SMOOTH));
         glCheck(glLineWidth(2.0));
@@ -437,7 +451,18 @@ void Client::render(int width, int height)
                         playerProjectionView);
         m_selectionBox.getDrawable().bindAndDraw(GL_LINES);
     }
+
+    // Render fluid mesh
+    m_fluidShader.program.bind();
+    gl::loadUniform(m_fluidShader.timeLocation,
+                    m_clock.getElapsedTime().asSeconds());
+    gl::loadUniform(m_fluidShader.projectionViewLocation, playerProjectionView);
+    if (m_chunks.manager.getBlock(toBlockPosition(mp_player->position)) == 4) {
+        glCheck(glCullFace(GL_FRONT));
+    }
+    renderChunks(m_chunks.fluidDrawables, m_frustum);
     glCheck(glDisable(GL_BLEND));
+    glCheck(glCullFace(GL_BACK));
 
     // GUI
     m_gui.render(width, height);
