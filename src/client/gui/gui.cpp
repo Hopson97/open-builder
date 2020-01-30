@@ -15,16 +15,6 @@ Gui::Gui()
     m_guiShader.colorLocation = m_guiShader.program.getUniformLocation("color3");
 }
 
-Gui::~Gui()
-{
-    m_quad.destroy();
-    m_guiShader.program.destroy();
-
-    for (auto &img : m_images) {
-        img.as<GuiImage>().m_image.destroy();
-    }
-}
-
 void Gui::addUsertypes(sol::table& gui_api)
 {
     auto udim2_type = gui_api.new_usertype<GDim>("GDim",

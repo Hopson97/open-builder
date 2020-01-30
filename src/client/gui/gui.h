@@ -50,11 +50,8 @@ struct GuiImage {
 
 class Gui final {
   public:
-    NON_COPYABLE(Gui)
-    NON_MOVEABLE(Gui)
-
     Gui();
-    ~Gui();
+
     void addUsertypes(sol::table& m_lua);
 
     void processKeypress(sf::Event e);
