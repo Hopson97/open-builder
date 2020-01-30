@@ -88,27 +88,22 @@ void Gui::render(float width, float height)
     auto d = m_quad.getDrawable();
     d.bind();
 
-    for (auto &img : m_images) {
-        auto &image = img.as<GuiImage>();
-        image.texture.bind();
-
-        glm::vec2 size = image.size;
+    for (auto &image : m_images) {
+        auto &img = image.as<GuiImage>();
+        img.texture.bind();
 
         glm::vec2 pos;
-        pos.x = image.position.x * width;
-        pos.y = image.position.y * height;
-
-        pos += image.pixelOffset;
+        pos.x = img.position.x * width;
+        pos.y = img.position.y * height;
+        pos += img.pixelOffset;
 
         glm::mat4 modelMatrix{1.0f};
         modelMatrix = glm::translate(modelMatrix, {pos.x, pos.y, 0.0f});
-        modelMatrix = glm::scale(modelMatrix, {size.x, size.y, 0.0f});
+        modelMatrix = glm::scale(modelMatrix, {img.size.x, img.size.y, 0.0f});
 
         gl::loadUniform(m_guiShader.projectionLocation, m_orthoMatrix);
         gl::loadUniform(m_guiShader.modelLocation, modelMatrix);
-        gl::loadUniform(m_guiShader.colorLocation, image.colour);
-
-        std::cout << pos << " " << size << '\n';
+        gl::loadUniform(m_guiShader.colorLocation, img.colour);
 
         d.draw();
     }
