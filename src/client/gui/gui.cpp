@@ -82,8 +82,8 @@ void Gui::addImage(sol::userdata image)
 
 void Gui::render(float width, float height)
 {
-    width /= 100.0f;
-    height /= 100.0f;
+    width /= 1000.0f;
+    height /= 1000.0f;
     m_guiShader.program.bind();
     auto d = m_quad.getDrawable();
     d.bind();
