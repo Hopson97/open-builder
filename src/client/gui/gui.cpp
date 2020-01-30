@@ -17,24 +17,17 @@ Gui::Gui()
         m_guiShader.program.getUniformLocation("color3");
 }
 
-
-void Gui::addUsertypes(sol::table& gui_api)
+void Gui::addUsertypes(sol::table &gui_api)
 {
     auto udim2_type = gui_api.new_usertype<GDim>(
         "GDim", sol::constructors<GDim(), GDim(float, float, float, float)>());
 
-    auto color3_type = gui_api.new_usertype<Color3>(
-        "Color3", sol::constructors<Color3(), Color3(float, float, float)>());
-    color3_type["r"] = &Color3::r;
-    color3_type["b"] = &Color3::g;
-    color3_type["g"] = &Color3::b;
+    auto guiImage = gui_api.new_usertype<GuiImage>("Image");
 
-    auto image_type = gui_api.new_usertype<GuiImage>("Image");
-
-    image_type["setSource"] = &GuiImage::setSource;
-    image_type["setSize"] = &GuiImage::setSize;
-    image_type["setPosition"] = &GuiImage::setPosition;
-    image_type["setColor"] = &GuiImage::setColor;
+    guiImage["setSource"] = &GuiImage::setSource;
+    guiImage["setSize"] = &GuiImage::setSize;
+    guiImage["setPosition"] = &GuiImage::setPosition;
+    guiImage["setColor"] = &GuiImage::setColour;
 }
 
 void GuiImage::setSize(GDim new_size)
@@ -47,9 +40,9 @@ void GuiImage::setPosition(GDim new_pos)
     m_position = new_pos;
 }
 
-void GuiImage::setColor(Color3 new_color)
+void GuiImage::setColour(float r, float g, float b)
 {
-    m_color = new_color;
+    colour = {r, g, b};
 }
 
 void Gui::processKeypress(sf::Event e)
@@ -79,7 +72,7 @@ void Gui::render(int width, int height)
     d.bind();
 
     for (auto &g_img : m_images) {
-        auto& img = g_img.as<GuiImage>();
+        auto &img = g_img.as<GuiImage>();
         glm::mat4 modelMatrix{1.0f};
         modelMatrix = glm::translate(
             modelMatrix, glm::vec3(img.m_position.scale.x * 2 - 1 +
@@ -96,8 +89,7 @@ void Gui::render(int width, int height)
                 1));
 
         gl::loadUniform(m_guiShader.modelLocation, modelMatrix);
-        gl::loadUniform(m_guiShader.colorLocation,
-                        glm::vec3(img.m_color.r, img.m_color.g, img.m_color.b));
+        gl::loadUniform(m_guiShader.colorLocation, img.colour);
         img.m_image.bind();
         d.draw();
     }
