@@ -7,6 +7,24 @@
 #include <iostream>
 
 //
+//  Gui Dimensions
+//
+GuiDimension::GuiDimension(float xScale, float xOffset, float yScale,
+                           float yOffset)
+    : scale{xScale, yScale}
+    , offset{xOffset, yOffset}
+{
+}
+
+glm::vec2 GuiDimension::apply(float width, float height)
+{
+    glm::vec2 vector;
+    vector.x = scale.x * width * 100.0f;
+    vector.y = scale.y * height * 100.0f;
+    return vector + offset;
+}
+
+//
 //  GUI Image
 //
 
@@ -20,12 +38,12 @@ void GuiImage::setSource(const std::string &imageSource)
 
 void GuiImage::setSize(float width, float height)
 {
-    size = {width, height};
+    size.offset = {width, height};
 }
 
 void GuiImage::setPosition(float x, float y)
 {
-    position = {x, y};
+    position.scale = {x, y};
 }
 
 void GuiImage::setColour(float r, float g, float b)
@@ -35,7 +53,7 @@ void GuiImage::setColour(float r, float g, float b)
 
 void GuiImage::setPixelOffset(float x, float y)
 {
-    pixelOffset = {x, y};
+    position.offset = {x, y};
 }
 
 Gui::Gui(float windowWidth, float windowHeight)
@@ -60,8 +78,9 @@ Gui::Gui(float windowWidth, float windowHeight)
 
 void Gui::addUsertypes(sol::table &gui_api)
 {
-    auto udim2_type = gui_api.new_usertype<GDim>(
-        "GDim", sol::constructors<GDim(), GDim(float, float, float, float)>());
+    auto udim2_type = gui_api.new_usertype<GuiDimension>(
+        "GDim", sol::constructors<GuiDimension(),
+                                  GuiDimension(float, float, float, float)>());
 
     auto guiImage = gui_api.new_usertype<GuiImage>("Image");
     guiImage["setSource"] = &GuiImage::setSource;
@@ -82,8 +101,8 @@ void Gui::addImage(sol::userdata image)
 
 void Gui::render(float width, float height)
 {
-    width /= 1000.0f;
-    height /= 1000.0f;
+    width /= 100.0f;
+    height /= 100.0f;
     m_guiShader.program.bind();
     auto d = m_quad.getDrawable();
     d.bind();
@@ -92,14 +111,12 @@ void Gui::render(float width, float height)
         auto &img = image.as<GuiImage>();
         img.texture.bind();
 
-        glm::vec2 pos;
-        pos.x = img.position.x * width;
-        pos.y = img.position.y * height;
-        pos += img.pixelOffset;
+        glm::vec2 pos = img.position.apply(width, height);
+        glm::vec2 size = img.size.apply(width, height);
 
         glm::mat4 modelMatrix{1.0f};
         modelMatrix = glm::translate(modelMatrix, {pos.x, pos.y, 0.0f});
-        modelMatrix = glm::scale(modelMatrix, {img.size.x, img.size.y, 0.0f});
+        modelMatrix = glm::scale(modelMatrix, {size.x, size.y, 0.0f});
 
         gl::loadUniform(m_guiShader.projectionLocation, m_orthoMatrix);
         gl::loadUniform(m_guiShader.modelLocation, modelMatrix);
@@ -108,38 +125,3 @@ void Gui::render(float width, float height)
         d.draw();
     }
 }
-
-/*
-void Gui::render(int width, int height)
-{
-    float pixel_width = 2.f / width;
-    float pixel_height = 2.f / height;
-
-    m_guiShader.program.bind();
-    auto d = m_quad.getDrawable();
-    d.bind();
-
-    for (auto &g_img : m_images) {
-        auto &img = g_img.as<GuiImage>();
-        glm::mat4 modelMatrix{1.0f};
-        modelMatrix = glm::translate(
-            modelMatrix, glm::vec3(img.m_position.scale.x * 2 - 1 +
-                                       img.m_position.offset.x * pixel_width,
-                                   1 - img.m_position.scale.y * -2 - 2 +
-                                       img.m_position.offset.y * pixel_height,
-                                   0));
-
-        modelMatrix = glm::scale(
-            modelMatrix,
-            glm::vec3(
-                img.m_size.scale.x * 2 + img.m_size.offset.x * pixel_width,
-                img.m_size.scale.y * 2 + img.m_size.offset.y * pixel_height,
-                1));
-
-        gl::loadUniform(m_guiShader.modelLocation, modelMatrix);
-        gl::loadUniform(m_guiShader.colorLocation, img.colour);
-        img.m_image.bind();
-        d.draw();
-    }
-}
-*/

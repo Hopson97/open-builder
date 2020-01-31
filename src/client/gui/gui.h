@@ -12,36 +12,25 @@
 // Todo: Maybe move these out into their own files
 
 // Stores the scale and offset of a GUI element in 2 dimensions
-struct GDim {
-    sf::Vector2f scale;
-    sf::Vector2f offset;
+struct GuiDimension {
+    glm::vec2 scale{0.0f};
+    glm::vec2 offset{0.0f};
 
-    GDim()
-        : scale(sf::Vector2f(0, 0))
-        , offset(sf::Vector2f(0, 0))
-    {
-    }
+    GuiDimension() = default;
+    GuiDimension(float xScale, float xOffset, float yScale, float yOffset);
 
-    GDim(float x_s, float x_o, float y_s, float y_o)
-        : scale(sf::Vector2f(x_s, y_s))
-        , offset(sf::Vector2f(x_o, y_o))
-    {
-    }
+    glm::vec2 apply(float width, float height);
 };
 
 // GUI Image,
 struct GuiImage {
     gl::Texture2d texture;
 
-    glm::vec2 position{0.0f};
-    glm::vec2 pixelOffset{0.0f};
-    glm::vec2 size{0.0f};
+    GuiDimension position;
+    GuiDimension size;
+
     glm::vec3 colour{0.0f};
 
-    // GDim m_size;
-    // GDim m_position;
-
-    // Setters (TODO: Getters?)
     void setSource(const std::string &imageSource);
     void setSize(float width, float height);
     void setPosition(float x, float y);
