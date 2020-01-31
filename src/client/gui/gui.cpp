@@ -81,21 +81,6 @@ Gui::Gui(float windowWidth, float windowHeight)
     gl::loadUniform(m_guiShader.projectionLocation, m_orthoMatrix);
 }
 
-void Gui::addUsertypes(sol::table &gui_api)
-{
-    auto udim2_type = gui_api.new_usertype<GuiDimension>(
-        "GDim", sol::constructors<GuiDimension(),
-                                  GuiDimension(float, float, float, float)>());
-
-    auto guiImage = gui_api.new_usertype<GuiImage>("Image");
-    guiImage["setSource"] = &GuiImage::setSource;
-    guiImage["setPixelSize"] = &GuiImage::setPixelSize;
-    guiImage["setScaledSize"] = &GuiImage::setScaledSize;
-    guiImage["setPixelOffset"] = &GuiImage::setPixelOffset;
-    guiImage["setScaledPosition"] = &GuiImage::setScaledPosition;
-    guiImage["setColor"] = &GuiImage::setColour;
-}
-
 void Gui::addImage(sol::userdata image)
 {
     if (!image.is<GuiImage>()) {
@@ -130,4 +115,22 @@ void Gui::render(float width, float height)
 
         d.draw();
     }
+}
+
+sol::table createGuiApi(ScriptEngine &engine)
+{
+    auto gui = engine.addTable("GUI");
+    auto gdim = gui.new_usertype<GuiDimension>(
+        "GDim", sol::constructors<GuiDimension(),
+                                  GuiDimension(float, float, float, float)>());
+
+    auto guiImage = gui.new_usertype<GuiImage>("Image");
+    guiImage["setSource"] = &GuiImage::setSource;
+    guiImage["setPixelSize"] = &GuiImage::setPixelSize;
+    guiImage["setScaledSize"] = &GuiImage::setScaledSize;
+    guiImage["setPixelOffset"] = &GuiImage::setPixelOffset;
+    guiImage["setScaledPosition"] = &GuiImage::setScaledPosition;
+    guiImage["setColor"] = &GuiImage::setColour;
+
+    return gui;
 }

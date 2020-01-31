@@ -46,7 +46,6 @@ class Gui final {
   public:
     Gui(float windowWidth, float windowHeight);
 
-    void addUsertypes(sol::table &m_lua);
     void processKeypress(sf::Event e);
     void processMouseEvent(sf::Event e);
 
@@ -66,3 +65,5 @@ class Gui final {
     gl::VertexArray m_quad;
     std::vector<sol::userdata> m_images;
 };
+
+sol::table createGuiApi(ScriptEngine &engine);
