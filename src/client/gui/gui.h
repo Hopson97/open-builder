@@ -32,10 +32,14 @@ struct GuiImage {
     glm::vec3 colour{0.0f};
 
     void setSource(const std::string &imageSource);
-    void setSize(float width, float height);
-    void setPosition(float x, float y);
-    void setPixelOffset(float x, float y);
+
     void setColour(float r, float g, float b);
+
+    void setPixelSize(float width, float height);
+    void setScaledSize(float width, float height);
+
+    void setPixelOffset(float x, float y);
+    void setScaledPosition(float x, float y);
 };
 
 class Gui final {

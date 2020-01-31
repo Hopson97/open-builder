@@ -36,19 +36,24 @@ void GuiImage::setSource(const std::string &imageSource)
     texture.create(imageSource);
 }
 
-void GuiImage::setSize(float width, float height)
+void GuiImage::setColour(float r, float g, float b)
+{
+    colour = {r, g, b};
+}
+
+void GuiImage::setPixelSize(float width, float height)
 {
     size.offset = {width, height};
 }
 
-void GuiImage::setPosition(float x, float y)
+void GuiImage::setScaledSize(float width, float height)
 {
-    position.scale = {x, y};
+    size.scale = {width, height};
 }
 
-void GuiImage::setColour(float r, float g, float b)
+void GuiImage::setScaledPosition(float x, float y)
 {
-    colour = {r, g, b};
+    position.scale = {x, y};
 }
 
 void GuiImage::setPixelOffset(float x, float y)
@@ -84,9 +89,10 @@ void Gui::addUsertypes(sol::table &gui_api)
 
     auto guiImage = gui_api.new_usertype<GuiImage>("Image");
     guiImage["setSource"] = &GuiImage::setSource;
-    guiImage["setSize"] = &GuiImage::setSize;
-    guiImage["setPosition"] = &GuiImage::setPosition;
+    guiImage["setPixelSize"] = &GuiImage::setPixelSize;
+    guiImage["setScaledSize"] = &GuiImage::setScaledSize;
     guiImage["setPixelOffset"] = &GuiImage::setPixelOffset;
+    guiImage["setScaledPosition"] = &GuiImage::setScaledPosition;
     guiImage["setColor"] = &GuiImage::setColour;
 }
 
