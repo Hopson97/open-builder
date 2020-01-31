@@ -15,19 +15,19 @@ const MeshFace RIGHT_FACE = {{1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0}, 0.6f};
 const MeshFace TOP_FACE = {{1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1}, 1.0f};
 const MeshFace BOTTOM_FACE = {{0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1}, 0.4f};
 
-bool makeFace(const VoxelDataManager &voxelData, block_t thisId,
+bool makeFace(const VoxelDataManager& voxelData, block_t thisId,
               block_t compareId)
 {
-    auto &thisBlock = voxelData.getVoxelData(thisId);
-    auto &compareBlock = voxelData.getVoxelData(compareId);
+    auto& thisBlock = voxelData.getVoxelData(thisId);
+    auto& compareBlock = voxelData.getVoxelData(compareId);
     return (compareBlock.id == 0 || compareBlock.id == 4) &&
            thisBlock.id != compareBlock.id;
 }
 
 } // namespace
 
-ChunkMeshCollection makeChunkMesh(const Chunk &chunk,
-                                  const VoxelDataManager &voxelData)
+ChunkMeshCollection makeChunkMesh(const Chunk& chunk,
+                                  const VoxelDataManager& voxelData)
 {
     sf::Clock clock;
     ChunkMeshCollection meshes(chunk.getPosition());
@@ -40,8 +40,8 @@ ChunkMeshCollection makeChunkMesh(const Chunk &chunk,
                 auto voxel = chunk.qGetBlock(blockPosition);
                 if (voxel > 0) {
 
-                    auto &voxData = voxelData.getVoxelData(voxel);
-                    ChunkMesh *mesh = voxData.type == VoxelType::Solid
+                    auto& voxData = voxelData.getVoxelData(voxel);
+                    ChunkMesh* mesh = voxData.type == VoxelType::Solid
                                           ? &meshes.blockMesh
                                           : &meshes.fluidMesh;
 

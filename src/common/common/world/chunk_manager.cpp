@@ -1,6 +1,6 @@
 #include "chunk_manager.h"
 
-Chunk &ChunkManager::addChunk(const ChunkPosition &chunk)
+Chunk& ChunkManager::addChunk(const ChunkPosition& chunk)
 {
     auto itr = m_chunks.find(chunk);
     if (itr == m_chunks.cend()) {
@@ -12,7 +12,7 @@ Chunk &ChunkManager::addChunk(const ChunkPosition &chunk)
     return itr->second;
 }
 
-const Chunk &ChunkManager::getChunk(const ChunkPosition &chunk)
+const Chunk& ChunkManager::getChunk(const ChunkPosition& chunk)
 {
     auto itr = m_chunks.find(chunk);
     if (itr == m_chunks.cend()) {
@@ -22,7 +22,7 @@ const Chunk &ChunkManager::getChunk(const ChunkPosition &chunk)
     return itr->second;
 }
 
-block_t ChunkManager::getBlock(const BlockPosition &blockPosition) const
+block_t ChunkManager::getBlock(const BlockPosition& blockPosition) const
 {
     auto chunkPosition = toChunkPosition(blockPosition);
     auto itr = m_chunks.find(chunkPosition);
@@ -32,7 +32,7 @@ block_t ChunkManager::getBlock(const BlockPosition &blockPosition) const
     return itr->second.qGetBlock(toLocalBlockPosition(blockPosition));
 }
 
-void ChunkManager::setBlock(const BlockPosition &blockPosition, block_t block)
+void ChunkManager::setBlock(const BlockPosition& blockPosition, block_t block)
 {
     auto chunkPosition = toChunkPosition(blockPosition);
     auto itr = m_chunks.find(chunkPosition);
@@ -42,14 +42,14 @@ void ChunkManager::setBlock(const BlockPosition &blockPosition, block_t block)
     assert(itr != m_chunks.end());
 }
 
-bool ChunkManager::hasChunk(const ChunkPosition &chunk) const
+bool ChunkManager::hasChunk(const ChunkPosition& chunk) const
 {
     return m_chunks.find(chunk) != m_chunks.cend();
 }
 
-bool ChunkManager::hasNeighbours(const ChunkPosition &chunkPosition) const
+bool ChunkManager::hasNeighbours(const ChunkPosition& chunkPosition) const
 {
-    const auto &cp = chunkPosition;
+    const auto& cp = chunkPosition;
     return hasChunk(chunkPosition) &&
            // Top
            hasChunk({cp.x, cp.y + 1, cp.z}) &&
@@ -65,9 +65,9 @@ bool ChunkManager::hasNeighbours(const ChunkPosition &chunkPosition) const
            hasChunk({cp.x, cp.y, cp.z + 1});
 }
 
-void ChunkManager::ensureNeighbours(const ChunkPosition &chunkPosition)
+void ChunkManager::ensureNeighbours(const ChunkPosition& chunkPosition)
 {
-    const auto &cp = chunkPosition;
+    const auto& cp = chunkPosition;
     addChunk(cp);
     addChunk({cp.x, cp.y + 1, cp.z});
     addChunk({cp.x, cp.y - 1, cp.z});

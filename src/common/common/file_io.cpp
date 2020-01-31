@@ -4,7 +4,7 @@
 #include <iostream>
 #include <sstream>
 
-std::string loadFileContents(const std::string &path)
+std::string loadFileContents(const std::string& path)
 {
     std::ifstream inFile(path);
     if (!inFile.is_open()) {

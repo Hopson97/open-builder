@@ -6,7 +6,7 @@
 #include <iostream>
 
 namespace {
-GLuint compileShader(const GLchar *source, GLenum shaderType)
+GLuint compileShader(const GLchar* source, GLenum shaderType)
 {
     auto shaderID = glCheck(glCreateShader(shaderType));
 
@@ -59,12 +59,12 @@ Shader::~Shader()
     destroy();
 }
 
-Shader::Shader(Shader &&other)
+Shader::Shader(Shader&& other)
 {
     *this = std::move(other);
 }
 
-Shader &Shader::operator=(Shader &&other)
+Shader& Shader::operator=(Shader&& other)
 {
     destroy();
     m_handle = other.m_handle;
@@ -72,8 +72,8 @@ Shader &Shader::operator=(Shader &&other)
     return *this;
 }
 
-void Shader::create(const std::string &vertexFile,
-                    const std::string &fragmentFile)
+void Shader::create(const std::string& vertexFile,
+                    const std::string& fragmentFile)
 {
     glCheck(glUseProgram(0));
     std::string vertFileFull("shaders/" + vertexFile + "_vertex.glsl");
@@ -106,24 +106,24 @@ void Shader::bind() const
     glCheck(glUseProgram(m_handle));
 }
 
-UniformLocation Shader::getUniformLocation(const char *name)
+UniformLocation Shader::getUniformLocation(const char* name)
 {
     UniformLocation location;
     location.ptr = glCheck(glGetUniformLocation(m_handle, name));
     return location;
 }
 
-void loadUniform(UniformLocation location, const glm::vec3 &vector)
+void loadUniform(UniformLocation location, const glm::vec3& vector)
 {
     glCheck(glUniform3fv(location.ptr, 1, glm::value_ptr(vector)));
 }
 
-void loadUniform(UniformLocation location, const glm::ivec3 &vector)
+void loadUniform(UniformLocation location, const glm::ivec3& vector)
 {
     glCheck(glUniform3iv(location.ptr, 1, glm::value_ptr(vector)));
 }
 
-void loadUniform(UniformLocation location, const glm::mat4 &matrix)
+void loadUniform(UniformLocation location, const glm::mat4& matrix)
 {
     glCheck(
         glUniformMatrix4fv(location.ptr, 1, GL_FALSE, glm::value_ptr(matrix)));

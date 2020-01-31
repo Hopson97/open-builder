@@ -17,7 +17,6 @@ Gui::Gui()
         m_guiShader.program.getUniformLocation("color3");
 }
 
-
 void Gui::addUsertypes(sol::table& gui_api)
 {
     auto udim2_type = gui_api.new_usertype<GDim>(
@@ -78,7 +77,7 @@ void Gui::render(int width, int height)
     auto d = m_quad.getDrawable();
     d.bind();
 
-    for (auto &g_img : m_images) {
+    for (auto& g_img : m_images) {
         auto& img = g_img.as<GuiImage>();
         glm::mat4 modelMatrix{1.0f};
         modelMatrix = glm::translate(
@@ -103,7 +102,7 @@ void Gui::render(int width, int height)
     }
 }
 
-void GuiImage::setSource(const std::string &imageSource)
+void GuiImage::setSource(const std::string& imageSource)
 {
     if (m_image.textureExists()) {
         m_image.destroy();

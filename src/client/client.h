@@ -46,8 +46,8 @@ class Client final : public NetworkHost {
   public:
     Client();
 
-    bool init(const ClientConfig &config, float aspect);
-    void handleInput(const sf::Window &window, const Keyboard &keyboard);
+    bool init(const ClientConfig& config, float aspect);
+    void handleInput(const sf::Window& window, const Keyboard& keyboard);
     void onKeyRelease(sf::Keyboard::Key key);
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
@@ -60,31 +60,31 @@ class Client final : public NetworkHost {
   private:
     // Network functions; defined in the src/client/network/client_command.cpp
     // directory
-    void sendPlayerPosition(const glm::vec3 &position);
-    void sendBlockUpdate(const BlockUpdate &update);
-    void sendPlayerSkin(const sf::Image &playerSkin);
+    void sendPlayerPosition(const glm::vec3& position);
+    void sendBlockUpdate(const BlockUpdate& update);
+    void sendPlayerSkin(const sf::Image& playerSkin);
 
-    void onPeerConnect(ENetPeer *peer) override;
-    void onPeerDisconnect(ENetPeer *peer) override;
-    void onPeerTimeout(ENetPeer *peer) override;
-    void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
+    void onPeerConnect(ENetPeer* peer) override;
+    void onPeerDisconnect(ENetPeer* peer) override;
+    void onPeerTimeout(ENetPeer* peer) override;
+    void onCommandRecieve(ENetPeer* peer, sf::Packet& packet,
                           command_t command) override;
 
-    void onPlayerJoin(sf::Packet &packet);
-    void onPlayerLeave(sf::Packet &packet);
-    void onSnapshot(sf::Packet &packet);
-    void onChunkData(sf::Packet &packet);
-    void onSpawnPoint(sf::Packet &packet);
-    void onBlockUpdate(sf::Packet &packet);
-    void onPlayerSkinReceive(sf::Packet &packet);
+    void onPlayerJoin(sf::Packet& packet);
+    void onPlayerLeave(sf::Packet& packet);
+    void onSnapshot(sf::Packet& packet);
+    void onChunkData(sf::Packet& packet);
+    void onSpawnPoint(sf::Packet& packet);
+    void onBlockUpdate(sf::Packet& packet);
+    void onPlayerSkinReceive(sf::Packet& packet);
 
-    void onGameRegistryData(sf::Packet &packet);
+    void onGameRegistryData(sf::Packet& packet);
     // End of network functions
 
-    void deleteChunkRenderable(const ChunkPosition &position);
+    void deleteChunkRenderable(const ChunkPosition& position);
 
     // Network
-    ENetPeer *mp_serverPeer = nullptr;
+    ENetPeer* mp_serverPeer = nullptr;
     CommandDispatcher<Client, ClientCommand> m_commandDispatcher;
     bool m_hasReceivedGameData = false;
 
@@ -133,7 +133,7 @@ class Client final : public NetworkHost {
     BlockPosition m_currentSelectedBlockPos;
     bool m_blockSelected;
 
-    Entity *mp_player = nullptr;
+    Entity* mp_player = nullptr;
     Entity m_externalCamera;
 
     struct {

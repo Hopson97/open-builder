@@ -13,8 +13,8 @@
 #include "client_config.h"
 
 namespace {
-int findChunkDrawableIndex(const ChunkPosition &position,
-                           const std::vector<ChunkDrawable> &drawables)
+int findChunkDrawableIndex(const ChunkPosition& position,
+                           const std::vector<ChunkDrawable>& drawables)
 {
     for (int i = 0; i < static_cast<int>(drawables.size()); i++) {
         if (drawables[i].position == position) {
@@ -24,8 +24,8 @@ int findChunkDrawableIndex(const ChunkPosition &position,
     return -1;
 }
 
-void deleteChunkRenderable(const ChunkPosition &position,
-                           std::vector<ChunkDrawable> &drawables)
+void deleteChunkRenderable(const ChunkPosition& position,
+                           std::vector<ChunkDrawable>& drawables)
 {
     auto index = findChunkDrawableIndex(position, drawables);
     if (index > -1) {
@@ -39,10 +39,10 @@ void deleteChunkRenderable(const ChunkPosition &position,
     }
 }
 
-void renderChunks(const std::vector<ChunkDrawable> &chunks,
-                  const ViewFrustum &frustum)
+void renderChunks(const std::vector<ChunkDrawable>& chunks,
+                  const ViewFrustum& frustum)
 {
-    for (const auto &chunk : chunks) {
+    for (const auto& chunk : chunks) {
         if (frustum.chunkIsInFrustum(chunk.position)) {
             chunk.vao.getDrawable().bindAndDraw();
         }
@@ -78,7 +78,7 @@ Client::Client()
     m_lua.runLuaFile("game/client/main.lua");
 }
 
-bool Client::init(const ClientConfig &config, float aspect)
+bool Client::init(const ClientConfig& config, float aspect)
 {
     // OpenGL stuff
     m_cube = makeCubeVertexArray(1, 2, 1);
@@ -139,7 +139,7 @@ bool Client::init(const ClientConfig &config, float aspect)
     return true;
 }
 
-void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
+void Client::handleInput(const sf::Window& window, const Keyboard& keyboard)
 {
     if (!m_hasReceivedGameData) {
         return;
@@ -163,8 +163,8 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
 
     // Handle mouse input
-    auto &rotation = mp_player->rotation;
-    auto &velocity = mp_player->velocity;
+    auto& rotation = mp_player->rotation;
+    auto& velocity = mp_player->velocity;
     if (keyboard.isKeyDown(sf::Keyboard::W)) {
         velocity += forwardsVector(rotation) * PLAYER_SPEED;
     }
@@ -203,7 +203,7 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
     // Step the ray until it hits a block/ reaches maximum length
     for (; ray.getLength() < 8; ray.step()) {
         auto rayBlockPosition = toBlockPosition(ray.getEndpoint());
-        auto &voxel = m_voxelData.getVoxelData(
+        auto& voxel = m_voxelData.getVoxelData(
             m_chunks.manager.getBlock(rayBlockPosition));
         if (isVoxelSelectable(voxel.type)) {
             BlockUpdate blockUpdate;
@@ -251,7 +251,7 @@ void Client::update(float dt)
     sendPlayerPosition(mp_player->position);
 
     // Update blocks
-    for (auto &blockUpdate : m_chunks.blockUpdates) {
+    for (auto& blockUpdate : m_chunks.blockUpdates) {
         auto chunkPosition = toChunkPosition(blockUpdate.position);
         m_chunks.manager.ensureNeighbours(chunkPosition);
         m_chunks.manager.setBlock(blockUpdate.position, blockUpdate.block);
@@ -283,7 +283,7 @@ void Client::update(float dt)
     m_chunks.blockUpdates.clear();
 
     auto playerChunk = worldToChunkPosition(mp_player->position);
-    auto distanceToPlayer = [&playerChunk](const ChunkPosition &chunkPosition) {
+    auto distanceToPlayer = [&playerChunk](const ChunkPosition& chunkPosition) {
         return glm::abs(playerChunk.x - chunkPosition.x) +
                glm::abs(playerChunk.y - chunkPosition.y) +
                glm::abs(playerChunk.z - chunkPosition.z);
@@ -293,13 +293,13 @@ void Client::update(float dt)
         // Sort chunk updates by distance if the update vector is not
         // sorted already
         if (!std::is_sorted(m_chunks.updates.begin(), m_chunks.updates.end(),
-                            [&](const auto &a, const auto &b) {
+                            [&](const auto& a, const auto& b) {
                                 return distanceToPlayer(a) <
                                        distanceToPlayer(b);
                             })) {
             // Remove non-unique elements
             std::unordered_set<ChunkPosition, ChunkPositionHash> updates;
-            for (auto &update : m_chunks.updates) {
+            for (auto& update : m_chunks.updates) {
                 updates.insert(update);
             }
 
@@ -307,7 +307,7 @@ void Client::update(float dt)
 
             // Sort it to find chunk mesh cloest to the player
             std::sort(m_chunks.updates.begin(), m_chunks.updates.end(),
-                      [&](const auto &a, const auto &b) {
+                      [&](const auto& a, const auto& b) {
                           return distanceToPlayer(a) < distanceToPlayer(b);
                       });
         }
@@ -323,7 +323,7 @@ void Client::update(float dt)
             for (auto itr = m_chunks.updates.cbegin();
                  itr != m_chunks.updates.cend();) {
                 if (m_chunks.manager.hasNeighbours(*itr)) {
-                    auto &chunk = m_chunks.manager.getChunk(*itr);
+                    auto& chunk = m_chunks.manager.getChunk(*itr);
                     auto buffer = makeChunkMesh(chunk, m_voxelData);
                     m_chunks.bufferables.push_back(buffer);
                     deleteChunkRenderable(*itr);
@@ -353,7 +353,7 @@ void Client::update(float dt)
 
     for (; ray.getLength() < 8; ray.step()) {
         auto rayBlockPosition = toBlockPosition(ray.getEndpoint());
-        auto &voxel = m_voxelData.getVoxelData(
+        auto& voxel = m_voxelData.getVoxelData(
             m_chunks.manager.getBlock(rayBlockPosition));
         if (isVoxelSelectable(voxel.type)) {
             m_currentSelectedBlockPos = rayBlockPosition;
@@ -390,7 +390,7 @@ void Client::render(int width, int height)
     auto drawable = m_cube.getDrawable();
     drawable.bind();
 
-    for (auto &ent : m_entities) {
+    for (auto& ent : m_entities) {
 
         if (ent.active && &ent != mp_player) {
             if (ent.playerSkin.textureExists()) {
@@ -412,7 +412,7 @@ void Client::render(int width, int height)
     m_voxelTextures.bind();
 
     // Buffer chunks
-    for (auto &chunkMesh : m_chunks.bufferables) {
+    for (auto& chunkMesh : m_chunks.bufferables) {
         // TODO [Hopson] -> DRY this code
         if (chunkMesh.blockMesh.indicesCount > 0) {
             m_chunks.drawables.push_back({chunkMesh.blockMesh.position,
@@ -478,7 +478,7 @@ EngineStatus Client::currentStatus() const
     return m_status;
 }
 
-void Client::deleteChunkRenderable(const ChunkPosition &position)
+void Client::deleteChunkRenderable(const ChunkPosition& position)
 {
     ::deleteChunkRenderable(position, m_chunks.drawables);
     ::deleteChunkRenderable(position, m_chunks.fluidDrawables);

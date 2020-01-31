@@ -17,8 +17,8 @@ struct QueuedPacket {
         One,
         Broadcast,
     };
-    ENetPeer *peer = nullptr;
-    ENetPacket *packet = nullptr;
+    ENetPeer* peer = nullptr;
+    ENetPacket* packet = nullptr;
     Style style = Style::Broadcast;
     u8 channel = 0;
 };
@@ -31,7 +31,7 @@ class NetworkHost {
     NON_MOVEABLE(NetworkHost)
 
   public:
-    NetworkHost(std::string &&name);
+    NetworkHost(std::string&& name);
 
     virtual ~NetworkHost();
 
@@ -50,7 +50,7 @@ class NetworkHost {
      * @return std::optional<ENetPeer *> The server peer, might not be
      * successful connection hence optional
      */
-    std::optional<ENetPeer *> createAsClient(const std::string &ip);
+    std::optional<ENetPeer*> createAsClient(const std::string& ip);
 
     /**
      * @brief Sets up the host to be a server
@@ -66,7 +66,7 @@ class NetworkHost {
      *
      * @param peer The peer to disconnect from
      */
-    void disconnectFromPeer(ENetPeer *peer);
+    void disconnectFromPeer(ENetPeer* peer);
 
     /**
      * @brief Disconnects all peers from this host
@@ -88,7 +88,7 @@ class NetworkHost {
      * @return true The packet was sent successfully
      * @return false The packet was not sent
      */
-    void sendToPeer(ENetPeer *peer, sf::Packet &packet, u8 channel, u32 flags);
+    void sendToPeer(ENetPeer* peer, sf::Packet& packet, u8 channel, u32 flags);
 
     /**
      * @brief Broadcasts a packet to all connected peers
@@ -97,23 +97,23 @@ class NetworkHost {
      * @param channel The channel ID to send the packet on
      * @param flags Flags for the packet (ENetPacketFlag)
      */
-    void broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags);
+    void broadcastToPeers(sf::Packet& packet, u8 channel, u32 flags);
 
   private:
-    void removePeerFromPacketQueue(ENetPeer *peer);
-    virtual void onPeerConnect(ENetPeer *peer) = 0;
-    virtual void onPeerDisconnect(ENetPeer *peer) = 0;
-    virtual void onPeerTimeout(ENetPeer *peer) = 0;
-    virtual void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
+    void removePeerFromPacketQueue(ENetPeer* peer);
+    virtual void onPeerConnect(ENetPeer* peer) = 0;
+    virtual void onPeerDisconnect(ENetPeer* peer) = 0;
+    virtual void onPeerTimeout(ENetPeer* peer) = 0;
+    virtual void onCommandRecieve(ENetPeer* peer, sf::Packet& packet,
                                   command_t command) = 0;
 
-    void onCommandRecieve(ENetPeer *peer, const ENetPacket &packet);
+    void onCommandRecieve(ENetPeer* peer, const ENetPacket& packet);
 
     void flush();
 
     std::deque<QueuedPacket> m_queue;
 
-    ENetHost *mp_host = nullptr;
+    ENetHost* mp_host = nullptr;
     const std::string m_name;
 
     peer_id_t m_peerId = 0;

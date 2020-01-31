@@ -14,7 +14,7 @@ GLuint createTexture()
     return handle;
 }
 
-bool bufferImage(GLenum param, const std::string &file)
+bool bufferImage(GLenum param, const std::string& file)
 {
     sf::Image img;
     if (!img.loadFromFile(file)) {
@@ -27,7 +27,7 @@ bool bufferImage(GLenum param, const std::string &file)
     return true;
 }
 
-void destroyTexture(GLuint *texture)
+void destroyTexture(GLuint* texture)
 {
     glCheck(glDeleteTextures(1, texture));
     *texture = 0;
@@ -89,12 +89,12 @@ Texture2d::~Texture2d()
     destroy();
 }
 
-Texture2d::Texture2d(Texture2d &&other)
+Texture2d::Texture2d(Texture2d&& other)
 {
     *this = std::move(other);
 }
 
-Texture2d &Texture2d::operator=(Texture2d &&other)
+Texture2d& Texture2d::operator=(Texture2d&& other)
 {
     destroy();
     m_hasTexture = other.m_hasTexture;
@@ -103,7 +103,7 @@ Texture2d &Texture2d::operator=(Texture2d &&other)
     return *this;
 }
 
-void Texture2d::create(const std::string &file)
+void Texture2d::create(const std::string& file)
 {
     bind();
 
@@ -120,7 +120,7 @@ void Texture2d::create(const std::string &file)
 }
 
 void Texture2d::create(unsigned int width, unsigned int height,
-                       const sf::Uint8 *pixels)
+                       const sf::Uint8* pixels)
 {
     if (!m_handle) {
         m_handle = createTexture();
@@ -157,7 +157,7 @@ bool Texture2d::textureExists() const
     return m_hasTexture;
 }
 
-sf::Image loadRawImageFile(const std::string &file)
+sf::Image loadRawImageFile(const std::string& file)
 {
     sf::Image img;
     auto path = "res/" + file + ".png";
@@ -189,12 +189,12 @@ TextureArray::~TextureArray()
     destroy();
 }
 
-TextureArray::TextureArray(TextureArray &&other)
+TextureArray::TextureArray(TextureArray&& other)
 {
     *this = std::move(other);
 }
 
-TextureArray &TextureArray::operator=(TextureArray &&other)
+TextureArray& TextureArray::operator=(TextureArray&& other)
 {
     destroy();
     m_handle = other.m_handle;
@@ -226,7 +226,7 @@ void TextureArray::create(GLsizei numTextures, GLsizei textureSize)
                  numTextures, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 }
 
-GLuint TextureArray::addTexture(const std::string &file)
+GLuint TextureArray::addTexture(const std::string& file)
 {
     sf::Image image;
     if (!image.loadFromFile(file + ".png")) {

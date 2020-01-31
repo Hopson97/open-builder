@@ -31,7 +31,7 @@ struct FPSCounter final {
 };
 } // namespace
 
-EngineStatus runClientEngine(const ClientConfig &config)
+EngineStatus runClientEngine(const ClientConfig& config)
 {
     // Create the window
     Window window(config);

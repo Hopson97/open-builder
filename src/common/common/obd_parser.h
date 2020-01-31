@@ -9,5 +9,5 @@ struct DataBlock {
     std::unordered_map<std::string, std::string> data;
 };
 
-std::vector<DataBlock> getObdData(const std::string &filename);
-std::vector<DataBlock> getObdDataRaw(const std::string &obd);
+std::vector<DataBlock> getObdData(const std::string& filename);
+std::vector<DataBlock> getObdDataRaw(const std::string& obd);

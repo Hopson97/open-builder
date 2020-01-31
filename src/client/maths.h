@@ -5,9 +5,9 @@
 #include <array>
 #include <common/world/coordinate.h>
 
-glm::mat4 createProjectionViewMatrix(const glm::vec3 &position,
-                                     const glm::vec3 &rotation,
-                                     const glm::mat4 &projection);
+glm::mat4 createProjectionViewMatrix(const glm::vec3& position,
+                                     const glm::vec3& rotation,
+                                     const glm::mat4& projection);
 
 /**
  * @brief Rotate a matrix
@@ -15,7 +15,7 @@ glm::mat4 createProjectionViewMatrix(const glm::vec3 &position,
  * @param matrix The matrix to rotate
  * @param degrees Rotation axis in degrees
  */
-void rotateMatrix(glm::mat4 &matrix, const glm::vec3 &degrees);
+void rotateMatrix(glm::mat4& matrix, const glm::vec3& degrees);
 
 /**
  * @brief Translates a matrix
@@ -23,7 +23,7 @@ void rotateMatrix(glm::mat4 &matrix, const glm::vec3 &degrees);
  * @param matrix The matrix to translate
  * @param offset The amount of translate by
  */
-void translateMatrix(glm::mat4 &matrix, const glm::vec3 &offset);
+void translateMatrix(glm::mat4& matrix, const glm::vec3& offset);
 
 /**
  * @brief Scales a matrix
@@ -31,7 +31,7 @@ void translateMatrix(glm::mat4 &matrix, const glm::vec3 &offset);
  * @param matrix The matrix to scale
  * @param scalars The amount to scale each axis by
  */
-void scaleMatrix(glm::mat4 &matrix, const glm::vec3 &scalars);
+void scaleMatrix(glm::mat4& matrix, const glm::vec3& scalars);
 
 /**
  * @brief Scales a matrix
@@ -39,7 +39,7 @@ void scaleMatrix(glm::mat4 &matrix, const glm::vec3 &scalars);
  * @param matrix The matrix to scale
  * @param scalar The amount to scale the whole matrix by
  */
-void scaleMatrix(glm::mat4 &matrix, float scalar);
+void scaleMatrix(glm::mat4& matrix, float scalar);
 
 /**
  * @brief Creates a forwards-facing vector
@@ -47,7 +47,7 @@ void scaleMatrix(glm::mat4 &matrix, float scalar);
  * @param rotation The rotation axis to base the result on
  * @return glm::vec3 A vector that is forwards from the rotation vector
  */
-glm::vec3 forwardsVector(const glm::vec3 &rotation);
+glm::vec3 forwardsVector(const glm::vec3& rotation);
 
 /**
  * @brief Creates a backwards-facing vector
@@ -55,7 +55,7 @@ glm::vec3 forwardsVector(const glm::vec3 &rotation);
  * @param rotation The rotation axis to base the result on
  * @return glm::vec3 A vector that is backwards from the rotation vector
  */
-glm::vec3 backwardsVector(const glm::vec3 &rotation);
+glm::vec3 backwardsVector(const glm::vec3& rotation);
 
 /**
  * @brief Creates a left-facing vector
@@ -63,7 +63,7 @@ glm::vec3 backwardsVector(const glm::vec3 &rotation);
  * @param rotation The rotation axis to base the result on
  * @return glm::vec3 A vector that is left from the rotation vector
  */
-glm::vec3 leftVector(const glm::vec3 &rotation);
+glm::vec3 leftVector(const glm::vec3& rotation);
 
 /**
  * @brief Creates a right-facing vector
@@ -71,7 +71,7 @@ glm::vec3 leftVector(const glm::vec3 &rotation);
  * @param rotation The rotation axis to base the result on
  * @return glm::vec3 A vector that is right from the rotation vector
  */
-glm::vec3 rightVector(const glm::vec3 &rotation);
+glm::vec3 rightVector(const glm::vec3& rotation);
 
 /**
  * @brief Represents a stepable ray
@@ -79,7 +79,7 @@ glm::vec3 rightVector(const glm::vec3 &rotation);
  */
 class Ray {
   public:
-    Ray(const glm::vec3 &startPosition, const glm::vec3 &direction);
+    Ray(const glm::vec3& startPosition, const glm::vec3& direction);
 
     /**
      * @brief Step the raycast in its direction
@@ -96,13 +96,13 @@ class Ray {
      * @brief Gets the current endpoint of the ray
      * @return const glm::vec3& The endpoint of the ray
      */
-    const glm::vec3 &getEndpoint() const;
+    const glm::vec3& getEndpoint() const;
 
     /**
      * @brief Gets the previous endpoint of the ray
      * @return const glm::vec3& The previous endpoint of the ray
      */
-    const glm::vec3 &getLastPoint() const;
+    const glm::vec3& getLastPoint() const;
 
   private:
     glm::vec3 m_start;
@@ -113,14 +113,14 @@ class Ray {
 
 class ViewFrustum {
     struct Plane {
-        float distanceToPoint(const glm::vec3 &point) const;
+        float distanceToPoint(const glm::vec3& point) const;
 
         float distanceToOrigin;
         glm::vec3 normal;
     };
 
   public:
-    void update(const glm::mat4 &projViewMatrix) noexcept;
+    void update(const glm::mat4& projViewMatrix) noexcept;
 
     bool chunkIsInFrustum(ChunkPosition position) const noexcept;
 

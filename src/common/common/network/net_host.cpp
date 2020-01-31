@@ -7,12 +7,12 @@
 #include <thread>
 
 namespace {
-ENetHost *createHost(const ENetAddress *address, int connections)
+ENetHost* createHost(const ENetAddress* address, int connections)
 {
     return enet_host_create(address, connections, 2, 0, 0);
 }
 
-ENetPeer *connectHostTo(ENetHost *host, const std::string &ip)
+ENetPeer* connectHostTo(ENetHost* host, const std::string& ip)
 {
     ENetAddress address{};
     address.port = DEFAULT_PORT;
@@ -21,7 +21,7 @@ ENetPeer *connectHostTo(ENetHost *host, const std::string &ip)
         return nullptr;
     }
 
-    ENetPeer *peer = enet_host_connect(host, &address, 2, 0);
+    ENetPeer* peer = enet_host_connect(host, &address, 2, 0);
     if (!peer) {
         LOG("Connection", "Failed to connect to server (Game Full).");
         return nullptr;
@@ -39,7 +39,7 @@ ENetPeer *connectHostTo(ENetHost *host, const std::string &ip)
     }
 }
 
-int getPeerIdFromServer(ENetHost *host)
+int getPeerIdFromServer(ENetHost* host)
 {
     int id = -1;
     sf::Clock test;
@@ -62,13 +62,13 @@ int getPeerIdFromServer(ENetHost *host)
     return id;
 }
 
-ENetPacket *createPacket(sf::Packet &packet, u32 flags)
+ENetPacket* createPacket(sf::Packet& packet, u32 flags)
 {
     return enet_packet_create(packet.getData(), packet.getDataSize(), flags);
 }
 } // namespace
 
-NetworkHost::NetworkHost(std::string &&name)
+NetworkHost::NetworkHost(std::string&& name)
     : m_name(std::move(name))
 {
 }
@@ -78,7 +78,7 @@ NetworkHost::~NetworkHost()
     enet_host_destroy(mp_host);
 }
 
-std::optional<ENetPeer *> NetworkHost::createAsClient(const std::string &ip)
+std::optional<ENetPeer*> NetworkHost::createAsClient(const std::string& ip)
 {
     mp_host = createHost(0, 1);
     if (!mp_host) {
@@ -113,7 +113,7 @@ bool NetworkHost::createAsServer(int maxConnections)
     return mp_host;
 }
 
-void NetworkHost::disconnectFromPeer(ENetPeer *peer)
+void NetworkHost::disconnectFromPeer(ENetPeer* peer)
 {
     enet_peer_disconnect(peer, static_cast<u32>(m_peerId));
     ENetEvent event;
@@ -175,10 +175,10 @@ int NetworkHost::getMaxConnections() const
     return m_maxConnections;
 }
 
-void NetworkHost::sendToPeer(ENetPeer *peer, sf::Packet &packet, u8 channel,
+void NetworkHost::sendToPeer(ENetPeer* peer, sf::Packet& packet, u8 channel,
                              u32 flags)
 {
-    ENetPacket *pkt = createPacket(packet, flags);
+    ENetPacket* pkt = createPacket(packet, flags);
     QueuedPacket qp;
     qp.packet = pkt;
     qp.peer = peer;
@@ -187,9 +187,9 @@ void NetworkHost::sendToPeer(ENetPeer *peer, sf::Packet &packet, u8 channel,
     m_queue.push_back(qp);
 }
 
-void NetworkHost::broadcastToPeers(sf::Packet &packet, u8 channel, u32 flags)
+void NetworkHost::broadcastToPeers(sf::Packet& packet, u8 channel, u32 flags)
 {
-    ENetPacket *pkt = createPacket(packet, flags);
+    ENetPacket* pkt = createPacket(packet, flags);
     QueuedPacket qp;
     qp.packet = pkt;
     qp.style = QueuedPacket::Style::Broadcast;
@@ -257,7 +257,7 @@ void NetworkHost::tick()
     }
 }
 
-void NetworkHost::onCommandRecieve(ENetPeer *peer, const ENetPacket &enetPacket)
+void NetworkHost::onCommandRecieve(ENetPeer* peer, const ENetPacket& enetPacket)
 {
     sf::Packet packet;
     packet.append(enetPacket.data, enetPacket.dataLength);
@@ -271,7 +271,7 @@ void NetworkHost::flush()
     enet_host_flush(mp_host);
 }
 
-void NetworkHost::removePeerFromPacketQueue(ENetPeer *peer)
+void NetworkHost::removePeerFromPacketQueue(ENetPeer* peer)
 {
     for (auto itr = m_queue.cbegin(); itr != m_queue.cend();) {
         if (itr->style == QueuedPacket::Style::One &&

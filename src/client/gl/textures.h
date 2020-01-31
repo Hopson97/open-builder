@@ -30,15 +30,15 @@ class Texture2d final {
     Texture2d();
     ~Texture2d();
 
-    Texture2d(Texture2d &&other);
-    Texture2d &operator=(Texture2d &&other);
+    Texture2d(Texture2d&& other);
+    Texture2d& operator=(Texture2d&& other);
 
     Texture2d(const Texture2d&) = delete;
     Texture2d& operator=(const Texture2d&) = delete;
 
-    void create(const std::string &file);
+    void create(const std::string& file);
     void create(unsigned int width, unsigned int height,
-                const sf::Uint8 *pixels);
+                const sf::Uint8* pixels);
     void destroy();
     void bind() const;
     bool textureExists() const;
@@ -55,14 +55,14 @@ class TextureArray final {
     TextureArray();
     ~TextureArray();
 
-    TextureArray(TextureArray &&other);
-    TextureArray &operator=(TextureArray &&other);
+    TextureArray(TextureArray&& other);
+    TextureArray& operator=(TextureArray&& other);
 
     TextureArray(const TextureArray&) = delete;
     TextureArray& operator=(const TextureArray&) = delete;
 
     void create(GLsizei numTextures, GLsizei textureSize);
-    GLuint addTexture(const std::string &file);
+    GLuint addTexture(const std::string& file);
     void destroy();
     void bind() const;
 
@@ -75,6 +75,6 @@ class TextureArray final {
     GLuint m_textureSize = 0;
 };
 
-sf::Image loadRawImageFile(const std::string &file);
+sf::Image loadRawImageFile(const std::string& file);
 
 } // namespace gl

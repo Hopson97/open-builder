@@ -2,7 +2,7 @@
 
 #include <common/world/world_constants.h>
 
-ChunkMesh::ChunkMesh(const ChunkPosition &chunkPosition)
+ChunkMesh::ChunkMesh(const ChunkPosition& chunkPosition)
     : position(chunkPosition)
 {
     vertices.reserve(CHUNK_VOLUME * 2);
@@ -11,8 +11,8 @@ ChunkMesh::ChunkMesh(const ChunkPosition &chunkPosition)
     cardinalLights.reserve(CHUNK_VOLUME * 2);
 }
 
-void ChunkMesh::addFace(const MeshFace &face,
-                        const BlockPosition &blockPosition, int texture)
+void ChunkMesh::addFace(const MeshFace& face,
+                        const BlockPosition& blockPosition, int texture)
 {
     int index = 0;
     for (int i = 0; i < 4; i++) {
@@ -50,7 +50,7 @@ gl::VertexArray ChunkMesh::createBuffer()
     return vao;
 }
 
-ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition &chunkPosition)
+ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition& chunkPosition)
     : blockMesh(chunkPosition)
     , fluidMesh(chunkPosition)
 {

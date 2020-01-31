@@ -30,8 +30,8 @@ class VertexArray final {
     VertexArray();
     ~VertexArray();
 
-    VertexArray(VertexArray &&other);
-    VertexArray &operator=(VertexArray &&other);
+    VertexArray(VertexArray&& other);
+    VertexArray& operator=(VertexArray&& other);
 
     VertexArray(const VertexArray&) = delete;
     VertexArray& operator=(const VertexArray&) = delete;
@@ -42,9 +42,9 @@ class VertexArray final {
 
     Drawable getDrawable() const;
 
-    void addVertexBuffer(int magnitude, const std::vector<GLuint> &data);
-    void addVertexBuffer(int magnitude, const std::vector<GLfloat> &data);
-    void addIndexBuffer(const std::vector<GLuint> &indices);
+    void addVertexBuffer(int magnitude, const std::vector<GLuint>& data);
+    void addVertexBuffer(int magnitude, const std::vector<GLfloat>& data);
+    void addIndexBuffer(const std::vector<GLuint>& indices);
 
   private:
     void reset();

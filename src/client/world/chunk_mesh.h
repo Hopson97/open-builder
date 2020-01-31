@@ -10,8 +10,8 @@ struct MeshFace {
 };
 
 struct ChunkMesh {
-    ChunkMesh(const ChunkPosition &chunkPosition);
-    void addFace(const MeshFace &face, const BlockPosition &blockPosition,
+    ChunkMesh(const ChunkPosition& chunkPosition);
+    void addFace(const MeshFace& face, const BlockPosition& blockPosition,
                  int texture);
 
     gl::VertexArray createBuffer();
@@ -26,7 +26,7 @@ struct ChunkMesh {
 };
 
 struct ChunkMeshCollection {
-    ChunkMeshCollection(const ChunkPosition &chunkPosition);
+    ChunkMeshCollection(const ChunkPosition& chunkPosition);
     ChunkMesh blockMesh;
     ChunkMesh fluidMesh;
 };

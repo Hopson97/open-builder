@@ -100,7 +100,7 @@ enum class ServerCommand : command_t {
 };
 
 template <typename CommandType>
-sf::Packet &operator>>(sf::Packet &packet, CommandType &command)
+sf::Packet& operator>>(sf::Packet& packet, CommandType& command)
 {
     command_t commandId;
     packet >> commandId;
@@ -109,7 +109,7 @@ sf::Packet &operator>>(sf::Packet &packet, CommandType &command)
 }
 
 template <typename CommandType>
-sf::Packet &operator<<(sf::Packet &packet, CommandType command)
+sf::Packet& operator<<(sf::Packet& packet, CommandType command)
 {
     packet << static_cast<command_t>(command);
     return packet;

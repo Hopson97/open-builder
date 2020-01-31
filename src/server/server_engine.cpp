@@ -7,7 +7,7 @@
 #include <iostream>
 #include <thread>
 
-ServerLauncher::ServerLauncher(const ServerConfig &config, sf::Time timeout)
+ServerLauncher::ServerLauncher(const ServerConfig& config, sf::Time timeout)
     : m_server(config)
     , m_config(config)
     , m_timeout(timeout)

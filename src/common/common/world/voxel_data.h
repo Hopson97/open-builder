@@ -45,15 +45,15 @@ struct VoxelData {
 
 class VoxelDataManager {
   public:
-    block_t addVoxelData(const VoxelData &voxel);
+    block_t addVoxelData(const VoxelData& voxel);
 
-    const VoxelData &getVoxelData(block_t id) const;
+    const VoxelData& getVoxelData(block_t id) const;
 
-    const VoxelData &getVoxelData(const std::string &name) const;
+    const VoxelData& getVoxelData(const std::string& name) const;
 
-    block_t getVoxelId(const std::string &name) const;
+    block_t getVoxelId(const std::string& name) const;
 
-    const std::vector<VoxelData> &getVoxelData() const;
+    const std::vector<VoxelData>& getVoxelData() const;
 
   private:
     std::vector<VoxelData> m_voxels;

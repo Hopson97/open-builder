@@ -12,7 +12,7 @@ GLuint genVbo()
 }
 
 template <typename T>
-void bufferData(const std::vector<T> &data)
+void bufferData(const std::vector<T>& data)
 {
     glCheck(glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(T), data.data(),
                          GL_STATIC_DRAW));
@@ -20,7 +20,7 @@ void bufferData(const std::vector<T> &data)
 
 void vertexAttribPointer(GLuint index, GLint mag, GLenum type)
 {
-    glCheck(glVertexAttribPointer(index, mag, type, GL_FALSE, 0, (GLvoid *)0));
+    glCheck(glVertexAttribPointer(index, mag, type, GL_FALSE, 0, (GLvoid*)0));
 }
 } // namespace
 
@@ -60,12 +60,12 @@ VertexArray::~VertexArray()
     destroy();
 }
 
-VertexArray::VertexArray(VertexArray &&other)
+VertexArray::VertexArray(VertexArray&& other)
 {
     *this = std::move(other);
 }
 
-VertexArray &VertexArray::operator=(VertexArray &&other)
+VertexArray& VertexArray::operator=(VertexArray&& other)
 {
     destroy();
     m_bufferObjects = std::move(other.m_bufferObjects);
@@ -100,7 +100,7 @@ Drawable VertexArray::getDrawable() const
 }
 
 void VertexArray::addVertexBuffer(int magnitude,
-                                  const std::vector<GLuint> &data)
+                                  const std::vector<GLuint>& data)
 {
     bind();
     GLuint vertexBuffer = genVbo();
@@ -111,7 +111,7 @@ void VertexArray::addVertexBuffer(int magnitude,
 }
 
 void VertexArray::addVertexBuffer(int magnitude,
-                                  const std::vector<GLfloat> &data)
+                                  const std::vector<GLfloat>& data)
 {
     bind();
     GLuint vertexBuffer = genVbo();
@@ -121,7 +121,7 @@ void VertexArray::addVertexBuffer(int magnitude,
     m_bufferObjects.push_back(vertexBuffer);
 }
 
-void VertexArray::addIndexBuffer(const std::vector<GLuint> &indices)
+void VertexArray::addIndexBuffer(const std::vector<GLuint>& indices)
 {
     bind();
 

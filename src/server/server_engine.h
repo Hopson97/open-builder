@@ -12,7 +12,7 @@ class ServerLauncher {
      * @param timeout Time to wait before server exit after no connections are
      * connected
      */
-    ServerLauncher(const ServerConfig &config, sf::Time timeout);
+    ServerLauncher(const ServerConfig& config, sf::Time timeout);
 
     /**
      * @brief Run the server engine

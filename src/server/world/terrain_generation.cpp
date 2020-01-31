@@ -35,7 +35,7 @@ struct NoiseOptions {
 };
 
 // THANKS! Karasa and K.jpg for help with this algo
-float rounded(const glm::vec2 &coord)
+float rounded(const glm::vec2& coord)
 {
     auto bump = [](float t) {
         return glm::max(0.0f, 1.0f - std::pow(t, 6.0f));
@@ -44,8 +44,8 @@ float rounded(const glm::vec2 &coord)
     return b * 0.9f;
 }
 
-float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
-                 const NoiseOptions &options, float seed)
+float getNoiseAt(const glm::vec2& blockPosition, const glm::vec2& chunkPosition,
+                 const NoiseOptions& options, float seed)
 {
     // Get voxel X/Z positions
     float voxelX = blockPosition.x + chunkPosition.x * CHUNK_SIZE;
@@ -71,7 +71,7 @@ float getNoiseAt(const glm::vec2 &blockPosition, const glm::vec2 &chunkPosition,
 
 } // namespace
 
-std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
+std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
                                                  float worldSize, float seed)
 {
     const float WOLRD_SIZE = worldSize * CHUNK_SIZE;
@@ -116,8 +116,8 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
     return heightMap;
 }
 
-void createSmoothTerrain(Chunk &chunk,
-                         const std::array<int, CHUNK_AREA> &heightMap,
+void createSmoothTerrain(Chunk& chunk,
+                         const std::array<int, CHUNK_AREA>& heightMap,
                          int baseChunk)
 {
     auto base = chunk.getPosition().y - baseChunk;
@@ -145,7 +145,7 @@ void createSmoothTerrain(Chunk &chunk,
     }
 }
 
-void makeFlatTerrain(Chunk *chunk, int worldSize)
+void makeFlatTerrain(Chunk* chunk, int worldSize)
 {
     auto cp = chunk->getPosition();
     auto cx = cp.x;
@@ -158,7 +158,7 @@ void makeFlatTerrain(Chunk *chunk, int worldSize)
     }
 }
 
-void makeStepTerrain(Chunk *chunk)
+void makeStepTerrain(Chunk* chunk)
 {
     for (int y = 0; y < CHUNK_SIZE; y++) {
         int realY = y + chunk->getPosition().y * CHUNK_SIZE;
@@ -175,7 +175,7 @@ void makeStepTerrain(Chunk *chunk)
     }
 }
 
-void makeRandomTerrain(Chunk *chunk)
+void makeRandomTerrain(Chunk* chunk)
 {
     for (int y = 0; y < CHUNK_SIZE; y++) {
         for (int z = 0; z < CHUNK_SIZE; z++) {
@@ -186,7 +186,7 @@ void makeRandomTerrain(Chunk *chunk)
     }
 }
 
-float generateSeed(const std::string &input)
+float generateSeed(const std::string& input)
 {
     std::hash<std::string> strhash;
 

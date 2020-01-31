@@ -56,7 +56,7 @@ struct GuiImage {
     Color3 m_color;
 
     // Setters (TODO: Getters?)
-    void setSource(const std::string &imageSource);
+    void setSource(const std::string& imageSource);
     void setSize(GDim new_size);
     void setPosition(GDim new_pos);
     void setColor(Color3 new_color);
@@ -65,7 +65,7 @@ struct GuiImage {
 class Gui final {
   public:
     Gui();
-  
+
     void addUsertypes(sol::table& m_lua);
     void processKeypress(sf::Event e);
     void processMouseEvent(sf::Event e);

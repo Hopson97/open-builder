@@ -4,7 +4,7 @@
 #include <common/world/chunk.h>
 #include <thread>
 
-void Client::sendPlayerPosition(const glm::vec3 &position)
+void Client::sendPlayerPosition(const glm::vec3& position)
 {
     sf::Packet packet;
     packet << ServerCommand::PlayerPosition << NetworkHost::getPeerId()
@@ -12,7 +12,7 @@ void Client::sendPlayerPosition(const glm::vec3 &position)
     NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
 }
 
-void Client::sendBlockUpdate(const BlockUpdate &update)
+void Client::sendBlockUpdate(const BlockUpdate& update)
 {
     sf::Packet packet;
     packet << ServerCommand::BlockEdit << update.position.x << update.position.y
@@ -20,7 +20,7 @@ void Client::sendBlockUpdate(const BlockUpdate &update)
     NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
 }
 
-void Client::sendPlayerSkin(const sf::Image &playerSkin)
+void Client::sendPlayerSkin(const sf::Image& playerSkin)
 {
     // Check the image is the right size
     if (playerSkin.getSize() != sf::Vector2u(32, 64)) {
@@ -35,27 +35,27 @@ void Client::sendPlayerSkin(const sf::Image &playerSkin)
                             ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Client::onPeerConnect([[maybe_unused]] ENetPeer *peer)
+void Client::onPeerConnect([[maybe_unused]] ENetPeer* peer)
 {
 }
 
-void Client::onPeerDisconnect([[maybe_unused]] ENetPeer *peer)
+void Client::onPeerDisconnect([[maybe_unused]] ENetPeer* peer)
 {
     m_status = EngineStatus::ExitServerDisconnect;
 }
 
-void Client::onPeerTimeout([[maybe_unused]] ENetPeer *peer)
+void Client::onPeerTimeout([[maybe_unused]] ENetPeer* peer)
 {
     m_status = EngineStatus::ExitServerTimeout;
 }
 
-void Client::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
-                              sf::Packet &packet, command_t command)
+void Client::onCommandRecieve([[maybe_unused]] ENetPeer* peer,
+                              sf::Packet& packet, command_t command)
 {
     m_commandDispatcher.execute(*this, command, packet);
 }
 
-void Client::onPlayerJoin(sf::Packet &packet)
+void Client::onPlayerJoin(sf::Packet& packet)
 {
     peer_id_t id = 0;
     packet >> id;
@@ -64,7 +64,7 @@ void Client::onPlayerJoin(sf::Packet &packet)
     LOGVAR("Client", "Player joined, client id: ", (int)id);
 }
 
-void Client::onPlayerLeave(sf::Packet &packet)
+void Client::onPlayerLeave(sf::Packet& packet)
 {
     peer_id_t id = 0;
     packet >> id;
@@ -73,7 +73,7 @@ void Client::onPlayerLeave(sf::Packet &packet)
     LOGVAR("Client", "Player left, client id: ", (int)id);
 }
 
-void Client::onSnapshot(sf::Packet &packet)
+void Client::onSnapshot(sf::Packet& packet)
 {
     u16 updateEntityCount = 0;
     packet >> updateEntityCount;
@@ -82,14 +82,14 @@ void Client::onSnapshot(sf::Packet &packet)
         float x, y, z;
         packet >> id >> x >> y >> z;
         if (id != NetworkHost::getPeerId()) {
-            auto *p = &m_entities[id];
+            auto* p = &m_entities[id];
             p->position = {x, y, z};
             p->active = true;
         }
     }
 }
 
-void Client::onChunkData(sf::Packet &packet)
+void Client::onChunkData(sf::Packet& packet)
 {
     // Get position of the recieved chunk, and create a chunk
     ChunkPosition position;
@@ -97,7 +97,7 @@ void Client::onChunkData(sf::Packet &packet)
 
     if (!m_chunks.manager.hasChunk(position)) {
 
-        Chunk &chunk = m_chunks.manager.addChunk(position);
+        Chunk& chunk = m_chunks.manager.addChunk(position);
 
         u32 size;
         CompressedBlocks compressed;
@@ -117,7 +117,7 @@ void Client::onChunkData(sf::Packet &packet)
     }
 }
 
-void Client::onSpawnPoint(sf::Packet &packet)
+void Client::onSpawnPoint(sf::Packet& packet)
 {
     assert(mp_player);
     if (mp_player) {
@@ -126,7 +126,7 @@ void Client::onSpawnPoint(sf::Packet &packet)
     }
 }
 
-void Client::onBlockUpdate(sf::Packet &packet)
+void Client::onBlockUpdate(sf::Packet& packet)
 {
     u16 count = 0;
     packet >> count;
@@ -138,19 +138,19 @@ void Client::onBlockUpdate(sf::Packet &packet)
     }
 }
 
-void Client::onPlayerSkinReceive(sf::Packet &packet)
+void Client::onPlayerSkinReceive(sf::Packet& packet)
 {
     peer_id_t id = 0;
     packet >> id;
 
     LOGVAR("Client", "Received skin for peer", (int)id);
 
-    sf::Uint8 *skinPixels =
-        (sf::Uint8 *)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
+    sf::Uint8* skinPixels =
+        (sf::Uint8*)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
     m_entities[id].playerSkin.create(32, 64, skinPixels);
 }
 
-void Client::onGameRegistryData(sf::Packet &packet)
+void Client::onGameRegistryData(sf::Packet& packet)
 {
     //  ====
     //  Get all blocks from the server
@@ -158,7 +158,7 @@ void Client::onGameRegistryData(sf::Packet &packet)
     // Maps tewxture names to their respective IDs in the
     // OpenGL texture array
     std::unordered_map<std::string, GLuint> textureMap;
-    auto getTexture = [&textureMap, this](const std::string &name) {
+    auto getTexture = [&textureMap, this](const std::string& name) {
         auto itr = textureMap.find(name);
         if (itr == textureMap.end()) {
             auto id = m_voxelTextures.addTexture(name);

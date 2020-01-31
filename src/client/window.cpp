@@ -4,7 +4,7 @@
 #include <SFML/Window/Event.hpp>
 #include <glad/glad.h>
 
-Window::Window(const ClientConfig &config)
+Window::Window(const ClientConfig& config)
 {
     window.setKeyRepeatEnabled(false);
     if (config.fullScreen) {
@@ -24,7 +24,7 @@ Window::Window(const ClientConfig &config)
     }
 }
 
-void Window::create(const sf::VideoMode &mode, u32 style)
+void Window::create(const sf::VideoMode& mode, u32 style)
 {
     sf::ContextSettings settings;
     settings.depthBits = 24;

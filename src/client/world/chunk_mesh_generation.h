@@ -6,5 +6,5 @@
 class VoxelDataManager;
 class Chunk;
 
-ChunkMeshCollection makeChunkMesh(const Chunk &chunk,
-                                  const VoxelDataManager &voxelData);
+ChunkMeshCollection makeChunkMesh(const Chunk& chunk,
+                                  const VoxelDataManager& voxelData);

@@ -5,10 +5,10 @@
 
 void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id,
                                 GLenum severity, GLsizei length,
-                                const char *message, const void *)
+                                const char* message, const void*)
 {
 
-    const char *sev = "";
+    const char* sev = "";
     switch (severity) {
         case GL_DEBUG_SEVERITY_HIGH:
             sev = "\e[91m";
@@ -24,7 +24,7 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id,
             break;
     }
 
-    const char *src = "?";
+    const char* src = "?";
     switch (source) {
         case GL_DEBUG_SOURCE_API:
             src = "API";
@@ -46,7 +46,7 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id,
             break;
     }
 
-    const char *type_str = "?";
+    const char* type_str = "?";
     switch (type) {
         case GL_DEBUG_TYPE_ERROR:
             type_str = "error";
@@ -91,7 +91,7 @@ void initGLDebug()
                           GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 }
 
-void glCheckError(const char *file, unsigned int line, const char *expression)
+void glCheckError(const char* file, unsigned int line, const char* expression)
 {
     // Get the last error
     GLenum errorCode = glGetError();

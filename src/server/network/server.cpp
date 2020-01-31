@@ -10,7 +10,7 @@
 
 #include <common/obd_parser.h>
 
-Server::Server(const ServerConfig &config)
+Server::Server(const ServerConfig& config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
 {
@@ -21,7 +21,7 @@ Server::Server(const ServerConfig &config)
     // clang-format on
 
     auto data = m_script.addTable("data");
-    data["addVoxel"] = [&](const sol::table &voxelData) {
+    data["addVoxel"] = [&](const sol::table& voxelData) {
         VoxelData voxel;
 
         std::cout << "Created voxel\n";
@@ -62,7 +62,7 @@ Server::Server(const ServerConfig &config)
             int maxHeight =
                 *std::max_element(heightMap.cbegin(), heightMap.cend());
             for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
-                Chunk &chunk = m_world.chunks.addChunk({x, y, z});
+                Chunk& chunk = m_world.chunks.addChunk({x, y, z});
                 createSmoothTerrain(chunk, heightMap, 0);
                 m_world.chunks.ensureNeighbours({x, y, z});
             }
@@ -70,18 +70,18 @@ Server::Server(const ServerConfig &config)
     }
 }
 
-void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
+void Server::sendChunk(peer_id_t peerId, const ChunkPosition& position)
 {
     if (!m_connectedClients[peerId].connected) {
         return;
     }
 
-    const Chunk &chunk = [this, &position]() {
+    const Chunk& chunk = [this, &position]() {
         if (m_world.chunks.hasChunk(position)) {
             return m_world.chunks.getChunk(position);
         }
         else {
-            Chunk &c = m_world.chunks.addChunk(position);
+            Chunk& c = m_world.chunks.addChunk(position);
             return c;
         }
     }();
@@ -93,7 +93,7 @@ void Server::sendChunk(peer_id_t peerId, const ChunkPosition &position)
 
     auto compressedChunk = compressBlockData(chunk.blocks);
     packet << static_cast<u32>(compressedChunk.size());
-    for (auto &block : compressedChunk) {
+    for (auto& block : compressedChunk) {
         packet << block.first << block.second;
     }
 
@@ -126,9 +126,9 @@ void Server::sendGameData(peer_id_t peerId)
     sf::Packet packet;
     packet << ClientCommand::GameRegistryData;
 
-    auto &data = m_voxelData.getVoxelData();
+    auto& data = m_voxelData.getVoxelData();
     packet << static_cast<u16>(data.size());
-    for (auto &voxel : data) {
+    for (auto& voxel : data) {
         u8 mesh = static_cast<u8>(voxel.meshStyle);
         u8 type = static_cast<u8>(voxel.type);
         u8 isCollidable = static_cast<u8>(voxel.isCollidable);
@@ -145,7 +145,7 @@ void Server::sendGameData(peer_id_t peerId)
                ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Server::onPeerConnect(ENetPeer *peer)
+void Server::onPeerConnect(ENetPeer* peer)
 {
     int slot = findEmptySlot();
     if (slot >= 0) {
@@ -169,7 +169,7 @@ void Server::onPeerConnect(ENetPeer *peer)
 
         // Send the spawn chunks
         sf::Packet spawn;
-        auto &player = m_entities[id];
+        auto& player = m_entities[id];
         player.position = findPlayerSpawnPosition();
         player.m_skinData.resize(8192);
         spawn << ClientCommand::SpawnPoint << player.position.x
@@ -189,7 +189,7 @@ void Server::onPeerConnect(ENetPeer *peer)
         }
 
         // Send the inital world to the client
-        for (auto &chunk : m_world.chunks.chunks()) {
+        for (auto& chunk : m_world.chunks.chunks()) {
             sendChunk(id, chunk.second.getPosition());
         }
 
@@ -203,23 +203,23 @@ void Server::onPeerConnect(ENetPeer *peer)
     }
 }
 
-void Server::onPeerDisconnect(ENetPeer *peer)
+void Server::onPeerDisconnect(ENetPeer* peer)
 {
     removePeer(peer->connectID);
 }
 
-void Server::onPeerTimeout(ENetPeer *peer)
+void Server::onPeerTimeout(ENetPeer* peer)
 {
     removePeer(peer->connectID);
 }
 
-void Server::onCommandRecieve([[maybe_unused]] ENetPeer *peer,
-                              sf::Packet &packet, command_t command)
+void Server::onCommandRecieve([[maybe_unused]] ENetPeer* peer,
+                              sf::Packet& packet, command_t command)
 {
     m_commandDispatcher.execute(*this, command, packet);
 }
 
-void Server::onPlayerPosition(sf::Packet &packet)
+void Server::onPlayerPosition(sf::Packet& packet)
 {
     peer_id_t id = 0;
     packet >> id;
@@ -227,7 +227,7 @@ void Server::onPlayerPosition(sf::Packet &packet)
         m_entities[id].position.z;
 }
 
-void Server::onBlockEdit(sf::Packet &packet)
+void Server::onBlockEdit(sf::Packet& packet)
 {
     BlockPosition position;
     block_t block;
@@ -235,7 +235,7 @@ void Server::onBlockEdit(sf::Packet &packet)
     m_world.blockUpdates.push_back({position, block});
 }
 
-void Server::onPlayerSkin(sf::Packet &packet)
+void Server::onPlayerSkin(sf::Packet& packet)
 {
     LOGVAR("Server",
            "Received player skin, packet size: ", (int)packet.getDataSize());
@@ -251,8 +251,8 @@ void Server::onPlayerSkin(sf::Packet &packet)
 
     // Copy contents into a buffer vector which then gets copied into the
     // player skin data
-    sf::Uint8 *skinPixels =
-        (sf::Uint8 *)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
+    sf::Uint8* skinPixels =
+        (sf::Uint8*)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
     std::vector<sf::Uint8> newPixels(skinPixels, skinPixels + 8192);
 
     m_entities[id].m_skinData.swap(newPixels);
@@ -270,7 +270,7 @@ void Server::update()
             u16 size = static_cast<u16>(m_world.blockUpdates.size());
             packet << ClientCommand::BlockUpdate << size;
 
-            for (auto &blockUpdate : m_world.blockUpdates) {
+            for (auto& blockUpdate : m_world.blockUpdates) {
                 auto chunkPosition = toChunkPosition(blockUpdate.position);
                 m_world.chunks.ensureNeighbours(chunkPosition);
                 m_world.chunks.setBlock(blockUpdate.position,
@@ -311,7 +311,7 @@ int Server::findEmptySlot() const
     return -1;
 }
 
-void Server::addPeer(ENetPeer *peer, peer_id_t id)
+void Server::addPeer(ENetPeer* peer, peer_id_t id)
 {
     LOGVAR("Server", "New Peer, Peer Id:", (int)id);
     m_connectedClients[id].peer = peer;
@@ -323,7 +323,7 @@ void Server::removePeer(u32 connectionId)
 {
     auto itr = std::find_if(
         m_connectedClients.begin(), m_connectedClients.end(),
-        [this, &connectionId](auto &conn) {
+        [this, &connectionId](auto& conn) {
             return conn.peer && conn.peer->connectID == connectionId;
         });
 
@@ -352,7 +352,7 @@ glm::vec3 Server::findPlayerSpawnPosition()
     for (int chunkY = m_worldSize - 1; chunkY >= 0; chunkY--) {
         auto chunkPosition = worldToChunkPosition({x, 0, z});
         chunkPosition.y = chunkY;
-        auto &spawn = m_world.chunks.getChunk(chunkPosition);
+        auto& spawn = m_world.chunks.getChunk(chunkPosition);
 
         for (int blockY = CHUNK_SIZE - 1; blockY >= 0; blockY--) {
             auto blockPosition = toLocalBlockPosition({x, 0, z});
