@@ -1,5 +1,20 @@
 #include "voxel_data.h"
 
+VoxelDataManager::VoxelDataManager()
+    : m_commonVoxels(static_cast<size_t>(CommonVoxel::Count))
+{
+}
+
+void VoxelDataManager::initCommonVoxelTypes()
+{
+    m_commonVoxels[(u8)CommonVoxel::Air] = getVoxelId("openbuilder_air");
+    m_commonVoxels[(u8)CommonVoxel::Stone] = getVoxelId("openbuilder_stone");
+    m_commonVoxels[(u8)CommonVoxel::Sand] = getVoxelId("openbuilder_sand");
+    m_commonVoxels[(u8)CommonVoxel::Water] = getVoxelId("openbuilder_water");
+    m_commonVoxels[(u8)CommonVoxel::Wood] = getVoxelId("openbuilder_wood");
+    m_commonVoxels[(u8)CommonVoxel::Leaf] = getVoxelId("openbuilder_leaf");
+}
+
 block_t VoxelDataManager::addVoxelData(const VoxelData &voxel)
 {
     m_voxelMap.emplace(voxel.name, m_voxels.size());
@@ -16,6 +31,12 @@ const VoxelData &VoxelDataManager::getVoxelData(block_t id) const
 const VoxelData &VoxelDataManager::getVoxelData(const std::string &name) const
 {
     return m_voxels.at(getVoxelId(name));
+}
+
+block_t VoxelDataManager::getVoxelId(CommonVoxel commonVoxel) const
+{
+    // TODO Change to operator[] once can be sure it is working
+    return m_commonVoxels.at((u8)commonVoxel);
 }
 
 block_t VoxelDataManager::getVoxelId(const std::string &name) const

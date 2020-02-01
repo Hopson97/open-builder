@@ -25,6 +25,21 @@ enum class VoxelType : u8 {
     Error,
 };
 
+/**
+ * @brief Very common voxel types
+ * The purpose of this is to give quick access to common voxel from client/server engine
+ */
+enum class CommonVoxel : block_t {
+    Air = 0,
+    Stone,
+    Sand,
+    Water,
+    Wood,
+    Leaf,
+
+    Count
+};
+
 struct VoxelData {
     block_t id = 0;
     std::string name;
@@ -45,17 +60,21 @@ struct VoxelData {
 
 class VoxelDataManager {
   public:
+    VoxelDataManager();
+    void initCommonVoxelTypes();
+
     block_t addVoxelData(const VoxelData &voxel);
 
     const VoxelData &getVoxelData(block_t id) const;
-
     const VoxelData &getVoxelData(const std::string &name) const;
 
+    block_t getVoxelId(CommonVoxel commonVoxel) const;
     block_t getVoxelId(const std::string &name) const;
 
     const std::vector<VoxelData> &getVoxelData() const;
 
   private:
     std::vector<VoxelData> m_voxels;
+    std::vector<block_t> m_commonVoxels;
     std::unordered_map<std::string, block_t> m_voxelMap;
 };
