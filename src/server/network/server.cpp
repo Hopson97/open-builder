@@ -55,6 +55,8 @@ Server::Server(const ServerConfig &config)
 
     m_script.runLuaFile("game/server/main.lua");
 
+    m_voxelData.initCommonVoxelTypes();
+
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
             std::array<int, CHUNK_AREA> heightMap = createChunkHeightMap(
@@ -63,7 +65,7 @@ Server::Server(const ServerConfig &config)
                 *std::max_element(heightMap.cbegin(), heightMap.cend());
             for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
                 Chunk &chunk = m_world.chunks.addChunk({x, y, z});
-                createSmoothTerrain(chunk, heightMap, 0);
+                createSmoothTerrain(chunk, heightMap, m_voxelData, 0);
                 m_world.chunks.ensureNeighbours({x, y, z});
             }
         }

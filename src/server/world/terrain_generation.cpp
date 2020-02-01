@@ -118,6 +118,7 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
+                         const VoxelDataManager &voxelData,
                          int baseChunk)
 {
     auto base = chunk.getPosition().y - baseChunk;
@@ -129,16 +130,25 @@ void createSmoothTerrain(Chunk &chunk,
                 int blockY = base * CHUNK_SIZE + y;
 
                 if (blockY > height) {
-                    chunk.qSetBlock({x, y, z}, blockY < 32 ? 4 : 0);
+                    if (blockY < WATER_LEVEL) {
+                        chunk.qSetBlock({x, y, z}, voxelData.getVoxelId(
+                                                       CommonVoxel::Water));
+                    }
                 }
                 else if (blockY <= height) {
-                    chunk.qSetBlock({x, y, z}, blockY < 35 ? 5 : 1);
+                    chunk.qSetBlock(
+                        {x, y, z},
+                        blockY < WATER_LEVEL + 3
+                            ? voxelData.getVoxelId(CommonVoxel::Sand)
+                            : voxelData.getVoxelId(CommonVoxel::Grass));
                 }
                 else if (blockY > height - 5) {
-                    chunk.qSetBlock({x, y, z}, 2);
+                    chunk.qSetBlock({x, y, z},
+                                    voxelData.getVoxelId(CommonVoxel::Leaf));
                 }
                 else {
-                    chunk.qSetBlock({x, y, z}, 5);
+                    chunk.qSetBlock({x, y, z},
+                                    voxelData.getVoxelId(CommonVoxel::Stone));
                 }
             }
         }

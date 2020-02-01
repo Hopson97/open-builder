@@ -31,6 +31,8 @@ enum class VoxelType : u8 {
  */
 enum class CommonVoxel : block_t {
     Air = 0,
+    Grass,
+    Dirt,
     Stone,
     Sand,
     Water,
