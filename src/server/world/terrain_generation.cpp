@@ -144,49 +144,46 @@ void createSmoothTerrain(Chunk &chunk,
 
     auto base = chunk.getPosition().y - baseChunk;
 
-
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             int height = heightMap[z * CHUNK_SIZE + x];
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 int blockY = base * CHUNK_SIZE + y;
+                block_t block = 0;
 
                 if (blockY > height) {
                     if (blockY < WATER_LEVEL) {
-                        chunk.qSetBlock({x, y, z}, voxelData.getVoxelId(
-                                                       CommonVoxel::Water));
+                        block = voxelData.getVoxelId(CommonVoxel::Water);
                     }
                 }
                 else if (blockY == height) {
                     if (blockY < WATER_LEVEL + 3) {
-                        chunk.qSetBlock({x, y, z}, voxelData.getVoxelId(
-                                                       CommonVoxel::Sand));
+                        block = voxelData.getVoxelId(CommonVoxel::Sand);
                     }
                     else {
-                        if (treeDist(rng) < 10)
-                    
-                        createBasicTree(chunk, {x, y + 1, z}, voxelData, rng);
+                        if (treeDist(rng) < 10) {
+                            createBasicTree(chunk, {x, y + 1, z}, voxelData,
+                                            rng);
+                            block = voxelData.getVoxelId(CommonVoxel::Dirt);
+                        }
+                        else {
+                            block = voxelData.getVoxelId(CommonVoxel::Grass);
+                        }
                     }
-
-                    chunk.qSetBlock(
-                        {x, y, z},
-                        blockY < WATER_LEVEL + 3
-                            ? voxelData.getVoxelId(CommonVoxel::Sand)
-                            : voxelData.getVoxelId(CommonVoxel::Grass));
                 }
                 else if (blockY > height - 5) {
-                    chunk.qSetBlock({x, y, z},
-                                    voxelData.getVoxelId(CommonVoxel::Dirt));
+                    block = voxelData.getVoxelId(CommonVoxel::Dirt);
                 }
                 else {
-                    chunk.qSetBlock({x, y, z},
-                                    voxelData.getVoxelId(CommonVoxel::Stone));
+                    block = voxelData.getVoxelId(CommonVoxel::Stone);
+                }
+                if (block > 0) {
+                    chunk.qSetBlock({x, y, z}, block);
                 }
             }
         }
     }
 }
-
 void makeFlatTerrain(Chunk *chunk, int worldSize)
 {
     auto cp = chunk->getPosition();
@@ -237,52 +234,3 @@ float generateSeed(const std::string &input)
     std::memcpy(&seed_float, &hash, sizeof(float));
     return seed_float;
 }
-
-/*
-void createSmoothTerrain(Chunk &chunk,
-                         const std::array<int, CHUNK_AREA> &heightMap,
-                         const VoxelDataManager &voxelData, int baseChunk)
-{
-
-    // TO DO: Eventully tree gen chance stuff can be done from lua
-    std::minstd_rand rng;
-    std::uniform_int_distribution<> treeDist(0, 200);
-    rng.seed(std::time(nullptr));
-
-    auto base = chunk.getPosition().y - baseChunk;
-
-    for (int z = 0; z < CHUNK_SIZE; z++) {
-        for (int x = 0; x < CHUNK_SIZE; x++) {
-            int height = heightMap[z * CHUNK_SIZE + x];
-            for (int y = 0; y < CHUNK_SIZE; y++) {
-                int blockY = base * CHUNK_SIZE + y;
-                block_t block = 0;
-
-                if (blockY > height) {
-                    if (blockY < WATER_LEVEL) {
-                        block = voxelData.getVoxelId(CommonVoxel::Water);
-                    }
-                }
-                else if (blockY == height) {
-                    if (treeDist(rng) < 10) {
-                        createBasicTree(chunk, {x, y + 1, z}, voxelData, rng);
-                    }
-                    if (blockY < WATER_LEVEL + 3) {
-                        block = voxelData.getVoxelId(CommonVoxel::Sand);
-                    }
-                    else {
-                        block = voxelData.getVoxelId(CommonVoxel::Grass);
-                    }
-                }
-                else if (blockY > height - 5) {
-                    block = voxelData.getVoxelId(CommonVoxel::Dirt);
-                }
-                else {
-                    block = voxelData.getVoxelId(CommonVoxel::Stone);
-                }
-                chunk.qSetBlock({x, y, z}, block);
-            }
-        }
-    }
-}
-*/
