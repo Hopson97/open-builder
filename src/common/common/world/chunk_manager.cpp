@@ -39,7 +39,9 @@ void ChunkManager::setBlock(const BlockPosition &blockPosition, block_t block)
     if (itr != m_chunks.cend()) {
         itr->second.qSetBlock(toLocalBlockPosition(blockPosition), block);
     }
-    assert(itr != m_chunks.end());
+    else {
+        //TODO This...
+    }
 }
 
 bool ChunkManager::hasChunk(const ChunkPosition &chunk) const
