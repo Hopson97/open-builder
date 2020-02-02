@@ -44,14 +44,32 @@ void createBasicTree(Chunk &chunk, const BlockPosition &blockPosition,
         chunk.setBlock({bx, by + y, bz}, wood);
     }
 
-    int leavesHeight = trunkHeight + 1;
-    for (int y = -2; y <= 2; y++) {
+    int leavesHeight = trunkHeight;
+
+    for (int y = 0; y <= 1; y++) {
         for (int x = -2; x <= 2; x++) {
             for (int z = -2; z <= 2; z++) {
                 chunk.setBlock({bx + x, by + leavesHeight + y, bz + z}, leaf);
             }
+        }  
+    }
+
+    for (int y = 2; y <= 3; y++) {
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                chunk.setBlock({bx + x, by + leavesHeight + y, bz + z}, leaf);
+            }
         }   
     }
+    chunk.setBlock({bx + 2, by + leavesHeight + 1, bz + 2}, 0);
+    chunk.setBlock({bx - 2, by + leavesHeight + 1, bz + 2}, 0);
+    chunk.setBlock({bx + 2, by + leavesHeight + 1, bz - 2}, 0);
+    chunk.setBlock({bx - 2, by + leavesHeight + 1, bz - 2}, 0);
+
+    chunk.setBlock({bx + 1, by + leavesHeight + 3, bz + 1}, 0);
+    chunk.setBlock({bx - 1, by + leavesHeight + 3, bz + 1}, 0);
+    chunk.setBlock({bx + 1, by + leavesHeight + 3, bz - 1}, 0);
+    chunk.setBlock({bx - 1, by + leavesHeight + 3, bz - 1}, 0);
 }
 
 struct NoiseOptions {
