@@ -40,11 +40,7 @@ void createBasicTree(Chunk &chunk, const BlockPosition &blockPosition,
     block_t wood = voxels.getVoxelId(CommonVoxel::Wood);
     block_t leaf = voxels.getVoxelId(CommonVoxel::Leaf);
 
-    for (int y = 0; y < trunkHeight; y++) {
-        chunk.setBlock({bx, by + y, bz}, wood);
-    }
-
-    int leavesHeight = trunkHeight;
+    int leavesHeight = trunkHeight - 1;
 
     for (int y = 0; y <= 1; y++) {
         for (int x = -2; x <= 2; x++) {
@@ -70,7 +66,12 @@ void createBasicTree(Chunk &chunk, const BlockPosition &blockPosition,
     chunk.setBlock({bx - 1, by + leavesHeight + 3, bz + 1}, 0);
     chunk.setBlock({bx + 1, by + leavesHeight + 3, bz - 1}, 0);
     chunk.setBlock({bx - 1, by + leavesHeight + 3, bz - 1}, 0);
+
+    for (int y = 0; y < trunkHeight; y++) {
+        chunk.setBlock({bx, by + y, bz}, wood);
+    }
 }
+
 
 struct NoiseOptions {
     int octaves;
