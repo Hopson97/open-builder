@@ -66,5 +66,6 @@ size_t ChunkMesh::calculateBufferSize() const
 ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition &chunkPosition)
     : blockMesh(chunkPosition)
     , fluidMesh(chunkPosition)
+    , floraMesh(chunkPosition)
 {
 }

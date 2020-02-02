@@ -18,10 +18,17 @@ const MeshFace BOTTOM_FACE = {{0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1}, 0.4f};
 bool makeFace(const VoxelDataManager &voxelData, block_t thisId,
               block_t compareId)
 {
+    block_t air = voxelData.getVoxelId(CommonVoxel::Air);
+
     auto &thisBlock = voxelData.getVoxelData(thisId);
     auto &compareBlock = voxelData.getVoxelData(compareId);
-    return (compareBlock.id == 0 || compareBlock.id == 4) &&
-           thisBlock.id != compareBlock.id;
+    if (compareId == air) {
+        return true;
+    }
+    else if ((compareBlock.type != VoxelType::Solid) && (compareId != thisId)) {
+        return true;
+    }
+    return false;
 }
 
 } // namespace
@@ -41,9 +48,18 @@ ChunkMeshCollection makeChunkMesh(const Chunk &chunk,
                 if (voxel > 0) {
 
                     auto &voxData = voxelData.getVoxelData(voxel);
-                    ChunkMesh *mesh = voxData.type == VoxelType::Solid
-                                          ? &meshes.blockMesh
-                                          : &meshes.fluidMesh;
+                    ChunkMesh *mesh = [&meshes, &voxData]() {
+                        if (voxData.type == VoxelType::Solid) {
+                            return &meshes.blockMesh;
+                        }
+                        else if (voxData.type == VoxelType::Flora) {
+                            return &meshes.floraMesh;
+                        }                         
+                        else if (voxData.type == VoxelType::Fluid) {
+                            return &meshes.fluidMesh;
+                        } 
+                        throw std::runtime_error("Unknown voxel type?");
+                    }();
 
                     // Left block face
                     if (makeFace(voxelData, voxel,

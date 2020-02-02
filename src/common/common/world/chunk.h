@@ -51,12 +51,22 @@ class Chunk {
 
     /**
      * @brief Get the block at the position
-     * This is a SAFE function, as in if you try to get an out-of-bounds chunk
-     * it will return a neighbouring chunk's blocks
+     * This is a SAFE function, as in if you try to get an out-of-bounds voxel
+     * it will return a neighbouring chunk's voxels
      * @param blockPosition The world position to get the block from
      * @return block_t The block at this position
      */
     block_t getBlock(const BlockPosition &blockPosition) const;
+
+    /**
+     * @brief Set the block at the position
+     * This is a SAFE function, as in if you try to set an out-of-bounds voxel
+     * it will return a neighbouring chunk's voxelsv
+     * @param blockPosition The world position to get the block from
+     * @param block_t The block to set at this position
+     */
+    void setBlock(const BlockPosition &blockPosition, block_t block);
+
     const ChunkPosition &getPosition() const;
 
     BlockArray blocks{0};

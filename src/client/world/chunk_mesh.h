@@ -31,4 +31,5 @@ struct ChunkMeshCollection {
     ChunkMeshCollection(const ChunkPosition &chunkPosition);
     ChunkMesh blockMesh;
     ChunkMesh fluidMesh;
+    ChunkMesh floraMesh;
 };

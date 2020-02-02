@@ -7,6 +7,7 @@
 #include <functional>
 #include <glm/gtc/noise.hpp>
 #include <iostream>
+#include <random>
 
 namespace {
 
@@ -25,6 +26,55 @@ float trilinearInterpolation(float blf, float blb, float brf, float brb,
            (trb * point.x * point.y * point.z);
 }
 */
+
+void createBasicTree(Chunk &chunk, const BlockPosition &blockPosition,
+                     const VoxelDataManager &voxels, std::minstd_rand rng)
+{
+    std::uniform_int_distribution<> dist(4, 5);
+    int trunkHeight = dist(rng);
+
+    int bx = blockPosition.x;
+    int by = blockPosition.y;
+    int bz = blockPosition.z;
+
+    block_t air = voxels.getVoxelId(CommonVoxel::Air);
+    block_t wood = voxels.getVoxelId(CommonVoxel::Wood);
+    block_t leaf = voxels.getVoxelId(CommonVoxel::Leaf);
+
+    int leavesHeight = trunkHeight - 1;
+
+    for (int y = 0; y <= 1; y++) {
+        for (int x = -2; x <= 2; x++) {
+            for (int z = -2; z <= 2; z++) {
+                chunk.setBlock({bx + x, by + leavesHeight + y, bz + z}, leaf);
+            }
+        }
+    }
+
+    for (int y = 2; y <= 3; y++) {
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                chunk.setBlock({bx + x, by + leavesHeight + y, bz + z}, leaf);
+            }
+        }
+    }
+    auto removeLeaf = [&](int xo, int yo, int zo) {
+        chunk.setBlock({bx + xo, by + leavesHeight + yo, bz + zo}, air);
+    };
+    removeLeaf(2, 1, 2);
+    removeLeaf(-2, 1, 2);
+    removeLeaf(2, 1, -2);
+    removeLeaf(-2, 1, -2);
+
+    removeLeaf(1, 3, 1);
+    removeLeaf(-1, 3, 1);
+    removeLeaf(1, 3, -1);
+    removeLeaf(-1, 3, -1);
+
+    for (int y = 0; y < trunkHeight; y++) {
+        chunk.setBlock({bx, by + y, bz}, wood);
+    }
+}
 
 struct NoiseOptions {
     int octaves;
@@ -118,8 +168,15 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
-                         int baseChunk)
+                         const VoxelDataManager &voxelData, int baseChunk,
+                         unsigned seed)
 {
+
+    // TO DO: Eventully tree gen chance stuff can be done from lua
+    std::minstd_rand rng;
+    std::uniform_int_distribution<> treeDist(0, 2000);
+    rng.seed(seed + chunk.getPosition().x * 16 + chunk.getPosition().z);
+
     auto base = chunk.getPosition().y - baseChunk;
 
     for (int z = 0; z < CHUNK_SIZE; z++) {
@@ -127,24 +184,41 @@ void createSmoothTerrain(Chunk &chunk,
             int height = heightMap[z * CHUNK_SIZE + x];
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 int blockY = base * CHUNK_SIZE + y;
+                block_t block = 0;
 
                 if (blockY > height) {
-                    chunk.qSetBlock({x, y, z}, blockY < 32 ? 4 : 0);
+                    if (blockY < WATER_LEVEL) {
+                        block = voxelData.getVoxelId(CommonVoxel::Water);
+                    }
                 }
-                else if (blockY <= height) {
-                    chunk.qSetBlock({x, y, z}, blockY < 35 ? 5 : 1);
+                else if (blockY == height) {
+                    if (blockY < WATER_LEVEL + 3) {
+                        block = voxelData.getVoxelId(CommonVoxel::Sand);
+                    }
+                    else {
+                        if (treeDist(rng) < 10) {
+                            createBasicTree(chunk, {x, y + 1, z}, voxelData,
+                                            rng);
+                            block = voxelData.getVoxelId(CommonVoxel::Dirt);
+                        }
+                        else {
+                            block = voxelData.getVoxelId(CommonVoxel::Grass);
+                        }
+                    }
                 }
                 else if (blockY > height - 5) {
-                    chunk.qSetBlock({x, y, z}, 2);
+                    block = voxelData.getVoxelId(CommonVoxel::Dirt);
                 }
                 else {
-                    chunk.qSetBlock({x, y, z}, 5);
+                    block = voxelData.getVoxelId(CommonVoxel::Stone);
+                }
+                if (block > 0) {
+                    chunk.qSetBlock({x, y, z}, block);
                 }
             }
         }
     }
 }
-
 void makeFlatTerrain(Chunk *chunk, int worldSize)
 {
     auto cp = chunk->getPosition();

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <common/debug.h>
 #include <thread>
+#include <iostream>
 
 #include "../world/terrain_generation.h"
 
@@ -24,6 +25,11 @@ Server::Server(const ServerConfig &config)
     data["addVoxel"] = [&](const sol::table &voxelData) {
         VoxelData voxel;
 
+        voxel.name = voxelData["name"].get<std::string>();
+        voxel.topTexture = voxelData["render"]["top"].get<std::string>();
+        voxel.sideTexture = voxelData["render"]["sides"].get<std::string>();
+        voxel.bottomTexture = voxelData["render"]["bottom"].get<std::string>();
+
         std::cout << "Created voxel\n";
         if (voxelData["collidable"].valid()) {
             voxel.isCollidable = voxelData["collidable"].get<bool>();
@@ -35,11 +41,6 @@ Server::Server(const ServerConfig &config)
             voxel.meshStyle = voxelData["render"]["mesh"].get<VoxelMeshStyle>();
         }
 
-        voxel.name = voxelData["name"].get<std::string>();
-        voxel.topTexture = voxelData["render"]["top"].get<std::string>();
-        voxel.sideTexture = voxelData["render"]["sides"].get<std::string>();
-        voxel.bottomTexture = voxelData["render"]["bottom"].get<std::string>();
-
         m_voxelData.addVoxelData(voxel);
     };
 
@@ -50,20 +51,25 @@ Server::Server(const ServerConfig &config)
 
     auto voxelType = m_script.addTable("VoxelType");
     voxelType["Solid"] = VoxelType::Solid;
+    voxelType["Flora"] = VoxelType::Flora;
     voxelType["Fluid"] = VoxelType::Fluid;
     voxelType["Gas"] = VoxelType::Gas;
 
     m_script.runLuaFile("game/server/main.lua");
 
+    m_voxelData.initCommonVoxelTypes();
+
+    float seed = generateSeed("test");
+
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
             std::array<int, CHUNK_AREA> heightMap = createChunkHeightMap(
-                {x, 0, z}, (float)m_worldSize, generateSeed("test"));
+                {x, 0, z}, (float)m_worldSize, seed);
             int maxHeight =
                 *std::max_element(heightMap.cbegin(), heightMap.cend());
-            for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
+            for (int y = 0; y < std::max(1, maxHeight / CHUNK_SIZE + 1); y++) {
                 Chunk &chunk = m_world.chunks.addChunk({x, y, z});
-                createSmoothTerrain(chunk, heightMap, 0);
+                createSmoothTerrain(chunk, heightMap, m_voxelData, 0, seed);
                 m_world.chunks.ensureNeighbours({x, y, z});
             }
         }

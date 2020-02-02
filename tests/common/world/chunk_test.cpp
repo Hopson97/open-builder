@@ -46,6 +46,56 @@ TEST_CASE("Chunks can get and set blocks")
         REQUIRE(rightChunk.getBlock(setPosition) == block);
         REQUIRE(manager.getBlock(setPosition) == block);
     }
+
+    SECTION("The chunk is able to set neighbour blocks")
+    {
+        ChunkPosition left(-1, 0, 0);
+        ChunkPosition right(0, 0, 0);
+        ChunkPosition up(0, 1, 0);
+
+        ChunkManager manager;
+        Chunk &leftChunk = manager.addChunk(left);
+        Chunk &rightChunk = manager.addChunk(right);
+        Chunk &upChunk = manager.addChunk(up);
+
+        BlockPosition setPosition;
+        BlockPosition correctedPosition;
+
+        setPosition = {-5, 5, 2};
+        correctedPosition = {CHUNK_SIZE - 5, 5, 2};
+        rightChunk.setBlock(setPosition, block);
+        REQUIRE(leftChunk.qGetBlock(correctedPosition) == block);
+        REQUIRE(leftChunk.getBlock(correctedPosition) == block);
+
+        setPosition = {5, 33, 3};
+        correctedPosition = {5, 1, 3};
+        rightChunk.setBlock(setPosition, block);
+        REQUIRE(upChunk.getBlock(correctedPosition) == block);
+        REQUIRE(upChunk.qGetBlock(correctedPosition) == block);
+    }
+
+    SECTION("Setting an out of bound block will create a chunk at that position")
+    {
+        ChunkManager manager;
+        ChunkPosition bottom(0, 0, 0);
+        ChunkPosition up(0, 1, 0);
+
+        Chunk &chunk = manager.addChunk(bottom);
+
+        BlockPosition setPosition;
+        BlockPosition correctedPosition;
+        setPosition = {5, 33, 3};
+        correctedPosition = {5, 1, 3};
+        chunk.setBlock(setPosition, block);
+
+        REQUIRE(manager.hasChunk(up));
+
+        if(manager.hasChunk(up)) {
+            const Chunk& newChunk = manager.getChunk(up);
+            REQUIRE(newChunk.getBlock(correctedPosition) == block);
+            REQUIRE(newChunk.qGetBlock(correctedPosition) == block);
+        }
+    }
 }
 
 TEST_CASE("Chunk can be compressed and uncompressed")

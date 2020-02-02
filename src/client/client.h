@@ -137,6 +137,12 @@ class Client final : public NetworkHost {
         gl::UniformLocation timeLocation;
     } m_fluidShader;
 
+    struct {
+        gl::Shader program;
+        gl::UniformLocation projectionViewLocation;
+        gl::UniformLocation timeLocation;
+    } m_floraShader;
+
     // For time-based render stuff eg waves in the water
     sf::Clock m_clock;
 
@@ -153,6 +159,7 @@ class Client final : public NetworkHost {
         std::vector<ChunkMeshCollection> bufferables;
         std::vector<ChunkDrawable> drawables;
         std::vector<ChunkDrawable> fluidDrawables;
+        std::vector<ChunkDrawable> floraDrawables;
         ChunkManager manager;
         std::vector<ChunkPosition> updates;
         std::vector<BlockUpdate> blockUpdates;

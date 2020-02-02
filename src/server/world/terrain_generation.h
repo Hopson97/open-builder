@@ -2,6 +2,7 @@
 
 #include <array>
 #include <common/world/coordinate.h>
+#include <common/world/voxel_data.h>
 #include <common/world/world_constants.h>
 
 class Chunk;
@@ -15,6 +16,7 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
-                         int baseChunk);
+                         const VoxelDataManager &voxelData, int baseChunk,
+                         unsigned seed);
 
 float generateSeed(const std::string &input);

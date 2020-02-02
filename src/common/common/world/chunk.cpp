@@ -30,6 +30,17 @@ block_t Chunk::getBlock(const BlockPosition &blockPosition) const
     return qGetBlock(blockPosition);
 }
 
+void Chunk::setBlock(const BlockPosition &blockPosition, block_t block)
+{
+    if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
+        blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE ||
+        blockPosition.z < 0 || blockPosition.z >= CHUNK_SIZE) {
+        return mp_manager.setBlock(
+            toGlobalBlockPosition(blockPosition, m_position), block);
+    }
+    qSetBlock(blockPosition, block);
+}
+
 const ChunkPosition &Chunk::getPosition() const
 {
     return m_position;
