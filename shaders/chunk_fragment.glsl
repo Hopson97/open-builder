@@ -9,4 +9,8 @@ uniform sampler2DArray textureArray;
 
 void main() {
     outColour = passBasicLight * texture(textureArray, passTexCoord);
+
+    if (outColour.a == 0) {
+        discard;
+    }
 }

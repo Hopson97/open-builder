@@ -30,15 +30,27 @@ float trilinearInterpolation(float blf, float blb, float brf, float brb,
 void createBasicTree(Chunk &chunk, const BlockPosition &blockPosition,
                      const VoxelDataManager &voxels, std::minstd_rand rng)
 {
-    std::uniform_int_distribution<> dist(200, 300);
+    std::uniform_int_distribution<> dist(5, 6);
     int trunkHeight = dist(rng);
 
     int bx = blockPosition.x;
     int by = blockPosition.y;
     int bz = blockPosition.z;
 
+    block_t wood = voxels.getVoxelId(CommonVoxel::Wood);
+    block_t leaf = voxels.getVoxelId(CommonVoxel::Leaf);
+
     for (int y = 0; y < trunkHeight; y++) {
-        chunk.setBlock({bx, by + y, bz}, voxels.getVoxelId(CommonVoxel::Wood));
+        chunk.setBlock({bx, by + y, bz}, wood);
+    }
+
+    int leavesHeight = trunkHeight + 1;
+    for (int y = -2; y <= 2; y++) {
+        for (int x = -2; x <= 2; x++) {
+            for (int z = -2; z <= 2; z++) {
+                chunk.setBlock({bx + x, by + leavesHeight + y, bz + z}, leaf);
+            }
+        }   
     }
 }
 
@@ -139,7 +151,7 @@ void createSmoothTerrain(Chunk &chunk,
 
     // TO DO: Eventully tree gen chance stuff can be done from lua
     std::minstd_rand rng;
-    std::uniform_int_distribution<> treeDist(0, 500);
+    std::uniform_int_distribution<> treeDist(0, 1000);
     rng.seed(std::time(nullptr));
 
     auto base = chunk.getPosition().y - baseChunk;
