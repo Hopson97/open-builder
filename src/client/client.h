@@ -42,12 +42,17 @@ struct Entity final {
 struct ChunkDrawable {
     ChunkPosition position;
     gl::VertexArray vao;
+
+    //Amount of memory used by the vertex buffers etc
+    size_t size = 0;
 };
 
 struct DebugStats {
     float fps;
     float frameTime;
+
     int renderedChunks;
+    size_t bytesRendered;
 };
 
 class Client final : public NetworkHost {

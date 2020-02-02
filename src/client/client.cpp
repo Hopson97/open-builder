@@ -8,8 +8,9 @@
 #include <common/debug.h>
 #include <common/network/net_command.h>
 #include <common/network/net_constants.h>
-#include <thread>
 #include <iomanip>
+#include <numeric>
+#include <thread>
 
 #include "client_config.h"
 
@@ -41,13 +42,14 @@ void deleteChunkRenderable(const ChunkPosition &position,
 }
 
 int renderChunks(const std::vector<ChunkDrawable> &chunks,
-                  const ViewFrustum &frustum)
+                 const ViewFrustum &frustum, size_t &bytes)
 {
     int renderedChunks = 0;
     for (const auto &chunk : chunks) {
         if (frustum.chunkIsInFrustum(chunk.position)) {
             chunk.vao.getDrawable().bindAndDraw();
             renderedChunks++;
+            bytes += chunk.size;
         }
     }
     return renderedChunks;
@@ -141,10 +143,10 @@ bool Client::init(const ClientConfig &config, float aspect)
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
 
-    //Font and text
-    m_debugTextFont.init("res/VeraMono-Bold.ttf", 256);
-    m_debugText.setPosition({15, config.windowHeight - 25, 0});
-    m_debugText.setCharSize(20);
+    // Font and text
+    m_debugTextFont.init("res/VeraMono-Bold.ttf", 512);
+    m_debugText.setPosition({2, config.windowHeight - 16, 0});
+    m_debugText.setCharSize(16);
     m_debugText.setFont(m_debugTextFont);
     m_debugText.setText("Current FPS: 60");
     return true;
@@ -253,7 +255,7 @@ void Client::update(float dt, float frameTime, float fps)
 {
     m_debugStats.fps = fps;
     m_debugStats.frameTime = frameTime;
-    
+
     NetworkHost::tick();
     if (!m_hasReceivedGameData) {
         return;
@@ -422,6 +424,7 @@ void Client::render(int width, int height)
         }
     }
 
+    size_t bytesRendered = 0;
     // Render chunks
     m_voxelTextures.bind();
 
@@ -429,13 +432,16 @@ void Client::render(int width, int height)
     for (auto &chunkMesh : m_chunks.bufferables) {
         // TODO [Hopson] -> DRY this code
         if (chunkMesh.blockMesh.indicesCount > 0) {
-            m_chunks.drawables.push_back({chunkMesh.blockMesh.position,
-                                          chunkMesh.blockMesh.createBuffer()});
+            m_chunks.drawables.push_back(
+                {chunkMesh.blockMesh.position,
+                 chunkMesh.blockMesh.createBuffer(),
+                 chunkMesh.blockMesh.calculateBufferSize()});
         }
         if (chunkMesh.fluidMesh.indicesCount > 0) {
             m_chunks.fluidDrawables.push_back(
                 {chunkMesh.fluidMesh.position,
-                 chunkMesh.fluidMesh.createBuffer()});
+                 chunkMesh.fluidMesh.createBuffer(),
+                 chunkMesh.blockMesh.calculateBufferSize()});
         }
     }
     m_chunks.bufferables.clear();
@@ -445,7 +451,7 @@ void Client::render(int width, int height)
     gl::loadUniform(m_chunkShader.projectionViewLocation, playerProjectionView);
 
     m_debugStats.renderedChunks = 0;
-    m_debugStats.renderedChunks += renderChunks(m_chunks.drawables, m_frustum);
+    m_debugStats.renderedChunks += renderChunks(m_chunks.drawables, m_frustum, bytesRendered);
 
     glCheck(glEnable(GL_BLEND));
 
@@ -475,23 +481,46 @@ void Client::render(int width, int height)
     if (m_chunks.manager.getBlock(toBlockPosition(mp_player->position)) == 4) {
         glCheck(glCullFace(GL_FRONT));
     }
-    renderChunks(m_chunks.fluidDrawables, m_frustum);
+    renderChunks(m_chunks.fluidDrawables, m_frustum, bytesRendered);
     glCheck(glDisable(GL_BLEND));
     glCheck(glCullFace(GL_BACK));
+
+    m_debugStats.bytesRendered = bytesRendered;
+
 
     // GUI
     m_gui.render(width, height);
 
-    //Debug stats
+    // Debug stats
     if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
         m_debugTextUpdateTimer.restart();
 
-        DebugStats& d = m_debugStats;
+        size_t totalBufferSize = [this]() {
+            auto &s = m_chunks.drawables;
+            auto &f = m_chunks.fluidDrawables;
+            auto getSize = [](const std::vector<ChunkDrawable> &drawables) { 
+                size_t s = 0;
+                for (auto &d : drawables) {
+                    s += d.size;
+                }
+                return s;
+            };
+            return getSize(s) + getSize(f);
+        }();
+
+        totalBufferSize /= 0x100000;
+        m_debugStats.bytesRendered /= 0x100000;
+
+        DebugStats &d = m_debugStats;
 
         std::ostringstream debugText;
-        debugText << "FPS: " << std::left << std::setw(5) << std::floor(d.fps) << ' ';
-        debugText << "Frame time: " << std::setprecision(3) << d.frameTime << "ms\n";
-        debugText << "Chunks: " << d.renderedChunks << "/" << m_chunks.drawables.size() << '\n';
+        debugText << "Frame time: " << std::setprecision(3) << d.frameTime
+                  << "ms ";
+        debugText << "FPS: " << std::floor(d.fps) << '\n';
+        debugText << "Chunks: " << d.renderedChunks << " of "
+                  << m_chunks.drawables.size() << " drawn\n";
+        debugText << "Chunk VRAM: " << m_debugStats.bytesRendered << "Mb of "
+                  << totalBufferSize << "Mb drawn\n";
 
         m_debugText.setText(debugText.str());
     }
