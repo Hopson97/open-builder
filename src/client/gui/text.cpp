@@ -1,7 +1,8 @@
 #include "text.h"
 
-#include "gl/shader.h"
-#include "maths.h"
+#include "../gl/shader.h"
+#include <iostream>
+#include "../maths.h"
 
 namespace {
 struct Mesh {
@@ -73,7 +74,9 @@ void addCharacter(Mesh &mesh, const sf::Glyph &glyph, float size, const sf::Vect
 void Font::init(const std::string& fontFile, unsigned bitmapScale)
 {
     m_bitmapScale = bitmapScale;
-    m_font.loadFromFile(fontFile);
+    if (!m_font.loadFromFile(fontFile)) {
+        throw std::runtime_error("Unable to load font from file...");
+    }
     for (auto character : m_charSet) {
         m_font.getGlyph(character, bitmapScale, false);
     }
@@ -88,7 +91,6 @@ const sf::Glyph& Font::getGlyph(char character) const
 {
     return m_font.getGlyph(character, m_bitmapScale, false);
 }
-
 
 unsigned Font::getKerning(char before, char next) const
 {
@@ -141,6 +143,8 @@ void Text::setPosition(const glm::vec3& position)
 
 void Text::render(const gl::UniformLocation& location)
 {
+    glCullFace(GL_FRONT);
+    glEnable(GL_BLEND);
     m_font->bindTexture();
     if (!m_font) {
         return;
@@ -158,6 +162,8 @@ void Text::render(const gl::UniformLocation& location)
     gl::loadUniform(location, modelMatrix);
 
     m_vao.getDrawable().bindAndDraw();
+    glCullFace(GL_BACK);
+    glDisable(GL_BLEND);
 }
 
 

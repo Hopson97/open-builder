@@ -5,6 +5,7 @@
 #include "gl/textures.h"
 #include "gl/vertex_array.h"
 #include "gui/gui.h"
+#include "gui/text.h"
 #include "maths.h"
 #include "world/chunk_mesh.h"
 #include <SFML/Network/Packet.hpp>
@@ -19,6 +20,7 @@
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_data.h>
 #include <unordered_set>
+
 
 class Keyboard;
 
@@ -152,6 +154,8 @@ class Client final : public NetworkHost {
 
     // GUI
     Gui m_gui;
+    Text m_debugText;
+    Font m_debugTextFont;
 
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;

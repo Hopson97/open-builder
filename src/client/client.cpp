@@ -136,6 +136,13 @@ bool Client::init(const ClientConfig &config, float aspect)
     sendPlayerSkin(m_rawPlayerSkin);
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
+
+    //Font and text
+    m_debugTextFont.init("font.ttf", 256);
+    m_debugText.setPosition({500, 400, 0});
+    m_debugText.setCharSize(32);
+    m_debugText.setFont(m_debugTextFont);
+    m_debugText.setText("Testing testgin... 123");
     return true;
 }
 
@@ -466,6 +473,7 @@ void Client::render(int width, int height)
 
     // GUI
     m_gui.render(width, height);
+    m_gui.renderText(m_debugText);
 }
 
 void Client::endGame()
