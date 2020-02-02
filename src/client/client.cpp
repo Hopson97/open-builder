@@ -519,6 +519,7 @@ void Client::render(int width, int height)
 
             DebugStats &d = m_debugStats;
             glm::vec3 &p = mp_player->position;
+            glm::vec3 &r = mp_player->rotation;
 
             std::ostringstream debugText;
             debugText << "Frame time: " << std::setprecision(3) << d.frameTime
@@ -529,6 +530,7 @@ void Client::render(int width, int height)
             debugText << "Chunk VRAM: " << m_debugStats.bytesRendered
                       << "Mb of " << totalBufferSize << "Mb drawn\n";
             debugText << "X: " << p.x << " Y: " << p.y << " Z: " << p.z << '\n';
+            debugText << "LX: " << r.x << " LY: " << r.y << " LZ: " << r.z << '\n';
 
             m_debugText.setText(debugText.str());
         }
