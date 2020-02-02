@@ -9,6 +9,7 @@
 #include <common/network/net_command.h>
 #include <common/network/net_constants.h>
 #include <thread>
+#include <iomanip>
 
 #include "client_config.h"
 
@@ -141,7 +142,7 @@ bool Client::init(const ClientConfig &config, float aspect)
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
 
     //Font and text
-    m_debugTextFont.init("res/Montserrat-Bold.ttf", 256);
+    m_debugTextFont.init("res/VeraMono-Bold.ttf", 256);
     m_debugText.setPosition({15, config.windowHeight - 25, 0});
     m_debugText.setCharSize(20);
     m_debugText.setFont(m_debugTextFont);
@@ -488,9 +489,9 @@ void Client::render(int width, int height)
         DebugStats& d = m_debugStats;
 
         std::ostringstream debugText;
-        debugText << "FPS: " << d.fps << '\n';
-        debugText << "Frame time: " << d.frameTime << '\n';
-        debugText << "Chunks rendered: " << d.renderedChunks << "/" << m_chunks.drawables.size() << '\n';
+        debugText << "FPS: " << std::left << std::setw(5) << std::floor(d.fps) << ' ';
+        debugText << "Frame time: " << std::setprecision(3) << d.frameTime << "ms\n";
+        debugText << "Chunks: " << d.renderedChunks << "/" << m_chunks.drawables.size() << '\n';
 
         m_debugText.setText(debugText.str());
     }

@@ -174,7 +174,7 @@ void Text::createGeometry()
     Mesh mesh;
     m_needsUpdate = false;
 
-    sf::Vector2f pos{0, m_scale};
+    sf::Vector2f pos{0, 0};
     char previous = 0;
     for (auto character : m_text) {
         pos.x += m_font->getKerning(previous, character);
@@ -185,6 +185,7 @@ void Text::createGeometry()
             pos.y += m_font->getLineHeight();
             pos.x = 0;
             previous = 0;
+            continue;
         }
 
         //Create a single quad for the char
