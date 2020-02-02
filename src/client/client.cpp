@@ -245,6 +245,10 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             break;
 
+        case sf::Keyboard::F3:
+            m_shouldRenderDebugInfo = !m_shouldRenderDebugInfo;
+            break;
+
         default:
             break;
     }
@@ -450,7 +454,8 @@ void Client::render(int width, int height)
     gl::loadUniform(m_chunkShader.projectionViewLocation, playerProjectionView);
 
     m_debugStats.renderedChunks = 0;
-    m_debugStats.renderedChunks += renderChunks(m_chunks.drawables, m_frustum, bytesRendered);
+    m_debugStats.renderedChunks +=
+        renderChunks(m_chunks.drawables, m_frustum, bytesRendered);
 
     glCheck(glEnable(GL_BLEND));
 
@@ -486,46 +491,49 @@ void Client::render(int width, int height)
 
     m_debugStats.bytesRendered = bytesRendered;
 
-
     // GUI
     m_gui.render(width, height);
 
     // Debug stats
-    if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
-        m_debugTextUpdateTimer.restart();
+    std::cout << m_shouldRenderDebugInfo << std::endl;
+    if (m_shouldRenderDebugInfo) {
+        
+        if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
+            m_debugTextUpdateTimer.restart();
 
-        size_t totalBufferSize = [this]() {
-            auto &s = m_chunks.drawables;
-            auto &f = m_chunks.fluidDrawables;
-            auto getSize = [](const std::vector<ChunkDrawable> &drawables) { 
-                size_t s = 0;
-                for (auto &d : drawables) {
-                    s += d.size;
-                }
-                return s;
-            };
-            return getSize(s) + getSize(f);
-        }();
+            size_t totalBufferSize = [this]() {
+                auto &s = m_chunks.drawables;
+                auto &f = m_chunks.fluidDrawables;
+                auto getSize = [](const std::vector<ChunkDrawable> &drawables) {
+                    size_t s = 0;
+                    for (auto &d : drawables) {
+                        s += d.size;
+                    }
+                    return s;
+                };
+                return getSize(s) + getSize(f);
+            }();
 
-        totalBufferSize /= 0x100000;
-        m_debugStats.bytesRendered /= 0x100000;
+            totalBufferSize /= 0x100000;
+            m_debugStats.bytesRendered /= 0x100000;
 
-        DebugStats &d = m_debugStats;
-        glm::vec3 &p = mp_player->position;
+            DebugStats &d = m_debugStats;
+            glm::vec3 &p = mp_player->position;
 
-        std::ostringstream debugText;
-        debugText << "Frame time: " << std::setprecision(3) << d.frameTime
-                  << "ms ";
-        debugText << "FPS: " << std::floor(d.fps) << '\n';
-        debugText << "Chunks: " << d.renderedChunks << " of "
-                  << m_chunks.drawables.size() << " drawn\n";
-        debugText << "Chunk VRAM: " << m_debugStats.bytesRendered << "Mb of "
-                  << totalBufferSize << "Mb drawn\n";
-        debugText << "X: " << p.x << " Y: " << p.y << " Z: " << p.z << '\n';
+            std::ostringstream debugText;
+            debugText << "Frame time: " << std::setprecision(3) << d.frameTime
+                      << "ms ";
+            debugText << "FPS: " << std::floor(d.fps) << '\n';
+            debugText << "Chunks: " << d.renderedChunks << " of "
+                      << m_chunks.drawables.size() << " drawn\n";
+            debugText << "Chunk VRAM: " << m_debugStats.bytesRendered
+                      << "Mb of " << totalBufferSize << "Mb drawn\n";
+            debugText << "X: " << p.x << " Y: " << p.y << " Z: " << p.z << '\n';
 
-        m_debugText.setText(debugText.str());
+            m_debugText.setText(debugText.str());
+        }
+        m_gui.renderText(m_debugText);
     }
-    m_gui.renderText(m_debugText);
 }
 
 void Client::endGame()

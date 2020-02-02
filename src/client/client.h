@@ -171,6 +171,7 @@ class Client final : public NetworkHost {
     Text m_debugText;
     Font m_debugTextFont;
     sf::Clock m_debugTextUpdateTimer;
+    bool m_shouldRenderDebugInfo = false;
 
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
