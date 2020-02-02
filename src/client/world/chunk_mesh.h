@@ -16,6 +16,8 @@ struct ChunkMesh {
 
     gl::VertexArray createBuffer();
 
+    size_t calculateBufferSize() const;
+
     std::vector<float> vertices;
     std::vector<GLfloat> textureCoords;
     std::vector<GLuint> indices;

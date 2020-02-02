@@ -2,6 +2,7 @@
 #include "../gl/primitive.h"
 #include "../gl/shader.h"
 #include "../maths.h"
+#include "text.h"
 #include <common/debug.h>
 
 #include <iostream>
@@ -115,6 +116,12 @@ void Gui::render(float width, float height)
 
         d.draw();
     }
+}
+
+void Gui::renderText(Text& text)
+{
+    m_guiShader.program.bind();
+    text.render(m_guiShader.modelLocation);
 }
 
 sol::table createGuiApi(ScriptEngine &engine)

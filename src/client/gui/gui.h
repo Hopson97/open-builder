@@ -9,6 +9,8 @@
 #include <memory>
 #include <vector>
 
+class Text;
+
 // Todo: Maybe move these out into their own files
 
 // Stores the scale and offset of a GUI element in 2 dimensions
@@ -52,6 +54,8 @@ class Gui final {
     void addImage(sol::userdata image);
 
     void render(float width, float height);
+
+    void renderText(Text& text);
 
   private:
     struct {

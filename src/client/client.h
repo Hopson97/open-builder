@@ -5,6 +5,7 @@
 #include "gl/textures.h"
 #include "gl/vertex_array.h"
 #include "gui/gui.h"
+#include "gui/text.h"
 #include "maths.h"
 #include "world/chunk_mesh.h"
 #include <SFML/Network/Packet.hpp>
@@ -19,6 +20,7 @@
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_data.h>
 #include <unordered_set>
+
 
 class Keyboard;
 
@@ -40,6 +42,17 @@ struct Entity final {
 struct ChunkDrawable {
     ChunkPosition position;
     gl::VertexArray vao;
+
+    //Amount of memory used by the vertex buffers etc
+    size_t size = 0;
+};
+
+struct DebugStats {
+    float fps;
+    float frameTime;
+
+    int renderedChunks;
+    size_t bytesRendered;
 };
 
 class Client final : public NetworkHost {
@@ -51,7 +64,7 @@ class Client final : public NetworkHost {
     void onKeyRelease(sf::Keyboard::Key key);
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
-    void update(float dt);
+    void update(float dt, float frameTime, float fps);
     void render(int width, int height);
     void endGame();
 
@@ -152,6 +165,13 @@ class Client final : public NetworkHost {
 
     // GUI
     Gui m_gui;
+
+    //Debug stats stuff
+    DebugStats m_debugStats;
+    Text m_debugText;
+    Font m_debugTextFont;
+    sf::Clock m_debugTextUpdateTimer;
+    bool m_shouldRenderDebugInfo = false;
 
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
