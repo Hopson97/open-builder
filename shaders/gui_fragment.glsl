@@ -4,10 +4,10 @@ in vec2 passTexCoord;
 out vec4 outColour;
 
 uniform sampler2D tex;
-uniform vec3 color3;
+uniform vec3 colour;
 
 void main() {
-    outColour = texture(tex, passTexCoord) * vec4(color3.rgb, 1);
+    outColour = texture(tex, passTexCoord) * vec4(colour, 1.0);
     if (outColour.a == 0) {
         discard;
     }

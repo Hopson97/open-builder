@@ -55,8 +55,9 @@ bool isVoxelSelectable(VoxelType voxelType)
 }
 } // namespace
 
-Client::Client()
+Client::Client(const ClientConfig &config)
     : NetworkHost("Client")
+    , m_gui(config.windowWidth, config.windowHeight)
 {
     // clang-format off
     m_commandDispatcher.addCommand(ClientCommand::BlockUpdate, &Client::onBlockUpdate);
@@ -69,12 +70,11 @@ Client::Client()
     m_commandDispatcher.addCommand(ClientCommand::NewPlayerSkin, &Client::onPlayerSkinReceive);
     // clang-format on
 
-    auto luaGuiAPI = m_lua.addTable("GUI");
-    luaGuiAPI["addImage"] = [&](sol::userdata img) { m_gui.addImage(img); };
+    auto gui = createGuiApi(m_lua);
+    gui["addImage"] = [&](const sol::userdata &image) {
+        m_gui.addImage(image);
+    };
 
-    m_gui.addUsertypes(luaGuiAPI);
-
-    m_lua.lua["update"] = 3;
     m_lua.runLuaFile("game/client/main.lua");
 }
 
