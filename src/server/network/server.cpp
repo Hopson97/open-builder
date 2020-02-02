@@ -63,7 +63,7 @@ Server::Server(const ServerConfig &config)
                 {x, 0, z}, (float)m_worldSize, generateSeed("test"));
             int maxHeight =
                 *std::max_element(heightMap.cbegin(), heightMap.cend());
-            for (int y = 0; y < std::max(4, maxHeight / CHUNK_SIZE + 1); y++) {
+            for (int y = 0; y < std::max(1, maxHeight / CHUNK_SIZE + 1); y++) {
                 Chunk &chunk = m_world.chunks.addChunk({x, y, z});
                 createSmoothTerrain(chunk, heightMap, m_voxelData, 0);
                 m_world.chunks.ensureNeighbours({x, y, z});

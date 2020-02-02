@@ -1,5 +1,7 @@
 #include "chunk_manager.h"
 
+#include <iostream>
+
 Chunk &ChunkManager::addChunk(const ChunkPosition &chunk)
 {
     auto itr = m_chunks.find(chunk);
@@ -36,11 +38,12 @@ void ChunkManager::setBlock(const BlockPosition &blockPosition, block_t block)
 {
     auto chunkPosition = toChunkPosition(blockPosition);
     auto itr = m_chunks.find(chunkPosition);
+    auto local = toLocalBlockPosition(blockPosition);
     if (itr != m_chunks.cend()) {
-        itr->second.qSetBlock(toLocalBlockPosition(blockPosition), block);
+        itr->second.qSetBlock(local, block);
     }
     else {
-        //TODO This...
+        addChunk(chunkPosition).qSetBlock(local, block);
     }
 }
 

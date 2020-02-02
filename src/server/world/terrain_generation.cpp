@@ -30,7 +30,7 @@ float trilinearInterpolation(float blf, float blb, float brf, float brb,
 void createBasicTree(Chunk &chunk, const BlockPosition &blockPosition,
                      const VoxelDataManager &voxels, std::minstd_rand rng)
 {
-    std::uniform_int_distribution<> dist(4, 7);
+    std::uniform_int_distribution<> dist(200, 300);
     int trunkHeight = dist(rng);
 
     int bx = blockPosition.x;

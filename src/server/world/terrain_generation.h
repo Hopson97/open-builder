@@ -16,7 +16,6 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
-                         const VoxelDataManager& voxelData,
-                         int baseChunk);
+                         const VoxelDataManager &voxelData, int baseChunk);
 
 float generateSeed(const std::string &input);

@@ -27,7 +27,8 @@ enum class VoxelType : u8 {
 
 /**
  * @brief Very common voxel types
- * The purpose of this is to give quick access to common voxel from client/server engine
+ * The purpose of this is to give quick access to common voxel from
+ * client/server engine
  */
 enum class CommonVoxel : block_t {
     Air = 0,

@@ -7,7 +7,8 @@ VoxelDataManager::VoxelDataManager()
 
 void VoxelDataManager::initCommonVoxelTypes()
 {
-    //TODO Eventually some of this won't be needed as "common voxels" as this stuff
+    // TODO Eventually some of this won't be needed as "common voxels" as this
+    // stuff
     // would be delagated to the Lua instead
     // For now though, this can work as a placeholder
     m_commonVoxels[(u8)CommonVoxel::Air] = getVoxelId("openbuilder_air");
