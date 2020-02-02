@@ -475,7 +475,7 @@ void Client::render(int width, int height)
     m_floraShader.program.bind();
     gl::loadUniform(m_floraShader.timeLocation, time);
     gl::loadUniform(m_floraShader.projectionViewLocation, playerProjectionView);
-    renderChunks(m_chunks.floraDrawables, m_frustum);
+    renderChunks(m_chunks.floraDrawables, m_frustum, bytesRendered);
 
     glCheck(glEnable(GL_BLEND));
 
@@ -514,7 +514,6 @@ void Client::render(int width, int height)
     m_gui.render(width, height);
 
     // Debug stats
-    std::cout << m_shouldRenderDebugInfo << std::endl;
     if (m_shouldRenderDebugInfo) {
         
         if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
