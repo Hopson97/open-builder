@@ -37,6 +37,7 @@ void createBasicTree(Chunk &chunk, const BlockPosition &blockPosition,
     int by = blockPosition.y;
     int bz = blockPosition.z;
 
+    block_t air = voxels.getVoxelId(CommonVoxel::Air);
     block_t wood = voxels.getVoxelId(CommonVoxel::Wood);
     block_t leaf = voxels.getVoxelId(CommonVoxel::Leaf);
 
@@ -57,15 +58,18 @@ void createBasicTree(Chunk &chunk, const BlockPosition &blockPosition,
             }
         }
     }
-    chunk.setBlock({bx + 2, by + leavesHeight + 1, bz + 2}, 0);
-    chunk.setBlock({bx - 2, by + leavesHeight + 1, bz + 2}, 0);
-    chunk.setBlock({bx + 2, by + leavesHeight + 1, bz - 2}, 0);
-    chunk.setBlock({bx - 2, by + leavesHeight + 1, bz - 2}, 0);
+    auto removeLeaf = [&](int xo, int yo, int zo) {
+        chunk.setBlock({bx + xo, by + leavesHeight + yo, bz + zo}, air);
+    };
+    removeLeaf(2, 1, 2);
+    removeLeaf(-2, 1, 2);
+    removeLeaf(2, 1, -2);
+    removeLeaf(-2, 1, -2);
 
-    chunk.setBlock({bx + 1, by + leavesHeight + 3, bz + 1}, 0);
-    chunk.setBlock({bx - 1, by + leavesHeight + 3, bz + 1}, 0);
-    chunk.setBlock({bx + 1, by + leavesHeight + 3, bz - 1}, 0);
-    chunk.setBlock({bx - 1, by + leavesHeight + 3, bz - 1}, 0);
+    removeLeaf(1, 3, 1);
+    removeLeaf(-1, 3, 1);
+    removeLeaf(1, 3, -1);
+    removeLeaf(-1, 3, -1);
 
     for (int y = 0; y < trunkHeight; y++) {
         chunk.setBlock({bx, by + y, bz}, wood);
