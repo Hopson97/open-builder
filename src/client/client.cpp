@@ -141,9 +141,9 @@ bool Client::init(const ClientConfig &config, float aspect)
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
 
     //Font and text
-    m_debugTextFont.init("font.ttf", 256);
+    m_debugTextFont.init("res/Montserrat-Bold.ttf", 256);
     m_debugText.setPosition({15, config.windowHeight - 25, 0});
-    m_debugText.setCharSize(25);
+    m_debugText.setCharSize(20);
     m_debugText.setFont(m_debugTextFont);
     m_debugText.setText("Current FPS: 60");
     return true;
