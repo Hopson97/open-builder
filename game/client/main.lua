@@ -1,9 +1,12 @@
 
+
 -- Main crosshair (to be used in final)
 local crosshair = game.GUI.Image.new()
 crosshair:setSource("crosshair")
-crosshair:setPosition(game.GUI.GDim.new(0.5, -16, 0.5, -16))
-crosshair:setSize(game.GUI.GDim.new(0, 32, 0, 32))
+crosshair:setScaledPosition(0.5, 0.5)
+crosshair:setPixelOffset(-16.0, -16.0)
+crosshair:setPixelSize(32.0, 32.0)
+crosshair:setColor(1, 1, 1)
 game.GUI.addImage(crosshair)
 
 -- gui.lua

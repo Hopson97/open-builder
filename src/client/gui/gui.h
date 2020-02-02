@@ -9,78 +9,65 @@
 #include <memory>
 #include <vector>
 
+class Text;
+
 // Todo: Maybe move these out into their own files
 
 // Stores the scale and offset of a GUI element in 2 dimensions
-struct GDim {
-    sf::Vector2f scale;
-    sf::Vector2f offset;
+struct GuiDimension {
+    glm::vec2 scale{0.0f};
+    glm::vec2 offset{0.0f};
 
-    GDim()
-        : scale(sf::Vector2f(0, 0))
-        , offset(sf::Vector2f(0, 0))
-    {
-    }
+    GuiDimension() = default;
+    GuiDimension(float xScale, float xOffset, float yScale, float yOffset);
 
-    GDim(float x_s, float x_o, float y_s, float y_o)
-        : scale(sf::Vector2f(x_s, y_s))
-        , offset(sf::Vector2f(x_o, y_o))
-    {
-    }
-};
-
-// GUI Color, each colour ranges from 0-1 (floats)
-struct Color3 {
-    float r, g, b;
-
-    Color3() // Default should be 1,1,1 so scripters don't need
-        : r(1.f)
-        , g(1.f)
-        , b(1.f)
-    {
-    } // to set color just to see the image
-
-    Color3(float r_, float g_, float b_)
-        : r{r_}
-        , g{g_}
-        , b{b_}
-    {
-    }
+    glm::vec2 apply(float width, float height);
 };
 
 // GUI Image,
 struct GuiImage {
-    gl::Texture2d m_image;
-    GDim m_size;
-    GDim m_position;
-    Color3 m_color;
+    gl::Texture2d texture;
 
-    // Setters (TODO: Getters?)
+    GuiDimension position;
+    GuiDimension size;
+
+    glm::vec3 colour{0.0f};
+
     void setSource(const std::string &imageSource);
-    void setSize(GDim new_size);
-    void setPosition(GDim new_pos);
-    void setColor(Color3 new_color);
+
+    void setColour(float r, float g, float b);
+
+    void setPixelSize(float width, float height);
+    void setScaledSize(float width, float height);
+
+    void setPixelOffset(float x, float y);
+    void setScaledPosition(float x, float y);
 };
 
 class Gui final {
   public:
-    Gui();
-  
-    void addUsertypes(sol::table& m_lua);
+    Gui(float windowWidth, float windowHeight);
+
     void processKeypress(sf::Event e);
     void processMouseEvent(sf::Event e);
 
     void addImage(sol::userdata image);
 
-    void render(int width, int height);
+    void render(float width, float height);
+
+    void renderText(Text& text);
 
   private:
     struct {
         gl::Shader program;
+        gl::UniformLocation projectionLocation;
         gl::UniformLocation modelLocation;
         gl::UniformLocation colorLocation;
     } m_guiShader;
 
+    glm::mat4 m_orthoMatrix;
     gl::VertexArray m_quad;
     std::vector<sol::userdata> m_images;
 };
+
+sol::table createGuiApi(ScriptEngine &engine);

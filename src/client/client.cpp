@@ -8,6 +8,8 @@
 #include <common/debug.h>
 #include <common/network/net_command.h>
 #include <common/network/net_constants.h>
+#include <iomanip>
+#include <numeric>
 #include <thread>
 
 #include "client_config.h"
@@ -39,14 +41,18 @@ void deleteChunkRenderable(const ChunkPosition &position,
     }
 }
 
-void renderChunks(const std::vector<ChunkDrawable> &chunks,
-                  const ViewFrustum &frustum)
+int renderChunks(const std::vector<ChunkDrawable> &chunks,
+                 const ViewFrustum &frustum, size_t &bytes)
 {
+    int renderedChunks = 0;
     for (const auto &chunk : chunks) {
         if (frustum.chunkIsInFrustum(chunk.position)) {
             chunk.vao.getDrawable().bindAndDraw();
+            renderedChunks++;
+            bytes += chunk.size;
         }
     }
+    return renderedChunks;
 }
 
 bool isVoxelSelectable(VoxelType voxelType)
@@ -55,8 +61,9 @@ bool isVoxelSelectable(VoxelType voxelType)
 }
 } // namespace
 
-Client::Client()
+Client::Client(const ClientConfig &config)
     : NetworkHost("Client")
+    , m_gui(config.windowWidth, config.windowHeight)
 {
     // clang-format off
     m_commandDispatcher.addCommand(ClientCommand::BlockUpdate, &Client::onBlockUpdate);
@@ -69,12 +76,11 @@ Client::Client()
     m_commandDispatcher.addCommand(ClientCommand::NewPlayerSkin, &Client::onPlayerSkinReceive);
     // clang-format on
 
-    auto luaGuiAPI = m_lua.addTable("GUI");
-    luaGuiAPI["addImage"] = [&](sol::userdata img) { m_gui.addImage(img); };
+    auto gui = createGuiApi(m_lua);
+    gui["addImage"] = [&](const sol::userdata &image) {
+        m_gui.addImage(image);
+    };
 
-    m_gui.addUsertypes(luaGuiAPI);
-
-    m_lua.lua["update"] = 3;
     m_lua.runLuaFile("game/client/main.lua");
 }
 
@@ -144,6 +150,13 @@ bool Client::init(const ClientConfig &config, float aspect)
     sendPlayerSkin(m_rawPlayerSkin);
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
+
+    // Font and text
+    m_debugTextFont.init("res/VeraMono-Bold.ttf", 512);
+    m_debugText.setPosition({2, config.windowHeight - 16, 0});
+    m_debugText.setCharSize(16);
+    m_debugText.setFont(m_debugTextFont);
+    m_debugText.setText("Current FPS: 60");
     return true;
 }
 
@@ -190,7 +203,6 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
     else if (keyboard.isKeyDown(sf::Keyboard::LShift)) {
         velocity.y -= PLAYER_SPEED * 2;
-        std::cout << mp_player->position << std::endl;
     }
     if (rotation.x < -80.0f) {
         rotation.x = -79.9f;
@@ -241,13 +253,20 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             break;
 
+        case sf::Keyboard::F3:
+            m_shouldRenderDebugInfo = !m_shouldRenderDebugInfo;
+            break;
+
         default:
             break;
     }
 }
 
-void Client::update(float dt)
+void Client::update(float dt, float frameTime, float fps)
 {
+    m_debugStats.fps = fps;
+    m_debugStats.frameTime = frameTime;
+
     NetworkHost::tick();
     if (!m_hasReceivedGameData) {
         return;
@@ -416,6 +435,7 @@ void Client::render(int width, int height)
         }
     }
 
+    size_t bytesRendered = 0;
     // Render chunks
     m_voxelTextures.bind();
 
@@ -423,8 +443,10 @@ void Client::render(int width, int height)
     for (auto &chunkMesh : m_chunks.bufferables) {
         // TODO [Hopson] -> DRY this code somehow...
         if (chunkMesh.blockMesh.indicesCount > 0) {
-            m_chunks.drawables.push_back({chunkMesh.blockMesh.position,
-                                          chunkMesh.blockMesh.createBuffer()});
+            m_chunks.drawables.push_back(
+                {chunkMesh.blockMesh.position,
+                 chunkMesh.blockMesh.createBuffer(),
+                 chunkMesh.blockMesh.calculateBufferSize()});
         }
         if (chunkMesh.fluidMesh.indicesCount > 0) {
             m_chunks.fluidDrawables.push_back(
@@ -445,7 +467,9 @@ void Client::render(int width, int height)
     m_chunkShader.program.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, playerProjectionView);
 
-    renderChunks(m_chunks.drawables, m_frustum);
+    m_debugStats.renderedChunks = 0;
+    m_debugStats.renderedChunks +=
+        renderChunks(m_chunks.drawables, m_frustum, bytesRendered);
 
     //Render the flora blocks
     m_floraShader.program.bind();
@@ -480,12 +504,57 @@ void Client::render(int width, int height)
     if (m_chunks.manager.getBlock(toBlockPosition(mp_player->position)) == 4) {
         glCheck(glCullFace(GL_FRONT));
     }
-    renderChunks(m_chunks.fluidDrawables, m_frustum);
+    renderChunks(m_chunks.fluidDrawables, m_frustum, bytesRendered);
     glCheck(glDisable(GL_BLEND));
     glCheck(glCullFace(GL_BACK));
 
+    m_debugStats.bytesRendered = bytesRendered;
+
     // GUI
     m_gui.render(width, height);
+
+    // Debug stats
+    std::cout << m_shouldRenderDebugInfo << std::endl;
+    if (m_shouldRenderDebugInfo) {
+        
+        if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
+            m_debugTextUpdateTimer.restart();
+
+            size_t totalBufferSize = [this]() {
+                auto &s = m_chunks.drawables;
+                auto &f = m_chunks.fluidDrawables;
+                auto getSize = [](const std::vector<ChunkDrawable> &drawables) {
+                    size_t s = 0;
+                    for (auto &d : drawables) {
+                        s += d.size;
+                    }
+                    return s;
+                };
+                return getSize(s) + getSize(f);
+            }();
+
+            totalBufferSize /= 0x100000;
+            m_debugStats.bytesRendered /= 0x100000;
+
+            DebugStats &d = m_debugStats;
+            glm::vec3 &p = mp_player->position;
+            glm::vec3 &r = mp_player->rotation;
+
+            std::ostringstream debugText;
+            debugText << "Frame time: " << std::setprecision(3) << d.frameTime
+                      << "ms ";
+            debugText << "FPS: " << std::floor(d.fps) << '\n';
+            debugText << "Chunks: " << d.renderedChunks << " of "
+                      << m_chunks.drawables.size() << " drawn\n";
+            debugText << "Chunk VRAM: " << m_debugStats.bytesRendered
+                      << "Mb of " << totalBufferSize << "Mb drawn\n";
+            debugText << "X: " << p.x << " Y: " << p.y << " Z: " << p.z << '\n';
+            debugText << "LX: " << r.x << " LY: " << r.y << " LZ: " << r.z << '\n';
+
+            m_debugText.setText(debugText.str());
+        }
+        m_gui.renderText(m_debugText);
+    }
 }
 
 void Client::endGame()

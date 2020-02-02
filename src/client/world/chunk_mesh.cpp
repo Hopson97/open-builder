@@ -2,6 +2,14 @@
 
 #include <common/world/world_constants.h>
 
+namespace {
+template <typename T>
+size_t vecSize(const std::vector<T> vect)
+{
+    return vect.size() * sizeof(vect[0]);
+}
+} // namespace
+
 ChunkMesh::ChunkMesh(const ChunkPosition &chunkPosition)
     : position(chunkPosition)
 {
@@ -47,6 +55,12 @@ gl::VertexArray ChunkMesh::createBuffer()
     vao.addIndexBuffer(indices);
 
     return vao;
+}
+
+size_t ChunkMesh::calculateBufferSize() const
+{
+    return vecSize(vertices) + vecSize(textureCoords) + vecSize(indices) +
+           vecSize(cardinalLights);
 }
 
 ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition &chunkPosition)

@@ -33,9 +33,10 @@ class Texture2d final {
     Texture2d(Texture2d &&other);
     Texture2d &operator=(Texture2d &&other);
 
-    Texture2d(const Texture2d&) = delete;
-    Texture2d& operator=(const Texture2d&) = delete;
+    Texture2d(const Texture2d &) = delete;
+    Texture2d &operator=(const Texture2d &) = delete;
 
+    void create(const sf::Image &image);
     void create(const std::string &file);
     void create(unsigned int width, unsigned int height,
                 const sf::Uint8 *pixels);
@@ -58,8 +59,8 @@ class TextureArray final {
     TextureArray(TextureArray &&other);
     TextureArray &operator=(TextureArray &&other);
 
-    TextureArray(const TextureArray&) = delete;
-    TextureArray& operator=(const TextureArray&) = delete;
+    TextureArray(const TextureArray &) = delete;
+    TextureArray &operator=(const TextureArray &) = delete;
 
     void create(GLsizei numTextures, GLsizei textureSize);
     GLuint addTexture(const std::string &file);

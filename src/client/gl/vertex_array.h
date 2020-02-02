@@ -33,8 +33,8 @@ class VertexArray final {
     VertexArray(VertexArray &&other);
     VertexArray &operator=(VertexArray &&other);
 
-    VertexArray(const VertexArray&) = delete;
-    VertexArray& operator=(const VertexArray&) = delete;
+    VertexArray(const VertexArray &) = delete;
+    VertexArray &operator=(const VertexArray &) = delete;
 
     void create();
     void destroy();

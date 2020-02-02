@@ -1,9 +1,6 @@
 #include "textures.h"
 #include "gl_errors.h"
-#include <common/debug.h>
 #include <iostream>
-
-#include <common/types.h>
 
 namespace {
 GLuint createTexture()
@@ -14,6 +11,13 @@ GLuint createTexture()
     return handle;
 }
 
+void texImage2d(GLenum param, const sf::Image &image)
+{
+    glCheck(glTexImage2D(param, 0, GL_RGBA, image.getSize().x,
+                         image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                         image.getPixelsPtr()));
+}
+
 bool bufferImage(GLenum param, const std::string &file)
 {
     sf::Image img;
@@ -21,9 +25,7 @@ bool bufferImage(GLenum param, const std::string &file)
         std::cerr << "Could not load: " << file << '\n';
         return false;
     }
-
-    glCheck(glTexImage2D(param, 0, GL_RGBA, img.getSize().x, img.getSize().y, 0,
-                         GL_RGBA, GL_UNSIGNED_BYTE, img.getPixelsPtr()));
+    texImage2d(param, img);
     return true;
 }
 
@@ -52,9 +54,9 @@ void CubeTexture::create(const std::array<std::string, 6> &textures)
     }
 
     glCheck(
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-    glCheck(
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER,
+GL_LINEAR)); glCheck( glTexParameteri(GL_TEXTURE_CUBE_MAP,
+GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
     glCheck(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S,
                             GL_CLAMP_TO_EDGE));
@@ -101,6 +103,20 @@ Texture2d &Texture2d::operator=(Texture2d &&other)
     m_handle = other.m_handle;
     other.reset();
     return *this;
+}
+
+void Texture2d::create(const sf::Image &image)
+{
+    bind();
+
+    texImage2d(GL_TEXTURE_2D, image);
+
+    glCheck(glGenerateMipmap(GL_TEXTURE_2D));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                            GL_LINEAR_MIPMAP_LINEAR));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.4f));
+    m_hasTexture = true;
 }
 
 void Texture2d::create(const std::string &file)
@@ -234,9 +250,9 @@ GLuint TextureArray::addTexture(const std::string &file)
         image.create(m_textureSize, m_textureSize);
         for (GLuint y = 0; y < m_textureSize; y++) {
             for (GLuint x = 0; x < m_textureSize; x++) {
-                u8 r = static_cast<u8>(rand() % 255);
-                u8 g = static_cast<u8>(rand() % 255);
-                u8 b = static_cast<u8>(rand() % 255);
+                uint8_t r = static_cast<uint8_t>(rand() % 255);
+                uint8_t g = static_cast<uint8_t>(rand() % 255);
+                uint8_t b = static_cast<uint8_t>(rand() % 255);
                 image.setPixel(x, y, {r, g, b});
             }
         }
