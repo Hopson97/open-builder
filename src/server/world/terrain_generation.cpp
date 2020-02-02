@@ -47,7 +47,7 @@ void createBasicTree(Chunk &chunk, const BlockPosition &blockPosition,
             for (int z = -2; z <= 2; z++) {
                 chunk.setBlock({bx + x, by + leavesHeight + y, bz + z}, leaf);
             }
-        }  
+        }
     }
 
     for (int y = 2; y <= 3; y++) {
@@ -55,7 +55,7 @@ void createBasicTree(Chunk &chunk, const BlockPosition &blockPosition,
             for (int z = -1; z <= 1; z++) {
                 chunk.setBlock({bx + x, by + leavesHeight + y, bz + z}, leaf);
             }
-        }   
+        }
     }
     chunk.setBlock({bx + 2, by + leavesHeight + 1, bz + 2}, 0);
     chunk.setBlock({bx - 2, by + leavesHeight + 1, bz + 2}, 0);
@@ -71,7 +71,6 @@ void createBasicTree(Chunk &chunk, const BlockPosition &blockPosition,
         chunk.setBlock({bx, by + y, bz}, wood);
     }
 }
-
 
 struct NoiseOptions {
     int octaves;
@@ -165,13 +164,14 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition &position,
 
 void createSmoothTerrain(Chunk &chunk,
                          const std::array<int, CHUNK_AREA> &heightMap,
-                         const VoxelDataManager &voxelData, int baseChunk)
+                         const VoxelDataManager &voxelData, int baseChunk,
+                         unsigned seed)
 {
 
     // TO DO: Eventully tree gen chance stuff can be done from lua
     std::minstd_rand rng;
     std::uniform_int_distribution<> treeDist(0, 2000);
-    rng.seed(std::time(nullptr));
+    rng.seed(seed + chunk.getPosition().x * 16 + chunk.getPosition().z);
 
     auto base = chunk.getPosition().y - baseChunk;
 
