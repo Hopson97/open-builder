@@ -139,10 +139,10 @@ bool Client::init(const ClientConfig &config, float aspect)
 
     //Font and text
     m_debugTextFont.init("font.ttf", 256);
-    m_debugText.setPosition({500, 400, 0});
-    m_debugText.setCharSize(32);
+    m_debugText.setPosition({15, config.windowHeight - 25, 0});
+    m_debugText.setCharSize(25);
     m_debugText.setFont(m_debugTextFont);
-    m_debugText.setText("Testing testgin... 123");
+    m_debugText.setText("Current FPS: 60");
     return true;
 }
 
@@ -245,8 +245,14 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
     }
 }
 
-void Client::update(float dt)
+void Client::update(float dt, float frameTime, float fps)
 {
+    float currentTime = m_clock.getElapsedTime().asSeconds();
+
+    m_debugText.setText(
+        "Current FPS: " + std::to_string(fps) + 
+        "\nFrame time: " + std::to_string(frameTime));
+    
     NetworkHost::tick();
     if (!m_hasReceivedGameData) {
         return;

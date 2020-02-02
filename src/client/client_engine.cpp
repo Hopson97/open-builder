@@ -13,17 +13,18 @@ struct FPSCounter final {
     float frameCount = 0;
     sf::Clock timer;
 
+    float fps;
+    float frameTime;
+
     void update()
     {
         frameCount++;
-        if (timer.getElapsedTime() > sf::seconds(2)) {
+        if (timer.getElapsedTime() > sf::seconds(0.25)) {
             auto time = timer.getElapsedTime();
 
-            float fps = frameCount / time.asSeconds();
-            float frameTime = time.asMilliseconds() / frameCount;
+            fps = frameCount / time.asSeconds();
+            frameTime = time.asMilliseconds() / frameCount;
 
-            std::cout << "FPS: " << fps << "\nFrame time: " << frameTime
-                      << "ms\n\n";
             frameCount = 0;
             timer.restart();
         }
@@ -76,7 +77,7 @@ EngineStatus runClientEngine(const ClientConfig &config)
         gameClient.handleInput(window.window, keyboard);
 
         // Update
-        gameClient.update(clock.restart().asSeconds());
+        gameClient.update(clock.restart().asSeconds(), counter.frameTime, counter.fps);
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

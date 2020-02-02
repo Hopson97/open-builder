@@ -44,6 +44,10 @@ struct ChunkDrawable {
     gl::VertexArray vao;
 };
 
+struct DebugStats {
+
+};
+
 class Client final : public NetworkHost {
   public:
     Client(const ClientConfig &config);
@@ -53,7 +57,7 @@ class Client final : public NetworkHost {
     void onKeyRelease(sf::Keyboard::Key key);
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
-    void update(float dt);
+    void update(float dt, float frameTime, float fps);
     void render(int width, int height);
     void endGame();
 
