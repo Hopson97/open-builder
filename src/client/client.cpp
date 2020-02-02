@@ -102,18 +102,26 @@ bool Client::init(const ClientConfig &config, float aspect)
         m_basicShader.program.getUniformLocation("projectionViewMatrix");
 
     // Chunk shader
-    m_chunkShader.program.create("chunk", "chunk");
+    m_chunkShader.program.create("chunk/chunk", "chunk/chunk");
     m_chunkShader.program.bind();
     m_chunkShader.projectionViewLocation =
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
 
-    // Chunk shader
-    m_fluidShader.program.create("water", "chunk");
+    // Fluids shader
+    m_fluidShader.program.create("chunk/water", "chunk/chunk");
     m_fluidShader.program.bind();
     m_fluidShader.projectionViewLocation =
         m_fluidShader.program.getUniformLocation("projectionViewMatrix");
     m_fluidShader.timeLocation =
         m_fluidShader.program.getUniformLocation("time");
+
+    // Flora shader
+    m_floraShader.program.create("chunk/flora", "chunk/transparent");
+    m_floraShader.program.bind();
+    m_floraShader.projectionViewLocation =
+        m_floraShader.program.getUniformLocation("projectionViewMatrix");
+    m_floraShader.timeLocation =
+        m_floraShader.program.getUniformLocation("time");
 
     // Texture for the player model
     m_errorSkinTexture.create("skins/error");
@@ -413,7 +421,7 @@ void Client::render(int width, int height)
 
     // Buffer chunks
     for (auto &chunkMesh : m_chunks.bufferables) {
-        // TODO [Hopson] -> DRY this code
+        // TODO [Hopson] -> DRY this code somehow...
         if (chunkMesh.blockMesh.indicesCount > 0) {
             m_chunks.drawables.push_back({chunkMesh.blockMesh.position,
                                           chunkMesh.blockMesh.createBuffer()});
@@ -422,15 +430,28 @@ void Client::render(int width, int height)
             m_chunks.fluidDrawables.push_back(
                 {chunkMesh.fluidMesh.position,
                  chunkMesh.fluidMesh.createBuffer()});
+        }        
+        if (chunkMesh.floraMesh.indicesCount > 0) {
+            m_chunks.floraDrawables.push_back(
+                {chunkMesh.floraMesh.position,
+                 chunkMesh.floraMesh.createBuffer()});
         }
     }
     m_chunks.bufferables.clear();
+
+    float time = m_clock.getElapsedTime().asSeconds();
 
     // Render solid chunk blocks
     m_chunkShader.program.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, playerProjectionView);
 
     renderChunks(m_chunks.drawables, m_frustum);
+
+    //Render the flora blocks
+    m_floraShader.program.bind();
+    gl::loadUniform(m_floraShader.timeLocation, time);
+    gl::loadUniform(m_floraShader.projectionViewLocation, playerProjectionView);
+    renderChunks(m_chunks.floraDrawables, m_frustum);
 
     glCheck(glEnable(GL_BLEND));
 
@@ -454,8 +475,7 @@ void Client::render(int width, int height)
 
     // Render fluid mesh
     m_fluidShader.program.bind();
-    gl::loadUniform(m_fluidShader.timeLocation,
-                    m_clock.getElapsedTime().asSeconds());
+    gl::loadUniform(m_fluidShader.timeLocation, time);
     gl::loadUniform(m_fluidShader.projectionViewLocation, playerProjectionView);
     if (m_chunks.manager.getBlock(toBlockPosition(mp_player->position)) == 4) {
         glCheck(glCullFace(GL_FRONT));
@@ -482,4 +502,5 @@ void Client::deleteChunkRenderable(const ChunkPosition &position)
 {
     ::deleteChunkRenderable(position, m_chunks.drawables);
     ::deleteChunkRenderable(position, m_chunks.fluidDrawables);
+    ::deleteChunkRenderable(position, m_chunks.floraDrawables);
 }

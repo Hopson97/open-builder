@@ -48,9 +48,18 @@ ChunkMeshCollection makeChunkMesh(const Chunk &chunk,
                 if (voxel > 0) {
 
                     auto &voxData = voxelData.getVoxelData(voxel);
-                    ChunkMesh *mesh = voxData.type == VoxelType::Solid
-                                          ? &meshes.blockMesh
-                                          : &meshes.fluidMesh;
+                    ChunkMesh *mesh = [&meshes, &voxData]() {
+                        if (voxData.type == VoxelType::Solid) {
+                            return &meshes.blockMesh;
+                        }
+                        else if (voxData.type == VoxelType::Flora) {
+                            return &meshes.floraMesh;
+                        }                         
+                        else if (voxData.type == VoxelType::Fluid) {
+                            return &meshes.fluidMesh;
+                        } 
+                        throw std::runtime_error("Unknown voxel type?");
+                    }();
 
                     // Left block face
                     if (makeFace(voxelData, voxel,

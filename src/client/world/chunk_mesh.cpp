@@ -39,7 +39,6 @@ void ChunkMesh::addFace(const MeshFace &face,
 
 gl::VertexArray ChunkMesh::createBuffer()
 {
-
     gl::VertexArray vao;
     vao.bind();
     vao.addVertexBuffer(3, vertices);
@@ -53,5 +52,6 @@ gl::VertexArray ChunkMesh::createBuffer()
 ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition &chunkPosition)
     : blockMesh(chunkPosition)
     , fluidMesh(chunkPosition)
+    , floraMesh(chunkPosition)
 {
 }
