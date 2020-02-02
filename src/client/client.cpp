@@ -195,7 +195,6 @@ void Client::handleInput(const sf::Window &window, const Keyboard &keyboard)
     }
     else if (keyboard.isKeyDown(sf::Keyboard::LShift)) {
         velocity.y -= PLAYER_SPEED * 2;
-        std::cout << mp_player->position << std::endl;
     }
     if (rotation.x < -80.0f) {
         rotation.x = -79.9f;
@@ -512,6 +511,7 @@ void Client::render(int width, int height)
         m_debugStats.bytesRendered /= 0x100000;
 
         DebugStats &d = m_debugStats;
+        glm::vec3 &p = mp_player->position;
 
         std::ostringstream debugText;
         debugText << "Frame time: " << std::setprecision(3) << d.frameTime
@@ -521,6 +521,7 @@ void Client::render(int width, int height)
                   << m_chunks.drawables.size() << " drawn\n";
         debugText << "Chunk VRAM: " << m_debugStats.bytesRendered << "Mb of "
                   << totalBufferSize << "Mb drawn\n";
+        debugText << "X: " << p.x << " Y: " << p.y << " Z: " << p.z << '\n';
 
         m_debugText.setText(debugText.str());
     }
