@@ -44,7 +44,7 @@ struct ChunkDrawable {
 
 class Client final : public NetworkHost {
   public:
-    Client();
+    Client(const ClientConfig &config);
 
     bool init(const ClientConfig &config, float aspect);
     void handleInput(const sf::Window &window, const Keyboard &keyboard);
