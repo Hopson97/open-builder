@@ -18,10 +18,17 @@ const MeshFace BOTTOM_FACE = {{0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1}, 0.4f};
 bool makeFace(const VoxelDataManager &voxelData, block_t thisId,
               block_t compareId)
 {
+    block_t air = voxelData.getVoxelId(CommonVoxel::Air);
+
     auto &thisBlock = voxelData.getVoxelData(thisId);
     auto &compareBlock = voxelData.getVoxelData(compareId);
-    return (compareBlock.id == 0 || compareBlock.id == 4) &&
-           thisBlock.id != compareBlock.id;
+    if (compareId == air) {
+        return true;
+    }
+    else if ((compareBlock.type != VoxelType::Solid) && (compareId != thisId)) {
+        return true;
+    }
+    return false;
 }
 
 } // namespace

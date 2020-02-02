@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <common/debug.h>
 #include <thread>
+#include <iostream>
 
 #include "../world/terrain_generation.h"
 
@@ -24,6 +25,11 @@ Server::Server(const ServerConfig &config)
     data["addVoxel"] = [&](const sol::table &voxelData) {
         VoxelData voxel;
 
+        voxel.name = voxelData["name"].get<std::string>();
+        voxel.topTexture = voxelData["render"]["top"].get<std::string>();
+        voxel.sideTexture = voxelData["render"]["sides"].get<std::string>();
+        voxel.bottomTexture = voxelData["render"]["bottom"].get<std::string>();
+
         std::cout << "Created voxel\n";
         if (voxelData["collidable"].valid()) {
             voxel.isCollidable = voxelData["collidable"].get<bool>();
@@ -35,11 +41,6 @@ Server::Server(const ServerConfig &config)
             voxel.meshStyle = voxelData["render"]["mesh"].get<VoxelMeshStyle>();
         }
 
-        voxel.name = voxelData["name"].get<std::string>();
-        voxel.topTexture = voxelData["render"]["top"].get<std::string>();
-        voxel.sideTexture = voxelData["render"]["sides"].get<std::string>();
-        voxel.bottomTexture = voxelData["render"]["bottom"].get<std::string>();
-
         m_voxelData.addVoxelData(voxel);
     };
 
@@ -50,6 +51,7 @@ Server::Server(const ServerConfig &config)
 
     auto voxelType = m_script.addTable("VoxelType");
     voxelType["Solid"] = VoxelType::Solid;
+    voxelType["Flora"] = VoxelType::Flora;
     voxelType["Fluid"] = VoxelType::Fluid;
     voxelType["Gas"] = VoxelType::Gas;
 

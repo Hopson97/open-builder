@@ -208,5 +208,7 @@ void Client::onGameRegistryData(sf::Packet &packet)
         m_voxelData.addVoxelData(voxelData);
     }
 
+    m_voxelData.initCommonVoxelTypes();
+
     m_hasReceivedGameData = true;
 }
