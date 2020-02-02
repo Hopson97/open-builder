@@ -184,6 +184,7 @@ void Text::createGeometry()
         if (character == '\n') {
             pos.y += m_font->getLineHeight();
             pos.x = 0;
+            previous = 0;
         }
 
         //Create a single quad for the char

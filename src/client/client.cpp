@@ -39,14 +39,17 @@ void deleteChunkRenderable(const ChunkPosition &position,
     }
 }
 
-void renderChunks(const std::vector<ChunkDrawable> &chunks,
+int renderChunks(const std::vector<ChunkDrawable> &chunks,
                   const ViewFrustum &frustum)
 {
+    int renderedChunks = 0;
     for (const auto &chunk : chunks) {
         if (frustum.chunkIsInFrustum(chunk.position)) {
             chunk.vao.getDrawable().bindAndDraw();
+            renderedChunks++;
         }
     }
+    return renderedChunks;
 }
 
 bool isVoxelSelectable(VoxelType voxelType)
@@ -247,11 +250,8 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
 
 void Client::update(float dt, float frameTime, float fps)
 {
-    float currentTime = m_clock.getElapsedTime().asSeconds();
-
-    m_debugText.setText(
-        "Current FPS: " + std::to_string(fps) + 
-        "\nFrame time: " + std::to_string(frameTime));
+    m_debugStats.fps = fps;
+    m_debugStats.frameTime = frameTime;
     
     NetworkHost::tick();
     if (!m_hasReceivedGameData) {
@@ -443,7 +443,8 @@ void Client::render(int width, int height)
     m_chunkShader.program.bind();
     gl::loadUniform(m_chunkShader.projectionViewLocation, playerProjectionView);
 
-    renderChunks(m_chunks.drawables, m_frustum);
+    m_debugStats.renderedChunks = 0;
+    m_debugStats.renderedChunks += renderChunks(m_chunks.drawables, m_frustum);
 
     glCheck(glEnable(GL_BLEND));
 
@@ -479,6 +480,20 @@ void Client::render(int width, int height)
 
     // GUI
     m_gui.render(width, height);
+
+    //Debug stats
+    if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
+        m_debugTextUpdateTimer.restart();
+
+        DebugStats& d = m_debugStats;
+
+        std::ostringstream debugText;
+        debugText << "FPS: " << d.fps << '\n';
+        debugText << "Frame time: " << d.frameTime << '\n';
+        debugText << "Chunks rendered: " << d.renderedChunks << "/" << m_chunks.drawables.size() << '\n';
+
+        m_debugText.setText(debugText.str());
+    }
     m_gui.renderText(m_debugText);
 }
 

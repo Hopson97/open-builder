@@ -45,7 +45,9 @@ struct ChunkDrawable {
 };
 
 struct DebugStats {
-
+    float fps;
+    float frameTime;
+    int renderedChunks;
 };
 
 class Client final : public NetworkHost {
@@ -158,8 +160,12 @@ class Client final : public NetworkHost {
 
     // GUI
     Gui m_gui;
+
+    //Debug stats stuff
+    DebugStats m_debugStats;
     Text m_debugText;
     Font m_debugTextFont;
+    sf::Clock m_debugTextUpdateTimer;
 
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
