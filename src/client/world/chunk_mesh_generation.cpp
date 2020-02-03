@@ -15,6 +15,9 @@ const MeshFace RIGHT_FACE = {{1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0}, 0.6f};
 const MeshFace TOP_FACE = {{1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1}, 1.0f};
 const MeshFace BOTTOM_FACE = {{0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1}, 0.4f};
 
+const MeshFace CROSS_FACE_A = {{0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0}, 0.8f};
+const MeshFace CROSS_FACE_B = {{0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1}, 0.8f};
+
 bool makeFace(const VoxelDataManager& voxelData, block_t thisId, block_t compareId)
 {
     block_t air = voxelData.getVoxelId(CommonVoxel::Air);
@@ -58,6 +61,12 @@ ChunkMeshCollection makeChunkMesh(const Chunk& chunk, const VoxelDataManager& vo
                         }
                         throw std::runtime_error("Unknown voxel type?");
                     }();
+
+                    if (voxData.meshStyle == VoxelMeshStyle::Cross) {
+                        mesh->addFace(CROSS_FACE_A, blockPosition, voxData.sideTextureId);
+                        mesh->addFace(CROSS_FACE_B, blockPosition, voxData.sideTextureId);
+                        continue;
+                    }
 
                     // Left block face
                     if (makeFace(voxelData, voxel, chunk.getBlock({x - 1, y, z}))) {
