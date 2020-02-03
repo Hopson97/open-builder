@@ -44,8 +44,8 @@ void ChunkManager::setBlock(const BlockPosition& blockPosition, block_t block)
     }
     else {
         addChunk(chunkPosition).qSetBlock(local, block);
-        ensureNeighbours(chunkPosition);
     }
+    ensureNeighbours(chunkPosition);
 }
 
 bool ChunkManager::hasChunk(const ChunkPosition& chunk) const
