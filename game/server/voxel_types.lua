@@ -96,6 +96,21 @@ game.data.addVoxel {
     },
 }
 
+--  Common Tall Grass Voxel Data
+game.data.addVoxel {
+    name = "openbuilder_common_tallgrass",
+    description = "Common Tallgrass",
+    type = game.VoxelType.Flora,
+    collidable = false,
+    render = {
+        mesh = game.VoxelType.Cross,
+        top = "common_tall_grass",
+        sides = "common_tall_grass",
+        bottom = "common_tall_grass",
+    },
+}
+
+
 ----  Coal ore Voxel Data
 --game.data.addVoxel {
 --    name = "openbuilder_raw_coal",
@@ -105,17 +120,5 @@ game.data.addVoxel {
 --        top = "coal_ore",
 --        sides = "coal_ore",
 --        bottom = "coal_ore",
---    },
---}
---
-----  Iron ore Voxel Data
---game.data.addVoxel {
---    name = "openbuilder_iron_ore",
---    description = "Iron Ore",
---    collidable = false,
---    render = {
---        top = "iron_ore",
---        sides = "iron_ore",
---        bottom = "iron_ore",
 --    },
 --}
