@@ -356,11 +356,12 @@ glm::vec3 Server::findPlayerSpawnPosition()
         for (int blockY = CHUNK_SIZE - 1; blockY >= 0; blockY--) {
             auto blockPosition = toLocalBlockPosition({x, 0, z});
             blockPosition.y = blockY;
-            if (spawn.qGetBlock(blockPosition) == 1) {
+            if (spawn.qGetBlock(blockPosition) > 0 ) {
                 auto worldY = chunkY * CHUNK_SIZE + blockY + 3;
+                std::cout << "Spawning: " << glm::vec3{x, worldY, z} << '\n';
                 return {x, worldY, z};
             }
         }
     }
-    return {x, CHUNK_SIZE * m_worldSize, z};
+    return {x, CHUNK_SIZE * 2, z};
 }
