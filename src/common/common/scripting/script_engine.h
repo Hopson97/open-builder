@@ -7,8 +7,8 @@
 struct ScriptEngine {
     ScriptEngine();
 
-    bool runLuaString(const std::string &script);
-    bool runLuaFile(const std::string &path);
+    bool runLuaString(const std::string& script);
+    bool runLuaFile(const std::string& path);
 
     /**
      * @brief Gets a Lua function
@@ -18,7 +18,7 @@ struct ScriptEngine {
      * @param functionName The name of the function to find
      * @return sol::function The Lua function
      */
-    sol::function getLuaFunction(const char *functionName);
+    sol::function getLuaFunction(const char* functionName);
 
     /**
      * @brief Runs a Lua function in a safe manner
@@ -31,26 +31,24 @@ struct ScriptEngine {
      * @return std::optional<R>
      */
     template <typename R, typename... Args>
-    std::optional<R> runLuaFunctionSafe(const char *functionName,
-                                        Args &&... args);
+    std::optional<R> runLuaFunctionSafe(const char* functionName, Args&&... args);
 
     template <typename... Args>
-    auto addTable(const std::string &tableName, Args &&... args);
+    auto addTable(const std::string& tableName, Args&&... args);
 
     template <typename T, typename... Args>
-    auto addType(const std::string &name, Args &&... args);
+    auto addType(const std::string& name, Args&&... args);
 
     sol::state lua;
     sol::table gameTable;
 };
 
 template <typename R, typename... Args>
-std::optional<R> ScriptEngine::runLuaFunctionSafe(const char *functionName,
-                                                  Args &&... args)
+std::optional<R> ScriptEngine::runLuaFunctionSafe(const char* functionName,
+                                                  Args&&... args)
 {
     sol::protected_function function = gameTable[functionName];
-    sol::protected_function_result result =
-        function(std::forward<Args>(args)...);
+    sol::protected_function_result result = function(std::forward<Args>(args)...);
     if (result.valid()) {
         R res = result;
         return res;
@@ -64,13 +62,13 @@ std::optional<R> ScriptEngine::runLuaFunctionSafe(const char *functionName,
 }
 
 template <typename T, typename... Args>
-auto ScriptEngine::addType(const std::string &name, Args &&... args)
+auto ScriptEngine::addType(const std::string& name, Args&&... args)
 {
     return lua.new_usertype<T>(name, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-auto ScriptEngine::addTable(const std::string &tableName, Args &&... args)
+auto ScriptEngine::addTable(const std::string& tableName, Args&&... args)
 {
     return gameTable.create_named(tableName, std::forward<Args>(args)...);
 }

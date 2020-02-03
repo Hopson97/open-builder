@@ -7,4 +7,4 @@
  * @param path The path of the file to load
  * @return std::string Contents of the file
  */
-std::string loadFileContents(const std::string &path);
+std::string loadFileContents(const std::string& path);

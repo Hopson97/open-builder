@@ -6,7 +6,7 @@
 #include <iostream>
 
 namespace {
-GLuint compileShader(const GLchar *source, GLenum shaderType)
+GLuint compileShader(const GLchar* source, GLenum shaderType)
 {
     auto shaderID = glCheck(glCreateShader(shaderType));
 
@@ -19,11 +19,9 @@ GLuint compileShader(const GLchar *source, GLenum shaderType)
     glCheck(glGetShaderiv(shaderID, GL_COMPILE_STATUS, &isSuccess));
     if (!isSuccess) {
         glCheck(glGetShaderInfoLog(shaderID, 512, nullptr, infoLog));
-        std::cout << "Unable to load a shader: " + std::string(infoLog)
-                  << std::endl;
+        std::cout << "Unable to load a shader: " + std::string(infoLog) << std::endl;
 
-        throw std::runtime_error("Unable to load a shader: " +
-                                 std::string(infoLog));
+        throw std::runtime_error("Unable to load a shader: " + std::string(infoLog));
     }
 
     return shaderID;
@@ -44,8 +42,7 @@ GLuint linkProgram(GLuint vertexShaderID, GLuint fragmentShaderID)
     glCheck(glGetProgramiv(id, GL_LINK_STATUS, &isSuccess));
     if (!isSuccess) {
         glCheck(glGetProgramInfoLog(id, 512, nullptr, infoLog));
-        throw std::runtime_error("Unable to link a shader: " +
-                                 std::string(infoLog));
+        throw std::runtime_error("Unable to link a shader: " + std::string(infoLog));
     }
 
     return id;
@@ -59,12 +56,12 @@ Shader::~Shader()
     destroy();
 }
 
-Shader::Shader(Shader &&other)
+Shader::Shader(Shader&& other)
 {
     *this = std::move(other);
 }
 
-Shader &Shader::operator=(Shader &&other)
+Shader& Shader::operator=(Shader&& other)
 {
     destroy();
     m_handle = other.m_handle;
@@ -72,8 +69,7 @@ Shader &Shader::operator=(Shader &&other)
     return *this;
 }
 
-void Shader::create(const std::string &vertexFile,
-                    const std::string &fragmentFile)
+void Shader::create(const std::string& vertexFile, const std::string& fragmentFile)
 {
     glCheck(glUseProgram(0));
     std::string vertFileFull("shaders/" + vertexFile + "_vertex.glsl");
@@ -83,8 +79,7 @@ void Shader::create(const std::string &vertexFile,
     auto fragmentSource = loadFileContents(fragFileFull);
 
     auto vertexShaderID = compileShader(vertexSource.c_str(), GL_VERTEX_SHADER);
-    auto fragmentShaderID =
-        compileShader(fragmentSource.c_str(), GL_FRAGMENT_SHADER);
+    auto fragmentShaderID = compileShader(fragmentSource.c_str(), GL_FRAGMENT_SHADER);
 
     m_handle = linkProgram(vertexShaderID, fragmentShaderID);
 
@@ -106,27 +101,26 @@ void Shader::bind() const
     glCheck(glUseProgram(m_handle));
 }
 
-UniformLocation Shader::getUniformLocation(const char *name)
+UniformLocation Shader::getUniformLocation(const char* name)
 {
     UniformLocation location;
     location.ptr = glCheck(glGetUniformLocation(m_handle, name));
     return location;
 }
 
-void loadUniform(UniformLocation location, const glm::vec3 &vector)
+void loadUniform(UniformLocation location, const glm::vec3& vector)
 {
     glCheck(glUniform3fv(location.ptr, 1, glm::value_ptr(vector)));
 }
 
-void loadUniform(UniformLocation location, const glm::ivec3 &vector)
+void loadUniform(UniformLocation location, const glm::ivec3& vector)
 {
     glCheck(glUniform3iv(location.ptr, 1, glm::value_ptr(vector)));
 }
 
-void loadUniform(UniformLocation location, const glm::mat4 &matrix)
+void loadUniform(UniformLocation location, const glm::mat4& matrix)
 {
-    glCheck(
-        glUniformMatrix4fv(location.ptr, 1, GL_FALSE, glm::value_ptr(matrix)));
+    glCheck(glUniformMatrix4fv(location.ptr, 1, GL_FALSE, glm::value_ptr(matrix)));
 }
 
 void loadUniform(UniformLocation location, GLint value)

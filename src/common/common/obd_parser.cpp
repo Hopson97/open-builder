@@ -10,16 +10,16 @@ namespace {
 /**
     Removes trailing/ leading whitespace from a string
 */
-std::string cleanString(const std::string &line)
+std::string cleanString(const std::string& line)
 {
-    const char *WhiteSpace = " \t\v\r\n";
+    const char* WhiteSpace = " \t\v\r\n";
     std::size_t start = line.find_first_not_of(WhiteSpace);
     std::size_t end = line.find_last_not_of(WhiteSpace);
     return start == end ? std::string() : line.substr(start, end - start + 1);
 }
 } // namespace
 
-std::vector<DataBlock> getObdDataRaw(const std::string &obd)
+std::vector<DataBlock> getObdDataRaw(const std::string& obd)
 {
     std::vector<DataBlock> data;
     std::istringstream stream(obd);
@@ -50,7 +50,7 @@ std::vector<DataBlock> getObdDataRaw(const std::string &obd)
     return data;
 }
 
-std::vector<DataBlock> getObdData(const std::string &filename)
+std::vector<DataBlock> getObdData(const std::string& filename)
 {
     return getObdDataRaw(loadFileContents(filename));
 }

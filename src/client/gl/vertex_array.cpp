@@ -12,7 +12,7 @@ GLuint genVbo()
 }
 
 template <typename T>
-void bufferData(const std::vector<T> &data)
+void bufferData(const std::vector<T>& data)
 {
     glCheck(glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(T), data.data(),
                          GL_STATIC_DRAW));
@@ -20,7 +20,7 @@ void bufferData(const std::vector<T> &data)
 
 void vertexAttribPointer(GLuint index, GLint mag, GLenum type)
 {
-    glCheck(glVertexAttribPointer(index, mag, type, GL_FALSE, 0, (GLvoid *)0));
+    glCheck(glVertexAttribPointer(index, mag, type, GL_FALSE, 0, (GLvoid*)0));
 }
 } // namespace
 
@@ -60,12 +60,12 @@ VertexArray::~VertexArray()
     destroy();
 }
 
-VertexArray::VertexArray(VertexArray &&other)
+VertexArray::VertexArray(VertexArray&& other)
 {
     *this = std::move(other);
 }
 
-VertexArray &VertexArray::operator=(VertexArray &&other)
+VertexArray& VertexArray::operator=(VertexArray&& other)
 {
     destroy();
     m_bufferObjects = std::move(other.m_bufferObjects);
@@ -99,8 +99,7 @@ Drawable VertexArray::getDrawable() const
     return {m_handle, m_indicesCount};
 }
 
-void VertexArray::addVertexBuffer(int magnitude,
-                                  const std::vector<GLuint> &data)
+void VertexArray::addVertexBuffer(int magnitude, const std::vector<GLuint>& data)
 {
     bind();
     GLuint vertexBuffer = genVbo();
@@ -110,8 +109,7 @@ void VertexArray::addVertexBuffer(int magnitude,
     m_bufferObjects.push_back(vertexBuffer);
 }
 
-void VertexArray::addVertexBuffer(int magnitude,
-                                  const std::vector<GLfloat> &data)
+void VertexArray::addVertexBuffer(int magnitude, const std::vector<GLfloat>& data)
 {
     bind();
     GLuint vertexBuffer = genVbo();
@@ -121,7 +119,7 @@ void VertexArray::addVertexBuffer(int magnitude,
     m_bufferObjects.push_back(vertexBuffer);
 }
 
-void VertexArray::addIndexBuffer(const std::vector<GLuint> &indices)
+void VertexArray::addIndexBuffer(const std::vector<GLuint>& indices)
 {
     bind();
 
@@ -129,9 +127,8 @@ void VertexArray::addIndexBuffer(const std::vector<GLuint> &indices)
     glCheck(glGenBuffers(1, &elementBuffer));
     glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer));
 
-    glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                         indices.size() * sizeof(GLuint), indices.data(),
-                         GL_STATIC_DRAW));
+    glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint),
+                         indices.data(), GL_STATIC_DRAW));
 
     m_bufferObjects.push_back(elementBuffer);
     m_indicesCount = indices.size();

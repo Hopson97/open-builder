@@ -33,7 +33,7 @@ struct GuiImage {
 
     glm::vec3 colour{0.0f};
 
-    void setSource(const std::string &imageSource);
+    void setSource(const std::string& imageSource);
 
     void setColour(float r, float g, float b);
 
@@ -70,4 +70,4 @@ class Gui final {
     std::vector<sol::userdata> m_images;
 };
 
-sol::table createGuiApi(ScriptEngine &engine);
+sol::table createGuiApi(ScriptEngine& engine);

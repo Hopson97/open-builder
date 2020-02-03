@@ -3,7 +3,7 @@
 #include <iostream>
 
 namespace {
-bool scriptRunWasValid(const sol::protected_function_result &result)
+bool scriptRunWasValid(const sol::protected_function_result& result)
 {
     if (result.valid()) {
         std::cout << "Script string ran sucessfully." << '\n';
@@ -22,7 +22,7 @@ ScriptEngine::ScriptEngine()
     lua.open_libraries(sol::lib::base, sol::lib::math);
 }
 
-bool ScriptEngine::runLuaString(const std::string &script)
+bool ScriptEngine::runLuaString(const std::string& script)
 {
     auto result = lua.script(script, [](auto L, auto res) {
         (void)L;
@@ -32,7 +32,7 @@ bool ScriptEngine::runLuaString(const std::string &script)
     return scriptRunWasValid(result);
 }
 
-bool ScriptEngine::runLuaFile(const std::string &path)
+bool ScriptEngine::runLuaFile(const std::string& path)
 {
     auto script = lua.load_file(path);
     if (script.valid()) {
@@ -41,13 +41,13 @@ bool ScriptEngine::runLuaFile(const std::string &path)
     }
     else {
         sol::error err = script;
-        std::cerr << "Lua script file invalid: " << path
-                  << "Error: " << err.what() << '\n';
+        std::cerr << "Lua script file invalid: " << path << "Error: " << err.what()
+                  << '\n';
         return false;
     }
 }
 
-sol::function ScriptEngine::getLuaFunction(const char *functionName)
+sol::function ScriptEngine::getLuaFunction(const char* functionName)
 {
     return gameTable[functionName];
 }

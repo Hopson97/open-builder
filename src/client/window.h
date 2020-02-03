@@ -12,10 +12,10 @@ struct ClientConfig;
  */
 class Window {
   public:
-    Window(const ClientConfig &config);
+    Window(const ClientConfig& config);
 
     template <typename F, typename MouseRelease>
-    EngineStatus pollEvents(Keyboard &keyboard, F onKeyRelease,
+    EngineStatus pollEvents(Keyboard& keyboard, F onKeyRelease,
                             MouseRelease onMouseRelease);
 
     sf::Window window;
@@ -24,11 +24,11 @@ class Window {
     float aspect;
 
   private:
-    void create(const sf::VideoMode &mode, u32 style);
+    void create(const sf::VideoMode& mode, u32 style);
 };
 
 template <typename F, typename MouseRelease>
-EngineStatus Window::pollEvents(Keyboard &keyboard, F onKeyRelease,
+EngineStatus Window::pollEvents(Keyboard& keyboard, F onKeyRelease,
                                 MouseRelease onMouseRelease)
 {
     auto status = EngineStatus::Ok;
@@ -50,8 +50,7 @@ EngineStatus Window::pollEvents(Keyboard &keyboard, F onKeyRelease,
                 break;
 
             case sf::Event::MouseButtonReleased:
-                onMouseRelease(e.mouseButton.button, e.mouseButton.x,
-                               e.mouseButton.y);
+                onMouseRelease(e.mouseButton.button, e.mouseButton.x, e.mouseButton.y);
                 break;
 
             case sf::Event::Closed:

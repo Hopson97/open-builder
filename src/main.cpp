@@ -47,7 +47,7 @@ struct Config {
  * @brief Loads config eg window size from the config.txt file
  * @param config The config object to put the data into
  */
-void loadFromConfigFile(Config &config)
+void loadFromConfigFile(Config& config)
 {
     auto data = getObdData("config.obd");
     auto clientData = data[0].data;
@@ -77,10 +77,10 @@ void loadFromConfigFile(Config &config)
  * @param config The config to load data into
  * @param args CLI arguments paired as <argument, param>
  */
-void parseArgs(Config &config,
-               const std::vector<std::pair<std::string, std::string>> &args)
+void parseArgs(Config& config,
+               const std::vector<std::pair<std::string, std::string>>& args)
 {
-    for (const auto &option : args) {
+    for (const auto& option : args) {
         // Set launch type to be server.
         // Option: MAX_CONNECTIONS 2-16
         if (option.first == "-server") {
@@ -88,17 +88,16 @@ void parseArgs(Config &config,
             try {
                 int maxConnections = std::stoi(option.second);
                 if (maxConnections < 2) {
-                    throw std::invalid_argument(
-                        "Max connections must be at least " +
-                        std::to_string(MIN_CONNECTIONS) + ".\n");
+                    throw std::invalid_argument("Max connections must be at least " +
+                                                std::to_string(MIN_CONNECTIONS) + ".\n");
                 }
                 else if (maxConnections > 16) {
-                    throw std::invalid_argument(
-                        "Max connections must be " +
-                        std::to_string(MAX_CONNECTIONS) + " or below.\n");
+                    throw std::invalid_argument("Max connections must be " +
+                                                std::to_string(MAX_CONNECTIONS) +
+                                                " or below.\n");
                 }
             }
-            catch (std::invalid_argument &e) {
+            catch (std::invalid_argument& e) {
                 std::cout << "Unable to set max connections, defaulting to "
                              "4. Reason: "
                           << e.what() << "\n";
@@ -118,7 +117,7 @@ void parseArgs(Config &config,
  * @brief Prints success message
  * @return int Exit success flag
  */
-int exitSuccess(const char *message = "Normal exit")
+int exitSuccess(const char* message = "Normal exit")
 {
     std::cout << "Engine exited successfully.\"" << message << "\"." << '\n';
     return EXIT_SUCCESS;
@@ -128,7 +127,7 @@ int exitSuccess(const char *message = "Normal exit")
  * @brief Prints failure message
  * @return int Exit failure flag
  */
-int exitFailure(const char *message)
+int exitFailure(const char* message)
 {
     std::cerr << "Engine exited with error: \"" << message << "\"." << '\n';
     return EXIT_FAILURE;
@@ -140,7 +139,7 @@ int exitFailure(const char *message)
  * @param timeout How long the server waits for a connection before closing
  * @return int Exit success flag
  */
-int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
+int launchServer(const ServerConfig& config, sf::Time timeout = sf::seconds(8))
 {
     LOG("Launcher", "Launching server");
     ServerLauncher launcher(config, timeout);
@@ -152,7 +151,7 @@ int launchServer(const ServerConfig &config, sf::Time timeout = sf::seconds(8))
 void printInstructions()
 {
     const int width = 20;
-    auto printInstruction = [width](const char *input, const char *output) {
+    auto printInstruction = [width](const char* input, const char* output) {
         std::cout << std::setw(width) << std::left << output << input << '\n';
     };
     std::cout << "Take a look at the instructions before you play." << '\n'
@@ -186,7 +185,7 @@ void printInstructions()
  * @param launchingJustClient It defines if the instructions should be printed
  * @return int Exit flag (Success, or Failure)
  */
-int launchClient(const ClientConfig &config, bool launchingJustClient)
+int launchClient(const ClientConfig& config, bool launchingJustClient)
 {
     if (launchingJustClient && config.shouldShowInstructions) {
         printInstructions();
@@ -201,8 +200,7 @@ int launchClient(const ClientConfig &config, bool launchingJustClient)
             return exitSuccess("Client was disconnected from the server.");
 
         case EngineStatus::ExitServerTimeout:
-            return exitSuccess(
-                "Server timeout, client forcefully was disconnected.");
+            return exitSuccess("Server timeout, client forcefully was disconnected.");
 
         case EngineStatus::GLInitError:
             return exitFailure("OpenGL failed to initilise correctly");
@@ -219,7 +217,7 @@ int launchClient(const ClientConfig &config, bool launchingJustClient)
  * @param config The config to be used by client/server engines
  * @return int Exit flag (Success, or Failure)
  */
-int launchBoth(const Config &config)
+int launchBoth(const Config& config)
 {
     ServerLauncher server(config.server, sf::milliseconds(5000));
     std::thread serverThread([&server]() {
@@ -237,7 +235,7 @@ int launchBoth(const Config &config)
  * @param config The config to be used by client/server engines
  * @return int Exit flag (Success, or Failure)
  */
-int launchServerAnd2Players(const Config &config)
+int launchServerAnd2Players(const Config& config)
 {
     ServerLauncher server(config.server, sf::milliseconds(5000));
     std::thread serverThread([&server]() {
@@ -256,7 +254,7 @@ int launchServerAnd2Players(const Config &config)
 }
 } // namespace
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     Config config;
 

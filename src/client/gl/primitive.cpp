@@ -1,7 +1,6 @@
 #include "primitive.h"
 
-gl::VertexArray makeCubeVertexArray(GLfloat width, GLfloat height,
-                                    GLfloat depth)
+gl::VertexArray makeCubeVertexArray(GLfloat width, GLfloat height, GLfloat depth)
 {
     float w = width;
     float h = height;
@@ -47,8 +46,7 @@ gl::VertexArray makeCubeVertexArray(GLfloat width, GLfloat height,
     return vao;
 }
 
-gl::VertexArray makeWireCubeVertexArray(GLfloat width, GLfloat height,
-                                        GLfloat depth)
+gl::VertexArray makeWireCubeVertexArray(GLfloat width, GLfloat height, GLfloat depth)
 {
     float w = width;
     float h = height;
@@ -71,8 +69,7 @@ gl::VertexArray makeWireCubeVertexArray(GLfloat width, GLfloat height,
     return vao;
 }
 
-gl::VertexArray makeQuadVertexArray(GLfloat relativeWidth,
-                                    GLfloat relativeHeight)
+gl::VertexArray makeQuadVertexArray(GLfloat relativeWidth, GLfloat relativeHeight)
 {
     auto w = relativeWidth;
     auto h = relativeHeight;
@@ -82,8 +79,7 @@ gl::VertexArray makeQuadVertexArray(GLfloat relativeWidth,
 
     std::vector<GLuint> indices = {0, 1, 2, 2, 3, 0};
 
-    std::vector<GLfloat> textureCoords = {0.0f, 0.0f, 1.0f, 0.0f,
-                                          1.0f, 1.0f, 0.0f, 1.0f};
+    std::vector<GLfloat> textureCoords = {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f};
 
     gl::VertexArray vao;
     vao.bind();

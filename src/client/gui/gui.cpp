@@ -10,8 +10,7 @@
 //
 //  Gui Dimensions
 //
-GuiDimension::GuiDimension(float xScale, float xOffset, float yScale,
-                           float yOffset)
+GuiDimension::GuiDimension(float xScale, float xOffset, float yScale, float yOffset)
     : scale{xScale, yScale}
     , offset{xOffset, yOffset}
 {
@@ -29,7 +28,7 @@ glm::vec2 GuiDimension::apply(float width, float height)
 //  GUI Image
 //
 
-void GuiImage::setSource(const std::string &imageSource)
+void GuiImage::setSource(const std::string& imageSource)
 {
     if (texture.textureExists()) {
         texture.destroy();
@@ -68,13 +67,10 @@ Gui::Gui(float windowWidth, float windowHeight)
     // GUI Shader
     m_guiShader.program.create("gui", "gui");
     m_guiShader.program.bind();
-    m_guiShader.modelLocation =
-        m_guiShader.program.getUniformLocation("modelMatrix");
-    m_guiShader.colorLocation =
-        m_guiShader.program.getUniformLocation("colour");
+    m_guiShader.modelLocation = m_guiShader.program.getUniformLocation("modelMatrix");
+    m_guiShader.colorLocation = m_guiShader.program.getUniformLocation("colour");
 
-    m_orthoMatrix =
-        glm::ortho(0.0f, windowWidth, 0.0f, windowHeight, -1.0f, 1.0f);
+    m_orthoMatrix = glm::ortho(0.0f, windowWidth, 0.0f, windowHeight, -1.0f, 1.0f);
 
     m_guiShader.projectionLocation =
         m_guiShader.program.getUniformLocation("projectionMatrix");
@@ -99,8 +95,8 @@ void Gui::render(float width, float height)
     auto d = m_quad.getDrawable();
     d.bind();
 
-    for (auto &image : m_images) {
-        auto &img = image.as<GuiImage>();
+    for (auto& image : m_images) {
+        auto& img = image.as<GuiImage>();
         img.texture.bind();
 
         glm::vec2 pos = img.position.apply(width, height);
@@ -124,12 +120,12 @@ void Gui::renderText(Text& text)
     text.render(m_guiShader.modelLocation);
 }
 
-sol::table createGuiApi(ScriptEngine &engine)
+sol::table createGuiApi(ScriptEngine& engine)
 {
     auto gui = engine.addTable("GUI");
     auto gdim = gui.new_usertype<GuiDimension>(
-        "GDim", sol::constructors<GuiDimension(),
-                                  GuiDimension(float, float, float, float)>());
+        "GDim",
+        sol::constructors<GuiDimension(), GuiDimension(float, float, float, float)>());
 
     auto guiImage = gui.new_usertype<GuiImage>("Image");
     guiImage["setSource"] = &GuiImage::setSource;

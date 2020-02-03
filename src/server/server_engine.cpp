@@ -7,7 +7,7 @@
 #include <iostream>
 #include <thread>
 
-ServerLauncher::ServerLauncher(const ServerConfig &config, sf::Time timeout)
+ServerLauncher::ServerLauncher(const ServerConfig& config, sf::Time timeout)
     : m_server(config)
     , m_config(config)
     , m_timeout(timeout)
@@ -57,9 +57,8 @@ void ServerLauncher::runServerEngine()
     }
     m_server.disconnectAllPeers();
     if (serverConsoleRunning) {
-        std::cout
-            << "Server console is still active.\nPlease type anything to exit."
-            << std::endl;
+        std::cout << "Server console is still active.\nPlease type anything to exit."
+                  << std::endl;
     }
     console.join();
 }

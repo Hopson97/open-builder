@@ -1,8 +1,8 @@
 #include "text.h"
 
 #include "../gl/shader.h"
-#include <iostream>
 #include "../maths.h"
+#include <iostream>
 
 namespace {
 struct Mesh {
@@ -12,12 +12,12 @@ struct Mesh {
     GLuint icount = 0;
 };
 
-//Adapted from https://github.com/SFML/SFML/blob/master/src/SFML/Graphics/Text.cpp
+// Adapted from https://github.com/SFML/SFML/blob/master/src/SFML/Graphics/Text.cpp
 // void addGlyphQuad and ensureGeometryUpdate
 
 /**
  * @brief Creates a quad that contains a character, and adds to a mesh
- * 
+ *
  * @param mesh The mesh to add the character to
  * @param glyph The glyph being added
  * @param c The character being added
@@ -25,9 +25,12 @@ struct Mesh {
  * @param position The world position to put this char at
  * @param maxHeight The maximum height of the chars
  */
-void addCharacter(Mesh &mesh, const sf::Glyph &glyph, float size, const sf::Vector2f& position)
+void addCharacter(Mesh& mesh, const sf::Glyph& glyph, float size,
+                  const sf::Vector2f& position)
 {
-    //Find the vertex positions of the the quad that will render this character
+    // Shorthand
+    const auto& textureRect = glyph.textureRect;
+    // Find the vertex positions of the the quad that will render this character
     float left = glyph.bounds.left;
     float top = glyph.bounds.top;
     float right = glyph.bounds.left + glyph.bounds.width;
@@ -35,11 +38,14 @@ void addCharacter(Mesh &mesh, const sf::Glyph &glyph, float size, const sf::Vect
 
     // Find the texture coords in the texture
     float pad = 1.0f;
-    float texLeft = (static_cast<float>(glyph.textureRect.left) - pad) / size;
-    float texRight = (static_cast<float>(glyph.textureRect.left + glyph.textureRect.width) + pad) / size;
-    float texTop = (static_cast<float>(glyph.textureRect.top) - pad) / size;
-    float texBottom  = (static_cast<float>(glyph.textureRect.top + glyph.textureRect.height) + pad) / size;
+    float texLeft = (static_cast<float>(textureRect.left) - pad) / size;
+    float texRight =
+        (static_cast<float>(textureRect.left + textureRect.width) + pad) / size;
+    float texTop = (static_cast<float>(textureRect.top) - pad) / size;
+    float texBottom =
+        (static_cast<float>(textureRect.top + textureRect.height) + pad) / size;
 
+    // clang-format off
     // Add the vertex positions to the mesh
     float scale = 1;
     mesh.vertices.insert(mesh.vertices.end(), {
@@ -57,6 +63,7 @@ void addCharacter(Mesh &mesh, const sf::Glyph &glyph, float size, const sf::Vect
         texRight, texBottom,
         texLeft, texBottom,
     });
+    // clang-format on
 
     // Add indices to the mesh
     mesh.indices.push_back(mesh.icount);
@@ -68,8 +75,7 @@ void addCharacter(Mesh &mesh, const sf::Glyph &glyph, float size, const sf::Vect
     mesh.icount += 4;
 }
 
-} // namespace 
-
+} // namespace
 
 void Font::init(const std::string& fontFile, unsigned bitmapScale)
 {
@@ -152,7 +158,7 @@ void Text::render(const gl::UniformLocation& location)
     if (m_needsUpdate) {
         createGeometry();
     }
-    glm::mat4 modelMatrix {1.0f};
+    glm::mat4 modelMatrix{1.0f};
     float scale = m_scale / m_font->getBitmapSize();
 
     translateMatrix(modelMatrix, m_position);
@@ -166,8 +172,6 @@ void Text::render(const gl::UniformLocation& location)
     glDisable(GL_BLEND);
 }
 
-
-
 void Text::createGeometry()
 {
     m_vao.destroy();
@@ -180,7 +184,7 @@ void Text::createGeometry()
         pos.x += m_font->getKerning(previous, character);
         previous = character;
 
-        //New line handler
+        // New line handler
         if (character == '\n') {
             pos.y += m_font->getLineHeight();
             pos.x = 0;
@@ -188,7 +192,7 @@ void Text::createGeometry()
             continue;
         }
 
-        //Create a single quad for the char
+        // Create a single quad for the char
         auto& glyph = m_font->getGlyph(character);
         addCharacter(mesh, glyph, m_font->getTextureAtlasSize(), pos);
         pos.x += glyph.advance;

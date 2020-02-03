@@ -3,23 +3,24 @@
 
 // TODO Replace the .at with operator[] (when can be sure its safe to do so)
 
-Chunk::Chunk(ChunkManager &manager, const ChunkPosition &position)
+Chunk::Chunk(ChunkManager& manager, const ChunkPosition& position)
     : mp_manager(manager)
     , m_position(position)
 {
 }
 
-block_t Chunk::qGetBlock(const BlockPosition &blockPosition) const
+block_t Chunk::qGetBlock(const BlockPosition& blockPosition) const
 {
     return blocks.at(toLocalBlockIndex(blockPosition));
 }
 
-void Chunk::qSetBlock(const BlockPosition &blockPosition, block_t block)
+void Chunk::qSetBlock(const BlockPosition& blockPosition, block_t block)
 {
     blocks.at(toLocalBlockIndex(blockPosition)) = block;
 }
 
-block_t Chunk::getBlock(const BlockPosition &blockPosition) const
+// clang-format off
+block_t Chunk::getBlock(const BlockPosition& blockPosition) const
 {
     if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
         blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE ||
@@ -30,7 +31,7 @@ block_t Chunk::getBlock(const BlockPosition &blockPosition) const
     return qGetBlock(blockPosition);
 }
 
-void Chunk::setBlock(const BlockPosition &blockPosition, block_t block)
+void Chunk::setBlock(const BlockPosition& blockPosition, block_t block)
 {
     if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
         blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE ||
@@ -40,13 +41,14 @@ void Chunk::setBlock(const BlockPosition &blockPosition, block_t block)
     }
     qSetBlock(blockPosition, block);
 }
+// clang-format on
 
-const ChunkPosition &Chunk::getPosition() const
+const ChunkPosition& Chunk::getPosition() const
 {
     return m_position;
 }
 
-CompressedBlocks compressBlockData(const BlockArray &blocks)
+CompressedBlocks compressBlockData(const BlockArray& blocks)
 {
     CompressedBlocks compressed;
     block_t currentBlock = blocks[0];
@@ -67,11 +69,11 @@ CompressedBlocks compressBlockData(const BlockArray &blocks)
     return compressed;
 }
 
-BlockArray decompressBlockData(const CompressedBlocks &blocks)
+BlockArray decompressBlockData(const CompressedBlocks& blocks)
 {
     BlockArray blockData;
     int blockPointer = 0;
-    for (auto &block : blocks) {
+    for (auto& block : blocks) {
         auto type = block.first;
         auto count = block.second;
 

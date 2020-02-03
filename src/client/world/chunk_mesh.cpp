@@ -10,7 +10,7 @@ size_t vecSize(const std::vector<T> vect)
 }
 } // namespace
 
-ChunkMesh::ChunkMesh(const ChunkPosition &chunkPosition)
+ChunkMesh::ChunkMesh(const ChunkPosition& chunkPosition)
     : position(chunkPosition)
 {
     vertices.reserve(CHUNK_VOLUME * 2);
@@ -19,8 +19,8 @@ ChunkMesh::ChunkMesh(const ChunkPosition &chunkPosition)
     cardinalLights.reserve(CHUNK_VOLUME * 2);
 }
 
-void ChunkMesh::addFace(const MeshFace &face,
-                        const BlockPosition &blockPosition, int texture)
+void ChunkMesh::addFace(const MeshFace& face, const BlockPosition& blockPosition,
+                        int texture)
 {
     int index = 0;
     for (int i = 0; i < 4; i++) {
@@ -33,9 +33,8 @@ void ChunkMesh::addFace(const MeshFace &face,
         cardinalLights.push_back(face.lightLevel);
     }
     textureCoords.insert(textureCoords.end(),
-                         {0.0f, 0.0f, (float)texture, 1.0f, 0.0f,
-                          (float)texture, 1.0f, 1.0f, (float)texture, 0.0f,
-                          1.0f, (float)texture});
+                         {0.0f, 0.0f, (float)texture, 1.0f, 0.0f, (float)texture, 1.0f,
+                          1.0f, (float)texture, 0.0f, 1.0f, (float)texture});
     indices.push_back(indicesCount);
     indices.push_back(indicesCount + 1);
     indices.push_back(indicesCount + 2);
@@ -63,7 +62,7 @@ size_t ChunkMesh::calculateBufferSize() const
            vecSize(cardinalLights);
 }
 
-ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition &chunkPosition)
+ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition& chunkPosition)
     : blockMesh(chunkPosition)
     , fluidMesh(chunkPosition)
     , floraMesh(chunkPosition)

@@ -11,14 +11,13 @@ GLuint createTexture()
     return handle;
 }
 
-void texImage2d(GLenum param, const sf::Image &image)
+void texImage2d(GLenum param, const sf::Image& image)
 {
-    glCheck(glTexImage2D(param, 0, GL_RGBA, image.getSize().x,
-                         image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                         image.getPixelsPtr()));
+    glCheck(glTexImage2D(param, 0, GL_RGBA, image.getSize().x, image.getSize().y, 0,
+                         GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr()));
 }
 
-bool bufferImage(GLenum param, const std::string &file)
+bool bufferImage(GLenum param, const std::string& file)
 {
     sf::Image img;
     if (!img.loadFromFile(file)) {
@@ -29,7 +28,7 @@ bool bufferImage(GLenum param, const std::string &file)
     return true;
 }
 
-void destroyTexture(GLuint *texture)
+void destroyTexture(GLuint* texture)
 {
     glCheck(glDeleteTextures(1, texture));
     *texture = 0;
@@ -91,12 +90,12 @@ Texture2d::~Texture2d()
     destroy();
 }
 
-Texture2d::Texture2d(Texture2d &&other)
+Texture2d::Texture2d(Texture2d&& other)
 {
     *this = std::move(other);
 }
 
-Texture2d &Texture2d::operator=(Texture2d &&other)
+Texture2d& Texture2d::operator=(Texture2d&& other)
 {
     destroy();
     m_hasTexture = other.m_hasTexture;
@@ -105,21 +104,21 @@ Texture2d &Texture2d::operator=(Texture2d &&other)
     return *this;
 }
 
-void Texture2d::create(const sf::Image &image)
+void Texture2d::create(const sf::Image& image)
 {
     bind();
 
     texImage2d(GL_TEXTURE_2D, image);
 
     glCheck(glGenerateMipmap(GL_TEXTURE_2D));
-    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                            GL_LINEAR_MIPMAP_LINEAR));
+    glCheck(
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.4f));
     m_hasTexture = true;
 }
 
-void Texture2d::create(const std::string &file)
+void Texture2d::create(const std::string& file)
 {
     bind();
 
@@ -127,16 +126,15 @@ void Texture2d::create(const std::string &file)
     bufferImage(GL_TEXTURE_2D, path);
 
     glCheck(glGenerateMipmap(GL_TEXTURE_2D));
-    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                            GL_LINEAR_MIPMAP_LINEAR));
+    glCheck(
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.4f));
 
     m_hasTexture = true;
 }
 
-void Texture2d::create(unsigned int width, unsigned int height,
-                       const sf::Uint8 *pixels)
+void Texture2d::create(unsigned int width, unsigned int height, const sf::Uint8* pixels)
 {
     if (!m_handle) {
         m_handle = createTexture();
@@ -145,13 +143,12 @@ void Texture2d::create(unsigned int width, unsigned int height,
 
     sf::Image img;
     img.create(width, height, pixels);
-    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getSize().x,
-                         img.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                         img.getPixelsPtr()));
+    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getSize().x, img.getSize().y, 0,
+                         GL_RGBA, GL_UNSIGNED_BYTE, img.getPixelsPtr()));
 
     glCheck(glGenerateMipmap(GL_TEXTURE_2D));
-    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                            GL_LINEAR_MIPMAP_LINEAR));
+    glCheck(
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.4f));
 
@@ -173,7 +170,7 @@ bool Texture2d::textureExists() const
     return m_hasTexture;
 }
 
-sf::Image loadRawImageFile(const std::string &file)
+sf::Image loadRawImageFile(const std::string& file)
 {
     sf::Image img;
     auto path = "res/" + file + ".png";
@@ -205,12 +202,12 @@ TextureArray::~TextureArray()
     destroy();
 }
 
-TextureArray::TextureArray(TextureArray &&other)
+TextureArray::TextureArray(TextureArray&& other)
 {
     *this = std::move(other);
 }
 
-TextureArray &TextureArray::operator=(TextureArray &&other)
+TextureArray& TextureArray::operator=(TextureArray&& other)
 {
     destroy();
     m_handle = other.m_handle;
@@ -231,18 +228,17 @@ void TextureArray::create(GLsizei numTextures, GLsizei textureSize)
     m_maxTextures = numTextures;
     m_textureSize = textureSize;
 
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER,
-                    GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, textureSize, textureSize,
-                 numTextures, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, textureSize, textureSize, numTextures,
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 }
 
-GLuint TextureArray::addTexture(const std::string &file)
+GLuint TextureArray::addTexture(const std::string& file)
 {
     sf::Image image;
     if (!image.loadFromFile(file + ".png")) {
@@ -259,14 +255,12 @@ GLuint TextureArray::addTexture(const std::string &file)
     };
 
     glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, m_textureCount, m_textureSize,
-                    m_textureSize, 1, GL_RGBA, GL_UNSIGNED_BYTE,
-                    image.getPixelsPtr());
+                    m_textureSize, 1, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
 
     // Generate Mipmap
     glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
 
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER,
-                    GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_LOD_BIAS, -1);
 
     return m_textureCount++;

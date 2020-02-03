@@ -29,7 +29,7 @@ using CompressedBlocks = std::vector<std::pair<block_t, u16>>;
  */
 class Chunk {
   public:
-    Chunk(ChunkManager &manager, const ChunkPosition &position);
+    Chunk(ChunkManager& manager, const ChunkPosition& position);
 
     /**
      * @brief Quick get block - Gets a block at the local block position without
@@ -38,7 +38,7 @@ class Chunk {
      * @param blockPosition The position to get the block from
      * @return block_t The block at the position
      */
-    block_t qGetBlock(const BlockPosition &blockPosition) const;
+    block_t qGetBlock(const BlockPosition& blockPosition) const;
 
     /**
      * @brief Quick set block - Sets a block at the local block position without
@@ -47,7 +47,7 @@ class Chunk {
      * @param blockPosition The position to set the block from
      * @param block The block to set
      */
-    void qSetBlock(const BlockPosition &blockPosition, block_t block);
+    void qSetBlock(const BlockPosition& blockPosition, block_t block);
 
     /**
      * @brief Get the block at the position
@@ -56,7 +56,7 @@ class Chunk {
      * @param blockPosition The world position to get the block from
      * @return block_t The block at this position
      */
-    block_t getBlock(const BlockPosition &blockPosition) const;
+    block_t getBlock(const BlockPosition& blockPosition) const;
 
     /**
      * @brief Set the block at the position
@@ -65,14 +65,14 @@ class Chunk {
      * @param blockPosition The world position to get the block from
      * @param block_t The block to set at this position
      */
-    void setBlock(const BlockPosition &blockPosition, block_t block);
+    void setBlock(const BlockPosition& blockPosition, block_t block);
 
-    const ChunkPosition &getPosition() const;
+    const ChunkPosition& getPosition() const;
 
     BlockArray blocks{0};
 
   private:
-    ChunkManager &mp_manager;
+    ChunkManager& mp_manager;
     ChunkPosition m_position;
 };
 
@@ -82,11 +82,11 @@ class Chunk {
  * @return CompressedBlocks The compressed block data [See:
  * CompressedBlocks]
  */
-CompressedBlocks compressBlockData(const BlockArray &blocks);
+CompressedBlocks compressBlockData(const BlockArray& blocks);
 
 /**
  * @brief Uncompress block data into this chunk
  *
  * @param blocks The compressed block data [See: CompressedBlocks]
  */
-BlockArray decompressBlockData(const CompressedBlocks &blocks);
+BlockArray decompressBlockData(const CompressedBlocks& blocks);

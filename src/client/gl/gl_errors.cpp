@@ -3,12 +3,11 @@
 #include <glad/glad.h>
 #include <iostream>
 
-void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id,
-                                GLenum severity, GLsizei length,
-                                const char *message, const void *)
+void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+                                GLsizei length, const char* message, const void*)
 {
 
-    const char *sev = "";
+    const char* sev = "";
     switch (severity) {
         case GL_DEBUG_SEVERITY_HIGH:
             sev = "\e[91m";
@@ -24,7 +23,7 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id,
             break;
     }
 
-    const char *src = "?";
+    const char* src = "?";
     switch (source) {
         case GL_DEBUG_SOURCE_API:
             src = "API";
@@ -46,7 +45,7 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id,
             break;
     }
 
-    const char *type_str = "?";
+    const char* type_str = "?";
     switch (type) {
         case GL_DEBUG_TYPE_ERROR:
             type_str = "error";
@@ -74,8 +73,8 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id,
             break;
     }
 
-    fprintf(stderr, "debug:%s type: %s, source: %s, message: \"%.*s\"\e[0m\n",
-            sev, type_str, src, length, message);
+    fprintf(stderr, "debug:%s type: %s, source: %s, message: \"%.*s\"\e[0m\n", sev,
+            type_str, src, length, message);
 }
 
 void initGLDebug()
@@ -91,7 +90,7 @@ void initGLDebug()
                           GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 }
 
-void glCheckError(const char *file, unsigned int line, const char *expression)
+void glCheckError(const char* file, unsigned int line, const char* expression)
 {
     // Get the last error
     GLenum errorCode = glGetError();
@@ -133,11 +132,10 @@ void glCheckError(const char *file, unsigned int line, const char *expression)
 
         // Log the error
         std::cerr << "An internal OpenGL call failed in "
-                  << fileString.substr(fileString.find_last_of("\\/") + 1)
-                  << "(" << line << ")."
-                  << "\nExpression:\n   " << expression
-                  << "\nError description:\n   " << error << "\n   "
-                  << description << "\n"
+                  << fileString.substr(fileString.find_last_of("\\/") + 1) << "(" << line
+                  << ")."
+                  << "\nExpression:\n   " << expression << "\nError description:\n   "
+                  << error << "\n   " << description << "\n"
                   << std::endl;
         glCheckError(file, line, expression);
         exit(-1);

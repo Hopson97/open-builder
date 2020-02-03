@@ -11,6 +11,8 @@ BreakConstructorInitializersBeforeComma: true
 
 AllowShortFunctionsOnASingleLine: None
 
-ColumnLimit: 80
+ColumnLimit: 90
 
 AlwaysBreakTemplateDeclarations: true
+
+PointerAlignment: Left 
