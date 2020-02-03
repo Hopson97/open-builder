@@ -26,6 +26,22 @@ ChunkPosition toChunkPosition(const BlockPosition& position)
     };
 }
 
+ChunkPosition toChunkPosition(float xp, float yp, float zp)
+{
+    int x = static_cast<int>(xp);
+    int y = static_cast<int>(yp);
+    int z = static_cast<int>(zp);
+    return toChunkPosition({x, y, z});
+}
+
+BlockPosition toLocalBlockPosition(float xp, float yp, float zp)
+{
+    int x = static_cast<int>(xp);
+    int y = static_cast<int>(yp);
+    int z = static_cast<int>(zp);
+    return toLocalBlockPosition({x, y, z});
+}
+
 BlockPosition toLocalBlockPosition(const BlockPosition& position)
 {
     // Deals with negative coordinates too

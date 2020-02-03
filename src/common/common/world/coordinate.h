@@ -44,6 +44,23 @@ ChunkPosition worldToChunkPosition(const glm::vec3& position);
 ChunkPosition toChunkPosition(const BlockPosition& position);
 
 /**
+ * @brief Converts a world block position to a chunk position
+ *
+ * @param position The world block position
+ * @return ChunkPosition The converted chunk position at the block position
+ */
+ChunkPosition toChunkPosition(float xp, float yp, float zp);
+
+
+/**
+ * @brief Converts a world block position to a local chunk block position
+ *
+ * @param position The world block position to convert
+ * @return BlockPosition The converted local-chunk block position
+ */
+BlockPosition toLocalBlockPosition(float xp, float yp, float zp);
+
+/**
  * @brief Converts a world block position to a local chunk block position
  *
  * @param position The world block position to convert

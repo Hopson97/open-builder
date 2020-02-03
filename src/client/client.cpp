@@ -525,6 +525,8 @@ void Client::render(int width, int height)
             DebugStats& d = m_debugStats;
             glm::vec3& p = mp_player->position;
             glm::vec3& r = mp_player->rotation;
+            auto bp = toLocalBlockPosition(p.x, p.y, p.z);
+            auto cp = toChunkPosition(p.x, p.y, p.z);
 
             std::ostringstream debugText;
             debugText << "Frame time: " << std::setprecision(3) << d.frameTime << "ms ";
@@ -533,8 +535,13 @@ void Client::render(int width, int height)
                       << m_chunks.drawables.size() << " drawn\n";
             debugText << "Chunk VRAM: " << m_debugStats.bytesRendered << "Mb of "
                       << totalBufferSize << "Mb drawn\n";
-            debugText << "X: " << p.x << " Y: " << p.y << " Z: " << p.z << '\n';
-            debugText << "LX: " << r.x << " LY: " << r.y << " LZ: " << r.z << '\n';
+            debugText << "Position: " << p << '\n';
+            debugText << "Chunk Position: " << cp << '\n';
+            debugText << "Local Position: " << bp << '\n';
+            debugText << "Rotation: " << r << '\n';
+            debugText << "In Chunk? " << (m_chunks.manager.hasChunk(cp) ? "Yes" : "No")
+                      << '\n';
+
 
             m_debugText.setText(debugText.str());
         }
