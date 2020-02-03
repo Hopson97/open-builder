@@ -15,8 +15,8 @@ const MeshFace RIGHT_FACE = {{1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0}, 0.6f};
 const MeshFace TOP_FACE = {{1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1}, 1.0f};
 const MeshFace BOTTOM_FACE = {{0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1}, 0.4f};
 
-const MeshFace CROSS_FACE_A = {{0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0}, 0.8f};
-const MeshFace CROSS_FACE_B = {{0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1}, 0.8f};
+const MeshFace CROSS_FACE_A = {{1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1}, 0.8f};
+const MeshFace CROSS_FACE_B = {{1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0}, 0.8f};
 
 bool makeFace(const VoxelDataManager& voxelData, block_t thisId, block_t compareId)
 {
