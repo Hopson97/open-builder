@@ -461,10 +461,12 @@ void Client::render(int width, int height)
         renderChunks(m_chunks.drawables, m_frustum, bytesRendered);
 
     // Render the flora blocks
+    glDisable(GL_CULL_FACE);
     m_floraShader.program.bind();
     gl::loadUniform(m_floraShader.timeLocation, time);
     gl::loadUniform(m_floraShader.projectionViewLocation, playerProjectionView);
     renderChunks(m_chunks.floraDrawables, m_frustum, bytesRendered);
+    glEnable(GL_CULL_FACE);
 
     glCheck(glEnable(GL_BLEND));
 
