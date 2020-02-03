@@ -14,9 +14,9 @@ vec4 waveLeaf()
 {
     //Have to do this as in variables cannot be mutated
     vec3 position = inVertexCoord;
-    position.y += sin((time + position.x) * 1.5) / 16.0f;
-    position.x += cos((time + position.z) * 1.5) / 16.0f;
-    position.z += sin((time + position.z) * 1.5) / 16.0f;
+    position.y += sin((time + position.x) * 1.5) / 32.0f;
+    position.x += cos((time + position.z) * 1.5) / 32.0f;
+    position.z += sin((time + position.z) * 1.5) / 32.0f;
     return vec4(position, 1.0);
 }
 
