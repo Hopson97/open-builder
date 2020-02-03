@@ -103,7 +103,7 @@ game.data.addVoxel {
     type = game.VoxelType.Flora,
     collidable = false,
     render = {
-        mesh = game.VoxelType.Cross,
+        mesh = game.MeshStyle.Cross,
         top = "common_tall_grass",
         sides = "common_tall_grass",
         bottom = "common_tall_grass",
