@@ -27,6 +27,8 @@ float trilinearInterpolation(float blf, float blb, float brf, float brb,
 }
 */
 
+
+
 void createBasicTree(Chunk& chunk, const BlockPosition& blockPosition,
                      const VoxelDataManager& voxels, std::minstd_rand rng)
 {
@@ -161,7 +163,32 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
     return heightMap;
 }
 
+std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float worldSize,
+                                           float seed)
+{
+    NoiseOptions biomeMapNoise;
+    biomeMapNoise.amplitude = 100;
+    biomeMapNoise.octaves = 6;
+    biomeMapNoise.smoothness = 505.f;
+    biomeMapNoise.roughness = 0.58f;
+    biomeMapNoise.offset = 18;
+
+    std::array<int, CHUNK_AREA> biomeMap;
+    glm::vec2 chunkXZ = {position.x, position.z};
+    for (int z = 0; z < CHUNK_SIZE; z++) {
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            float bx = x + position.x * CHUNK_SIZE;
+            float bz = z + position.z * CHUNK_SIZE;
+
+            auto noise = getNoiseAt({x, z}, chunkXZ, biomeMapNoise, seed);
+
+            biomeMap[z * CHUNK_SIZE + x] = noise * biomeMapNoise.amplitude;
+        }
+    }
+}
+
 void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& heightMap,
+                         const std::array<int, CHUNK_AREA>& biomeMap,
                          const VoxelDataManager& voxelData, int baseChunk, unsigned seed)
 {
 
@@ -175,6 +202,7 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             int height = heightMap[z * CHUNK_SIZE + x];
+            int biome = biomeMap[z * CHUNK_SIZE + x];
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 int blockY = base * CHUNK_SIZE + y;
                 block_t block = 0;
@@ -192,14 +220,16 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                         float dist = treeDist(rng);
                         if (dist < 100) {
                             chunk.setBlock({x, y + 1, z}, 8);
-                            block = voxelData.getVoxelId(CommonVoxel::Grass);
+                            block = biome > 40 ? voxelData.getVoxelId(CommonVoxel::Grass) :
+                            voxelData.getVoxelId(CommonVoxel::Sand);
                         }
                         else if (dist < 120) {
                             createBasicTree(chunk, {x, y + 1, z}, voxelData, rng);
                             block = voxelData.getVoxelId(CommonVoxel::Dirt);
                         }
                         else {
-                            block = voxelData.getVoxelId(CommonVoxel::Grass);
+                            block = biome > 40 ? voxelData.getVoxelId(CommonVoxel::Grass)
+                                               : voxelData.getVoxelId(CommonVoxel::Sand);
                         }
                     }
                 }
