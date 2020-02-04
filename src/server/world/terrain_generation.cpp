@@ -27,7 +27,20 @@ float trilinearInterpolation(float blf, float blb, float brf, float brb,
 }
 */
 
+void createCommonCactus(Chunk& chunk, const BlockPosition& blockPosition,
+                  const VoxelDataManager& voxels, std::minstd_rand rng)
+{
+    std::uniform_int_distribution<> dist(4, 5);
+    int cactusHeight = dist(rng);
 
+    int bx = blockPosition.x;
+    int by = blockPosition.y;
+    int bz = blockPosition.z;
+
+    for (int y = 0; y < cactusHeight; y++) {
+        chunk.setBlock({bx, by + y, bz}, 9);
+    }
+}
 
 void createBasicTree(Chunk& chunk, const BlockPosition& blockPosition,
                      const VoxelDataManager& voxels, std::minstd_rand rng)
@@ -168,9 +181,9 @@ std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float 
 {
     NoiseOptions biomeMapNoise;
     biomeMapNoise.amplitude = 100;
-    biomeMapNoise.octaves = 6;
+    biomeMapNoise.octaves = 4;
     biomeMapNoise.smoothness = 505.f;
-    biomeMapNoise.roughness = 0.58f;
+    biomeMapNoise.roughness = 0.6;
     biomeMapNoise.offset = 18;
 
     std::array<int, CHUNK_AREA> biomeMap;
@@ -180,7 +193,7 @@ std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float 
             float bx = x + position.x * CHUNK_SIZE;
             float bz = z + position.z * CHUNK_SIZE;
 
-            auto noise = getNoiseAt({x, z}, chunkXZ, biomeMapNoise, seed);
+            auto noise = getNoiseAt({x, z}, chunkXZ, biomeMapNoise);
 
             biomeMap[z * CHUNK_SIZE + x] = noise * biomeMapNoise.amplitude;
         }
@@ -219,13 +232,19 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                     else {
                         float dist = treeDist(rng);
                         if (dist < 100) {
-                            chunk.setBlock({x, y + 1, z}, 8);
-                            block = biome > 40 ? voxelData.getVoxelId(CommonVoxel::Grass) :
-                            voxelData.getVoxelId(CommonVoxel::Sand);
+                            chunk.setBlock({x, y + 1, z}, biome > 40 ? 8 : 10);
+                            block = biome > 40 ? voxelData.getVoxelId(CommonVoxel::Grass)
+                                               : voxelData.getVoxelId(CommonVoxel::Sand);
                         }
                         else if (dist < 120) {
-                            createBasicTree(chunk, {x, y + 1, z}, voxelData, rng);
-                            block = voxelData.getVoxelId(CommonVoxel::Dirt);
+                            if (biome > 40) {
+                                createBasicTree(chunk, {x, y + 1, z}, voxelData, rng);
+                                block = voxelData.getVoxelId(CommonVoxel::Dirt);
+                            }
+                            else {
+                                createCommonCactus(chunk, {x, y + 1, z}, voxelData, rng);
+                                block = voxelData.getVoxelId(CommonVoxel::Sand);
+                            }
                         }
                         else {
                             block = biome > 40 ? voxelData.getVoxelId(CommonVoxel::Grass)
