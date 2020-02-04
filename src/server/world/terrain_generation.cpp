@@ -193,7 +193,7 @@ std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float 
             float bx = x + position.x * CHUNK_SIZE;
             float bz = z + position.z * CHUNK_SIZE;
 
-            auto noise = getNoiseAt({x, z}, chunkXZ, biomeMapNoise);
+            auto noise = getNoiseAt({x, z}, chunkXZ, biomeMapNoise, seed);
 
             biomeMap[z * CHUNK_SIZE + x] = noise * biomeMapNoise.amplitude;
         }
@@ -207,7 +207,7 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
 
     // TO DO: Eventully tree gen chance stuff can be done from lua
     std::minstd_rand rng;
-    std::uniform_int_distribution<> treeDist(0, 500);
+    std::uniform_int_distribution<> treeDist(0, 2000);
     rng.seed(seed + chunk.getPosition().x * 16 + chunk.getPosition().z);
 
     auto base = chunk.getPosition().y - baseChunk;
@@ -232,12 +232,12 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                     else {
                         float dist = treeDist(rng);
                         if (dist < 100) {
-                            chunk.setBlock({x, y + 1, z}, biome > 40 ? 8 : 10);
-                            block = biome > 40 ? voxelData.getVoxelId(CommonVoxel::Grass)
+                            chunk.setBlock({x, y + 1, z}, biome > 30 ? 8 : 10);
+                            block = biome > 30 ? voxelData.getVoxelId(CommonVoxel::Grass)
                                                : voxelData.getVoxelId(CommonVoxel::Sand);
                         }
                         else if (dist < 120) {
-                            if (biome > 40) {
+                            if (biome > 30) {
                                 createBasicTree(chunk, {x, y + 1, z}, voxelData, rng);
                                 block = voxelData.getVoxelId(CommonVoxel::Dirt);
                             }
@@ -247,7 +247,7 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                             }
                         }
                         else {
-                            block = biome > 40 ? voxelData.getVoxelId(CommonVoxel::Grass)
+                            block = biome > 30 ? voxelData.getVoxelId(CommonVoxel::Grass)
                                                : voxelData.getVoxelId(CommonVoxel::Sand);
                         }
                     }
