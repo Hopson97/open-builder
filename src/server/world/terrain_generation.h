@@ -14,7 +14,11 @@ void makeRandomTerrain(Chunk* chunk);
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
                                                  float worldSize, float seed);
 
+std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float worldSize,
+                                           float seed);
+
 void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& heightMap,
+                         const std::array<int, CHUNK_AREA>& biomeMap,
                          const VoxelDataManager& voxelData, int baseChunk, unsigned seed);
 
 float generateSeed(const std::string& input);
