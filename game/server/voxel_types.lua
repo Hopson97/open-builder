@@ -110,6 +110,33 @@ game.data.addVoxel {
     },
 }
 
+--  Common Cactus Voxel Data
+game.data.addVoxel {
+    name = "openbuilder_common_cactus",
+    description = "Common Cactus",
+    type = game.VoxelType.Flora,
+    collidable = false,
+    render = {
+        top = "common_cactus_top",
+        sides = "common_cactus_side",
+        bottom = "common_cactus_top",
+    },
+}
+
+--  Common Dead Shrub Voxel Data
+game.data.addVoxel {
+    name = "openbuilder_common_dead_shrub",
+    description = "Common Dead Shrub",
+    type = game.VoxelType.Flora,
+    collidable = false,
+    render = {
+        mesh = game.MeshStyle.Cross,
+        top = "common_dead_shrub",
+        sides = "common_dead_shrub",
+        bottom = "common_dead_shrub",
+    },
+}
+
 
 ----  Coal ore Voxel Data
 --game.data.addVoxel {
