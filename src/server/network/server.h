@@ -5,6 +5,7 @@
 #include <common/network/command_dispatcher.h>
 #include <common/network/net_host.h>
 #include <common/scripting/script_engine.h>
+#include <common/world/biome.h>
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_data.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -70,6 +71,7 @@ class Server final : public NetworkHost {
 
     ScriptEngine m_script;
     VoxelDataManager m_voxelData;
+    BiomeDataManager m_biomeData;
 
     CommandDispatcher<Server, ServerCommand> m_commandDispatcher;
 };
