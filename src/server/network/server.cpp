@@ -50,8 +50,8 @@ Server::Server(const ServerConfig& config)
         biome.name = biomeData["name"].get<std::string>();
         biome.depth = biomeData["depth"].get<int>();
 
-        std::string topVoxel = biomeData["top_block"].get<std::string>();
-        std::string undergroundVoxel = biomeData["top_block"].get<std::string>();
+        std::string topVoxel = biomeData["top_voxel"].get<std::string>();
+        std::string undergroundVoxel = biomeData["underground_voxel"].get<std::string>();
 
         biome.topVoxel = m_voxelData.getVoxelId(topVoxel);
         biome.undergroundVoxel = m_voxelData.getVoxelId(undergroundVoxel);
@@ -83,7 +83,8 @@ Server::Server(const ServerConfig& config)
             int maxHeight = *std::max_element(heightMap.cbegin(), heightMap.cend());
             for (int y = 0; y < std::max(1, maxHeight / CHUNK_SIZE + 1); y++) {
                 Chunk& chunk = m_world.chunks.addChunk({x, y, z});
-                createSmoothTerrain(chunk, heightMap, biomeMap, m_voxelData, 0, seed);
+                createSmoothTerrain(chunk, heightMap, biomeMap, m_voxelData, m_biomeData,
+                                    0, seed);
                 m_world.chunks.ensureNeighbours({x, y, z});
             }
         }

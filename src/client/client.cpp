@@ -544,7 +544,6 @@ void Client::render(int width, int height)
             debugText << "In Chunk? " << (m_chunks.manager.hasChunk(cp) ? "Yes" : "No")
                       << '\n';
 
-
             m_debugText.setText(debugText.str());
         }
         m_gui.renderText(m_debugText);
