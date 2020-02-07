@@ -211,7 +211,7 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
 {
     // Handle block removal/ block placing events
   
-    auto blocks = getIntersectedBlocks(8);
+    auto blocks = getIntersectedBlocks(mp_player->position, forwardsVector(mp_player->rotation), 8);
 
     BlockPosition& previous = blocks.at(0);
     for (auto& position : blocks) {
@@ -377,7 +377,7 @@ void Client::update(float dt, float frameTime, float fps)
 
     // Determine if a player is selecting a block & if so, which
     m_blockSelected = false;
-    auto blocks = getIntersectedBlocks(8);
+    auto blocks = getIntersectedBlocks(mp_player->position, forwardsVector(mp_player->rotation), 8);
     for (auto& position : blocks) {
         auto& voxel =
             m_voxelData.getVoxelData(m_chunks.manager.getBlock(position));
@@ -566,66 +566,6 @@ void Client::endGame()
 EngineStatus Client::currentStatus() const
 {
     return m_status;
-}
-
-
-// uses fast voxel traversal to get the voxels intersected by a ray of length `range`
-// assumes blocks are 1x1x1
-std::vector<BlockPosition> Client::getIntersectedBlocks(float range) {
-    auto startPoint = mp_player->position;
-    auto direction  = glm::normalize(forwardsVector(mp_player->rotation));
-    auto endPoint   = startPoint + direction * range;
-    auto startVoxel = toBlockPosition(startPoint);
-
-    // +1, -1, or 0
-    i32 stepX = (direction.x > 0) ? 1 : ((direction.x < 0) ? -1 : 0);
-    i32 stepY = (direction.y > 0) ? 1 : ((direction.y < 0) ? -1 : 0);
-    i32 stepZ = (direction.z > 0) ? 1 : ((direction.z < 0) ? -1 : 0);
-
-    float tDeltaX = (stepX != 0)
-        ? fmin(stepX / (endPoint.x - startPoint.x), FLT_MAX) : FLT_MAX; 
-    float tDeltaY = (stepY != 0)
-        ? fmin(stepY / (endPoint.y - startPoint.y), FLT_MAX) : FLT_MAX;
-    float tDeltaZ = (stepZ != 0)
-        ? fmin(stepZ / (endPoint.z - startPoint.z), FLT_MAX) : FLT_MAX;
-  
-    float tMaxX = (stepX > 0)
-        ? tDeltaX * (1.0 - startPoint.x + startVoxel.x)
-        : tDeltaX * (startPoint.x - startVoxel.x);
-    float tMaxY =  (stepY > 0)
-        ? tDeltaY * (1.0 - startPoint.y + startVoxel.y)
-        : tDeltaY * (startPoint.y - startVoxel.y);
-    float tMaxZ =  (stepZ > 0)
-        ? tDeltaZ * (1.0 - startPoint.z + startVoxel.z)
-        : tDeltaZ * (startPoint.z - startVoxel.z);
-
-    auto currentVoxel = startVoxel;
-    std::vector<BlockPosition> intersected;
-    intersected.push_back(startVoxel);
-
-    // sanity check to prevent leak
-    while (intersected.size() < range * 3) {
-        if (tMaxX < tMaxY) {
-            if (tMaxX < tMaxZ) {
-                currentVoxel.x += stepX;
-                tMaxX += tDeltaX;
-            } else {
-                currentVoxel.z += stepZ;
-                tMaxZ += tDeltaZ;
-            }
-        } else {
-            if (tMaxY < tMaxZ) {
-                currentVoxel.y += stepY;
-                tMaxY += tDeltaY;
-            } else {
-                currentVoxel.z += stepZ;
-                tMaxZ += tDeltaZ;
-            }
-        }
-        if (tMaxX > 1 && tMaxY > 1 && tMaxZ > 1) break;
-        intersected.push_back(currentVoxel);
-    }
-    return intersected;
 }
 
 void Client::deleteChunkRenderable(const ChunkPosition& position)
