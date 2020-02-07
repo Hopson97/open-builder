@@ -91,6 +91,7 @@ class Client final : public NetworkHost {
     void onGameRegistryData(sf::Packet& packet);
     // End of network functions
 
+    std::vector<BlockPosition> getIntersectedBlocks(float range);
     void deleteChunkRenderable(const ChunkPosition& position);
 
     // Network
