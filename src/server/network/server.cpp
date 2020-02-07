@@ -44,6 +44,21 @@ Server::Server(const ServerConfig& config)
         m_voxelData.addVoxelData(voxel);
     };
 
+    data["addBiome"] = [&](const sol::table& biomeData) {
+        Biome biome;
+
+        biome.name = biomeData["name"].get<std::string>();
+        biome.depth = biomeData["depth"].get<int>();
+
+        std::string topVoxel = biomeData["top_block"].get<std::string>();
+        std::string undergroundVoxel = biomeData["top_block"].get<std::string>();
+
+        biome.topVoxel = m_voxelData.getVoxelId(topVoxel);
+        biome.undergroundVoxel = m_voxelData.getVoxelId(undergroundVoxel);
+
+        m_biomeData.addBiomeData(biome);
+    };
+
     auto meshStyle = m_script.addTable("MeshStyle");
     meshStyle["Block"] = VoxelMeshStyle::Block;
     meshStyle["Cross"] = VoxelMeshStyle::Cross;
