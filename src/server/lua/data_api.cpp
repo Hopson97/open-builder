@@ -15,7 +15,6 @@ void addVoxelApi(sol::table& dataTable, VoxelDataManager& voxelManager)
         voxel.sideTexture = voxelData["render"]["sides"].get<std::string>();
         voxel.bottomTexture = voxelData["render"]["bottom"].get<std::string>();
 
-        std::cout << "Created voxel\n";
         if (voxelData["collidable"].valid()) {
             voxel.isCollidable = voxelData["collidable"].get<bool>();
         }
