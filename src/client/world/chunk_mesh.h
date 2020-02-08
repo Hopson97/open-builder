@@ -6,7 +6,7 @@
 
 struct MeshFace {
     std::array<GLbyte, 12> vertices;
-    GLfloat lightLevel;
+    GLbyte lightLevel;
 };
 
 struct ChunkMesh {
@@ -20,7 +20,7 @@ struct ChunkMesh {
     std::vector<GLuint> vertices;
     std::vector<GLfloat> textureCoords;
     std::vector<GLuint> indices;
-    std::vector<GLfloat> cardinalLights;
+   // std::vector<GLfloat> cardinalLights;
     int indicesCount = 0;
 
     ChunkPosition position;

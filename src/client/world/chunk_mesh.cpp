@@ -16,7 +16,7 @@ ChunkMesh::ChunkMesh(const ChunkPosition& chunkPosition)
     vertices.reserve(CHUNK_VOLUME * 2);
     textureCoords.reserve(CHUNK_VOLUME * 2);
     indices.reserve(CHUNK_VOLUME * 2);
-    cardinalLights.reserve(CHUNK_VOLUME * 2);
+    //cardinalLights.reserve(CHUNK_VOLUME * 2);
 }
 
 void ChunkMesh::addFace(const MeshFace& face, const BlockPosition& blockPosition,
@@ -28,11 +28,11 @@ void ChunkMesh::addFace(const MeshFace& face, const BlockPosition& blockPosition
         GLubyte y = face.vertices[index++] + blockPosition.y;
         GLubyte z = face.vertices[index++] + blockPosition.z;
 
-        GLuint vertex = x | y << 6 | z << 12;
+        GLuint vertex = x | y << 6 | z << 12 | face.lightLevel << 18;
 
         vertices.push_back(vertex);
 
-        cardinalLights.push_back(face.lightLevel);
+        //cardinalLights.push_back(face.lightLevel);
     }
     textureCoords.insert(textureCoords.end(),
                          {0.0f, 0.0f, (float)texture, 1.0f, 0.0f, (float)texture, 1.0f,
@@ -52,7 +52,7 @@ gl::VertexArray ChunkMesh::createBuffer()
     vao.bind();
     vao.addVertexBuffer(1, vertices);
     vao.addVertexBuffer(3, textureCoords);
-    vao.addVertexBuffer(1, cardinalLights);
+   // vao.addVertexBuffer(1, cardinalLights);
     vao.addIndexBuffer(indices);
 
     return vao;
@@ -60,8 +60,9 @@ gl::VertexArray ChunkMesh::createBuffer()
 
 size_t ChunkMesh::calculateBufferSize() const
 {
-    return vecSize(vertices) + vecSize(textureCoords) + vecSize(indices) +
-           vecSize(cardinalLights);
+    return vecSize(vertices) + vecSize(textureCoords) + vecSize(indices);
+    
+           //vecSize(cardinalLights);
 }
 
 ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition& chunkPosition)
