@@ -3,7 +3,7 @@ local sand = game.data.getVoxel("openbuilder_sand")
 
 function onTopBlockSet(chunk, x, y, z, rng)
     if rng < 2 then
-        createPyramid(chunk, x, y, z)
+        createCactus(chunk, x, y, z)
     elseif rng < 5 then
         chunk:setBlock(x, y, z, deadShrub)
     end
