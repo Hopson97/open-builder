@@ -1,9 +1,9 @@
 local deadShrub = game.data.getVoxel("openbuilder_common_dead_shrub")
 
 function onTopBlockSet(chunk, x, y, z, rng)
-    if rng < 5 then
+    if rng < 2 then
         createCactus(chunk, x, y, z)
-    elseif rng < 15 then
+    elseif rng < 5 then
         chunk:setBlock(x, y, z, deadShrub)
     end
 end
