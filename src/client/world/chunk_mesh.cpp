@@ -24,12 +24,9 @@ void ChunkMesh::addFace(const MeshFace& face, const BlockPosition& blockPosition
 {
     int index = 0;
     for (int i = 0; i < 4; i++) {
-        vertices.push_back(face.vertices[index++] + position.x * CHUNK_SIZE +
-                           blockPosition.x);
-        vertices.push_back(face.vertices[index++] + position.y * CHUNK_SIZE +
-                           blockPosition.y);
-        vertices.push_back(face.vertices[index++] + position.z * CHUNK_SIZE +
-                           blockPosition.z);
+        vertices.push_back(face.vertices[index++] + blockPosition.x);
+        vertices.push_back(face.vertices[index++] + blockPosition.y);
+        vertices.push_back(face.vertices[index++] + blockPosition.z);
         cardinalLights.push_back(face.lightLevel);
     }
     textureCoords.insert(textureCoords.end(),

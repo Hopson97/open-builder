@@ -42,11 +42,15 @@ void deleteChunkRenderable(const ChunkPosition& position,
 }
 
 int renderChunks(const std::vector<ChunkDrawable>& chunks, const ViewFrustum& frustum,
-                 size_t& bytes)
+                 gl::UniformLocation chunkPositionLocation, size_t& bytes)
 {
     int renderedChunks = 0;
     for (const auto& chunk : chunks) {
         if (frustum.chunkIsInFrustum(chunk.position)) {
+            glm::vec3 cp{chunk.position.x, chunk.position.y, chunk.position.z};
+            cp *= CHUNK_SIZE;
+            gl::loadUniform(chunkPositionLocation, cp);
+
             chunk.vao.getDrawable().bindAndDraw();
             renderedChunks++;
             bytes += chunk.size;
@@ -109,6 +113,8 @@ bool Client::init(const ClientConfig& config, float aspect)
     m_chunkShader.program.bind();
     m_chunkShader.projectionViewLocation =
         m_chunkShader.program.getUniformLocation("projectionViewMatrix");
+    m_chunkShader.chunkPositionLocation =
+        m_chunkShader.program.getUniformLocation("chunkPosition");
 
     // Fluids shader
     m_fluidShader.program.create("chunk/water", "chunk/chunk");
@@ -116,6 +122,8 @@ bool Client::init(const ClientConfig& config, float aspect)
     m_fluidShader.projectionViewLocation =
         m_fluidShader.program.getUniformLocation("projectionViewMatrix");
     m_fluidShader.timeLocation = m_fluidShader.program.getUniformLocation("time");
+    m_fluidShader.chunkPositionLocation =
+        m_fluidShader.program.getUniformLocation("chunkPosition");
 
     // Flora shader
     m_floraShader.program.create("chunk/flora", "chunk/transparent");
@@ -123,6 +131,8 @@ bool Client::init(const ClientConfig& config, float aspect)
     m_floraShader.projectionViewLocation =
         m_floraShader.program.getUniformLocation("projectionViewMatrix");
     m_floraShader.timeLocation = m_floraShader.program.getUniformLocation("time");
+    m_floraShader.chunkPositionLocation =
+        m_floraShader.program.getUniformLocation("chunkPosition");
 
     // Texture for the player model
     m_errorSkinTexture.create("skins/error");
@@ -210,28 +220,28 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
                             [[maybe_unused]] int y)
 {
     // Handle block removal/ block placing events
-  
-    auto blocks = getIntersectedBlocks(mp_player->position, forwardsVector(mp_player->rotation), 8);
+
+    auto blocks =
+        getIntersectedBlocks(mp_player->position, forwardsVector(mp_player->rotation), 8);
 
     BlockPosition& previous = blocks.at(0);
     for (auto& position : blocks) {
-        auto& voxel =
-            m_voxelData.getVoxelData(m_chunks.manager.getBlock(position));
-      
+        auto& voxel = m_voxelData.getVoxelData(m_chunks.manager.getBlock(position));
+
         if (isVoxelSelectable(voxel.type)) {
             BlockUpdate blockUpdate;
             blockUpdate.block = button == sf::Mouse::Left ? 0 : 1;
             if (button == sf::Mouse::Left) {
                 blockUpdate.position = position;
-            } else if (previous == toBlockPosition(mp_player->position)) {
+            }
+            else if (previous == toBlockPosition(mp_player->position)) {
                 // prevents players from replacing blocks they're inside of
                 break;
-            } else {
+            }
+            else {
                 blockUpdate.position = previous;
             }
-            blockUpdate.position = button == sf::Mouse::Left
-                ? position
-                : previous;
+            blockUpdate.position = button == sf::Mouse::Left ? position : previous;
             m_chunks.blockUpdates.push_back(blockUpdate);
             sendBlockUpdate(blockUpdate);
             break;
@@ -377,17 +387,17 @@ void Client::update(float dt, float frameTime, float fps)
 
     // Determine if a player is selecting a block & if so, which
     m_blockSelected = false;
-    auto blocks = getIntersectedBlocks(mp_player->position, forwardsVector(mp_player->rotation), 8);
+    auto blocks =
+        getIntersectedBlocks(mp_player->position, forwardsVector(mp_player->rotation), 8);
     for (auto& position : blocks) {
-        auto& voxel =
-            m_voxelData.getVoxelData(m_chunks.manager.getBlock(position));
+        auto& voxel = m_voxelData.getVoxelData(m_chunks.manager.getBlock(position));
         if (isVoxelSelectable(voxel.type)) {
             m_currentSelectedBlockPos = position;
             m_blockSelected = true;
             break;
         }
     }
-    
+
     // Call update function on the GUI script
     // Note: This part is quite dangerous, if there's no update() or there's an
     // error
@@ -465,14 +475,15 @@ void Client::render(int width, int height)
 
     m_debugStats.renderedChunks = 0;
     m_debugStats.renderedChunks +=
-        renderChunks(m_chunks.drawables, m_frustum, bytesRendered);
+        renderChunks(m_chunks.drawables, m_frustum, m_chunkShader.chunkPositionLocation, bytesRendered);
 
     // Render the flora blocks
     glDisable(GL_CULL_FACE);
     m_floraShader.program.bind();
     gl::loadUniform(m_floraShader.timeLocation, time);
     gl::loadUniform(m_floraShader.projectionViewLocation, playerProjectionView);
-    renderChunks(m_chunks.floraDrawables, m_frustum, bytesRendered);
+    renderChunks(m_chunks.floraDrawables, m_frustum, m_floraShader.chunkPositionLocation,
+                 bytesRendered);
     glEnable(GL_CULL_FACE);
 
     glCheck(glEnable(GL_BLEND));
@@ -500,7 +511,8 @@ void Client::render(int width, int height)
     if (m_chunks.manager.getBlock(toBlockPosition(mp_player->position)) == 4) {
         glCheck(glCullFace(GL_FRONT));
     }
-    renderChunks(m_chunks.fluidDrawables, m_frustum, bytesRendered);
+    renderChunks(m_chunks.fluidDrawables, m_frustum, m_fluidShader.chunkPositionLocation,
+                 bytesRendered);
     glCheck(glDisable(GL_BLEND));
     glCheck(glCullFace(GL_BACK));
 
@@ -550,7 +562,6 @@ void Client::render(int width, int height)
             debugText << "Rotation: " << r << '\n';
             debugText << "In Chunk? " << (m_chunks.manager.hasChunk(cp) ? "Yes" : "No")
                       << '\n';
-
 
             m_debugText.setText(debugText.str());
         }
