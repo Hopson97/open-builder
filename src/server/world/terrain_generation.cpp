@@ -29,21 +29,6 @@ float trilinearInterpolation(float blf, float blb, float brf, float brb,
 }
 */
 
-void createCommonCactus(Chunk& chunk, const BlockPosition& blockPosition,
-                        const VoxelDataManager& voxels, std::minstd_rand rng)
-{
-    std::uniform_int_distribution<> dist(4, 5);
-    int cactusHeight = dist(rng);
-
-    int bx = blockPosition.x;
-    int by = blockPosition.y;
-    int bz = blockPosition.z;
-
-    for (int y = 0; y < cactusHeight; y++) {
-        chunk.setBlock({bx, by + y, bz}, 9);
-    }
-}
-
 struct NoiseOptions {
     int octaves;
     float amplitude;
@@ -155,7 +140,7 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                          const VoxelDataManager& voxelData,
                          const BiomeDataManager& biomeData, int baseChunk, unsigned seed)
 {
-    auto& biome = biomeData.getBiomeData(0);
+    auto& biome = biomeData.getBiomeData(1);
     // TO DO: Eventully tree gen chance stuff can be done from lua
     std::minstd_rand rng;
     std::uniform_int_distribution<> treeDist(0, 3000);
