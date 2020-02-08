@@ -140,7 +140,7 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                          const VoxelDataManager& voxelData,
                          const BiomeDataManager& biomeData, int baseChunk, unsigned seed)
 {
-    auto& biome = biomeData.getBiomeData(1);
+
     // TO DO: Eventully tree gen chance stuff can be done from lua
     std::minstd_rand rng;
     std::uniform_int_distribution<> treeDist(0, 3000);
@@ -152,6 +152,7 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
         for (int x = 0; x < CHUNK_SIZE; x++) {
             int height = heightMap[z * CHUNK_SIZE + x];
             int biomeVal = biomeMap[z * CHUNK_SIZE + x];
+            auto& biome = biomeData.getBiomeData(biomeVal > 40 ? 0 : 1);
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 int blockY = base * CHUNK_SIZE + y;
                 block_t block = 0;
