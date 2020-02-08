@@ -96,8 +96,8 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
     std::array<int, CHUNK_AREA> heightMap;
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
-            float bx = x + position.x * CHUNK_SIZE;
-            float bz = z + position.z * CHUNK_SIZE;
+            float bx = static_cast<float>(x + position.x * CHUNK_SIZE);
+            float bz = static_cast<float>(z + position.z * CHUNK_SIZE);
 
             glm::vec2 coord = (glm::vec2{bx, bz} - WOLRD_SIZE / 2.0f) / WOLRD_SIZE * 2.0f;
 
@@ -120,7 +120,7 @@ std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float 
     biomeMapNoise.amplitude = 100;
     biomeMapNoise.octaves = 4;
     biomeMapNoise.smoothness = 505.f;
-    biomeMapNoise.roughness = 0.6;
+    biomeMapNoise.roughness = 0.6f;
     biomeMapNoise.offset = 18;
 
     std::array<int, CHUNK_AREA> biomeMap;
@@ -167,7 +167,7 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                         block = voxelData.getVoxelId(CommonVoxel::Sand);
                     }
                     else {
-                        float dist = treeDist(rng);
+                        int dist = treeDist(rng);
 
                         biome.onTopBlockSet(chunk, x, y + 1, z, dist);
                         block = biome.topVoxel;

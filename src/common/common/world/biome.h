@@ -17,7 +17,7 @@ struct Biome {
     sol::function onTopBlockSet;
 };
 
-struct BiomeDataManager {
+class BiomeDataManager {
   public:
     int addBiomeData(const Biome& biome);
 
