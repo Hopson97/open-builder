@@ -1,6 +1,6 @@
 #version 330
 
-layout (location = 0) in vec3 inVertexCoord;
+layout (location = 0) in uint inVertexCoord;
 layout (location = 1) in vec3 inTextureCoord;
 layout (location = 2) in float inBasicLight;
 
@@ -21,11 +21,14 @@ vec4 createWaveOffset(vec3 position)
 }
 
 void main() {
-    vec4 position = createWaveOffset(vec3(
-         chunkPosition.x + inVertexCoord.x,
-         chunkPosition.y + inVertexCoord.y,
-         chunkPosition.z + inVertexCoord.z
-    ));
+    float x = float(inVertexCoord & 0x3Fu);
+    float y = float((inVertexCoord & 0xFC0u) >> 6u);
+    float z = float((inVertexCoord & 0x3F000u) >> 12u);
+    x += chunkPosition.x;
+    y += chunkPosition.y;
+    z += chunkPosition.z;
+
+    vec4 position = createWaveOffset(vec3(x, y, z));
 
     gl_Position = projectionViewMatrix * position;
     

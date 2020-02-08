@@ -1,6 +1,6 @@
 #version 330
 
-layout (location = 0) in vec3 inVertexCoord;
+layout (location = 0) in uint inVertexCoord;
 layout (location = 1) in vec3 inTextureCoord;
 layout (location = 2) in float inBasicLight;
 
@@ -11,10 +11,13 @@ uniform mat4 projectionViewMatrix;
 out vec3 passTexCoord;
 out float passBasicLight;
 
-void main() {
-    float x = chunkPosition.x + inVertexCoord.x;
-    float y = chunkPosition.y + inVertexCoord.y;
-    float z = chunkPosition.z + inVertexCoord.z;
+void main() {   
+    float x = float(inVertexCoord & 0x3Fu);
+    float y = float((inVertexCoord & 0xFC0u) >> 6u);
+    float z = float((inVertexCoord & 0x3F000u) >> 12u);
+    x += chunkPosition.x;
+    y += chunkPosition.y;
+    z += chunkPosition.z;
     gl_Position = projectionViewMatrix * vec4(x, y, z, 1.0);
     
     passTexCoord = inTextureCoord;

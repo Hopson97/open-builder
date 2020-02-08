@@ -24,9 +24,14 @@ void ChunkMesh::addFace(const MeshFace& face, const BlockPosition& blockPosition
 {
     int index = 0;
     for (int i = 0; i < 4; i++) {
-        vertices.push_back(face.vertices[index++] + blockPosition.x);
-        vertices.push_back(face.vertices[index++] + blockPosition.y);
-        vertices.push_back(face.vertices[index++] + blockPosition.z);
+        GLubyte x = face.vertices[index++] + blockPosition.x;
+        GLubyte y = face.vertices[index++] + blockPosition.y;
+        GLubyte z = face.vertices[index++] + blockPosition.z;
+
+        GLuint vertex = x | y << 6 | z << 12;
+
+        vertices.push_back(vertex);
+
         cardinalLights.push_back(face.lightLevel);
     }
     textureCoords.insert(textureCoords.end(),
@@ -45,7 +50,7 @@ gl::VertexArray ChunkMesh::createBuffer()
 {
     gl::VertexArray vao;
     vao.bind();
-    vao.addVertexBuffer(3, vertices);
+    vao.addVertexBuffer(1, vertices);
     vao.addVertexBuffer(3, textureCoords);
     vao.addVertexBuffer(1, cardinalLights);
     vao.addIndexBuffer(indices);

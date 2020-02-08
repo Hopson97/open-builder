@@ -22,6 +22,11 @@ void vertexAttribPointer(GLuint index, GLint mag, GLenum type)
 {
     glCheck(glVertexAttribPointer(index, mag, type, GL_FALSE, 0, (GLvoid*)0));
 }
+
+void vertexAttribIntPointer(GLuint index, GLint mag, GLenum type)
+{
+    glCheck(glVertexAttribIPointer(index, mag, type, 0, (GLvoid*)0));
+}
 } // namespace
 
 namespace gl {
@@ -104,7 +109,7 @@ void VertexArray::addVertexBuffer(int magnitude, const std::vector<GLuint>& data
     bind();
     GLuint vertexBuffer = genVbo();
     bufferData(data);
-    vertexAttribPointer(m_bufferObjects.size(), magnitude, GL_UNSIGNED_INT);
+    vertexAttribIntPointer(m_bufferObjects.size(), magnitude, GL_UNSIGNED_INT);
     glCheck(glEnableVertexAttribArray(m_bufferObjects.size()));
     m_bufferObjects.push_back(vertexBuffer);
 }
