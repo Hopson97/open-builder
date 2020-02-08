@@ -5,12 +5,16 @@
 #include <unordered_map>
 #include <vector>
 
+#include <sol/sol.hpp>
+
 struct Biome {
     int id = 0;
     std::string name;
     block_t topVoxel;
     block_t undergroundVoxel;
     int depth;
+
+    sol::function onTopBlockSet;
 };
 
 struct BiomeDataManager {
