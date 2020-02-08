@@ -5,8 +5,8 @@
 #include <common/world/coordinate.h>
 
 struct MeshFace {
-    std::array<GLfloat, 12> vertices;
-    GLfloat lightLevel;
+    std::array<GLbyte, 12> vertices;
+    GLbyte lightLevel;
 };
 
 struct ChunkMesh {
@@ -17,10 +17,9 @@ struct ChunkMesh {
 
     size_t calculateBufferSize() const;
 
-    std::vector<float> vertices;
+    std::vector<GLuint> vertexAndLight;
     std::vector<GLfloat> textureCoords;
     std::vector<GLuint> indices;
-    std::vector<GLfloat> cardinalLights;
     int indicesCount = 0;
 
     ChunkPosition position;

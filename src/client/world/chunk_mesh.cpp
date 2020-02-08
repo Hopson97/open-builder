@@ -13,10 +13,9 @@ size_t vecSize(const std::vector<T> vect)
 ChunkMesh::ChunkMesh(const ChunkPosition& chunkPosition)
     : position(chunkPosition)
 {
-    vertices.reserve(CHUNK_VOLUME * 2);
+    vertexAndLight.reserve(CHUNK_VOLUME);
     textureCoords.reserve(CHUNK_VOLUME * 2);
     indices.reserve(CHUNK_VOLUME * 2);
-    cardinalLights.reserve(CHUNK_VOLUME * 2);
 }
 
 void ChunkMesh::addFace(const MeshFace& face, const BlockPosition& blockPosition,
@@ -24,17 +23,19 @@ void ChunkMesh::addFace(const MeshFace& face, const BlockPosition& blockPosition
 {
     int index = 0;
     for (int i = 0; i < 4; i++) {
-        vertices.push_back(face.vertices[index++] + position.x * CHUNK_SIZE +
-                           blockPosition.x);
-        vertices.push_back(face.vertices[index++] + position.y * CHUNK_SIZE +
-                           blockPosition.y);
-        vertices.push_back(face.vertices[index++] + position.z * CHUNK_SIZE +
-                           blockPosition.z);
-        cardinalLights.push_back(face.lightLevel);
+        GLubyte x = face.vertices[index++] + blockPosition.x;
+        GLubyte y = face.vertices[index++] + blockPosition.y;
+        GLubyte z = face.vertices[index++] + blockPosition.z;
+
+        GLuint vertex = x | y << 6 | z << 12 | face.lightLevel << 18;
+
+        vertexAndLight.push_back(vertex);
     }
+
     textureCoords.insert(textureCoords.end(),
                          {0.0f, 0.0f, (float)texture, 1.0f, 0.0f, (float)texture, 1.0f,
                           1.0f, (float)texture, 0.0f, 1.0f, (float)texture});
+
     indices.push_back(indicesCount);
     indices.push_back(indicesCount + 1);
     indices.push_back(indicesCount + 2);
@@ -48,18 +49,15 @@ gl::VertexArray ChunkMesh::createBuffer()
 {
     gl::VertexArray vao;
     vao.bind();
-    vao.addVertexBuffer(3, vertices);
+    vao.addVertexBuffer(1, vertexAndLight);
     vao.addVertexBuffer(3, textureCoords);
-    vao.addVertexBuffer(1, cardinalLights);
     vao.addIndexBuffer(indices);
-
     return vao;
 }
 
 size_t ChunkMesh::calculateBufferSize() const
 {
-    return vecSize(vertices) + vecSize(textureCoords) + vecSize(indices) +
-           vecSize(cardinalLights);
+    return vecSize(vertexAndLight) + vecSize(textureCoords) + vecSize(indices);
 }
 
 ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition& chunkPosition)

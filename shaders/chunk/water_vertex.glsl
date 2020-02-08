@@ -1,8 +1,9 @@
 #version 330
 
-layout (location = 0) in vec3 inVertexCoord;
+layout (location = 0) in uint inVertexCoord;
 layout (location = 1) in vec3 inTextureCoord;
-layout (location = 2) in float inBasicLight;
+
+uniform vec3 chunkPosition;
 
 uniform mat4 projectionViewMatrix;
 uniform float time;
@@ -10,10 +11,8 @@ uniform float time;
 out vec3 passTexCoord;
 out float passBasicLight;
 
-vec4 createWaveOffset()
+vec4 createWaveOffset(vec3 position)
 {
-    //Have to do this as in variables cannot be mutated
-    vec3 position = inVertexCoord;
     position.y += sin((time + position.x) * 1.5) / 8.8f;
     position.y += cos((time + position.z) * 1.5) / 8.1f;
     position.y -= 0.22;
@@ -21,8 +20,17 @@ vec4 createWaveOffset()
 }
 
 void main() {
-    gl_Position = projectionViewMatrix * createWaveOffset();
+    float x = float(inVertexCoord & 0x3Fu);
+    float y = float((inVertexCoord & 0xFC0u) >> 6u);
+    float z = float((inVertexCoord & 0x3F000u) >> 12u);
+    x += chunkPosition.x;
+    y += chunkPosition.y;
+    z += chunkPosition.z;
+
+    vec4 position = createWaveOffset(vec3(x, y, z));
+
+    gl_Position = projectionViewMatrix * position;
     
     passTexCoord = inTextureCoord;
-    passBasicLight = inBasicLight;
+    passBasicLight = float((inVertexCoord & 0x1C0000u) >> 18u) / 5.0f;
 }

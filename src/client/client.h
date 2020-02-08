@@ -121,25 +121,28 @@ class Client final : public NetworkHost {
     struct {
         gl::Shader program;
         gl::UniformLocation projectionViewLocation;
+        gl::UniformLocation chunkPositionLocation;
     } m_chunkShader;
-
-    struct {
-        gl::Shader program;
-        gl::UniformLocation modelLocation;
-        gl::UniformLocation projectionViewLocation;
-    } m_selectionShader;
 
     struct {
         gl::Shader program;
         gl::UniformLocation projectionViewLocation;
         gl::UniformLocation timeLocation;
+        gl::UniformLocation chunkPositionLocation;
     } m_fluidShader;
 
     struct {
         gl::Shader program;
         gl::UniformLocation projectionViewLocation;
         gl::UniformLocation timeLocation;
+        gl::UniformLocation chunkPositionLocation;
     } m_floraShader;
+
+    struct {
+        gl::Shader program;
+        gl::UniformLocation modelLocation;
+        gl::UniformLocation projectionViewLocation;
+    } m_selectionShader;
 
     // For time-based render stuff eg waves in the water
     sf::Clock m_clock;
