@@ -7,6 +7,8 @@
 #include <iostream>
 #include <thread>
 
+#include "../lua/lua_api.h"
+
 #include "../world/terrain_generation.h"
 
 #include <common/obd_parser.h>
@@ -21,68 +23,10 @@ Server::Server(const ServerConfig& config)
     m_commandDispatcher.addCommand(ServerCommand::PlayerSkin, &Server::onPlayerSkin);
     // clang-format on
 
-    auto data = m_script.addTable("data");
-    data["addVoxel"] = [&](const sol::table& voxelData) {
-        VoxelData voxel;
-
-        voxel.name = voxelData["name"].get<std::string>();
-        voxel.topTexture = voxelData["render"]["top"].get<std::string>();
-        voxel.sideTexture = voxelData["render"]["sides"].get<std::string>();
-        voxel.bottomTexture = voxelData["render"]["bottom"].get<std::string>();
-
-        std::cout << "Created voxel\n";
-        if (voxelData["collidable"].valid()) {
-            voxel.isCollidable = voxelData["collidable"].get<bool>();
-        }
-        if (voxelData["type"].valid()) {
-            voxel.type = voxelData["type"].get<VoxelType>();
-        }
-        if (voxelData["render"]["mesh"].valid()) {
-            voxel.meshStyle = voxelData["render"]["mesh"].get<VoxelMeshStyle>();
-        }
-
-        m_voxelData.addVoxelData(voxel);
-    };
-
-    data["addBiome"] = [&](const sol::table& biomeData) {
-        Biome biome;
-
-        biome.name = biomeData["name"].get<std::string>();
-        biome.depth = biomeData["depth"].get<int>();
-
-        std::string topVoxel = biomeData["top_voxel"].get<std::string>();
-        std::string undergroundVoxel = biomeData["underground_voxel"].get<std::string>();
-
-        biome.topVoxel = m_voxelData.getVoxelId(topVoxel);
-        biome.undergroundVoxel = m_voxelData.getVoxelId(undergroundVoxel);
-
-        biome.onTopBlockSet = biomeData["onTopBlockSet"];
-
-        m_biomeData.addBiomeData(biome);
-    };
-
-    data["getVoxel"] = [&](const std::string& voxelName) {
-        return m_voxelData.getVoxelId(voxelName);
-    };
-
-    auto& l = m_script.lua;
-    auto chunkapi = l.new_usertype<Chunk>("Chunk");
-    chunkapi["setBlock"] = [&](Chunk& chunk, int x, int y, int z, int block) {
-        chunk.setBlock({x, y, z}, block);
-    };
-
-
-
-    auto meshStyle = m_script.addTable("MeshStyle");
-    meshStyle["Block"] = VoxelMeshStyle::Block;
-    meshStyle["Cross"] = VoxelMeshStyle::Cross;
-    meshStyle["None"] = VoxelMeshStyle::None;
-
-    auto voxelType = m_script.addTable("VoxelType");
-    voxelType["Solid"] = VoxelType::Solid;
-    voxelType["Flora"] = VoxelType::Flora;
-    voxelType["Fluid"] = VoxelType::Fluid;
-    voxelType["Gas"] = VoxelType::Gas;
+    // Add all the API needed to the Lua engine
+    // (Stuff that Lua calls that is defined on the C++ side)
+    luaInitDataApi(m_script, m_biomeData, m_voxelData);
+    luaInitWorldApi(m_script);
 
     m_script.runLuaFile("game/server/main.lua");
 

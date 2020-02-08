@@ -202,10 +202,9 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                         }
                         else {
                             */
-                            biome.onTopBlockSet(chunk, x, y + 1, z, dist);
-                            block = biomeVal > 30
-                                        ? biome.topVoxel
-                                        : voxelData.getVoxelId(CommonVoxel::Sand);
+                        biome.onTopBlockSet(chunk, x, y + 1, z, dist);
+                        block = biomeVal > 30 ? biome.topVoxel
+                                              : voxelData.getVoxelId(CommonVoxel::Sand);
                         //}
                     }
                 }
