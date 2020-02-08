@@ -495,7 +495,7 @@ void Client::render(int width, int height)
         glCheck(glLineWidth(2.0));
         m_selectionShader.program.bind();
         glm::mat4 modelMatrix{1.0};
-        float size = 1.005;
+        float size = 1.005f;
         translateMatrix(modelMatrix, {m_currentSelectedBlockPos.x - (size - 1) / 2,
                                       m_currentSelectedBlockPos.y - (size - 1) / 2,
                                       m_currentSelectedBlockPos.z - (size - 1) / 2});

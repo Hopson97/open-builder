@@ -7,6 +7,8 @@
 #include <iostream>
 #include <thread>
 
+#include "../lua/lua_api.h"
+
 #include "../world/terrain_generation.h"
 
 #include <common/obd_parser.h>
@@ -21,41 +23,17 @@ Server::Server(const ServerConfig& config)
     m_commandDispatcher.addCommand(ServerCommand::PlayerSkin, &Server::onPlayerSkin);
     // clang-format on
 
-    auto data = m_script.addTable("data");
-    data["addVoxel"] = [&](const sol::table& voxelData) {
-        VoxelData voxel;
+    // Add all the API needed to the Lua engine
+    // (Stuff that Lua calls that is defined on the C++ side)
+    luaInitDataApi(m_script, m_biomeData, m_voxelData);
+    luaInitWorldApi(m_script);
 
-        voxel.name = voxelData["name"].get<std::string>();
-        voxel.topTexture = voxelData["render"]["top"].get<std::string>();
-        voxel.sideTexture = voxelData["render"]["sides"].get<std::string>();
-        voxel.bottomTexture = voxelData["render"]["bottom"].get<std::string>();
-
-        std::cout << "Created voxel\n";
-        if (voxelData["collidable"].valid()) {
-            voxel.isCollidable = voxelData["collidable"].get<bool>();
-        }
-        if (voxelData["type"].valid()) {
-            voxel.type = voxelData["type"].get<VoxelType>();
-        }
-        if (voxelData["render"]["mesh"].valid()) {
-            voxel.meshStyle = voxelData["render"]["mesh"].get<VoxelMeshStyle>();
-        }
-
-        m_voxelData.addVoxelData(voxel);
-    };
-
-    auto meshStyle = m_script.addTable("MeshStyle");
-    meshStyle["Block"] = VoxelMeshStyle::Block;
-    meshStyle["Cross"] = VoxelMeshStyle::Cross;
-    meshStyle["None"] = VoxelMeshStyle::None;
-
-    auto voxelType = m_script.addTable("VoxelType");
-    voxelType["Solid"] = VoxelType::Solid;
-    voxelType["Flora"] = VoxelType::Flora;
-    voxelType["Fluid"] = VoxelType::Fluid;
-    voxelType["Gas"] = VoxelType::Gas;
-
-    m_script.runLuaFile("game/server/main.lua");
+    // Load game in this order 
+    // Voxels then Biomes
+    // Done this way as voxel types are a dependancy of biomes
+    m_script.lua["path"] = "game/"; 
+    m_script.runLuaFile("game/voxels.lua");
+    m_script.runLuaFile("game/biomes.lua");
 
     m_voxelData.initCommonVoxelTypes();
 
@@ -63,12 +41,13 @@ Server::Server(const ServerConfig& config)
 
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
-            std::array<int, CHUNK_AREA> heightMap =
-                createChunkHeightMap({x, 0, z}, (float)m_worldSize, seed);
+            auto heightMap = createChunkHeightMap({x, 0, z}, (float)m_worldSize, seed);
+            auto biomeMap = createChunkHeightMap({x, 0, z}, (float)m_worldSize, 11423);
             int maxHeight = *std::max_element(heightMap.cbegin(), heightMap.cend());
             for (int y = 0; y < std::max(1, maxHeight / CHUNK_SIZE + 1); y++) {
                 Chunk& chunk = m_world.chunks.addChunk({x, y, z});
-                createSmoothTerrain(chunk, heightMap, m_voxelData, 0, seed);
+                createSmoothTerrain(chunk, heightMap, biomeMap, m_voxelData, m_biomeData,
+                                    0, seed);
                 m_world.chunks.ensureNeighbours({x, y, z});
             }
         }

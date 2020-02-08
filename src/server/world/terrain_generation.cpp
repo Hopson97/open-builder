@@ -1,6 +1,8 @@
 #include "terrain_generation.h"
 
+#include <common/world/biome.h>
 #include <common/world/chunk.h>
+#include <common/world/voxel_data.h>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -26,55 +28,6 @@ float trilinearInterpolation(float blf, float blb, float brf, float brb,
            (trb * point.x * point.y * point.z);
 }
 */
-
-void createBasicTree(Chunk& chunk, const BlockPosition& blockPosition,
-                     const VoxelDataManager& voxels, std::minstd_rand rng)
-{
-    std::uniform_int_distribution<> dist(4, 5);
-    int trunkHeight = dist(rng);
-
-    int bx = blockPosition.x;
-    int by = blockPosition.y;
-    int bz = blockPosition.z;
-
-    block_t air = voxels.getVoxelId(CommonVoxel::Air);
-    block_t wood = voxels.getVoxelId(CommonVoxel::Wood);
-    block_t leaf = voxels.getVoxelId(CommonVoxel::Leaf);
-
-    int leavesHeight = trunkHeight - 1;
-
-    for (int y = 0; y <= 1; y++) {
-        for (int x = -2; x <= 2; x++) {
-            for (int z = -2; z <= 2; z++) {
-                chunk.setBlock({bx + x, by + leavesHeight + y, bz + z}, leaf);
-            }
-        }
-    }
-
-    for (int y = 2; y <= 3; y++) {
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                chunk.setBlock({bx + x, by + leavesHeight + y, bz + z}, leaf);
-            }
-        }
-    }
-    auto removeLeaf = [&](int xo, int yo, int zo) {
-        chunk.setBlock({bx + xo, by + leavesHeight + yo, bz + zo}, air);
-    };
-    removeLeaf(2, 1, 2);
-    removeLeaf(-2, 1, 2);
-    removeLeaf(2, 1, -2);
-    removeLeaf(-2, 1, -2);
-
-    removeLeaf(1, 3, 1);
-    removeLeaf(-1, 3, 1);
-    removeLeaf(1, 3, -1);
-    removeLeaf(-1, 3, -1);
-
-    for (int y = 0; y < trunkHeight; y++) {
-        chunk.setBlock({bx, by + y, bz}, wood);
-    }
-}
 
 struct NoiseOptions {
     int octaves;
@@ -143,8 +96,8 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
     std::array<int, CHUNK_AREA> heightMap;
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
-            float bx = x + position.x * CHUNK_SIZE;
-            float bz = z + position.z * CHUNK_SIZE;
+            float bx = static_cast<float>(x + position.x * CHUNK_SIZE);
+            float bz = static_cast<float>(z + position.z * CHUNK_SIZE);
 
             glm::vec2 coord = (glm::vec2{bx, bz} - WOLRD_SIZE / 2.0f) / WOLRD_SIZE * 2.0f;
 
@@ -161,13 +114,36 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
     return heightMap;
 }
 
+std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float seed)
+{
+    NoiseOptions biomeMapNoise;
+    biomeMapNoise.amplitude = 100;
+    biomeMapNoise.octaves = 4;
+    biomeMapNoise.smoothness = 505.f;
+    biomeMapNoise.roughness = 0.6f;
+    biomeMapNoise.offset = 18;
+
+    std::array<int, CHUNK_AREA> biomeMap;
+    glm::vec2 chunkXZ = {position.x, position.z};
+    for (int z = 0; z < CHUNK_SIZE; z++) {
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            auto noise = getNoiseAt({x, z}, chunkXZ, biomeMapNoise, seed);
+
+            biomeMap[z * CHUNK_SIZE + x] = noise * biomeMapNoise.amplitude;
+        }
+    }
+    return biomeMap;
+}
+
 void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& heightMap,
-                         const VoxelDataManager& voxelData, int baseChunk, unsigned seed)
+                         const std::array<int, CHUNK_AREA>& biomeMap,
+                         const VoxelDataManager& voxelData,
+                         const BiomeDataManager& biomeData, int baseChunk, unsigned seed)
 {
 
     // TO DO: Eventully tree gen chance stuff can be done from lua
     std::minstd_rand rng;
-    std::uniform_int_distribution<> treeDist(0, 500);
+    std::uniform_int_distribution<> treeDist(0, 3000);
     rng.seed(seed + chunk.getPosition().x * 16 + chunk.getPosition().z);
 
     auto base = chunk.getPosition().y - baseChunk;
@@ -175,6 +151,8 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             int height = heightMap[z * CHUNK_SIZE + x];
+            int biomeVal = biomeMap[z * CHUNK_SIZE + x];
+            auto& biome = biomeData.getBiomeData(biomeVal > 40 ? 0 : 1);
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 int blockY = base * CHUNK_SIZE + y;
                 block_t block = 0;
@@ -189,22 +167,14 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                         block = voxelData.getVoxelId(CommonVoxel::Sand);
                     }
                     else {
-                        float dist = treeDist(rng);
-                        if (dist < 100) {
-                            chunk.setBlock({x, y + 1, z}, 8);
-                            block = voxelData.getVoxelId(CommonVoxel::Grass);
-                        }
-                        else if (dist < 120) {
-                            createBasicTree(chunk, {x, y + 1, z}, voxelData, rng);
-                            block = voxelData.getVoxelId(CommonVoxel::Dirt);
-                        }
-                        else {
-                            block = voxelData.getVoxelId(CommonVoxel::Grass);
-                        }
+                        int dist = treeDist(rng);
+
+                        biome.onTopBlockSet(chunk, x, y + 1, z, dist);
+                        block = biome.topVoxel;
                     }
                 }
-                else if (blockY > height - 5) {
-                    block = voxelData.getVoxelId(CommonVoxel::Dirt);
+                else if (blockY > height - biome.depth) {
+                    block = biome.undergroundVoxel;
                 }
                 else {
                     block = voxelData.getVoxelId(CommonVoxel::Stone);

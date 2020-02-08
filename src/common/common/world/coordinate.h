@@ -51,7 +51,6 @@ ChunkPosition toChunkPosition(const BlockPosition& position);
  */
 ChunkPosition toChunkPosition(float xp, float yp, float zp);
 
-
 /**
  * @brief Converts a world block position to a local chunk block position
  *

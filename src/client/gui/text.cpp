@@ -98,12 +98,12 @@ const sf::Glyph& Font::getGlyph(char character) const
     return m_font.getGlyph(character, m_bitmapScale, false);
 }
 
-unsigned Font::getKerning(char before, char next) const
+float Font::getKerning(char before, char next) const
 {
     return m_font.getKerning(before, next, m_bitmapScale);
 }
 
-unsigned Font::getLineHeight() const
+float Font::getLineHeight() const
 {
     return m_font.getLineSpacing(m_bitmapScale);
 }

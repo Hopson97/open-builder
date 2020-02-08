@@ -9,6 +9,7 @@ add_library(ob-common
     world/chunk_manager.cpp
     world/coordinate.cpp
     world/voxel_data.cpp
+    world/biome.cpp
 )
 
 set_flags(ob-common)

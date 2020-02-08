@@ -14,8 +14,8 @@ class Font {
     void init(const std::string& fontFile, unsigned bitmapScale);
     const sf::Glyph& getGlyph(char character) const;
 
-    unsigned getKerning(char before, char next) const;
-    unsigned getLineHeight() const;
+    float getKerning(char before, char next) const;
+    float getLineHeight() const;
 
     void bindTexture() const;
 
