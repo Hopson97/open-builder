@@ -99,6 +99,7 @@ class Client final : public NetworkHost {
     bool m_hasReceivedGameData = false;
 
     // Rendering/ OpenGL stuff
+    ViewFrustum m_frustum{};
     glm::mat4 m_projectionMatrix{1.0f};
 
     gl::VertexArray m_cube;
@@ -147,7 +148,7 @@ class Client final : public NetworkHost {
     std::array<Entity, 512> m_entities;
 
     BlockPosition m_currentSelectedBlockPos;
-    bool m_blockSelected;
+    bool m_blockSelected = false;
 
     Entity* mp_player = nullptr;
     Entity m_externalCamera;
@@ -171,7 +172,7 @@ class Client final : public NetworkHost {
     Gui m_gui;
 
     // Debug stats stuff
-    DebugStats m_debugStats;
+    DebugStats m_debugStats{};
     Text m_debugText;
     Font m_debugTextFont;
     sf::Clock m_debugTextUpdateTimer;
@@ -180,8 +181,6 @@ class Client final : public NetworkHost {
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
     bool m_isMouseLocked = false;
-
-    ViewFrustum m_frustum;
 
     unsigned m_noMeshingCount = 0;
     bool m_blockMeshing = false;

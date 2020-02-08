@@ -1,6 +1,6 @@
 #pragma once
 
-class ScriptEngine;
+struct ScriptEngine;
 class BiomeDataManager;
 class VoxelDataManager;
 

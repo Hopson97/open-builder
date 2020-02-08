@@ -21,7 +21,7 @@ block_t VoxelDataManager::addVoxelData(const VoxelData& voxel)
 {
     m_voxelMap.emplace(voxel.name, m_voxels.size());
     auto& data = m_voxels.emplace_back(voxel);
-    data.id = m_voxels.size() - 1;
+    data.id = static_cast<block_t>(m_voxels.size() - 1);
     return data.id;
 }
 
