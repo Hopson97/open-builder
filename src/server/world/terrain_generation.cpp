@@ -182,30 +182,9 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                     }
                     else {
                         float dist = treeDist(rng);
-                        /*
-                        float dist = treeDist(rng);
-                        if (dist < 100) {
-                            chunk.setBlock({x, y + 1, z}, biomeVal > 30 ? 8 : 10);
-                            block = biomeVal > 30
-                                        ? biome.topVoxel
-                                        : voxelData.getVoxelId(CommonVoxel::Sand);
-                        }
-                        else if (dist < 120) {
-                            if (biomeVal > 30) {
-                                createBasicTree(chunk, {x, y + 1, z}, voxelData, rng);
-                                block = biome.undergroundVoxel;
-                            }
-                            else {
-                                createCommonCactus(chunk, {x, y + 1, z}, voxelData, rng);
-                                block = voxelData.getVoxelId(CommonVoxel::Sand);
-                            }
-                        }
-                        else {
-                            */
+
                         biome.onTopBlockSet(chunk, x, y + 1, z, dist);
-                        block = biomeVal > 30 ? biome.topVoxel
-                                              : voxelData.getVoxelId(CommonVoxel::Sand);
-                        //}
+                        block = biome.topVoxel;
                     }
                 }
                 else if (blockY > height - biome.depth) {

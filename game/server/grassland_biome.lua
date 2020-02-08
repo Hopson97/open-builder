@@ -3,6 +3,9 @@
 local air = game.data.getVoxel("openbuilder_air")
 local wood = game.data.getVoxel("openbuilder_wood")
 local leaf = game.data.getVoxel("openbuilder_leaf")
+local tallGrass = game.data.getVoxel("openbuilder_common_tallgrass")
+
+local stone = game.data.getVoxel("openbuilder_stone")
 
 function createTree(chunk, bx, by, bz) 
 
@@ -29,15 +32,15 @@ function createTree(chunk, bx, by, bz)
         chunk:setBlock(xo + bx, yo + by + leavesHeight, bz + zo, air)
     end
 
-    removeLeaf(2, 1, 2);
-    removeLeaf(-2, 1, 2);
-    removeLeaf(2, 1, -2);
-    removeLeaf(-2, 1, -2);
+    removeLeaf(2, 1, 2)
+    removeLeaf(-2, 1, 2)
+    removeLeaf(2, 1, -2)
+    removeLeaf(-2, 1, -2)
 
-    removeLeaf(1, 3, 1);
-    removeLeaf(-1, 3, 1);
-    removeLeaf(1, 3, -1);
-    removeLeaf(-1, 3, -1);
+    removeLeaf(1, 3, 1)
+    removeLeaf(-1, 3, 1)
+    removeLeaf(1, 3, -1)
+    removeLeaf(-1, 3, -1)
 
     for y = 0, trunkHeight, 1 do
        chunk:setBlock(bx, y + by, bz, wood)
@@ -47,6 +50,8 @@ end
 function onTopBlockSet(chunk, x, y, z, rng)
     if rng < 20 then
         createTree(chunk, x, y, z)
+    elseif rng < 50 then
+        chunk:setBlock(x, y, z, tallGrass)
     end
 end
 

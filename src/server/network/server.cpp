@@ -34,26 +34,19 @@ Server::Server(const ServerConfig& config)
 
     float seed = generateSeed("test");
 
-    float time = 0;
-    int count = 0;
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
             auto heightMap = createChunkHeightMap({x, 0, z}, (float)m_worldSize, seed);
             auto biomeMap = createChunkHeightMap({x, 0, z}, (float)m_worldSize, 11423);
             int maxHeight = *std::max_element(heightMap.cbegin(), heightMap.cend());
             for (int y = 0; y < std::max(1, maxHeight / CHUNK_SIZE + 1); y++) {
-                sf::Clock clock;
                 Chunk& chunk = m_world.chunks.addChunk({x, y, z});
                 createSmoothTerrain(chunk, heightMap, biomeMap, m_voxelData, m_biomeData,
                                     0, seed);
                 m_world.chunks.ensureNeighbours({x, y, z});
-
-                time += clock.getElapsedTime().asSeconds();
-                count++;
             }
         }
     }
-    std::cout << time * 1000 << " " << (time / count) * 1000 << std::endl;
 }
 
 void Server::sendChunk(peer_id_t peerId, const ChunkPosition& position)
