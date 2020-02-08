@@ -18,8 +18,4 @@ function createCactus(chunk, bx, by, bz)
         chunk:setBlock(bx, by + 4, bz - 1, cactus)
         chunk:setBlock(bx, by + 3, bz + 1, cactus)
     end
-
-    
-
-
 end
