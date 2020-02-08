@@ -12,13 +12,9 @@ void VoxelDataManager::initCommonVoxelTypes()
     // would be delagated to the Lua instead
     // For now though, this can work as a placeholder
     m_commonVoxels[(u8)CommonVoxel::Air] = getVoxelId("openbuilder_air");
-    m_commonVoxels[(u8)CommonVoxel::Grass] = getVoxelId("openbuilder_grass");
-    m_commonVoxels[(u8)CommonVoxel::Dirt] = getVoxelId("openbuilder_dirt");
     m_commonVoxels[(u8)CommonVoxel::Stone] = getVoxelId("openbuilder_stone");
     m_commonVoxels[(u8)CommonVoxel::Sand] = getVoxelId("openbuilder_sand");
     m_commonVoxels[(u8)CommonVoxel::Water] = getVoxelId("openbuilder_water");
-    m_commonVoxels[(u8)CommonVoxel::Wood] = getVoxelId("openbuilder_wood");
-    m_commonVoxels[(u8)CommonVoxel::Leaf] = getVoxelId("openbuilder_leaf");
 }
 
 block_t VoxelDataManager::addVoxelData(const VoxelData& voxel)
