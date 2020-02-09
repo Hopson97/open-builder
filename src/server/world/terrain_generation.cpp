@@ -164,7 +164,8 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                         block = voxelData.getVoxelId(CommonVoxel::Sand);
                     }
                     else {
-                        block = biome.topVoxel;
+                        //Allows lua to override the top voxel (eg use dirt if they place a tree)
+                        chunk.qSetBlock({x, y, z}, biome.topVoxel);
                         biome.onTopBlockSet(chunk, x, y + 1, z, rng);
                     }
                 }
