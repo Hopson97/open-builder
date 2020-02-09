@@ -140,8 +140,7 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
 {
 
     // TO DO: Eventully tree gen chance stuff can be done from lua
-    RandomNumberGenerator rng;
-    rng.setSeed(seed + chunk.getPosition().x * 16 + chunk.getPosition().z);
+    RandomNumberGenerator rng(seed + chunk.getPosition().x * 16 + chunk.getPosition().z);
 
     auto base = chunk.getPosition().y - baseChunk;
 

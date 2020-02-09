@@ -2,9 +2,9 @@
 
 #include <ctime>
 
-RandomNumberGenerator::RandomNumberGenerator()
+RandomNumberGenerator::RandomNumberGenerator(int seed)
 {
-    m_rng.seed(std::time(nullptr));
+    setSeed(seed);
 }
 
 void RandomNumberGenerator::setSeed(int seed)
