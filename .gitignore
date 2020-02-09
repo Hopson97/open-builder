@@ -25,6 +25,7 @@ custom_run.sh
 
 build/
 bin/
+custom_run.sh
 
 #
 #   Windows

@@ -7,8 +7,6 @@ assignees: ''
 
 ---
 
-# Suggestion Title
-[eg, terrain generation]
 
 ## Describe your suggestion
 [eg. Would be cool if the world was bumpy and not not bumpy]
