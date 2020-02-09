@@ -19,6 +19,7 @@ struct ChunkRenderable final {
     // Used for debugging (Seeing vram usage)
     size_t bufferSize = 0;
 };
+using ChunkRenderList = std::vector<ChunkRenderable>;
 
 /**
  * @brief Used for mostly debugging purposes, used to count number of chunks being
@@ -33,6 +34,15 @@ struct ChunkRenderResult final {
  * @brief Manager class for all things chunk rendering
  */
 class ChunkRenderer final {
+    /**
+     * @brief Used as in index for the chunk renderable array (below)
+     */
+    enum class ChunkRenderType {
+        Solid = 0,
+        Fluid = 1,
+        Flora = 2,
+    };
+
     /**
      * @brief Common shader for chunks
      */
@@ -88,9 +98,7 @@ class ChunkRenderer final {
     ChunkAnimatedShader m_floraShader;
 
     std::vector<ChunkMeshCollection> m_chunkMeshes;
-    std::vector<ChunkRenderable> m_solidDrawables;
-    std::vector<ChunkRenderable> m_fluidDrawables;
-    std::vector<ChunkRenderable> m_floraDrawables;
+    std::array<ChunkRenderList, 3> m_chunkRenderables;
 
     sf::Clock m_animationTimer;
 };
