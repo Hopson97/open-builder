@@ -7,10 +7,6 @@ assignees: ''
 
 ---
 
-# Bug Name
-
-(Does your bug have a name that you can use to refer to it throughout this doc?)
-
 ## Describe the bug
 A clear and concise description of what the bug is.
 

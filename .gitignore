@@ -23,6 +23,7 @@ texture_packs/ElijahHyper
 
 build/
 bin/
+custom_run.sh
 
 #
 #   Windows

@@ -475,8 +475,9 @@ void Client::render(int width, int height)
 
     m_debugStats.renderedChunks = 0;
     m_debugStats.renderedChunks +=
-        renderChunks(m_chunks.drawables, m_frustum, m_chunkShader.chunkPositionLocation, bytesRendered);
-    
+        renderChunks(m_chunks.drawables, m_frustum, m_chunkShader.chunkPositionLocation,
+                     bytesRendered);
+
     // Render the flora blocks
    
     glDisable(GL_CULL_FACE);
@@ -486,8 +487,6 @@ void Client::render(int width, int height)
     renderChunks(m_chunks.floraDrawables, m_frustum, m_floraShader.chunkPositionLocation,
                  bytesRendered);
     glEnable(GL_CULL_FACE);
-    
-    
 
     glCheck(glEnable(GL_BLEND));
 
@@ -508,7 +507,7 @@ void Client::render(int width, int height)
     }
 
     // Render fluid mesh
-    
+
     m_fluidShader.program.bind();
     gl::loadUniform(m_fluidShader.timeLocation, time);
     gl::loadUniform(m_fluidShader.projectionViewLocation, playerProjectionView);
@@ -517,8 +516,7 @@ void Client::render(int width, int height)
     }
     renderChunks(m_chunks.fluidDrawables, m_frustum, m_fluidShader.chunkPositionLocation,
                  bytesRendered);
-                 
-    
+
     glCheck(glDisable(GL_BLEND));
     glCheck(glCullFace(GL_BACK));
 
