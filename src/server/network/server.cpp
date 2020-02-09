@@ -28,10 +28,10 @@ Server::Server(const ServerConfig& config)
     luaInitDataApi(m_script, m_biomeData, m_voxelData);
     luaInitWorldApi(m_script);
 
-    // Load game in this order 
+    // Load game in this order
     // Voxels then Biomes
     // Done this way as voxel types are a dependancy of biomes
-    m_script.lua["path"] = "game/"; 
+    m_script.lua["path"] = "game/";
     m_script.runLuaFile("game/voxels.lua");
     m_script.runLuaFile("game/biomes.lua");
 
