@@ -15,50 +15,6 @@
 #include "client_config.h"
 
 namespace {
-int findChunkDrawableIndex(const ChunkPosition& position,
-                           const std::vector<ChunkDrawable>& drawables)
-{
-    for (int i = 0; i < static_cast<int>(drawables.size()); i++) {
-        if (drawables[i].position == position) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-void deleteChunkRenderable(const ChunkPosition& position,
-                           std::vector<ChunkDrawable>& drawables)
-{
-    auto index = findChunkDrawableIndex(position, drawables);
-    if (index > -1) {
-        drawables[index].vao.destroy();
-
-        // As the chunk renders need not be a sorted array, "swap and pop"
-        // can be used
-        // More efficent (and maybe safer) than normal deletion
-        std::iter_swap(drawables.begin() + index, drawables.end() - 1);
-        drawables.pop_back();
-    }
-}
-
-int renderChunks(const std::vector<ChunkDrawable>& chunks, const ViewFrustum& frustum,
-                 gl::UniformLocation chunkPositionLocation, size_t& bytes)
-{
-    int renderedChunks = 0;
-    for (const auto& chunk : chunks) {
-        if (frustum.chunkIsInFrustum(chunk.position)) {
-            glm::vec3 cp{chunk.position.x, chunk.position.y, chunk.position.z};
-            cp *= CHUNK_SIZE;
-            gl::loadUniform(chunkPositionLocation, cp);
-
-            chunk.vao.getDrawable().bindAndDraw();
-            renderedChunks++;
-            bytes += chunk.size;
-        }
-    }
-    return renderedChunks;
-}
-
 bool isVoxelSelectable(VoxelType voxelType)
 {
     return voxelType == VoxelType::Solid || voxelType == VoxelType::Flora;
@@ -93,6 +49,8 @@ bool Client::init(const ClientConfig& config, float aspect)
 
     m_selectionBox = makeWireCubeVertexArray(1, 1, 1);
 
+    m_chunkRenderer.init();
+
     // Selection box shader
     m_selectionShader.program.create("selection", "selection");
     m_selectionShader.program.bind();
@@ -107,32 +65,6 @@ bool Client::init(const ClientConfig& config, float aspect)
     m_basicShader.modelLocation = m_basicShader.program.getUniformLocation("modelMatrix");
     m_basicShader.projectionViewLocation =
         m_basicShader.program.getUniformLocation("projectionViewMatrix");
-
-    // Chunk shader
-    m_chunkShader.program.create("chunk/chunk", "chunk/chunk");
-    m_chunkShader.program.bind();
-    m_chunkShader.projectionViewLocation =
-        m_chunkShader.program.getUniformLocation("projectionViewMatrix");
-    m_chunkShader.chunkPositionLocation =
-        m_chunkShader.program.getUniformLocation("chunkPosition");
-
-    // Fluids shader
-    m_fluidShader.program.create("chunk/water", "chunk/chunk");
-    m_fluidShader.program.bind();
-    m_fluidShader.projectionViewLocation =
-        m_fluidShader.program.getUniformLocation("projectionViewMatrix");
-    m_fluidShader.timeLocation = m_fluidShader.program.getUniformLocation("time");
-    m_fluidShader.chunkPositionLocation =
-        m_fluidShader.program.getUniformLocation("chunkPosition");
-
-    // Flora shader
-    m_floraShader.program.create("chunk/flora", "chunk/transparent");
-    m_floraShader.program.bind();
-    m_floraShader.projectionViewLocation =
-        m_floraShader.program.getUniformLocation("projectionViewMatrix");
-    m_floraShader.timeLocation = m_floraShader.program.getUniformLocation("time");
-    m_floraShader.chunkPositionLocation =
-        m_floraShader.program.getUniformLocation("chunkPosition");
 
     // Texture for the player model
     m_errorSkinTexture.create("skins/error");
@@ -361,9 +293,9 @@ void Client::update(float dt, float frameTime, float fps)
             for (auto itr = m_chunks.updates.cbegin(); itr != m_chunks.updates.cend();) {
                 if (m_chunks.manager.hasNeighbours(*itr)) {
                     auto& chunk = m_chunks.manager.getChunk(*itr);
+
                     auto buffer = makeChunkMesh(chunk, m_voxelData);
-                    m_chunks.bufferables.push_back(buffer);
-                    deleteChunkRenderable(*itr);
+                    m_chunkRenderer.updateMesh(*itr, std::move(buffer));
                     itr = m_chunks.updates.erase(itr);
 
                     // Break so that the game still runs while world is
@@ -442,56 +374,21 @@ void Client::render(int width, int height)
             gl::loadUniform(m_basicShader.modelLocation, modelMatrix);
             drawable.draw();
         }
-    }
-
-    size_t bytesRendered = 0;
+    };
     // Render chunks
     m_voxelTextures.bind();
 
-    // Buffer chunks
-    for (auto& chunkMesh : m_chunks.bufferables) {
-        // TODO [Hopson] -> DRY this code somehow...
-        if (chunkMesh.blockMesh.indicesCount > 0) {
-            m_chunks.drawables.push_back({chunkMesh.blockMesh.position,
-                                          chunkMesh.blockMesh.createBuffer(),
-                                          chunkMesh.blockMesh.calculateBufferSize()});
-        }
-        if (chunkMesh.fluidMesh.indicesCount > 0) {
-            m_chunks.fluidDrawables.push_back(
-                {chunkMesh.fluidMesh.position, chunkMesh.fluidMesh.createBuffer()});
-        }
-        if (chunkMesh.floraMesh.indicesCount > 0) {
-            m_chunks.floraDrawables.push_back(
-                {chunkMesh.floraMesh.position, chunkMesh.floraMesh.createBuffer()});
-        }
-    }
-    m_chunks.bufferables.clear();
-
-    float time = m_clock.getElapsedTime().asSeconds();
-
-    // Render solid chunk blocks
-    m_chunkShader.program.bind();
-    gl::loadUniform(m_chunkShader.projectionViewLocation, playerProjectionView);
-
-    m_debugStats.renderedChunks = 0;
-    m_debugStats.renderedChunks +=
-        renderChunks(m_chunks.drawables, m_frustum, m_chunkShader.chunkPositionLocation,
-                     bytesRendered);
-
-    // Render the flora blocks
-   
-    glDisable(GL_CULL_FACE);
-    m_floraShader.program.bind();
-    gl::loadUniform(m_floraShader.timeLocation, time);
-    gl::loadUniform(m_floraShader.projectionViewLocation, playerProjectionView);
-    renderChunks(m_chunks.floraDrawables, m_frustum, m_floraShader.chunkPositionLocation,
-                 bytesRendered);
-    glEnable(GL_CULL_FACE);
-
-    glCheck(glEnable(GL_BLEND));
+    bool isPlayerInWater =
+        m_chunks.manager.getBlock(toBlockPosition(mp_player->position)) ==
+        m_voxelData.getVoxelId(CommonVoxel::Water);
+    auto result = m_chunkRenderer.renderChunks(mp_player->position, m_frustum,
+                                               playerProjectionView, isPlayerInWater);
+    m_debugStats.bytesRendered = result.bytesInView;
+    m_debugStats.renderedChunks = result.chunksRendered;
 
     // Render selection box
     if (m_blockSelected) {
+        glCheck(glEnable(GL_BLEND));
         glCheck(glEnable(GL_LINE_SMOOTH));
         glCheck(glLineWidth(2.0));
         m_selectionShader.program.bind();
@@ -504,23 +401,8 @@ void Client::render(int width, int height)
         gl::loadUniform(m_selectionShader.modelLocation, modelMatrix);
         gl::loadUniform(m_selectionShader.projectionViewLocation, playerProjectionView);
         m_selectionBox.getDrawable().bindAndDraw(GL_LINES);
+        glCheck(glDisable(GL_BLEND));
     }
-
-    // Render fluid mesh
-
-    m_fluidShader.program.bind();
-    gl::loadUniform(m_fluidShader.timeLocation, time);
-    gl::loadUniform(m_fluidShader.projectionViewLocation, playerProjectionView);
-    if (m_chunks.manager.getBlock(toBlockPosition(mp_player->position)) == 4) {
-        glCheck(glCullFace(GL_FRONT));
-    }
-    renderChunks(m_chunks.fluidDrawables, m_frustum, m_fluidShader.chunkPositionLocation,
-                 bytesRendered);
-
-    glCheck(glDisable(GL_BLEND));
-    glCheck(glCullFace(GL_BACK));
-
-    m_debugStats.bytesRendered = bytesRendered;
 
     // GUI
     m_gui.render(width, height);
@@ -531,20 +413,9 @@ void Client::render(int width, int height)
         if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
             m_debugTextUpdateTimer.restart();
 
-            size_t totalBufferSize = [this]() {
-                auto& s = m_chunks.drawables;
-                auto& f = m_chunks.fluidDrawables;
-                auto getSize = [](const std::vector<ChunkDrawable>& drawables) {
-                    size_t s = 0;
-                    for (auto& d : drawables) {
-                        s += d.size;
-                    }
-                    return s;
-                };
-                return getSize(s) + getSize(f);
-            }();
-
-            totalBufferSize /= 0x100000;
+            // Get vertices total size in view and convert to MB
+            size_t buffSize = m_chunkRenderer.getTotalBufferSize();
+            buffSize /= 0x100000;
             m_debugStats.bytesRendered /= 0x100000;
 
             DebugStats& d = m_debugStats;
@@ -557,9 +428,9 @@ void Client::render(int width, int height)
             debugText << "Frame time: " << std::setprecision(3) << d.frameTime << "ms ";
             debugText << "FPS: " << std::floor(d.fps) << '\n';
             debugText << "Chunks: " << d.renderedChunks << " of "
-                      << m_chunks.drawables.size() << " drawn\n";
+                      << m_chunkRenderer.getTotalChunks() << " drawn\n";
             debugText << "Chunk VRAM: " << m_debugStats.bytesRendered << "Mb of "
-                      << totalBufferSize << "Mb drawn\n";
+                      << buffSize << "Mb drawn\n";
             debugText << "Position: " << p << '\n';
             debugText << "Chunk Position: " << cp << '\n';
             debugText << "Local Position: " << bp << '\n';
@@ -581,11 +452,4 @@ void Client::endGame()
 EngineStatus Client::currentStatus() const
 {
     return m_status;
-}
-
-void Client::deleteChunkRenderable(const ChunkPosition& position)
-{
-    ::deleteChunkRenderable(position, m_chunks.drawables);
-    ::deleteChunkRenderable(position, m_chunks.fluidDrawables);
-    ::deleteChunkRenderable(position, m_chunks.floraDrawables);
 }

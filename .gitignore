@@ -17,6 +17,8 @@ texture_packs/ElijahHyper
 *.srctrldb
 *.srctrlbm
 
+custom_run.sh
+
 #
 #   Linux
 #
