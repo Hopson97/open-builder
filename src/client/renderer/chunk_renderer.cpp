@@ -5,16 +5,30 @@
 #include "../gl/gl_errors.h"
 
 namespace {
+/**
+ * @brief Find the index of a chunk in a chunk renderable list given its position
+ * 
+ * @param position The position of the chunk to find
+ * @param drawables List of chunk renderable objects to search
+ * @return int The index of the chunk, -1 if not found
+ */
 int findChunkDrawableIndex(const ChunkPosition& position,
                            const std::vector<ChunkRenderable>& drawables)
 {
-    for (int i = 0; i < static_cast<int>(drawables.size()); i++) {
+    for (unsigned i = 0; i < drawables.size(); i++) {
         if (drawables[i].position == position) {
             return i;
         }
     }
     return -1;
 }
+
+/**
+ * @brief Deletes a chunk renderable
+ * 
+ * @param position The position of the chunk renderable to delete
+ * @param drawables List of chunk renderable objects to search
+ */
 void deleteChunkRenderable(const ChunkPosition& position,
                            std::vector<ChunkRenderable>& drawables)
 {
@@ -26,6 +40,14 @@ void deleteChunkRenderable(const ChunkPosition& position,
     }
 }
 
+/**
+ * @brief Render a group of chunks
+ * 
+ * @param chunks List of chunks to render
+ * @param frustum The camera viewing frustum, used for culling chunks out of view
+ * @param chunkPositionLocation Shader location to give chunk position
+ * @param outResult Count of chunks rendered this frame
+ */
 void renderChunks(const std::vector<ChunkRenderable>& chunks, const ViewFrustum& frustum,
                   gl::UniformLocation chunkPositionLocation, ChunkRenderResult& outResult)
 {
@@ -44,6 +66,12 @@ void renderChunks(const std::vector<ChunkRenderable>& chunks, const ViewFrustum&
     }
 }
 
+/**
+ * @brief Buffers a list of chunk meshes
+ * 
+ * @param mesh The vertex data to buffer
+ * @param renderList The list of renderable chunks to add the buffered mesh to
+ */
 void bufferChunks(ChunkMesh& mesh, std::vector<ChunkRenderable>& renderList)
 {
     if (mesh.indicesCount > 0) {

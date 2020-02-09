@@ -9,6 +9,9 @@
 #include <common/world/coordinate.h>
 #include <vector>
 
+/**
+ * @brief A mesh that makes up the verticies and such of a chunk in the world
+ */
 struct ChunkRenderable final {
     ChunkPosition position;
     gl::VertexArray vao;
@@ -17,29 +20,61 @@ struct ChunkRenderable final {
     size_t bufferSize = 0;
 };
 
+/**
+ * @brief Used for mostly debugging purposes, used to count number of chunks being
+ * rendered, and how large the rendered chunk's buffer is
+ */
 struct ChunkRenderResult final {
     int chunksRendered = 0;
     int bytesInView = 0;
 };
 
+/**
+ * @brief Manager class for all things chunk rendering
+ */
 class ChunkRenderer final {
-    struct ChunkShader  {
+    /**
+     * @brief Common shader for chunks
+     */
+    struct ChunkShader {
         gl::Shader program;
         gl::UniformLocation projectionViewLocation;
         gl::UniformLocation chunkPositionLocation;
     };
 
+    /**
+     * @brief Additional chunk shader utility for time based events
+     */
     struct ChunkAnimatedShader final : ChunkShader {
         gl::UniformLocation timeLocation;
     };
 
   public:
     void init();
+
+    /**
+     * @brief Update a chunk mesh in the world
+     * This function will also delete a chunk mesh given it exists
+     * @param position The position of the chunk to update
+     * @param meshes The meshes to be processed
+     */
     void updateMesh(const ChunkPosition& position, ChunkMeshCollection&& meshes);
 
+    /**
+     * @brief Render all chunks (that are in view)
+     *
+     * @param cameraPosition The position of the camera
+     * @param frustum The viewing frustum, for frustum culling
+     * @param projectionViewMatrix Projection view matrix for the shaders
+     * @param cameraInWater Is the camera in water, for rendering special effects if the
+     * case
+     * @return ChunkRenderResult The count of chunks rendered and their total buffer size
+     * this frame
+     */
     ChunkRenderResult renderChunks(const glm::vec3& cameraPosition,
                                    const ViewFrustum& frustum,
-                                   const glm::mat4& projectionViewMatrix, bool cameraInWater);
+                                   const glm::mat4& projectionViewMatrix,
+                                   bool cameraInWater);
 
     // Used for the debug stat view
     int getTotalChunks() const;
