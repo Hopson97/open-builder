@@ -3,9 +3,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <array>
-#include <vector>
 #include <cfloat>
 #include <common/world/coordinate.h>
+#include <vector>
 
 glm::mat4 createProjectionViewMatrix(const glm::vec3& position, const glm::vec3& rotation,
                                      const glm::mat4& projection);
@@ -75,14 +75,15 @@ glm::vec3 leftVector(const glm::vec3& rotation);
 glm::vec3 rightVector(const glm::vec3& rotation);
 
 /**
- * @brief Returns a list of intersected BlockPositions given a starting point, direction, and range 
+ * @brief Returns a list of intersected BlockPositions given a starting point, direction,
+ * and range
  *
  * @param startPoint The position at which to begin testing for intersections
  * @param direction Direction to travel away from the start point
  * @param range Maximum distance to travel from the start point
  */
-std::vector<BlockPosition> getIntersectedBlocks(const glm::vec3& startPoint, const glm::vec3& direction,
-						float range);
+std::vector<BlockPosition> getIntersectedBlocks(const glm::vec3& startPoint,
+                                                const glm::vec3& direction, float range);
 
 /**
  * @brief Represents a stepable ray

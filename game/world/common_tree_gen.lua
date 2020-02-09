@@ -1,10 +1,12 @@
 local air = game.data.getVoxel("openbuilder_air")
 local wood = game.data.getVoxel("openbuilder_wood")
 local leaf = game.data.getVoxel("openbuilder_leaf")
+local dirt = game.data.getVoxel("openbuilder_dirt")
 
-function createTree(chunk, bx, by, bz) 
-    local trunkHeight = 5
+function createTree(chunk, bx, by, bz, rng) 
+    local trunkHeight = rng:nextInt(4, 6);
     local leavesHeight = trunkHeight - 1;
+    chunk:setBlock(bx, by - 1, bz, dirt)
 
     for y = 0, 1, 1 do
         for x = -2, 2, 1 do

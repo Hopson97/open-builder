@@ -8,11 +8,16 @@ More information about the project can be found in the **[Open Builder Wiki](htt
 
 This was made mostly for a YouTube series which can be found here: **[Lets Code A Multiplayer Voxel Game](https://www.youtube.com/watch?v=4Rg1RriQZ9Q&list=PLMZ_9w2XRxiYb-ewSron6jd2fC1UHbDbJ&index=2)**
 
-## Screenshot
+## Screenshots
 
-Game is in uh very early stages
+Terrain gen:
 
+![player](https://i.imgur.com/FSz0iWu.png)
+
+Early screenshot:
 ![player](https://i.imgur.com/RLqoqKw.png)
+
+
 
 ## Project Structure
 
