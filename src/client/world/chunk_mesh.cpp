@@ -31,8 +31,8 @@ void ChunkMesh::addFace(const MeshFace& face, const BlockPosition& blockPosition
 
         vertexAndLight.push_back(vertex);
     }
-    textureCoords.insert(textureCoords.end(),
-                         {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f});
+    textureCoordIndex.insert(textureCoordIndex.end(), {0, 1, 2, 3});
+                        
     textureLayer.insert(textureLayer.end(), {texture, texture, texture, texture});
 
         /*
@@ -54,7 +54,7 @@ gl::VertexArray ChunkMesh::createBuffer()
     gl::VertexArray vao;
     vao.bind();
     vao.addVertexBuffer(1, vertexAndLight);
-    vao.addVertexBuffer(2, textureCoords);
+    vao.addVertexBuffer(1, textureCoordIndex);
     vao.addVertexBuffer(1, textureLayer);
     // vao.addVertexBuffer(3, textureCoords);
     vao.addIndexBuffer(indices);
