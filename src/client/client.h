@@ -93,8 +93,6 @@ class Client final : public NetworkHost {
     void onGameRegistryData(sf::Packet& packet);
     // End of network functions
 
-    void deleteChunkRenderable(const ChunkPosition& position);
-
     // Network
     ENetPeer* mp_serverPeer = nullptr;
     CommandDispatcher<Client, ClientCommand> m_commandDispatcher;
@@ -124,26 +122,6 @@ class Client final : public NetworkHost {
 
     struct {
         gl::Shader program;
-        gl::UniformLocation projectionViewLocation;
-        gl::UniformLocation chunkPositionLocation;
-    } m_chunkShader;
-
-    struct {
-        gl::Shader program;
-        gl::UniformLocation projectionViewLocation;
-        gl::UniformLocation timeLocation;
-        gl::UniformLocation chunkPositionLocation;
-    } m_fluidShader;
-
-    struct {
-        gl::Shader program;
-        gl::UniformLocation projectionViewLocation;
-        gl::UniformLocation timeLocation;
-        gl::UniformLocation chunkPositionLocation;
-    } m_floraShader;
-
-    struct {
-        gl::Shader program;
         gl::UniformLocation modelLocation;
         gl::UniformLocation projectionViewLocation;
     } m_selectionShader;
@@ -161,10 +139,6 @@ class Client final : public NetworkHost {
     Entity m_externalCamera;
 
     struct {
-        std::vector<ChunkMeshCollection> bufferables;
-        std::vector<ChunkDrawable> drawables;
-        std::vector<ChunkDrawable> fluidDrawables;
-        std::vector<ChunkDrawable> floraDrawables;
         ChunkManager manager;
         std::vector<ChunkPosition> updates;
         std::vector<BlockUpdate> blockUpdates;
