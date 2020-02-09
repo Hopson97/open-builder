@@ -3,13 +3,11 @@
 #include <common/world/biome.h>
 #include <common/world/chunk.h>
 #include <common/world/voxel_data.h>
-#include <cstdlib>
 #include <cstring>
-#include <ctime>
 #include <functional>
 #include <glm/gtc/noise.hpp>
 #include <iostream>
-#include <random>
+#include <common/util/random_number_generator.h>
 
 namespace {
 
@@ -142,9 +140,8 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
 {
 
     // TO DO: Eventully tree gen chance stuff can be done from lua
-    std::minstd_rand rng;
-    std::uniform_int_distribution<> treeDist(0, 3000);
-    rng.seed(seed + chunk.getPosition().x * 16 + chunk.getPosition().z);
+    RandomNumberGenerator rng;
+    rng.setSeed(seed + chunk.getPosition().x * 16 + chunk.getPosition().z);
 
     auto base = chunk.getPosition().y - baseChunk;
 
@@ -167,9 +164,8 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                         block = voxelData.getVoxelId(CommonVoxel::Sand);
                     }
                     else {
-                        int dist = treeDist(rng);
-
-                        biome.onTopBlockSet(chunk, x, y + 1, z, dist);
+                        int n = rng.nextInt(0, 3000);
+                        biome.onTopBlockSet(chunk, x, y + 1, z, n);
                         block = biome.topVoxel;
                     }
                 }
