@@ -39,20 +39,11 @@ struct Entity final {
     gl::Texture2d playerSkin; // May need to be relocated to its own Player Entity
 };
 
-struct ChunkDrawable {
-    ChunkPosition position;
-    gl::VertexArray vao;
-
-    // Amount of memory used by the vertex buffers etc
-    size_t size = 0;
-};
-
 struct DebugStats {
-    float fps;
-    float frameTime;
-
-    int renderedChunks;
-    size_t bytesRendered;
+    float fps = 0;
+    float frameTime = 0;
+    int renderedChunks = 0;
+    size_t bytesRendered = 0;
 };
 
 class Client final : public NetworkHost {
