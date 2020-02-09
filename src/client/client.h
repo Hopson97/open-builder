@@ -21,6 +21,8 @@
 #include <common/world/voxel_data.h>
 #include <unordered_set>
 
+#include "renderer/chunk_renderer.h"
+
 class Keyboard;
 
 struct BlockUpdate {
@@ -111,6 +113,8 @@ class Client final : public NetworkHost {
 
     std::string m_texturePack;
     gl::TextureArray m_voxelTextures;
+
+    ChunkRenderer m_chunkRenderer;
 
     struct {
         gl::Shader program;
