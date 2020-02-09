@@ -1,5 +1,3 @@
-#pragma once
-
 #include <common/scripting/script_engine.h>
 #include <common/util/random_number_generator.h>
 #include "lua_api.h"
