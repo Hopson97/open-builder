@@ -21,10 +21,6 @@ void deleteChunkRenderable(const ChunkPosition& position,
     auto index = findChunkDrawableIndex(position, drawables);
     if (index > -1) {
         drawables[index].vao.destroy();
-
-        // As the chunk renders need not be a sorted array, "swap and pop"
-        // can be used
-        // More efficent (and maybe safer) than normal deletion
         std::iter_swap(drawables.begin() + index, drawables.end() - 1);
         drawables.pop_back();
     }
@@ -36,6 +32,7 @@ int renderChunks(const std::vector<ChunkRenderable>& chunks, const ViewFrustum& 
     int renderedChunks = 0;
     for (const auto& chunk : chunks) {
         if (frustum.chunkIsInFrustum(chunk.position)) {
+            
             glm::vec3 cp{chunk.position.x, chunk.position.y, chunk.position.z};
             cp *= CHUNK_SIZE;
             gl::loadUniform(chunkPositionLocation, cp);
@@ -47,6 +44,15 @@ int renderChunks(const std::vector<ChunkRenderable>& chunks, const ViewFrustum& 
     }
     return renderedChunks;
 }
+
+void bufferChunks(ChunkMesh& mesh, std::vector<ChunkRenderable>& renderList)
+{
+    if (mesh.indicesCount > 0) {
+        renderList.push_back({mesh.position, mesh.createBuffer(),
+                              mesh.calculateBufferSize()});
+    }
+}
+
 } // namespace
 
 void ChunkRenderer::init()
@@ -89,24 +95,9 @@ void ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
                                  const glm::mat4& projectionViewMatrix)
 {
     for (auto& meshes : m_chunkMeshes) {
-        // TODO [Hopson] -> DRY this code somehow...
-        if (meshes.blockMesh.indicesCount > 0) {
-            m_solidDrawables.push_back({meshes.blockMesh.position,
-                                        meshes.blockMesh.createBuffer(),
-                                        meshes.blockMesh.calculateBufferSize()});
-        }
-
-        if (meshes.fluidMesh.indicesCount > 0) {
-            m_fluidDrawables.push_back({meshes.fluidMesh.position,
-                                        meshes.fluidMesh.createBuffer(),
-                                        meshes.fluidMesh.calculateBufferSize()});
-        }
-
-        if (meshes.floraMesh.indicesCount > 0) {
-            m_floraDrawables.push_back({meshes.floraMesh.position,
-                                        meshes.floraMesh.createBuffer(),
-                                        meshes.fluidMesh.calculateBufferSize()});
-        }
+        bufferChunks(meshes.blockMesh, m_solidDrawables);
+        bufferChunks(meshes.fluidMesh, m_fluidDrawables);
+        bufferChunks(meshes.floraMesh, m_floraDrawables);
     }
     m_chunkMeshes.clear();
 
@@ -133,8 +124,7 @@ void ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     gl::loadUniform(m_floraShader.timeLocation, time);
 
     glDisable(GL_CULL_FACE);
-    ::renderChunks(m_floraDrawables, frustum,
-                   m_floraShader.chunkPositionLocation, temp);
+    ::renderChunks(m_floraDrawables, frustum, m_floraShader.chunkPositionLocation, temp);
     glEnable(GL_CULL_FACE);
 
     // TODO Player is in water and all that idk
