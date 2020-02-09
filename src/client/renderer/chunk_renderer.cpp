@@ -2,6 +2,8 @@
 
 #include <common/world/world_constants.h>
 
+#include "../gl/gl_errors.h"
+
 namespace {
 int findChunkDrawableIndex(const ChunkPosition& position,
                            const std::vector<ChunkRenderable>& drawables)
@@ -93,11 +95,12 @@ void ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
                                         meshes.blockMesh.createBuffer(),
                                         meshes.blockMesh.calculateBufferSize()});
         }
-        /*
-        if (chunkMesh.fluidMesh.indicesCount > 0) {
-            m_chunks.fluidDrawables.push_back(
-                {chunkMesh.fluidMesh.position, chunkMesh.fluidMesh.createBuffer()});
+        
+        if (meshes.fluidMesh.indicesCount > 0) {
+            m_fluidDrawables.push_back(
+                {meshes.fluidMesh.position, meshes.fluidMesh.createBuffer(), meshes.fluidMesh.calculateBufferSize()});
         }
+        /**
         if (chunkMesh.floraMesh.indicesCount > 0) {
             m_chunks.floraDrawables.push_back(
                 {chunkMesh.floraMesh.position, chunkMesh.floraMesh.createBuffer()});
@@ -107,11 +110,31 @@ void ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     m_chunkMeshes.clear();
 
     unsigned temp = 0;
-    // Solid blocks
+    float time = m_animationTimer.getElapsedTime().asSeconds();
 
+    // Solid blocks
     m_solidShader.program.bind();
     gl::loadUniform(m_solidShader.projectionViewLocation, projectionViewMatrix);
     ::renderChunks(m_solidDrawables, frustum, m_solidShader.chunkPositionLocation, temp);
+
+    // Fluid blocks
+    m_fluidShader.program.bind();
+    gl::loadUniform(m_fluidShader.projectionViewLocation, projectionViewMatrix);
+    gl::loadUniform(m_fluidShader.timeLocation, time);
+
+    glCheck(glEnable(GL_BLEND));
+    ::renderChunks(m_fluidDrawables, frustum, m_fluidShader.chunkPositionLocation,
+                 temp);
+    glCheck(glDisable(GL_BLEND));
+
+    //TODO Player is in water and all that idk
+    // if in water blah blah
+    // glCheck(glCullFace(GL_FRONT));
+    //  here
+    // glCheck(glCullFace(GL_BACK));
+
+
+
 }
 
 void ChunkRenderer::deleteChunkRenderables(const ChunkPosition& position)

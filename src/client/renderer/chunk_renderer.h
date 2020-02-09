@@ -40,8 +40,9 @@ class ChunkRenderer {
 
 
     ChunkShader m_solidShader;
-    ChunkAnimatedShader m_floraShader;
     ChunkAnimatedShader m_fluidShader;
+    ChunkAnimatedShader m_floraShader;
+    
 
     std::vector<ChunkMeshCollection> m_chunkMeshes;
     std::vector<ChunkRenderable> m_solidDrawables;
