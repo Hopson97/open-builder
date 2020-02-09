@@ -11,14 +11,14 @@ struct MeshFace {
 
 struct ChunkMesh {
     ChunkMesh(const ChunkPosition& chunkPosition);
-    void addFace(const MeshFace& face, const BlockPosition& blockPosition, int texture);
+    void addFace(const MeshFace& face, const BlockPosition& blockPosition,
+                 GLuint texture);
 
     gl::VertexArray createBuffer();
 
     size_t calculateBufferSize() const;
 
-    std::vector<GLuint> vertexAndLight;
-    std::vector<GLfloat> textureCoords;
+    std::vector<GLuint> vertexData;
     std::vector<GLuint> indices;
     int indicesCount = 0;
 
