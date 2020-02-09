@@ -9,22 +9,27 @@
 #include <common/world/coordinate.h>
 #include <vector>
 
-struct ChunkRenderable {
+struct ChunkRenderable final {
     ChunkPosition position;
     gl::VertexArray vao;
 
     // Used for debugging (Seeing vram usage)
-    size_t bufferSize;
+    size_t bufferSize = 0;
 };
 
-class ChunkRenderer {
-    struct ChunkShader {
+struct ChunkRenderResult final {
+    int chunksRendered = 0;
+    int bytesInView = 0;
+};
+
+class ChunkRenderer final {
+    struct ChunkShader  {
         gl::Shader program;
         gl::UniformLocation projectionViewLocation;
         gl::UniformLocation chunkPositionLocation;
     };
 
-    struct ChunkAnimatedShader : ChunkShader {
+    struct ChunkAnimatedShader final : ChunkShader {
         gl::UniformLocation timeLocation;
     };
 
@@ -32,17 +37,20 @@ class ChunkRenderer {
     void init();
     void updateMesh(const ChunkPosition& position, ChunkMeshCollection&& meshes);
 
-    void renderChunks(const glm::vec3& cameraPosition, const ViewFrustum& frustum,
-                      const glm::mat4& projectionViewMatrix);
+    ChunkRenderResult renderChunks(const glm::vec3& cameraPosition,
+                                   const ViewFrustum& frustum,
+                                   const glm::mat4& projectionViewMatrix);
+
+    // Used for the debug stat view
+    int getTotalChunks() const;
+    int getTotalBufferSize() const;
 
   private:
     void deleteChunkRenderables(const ChunkPosition& position);
 
-
     ChunkShader m_solidShader;
     ChunkAnimatedShader m_fluidShader;
     ChunkAnimatedShader m_floraShader;
-    
 
     std::vector<ChunkMeshCollection> m_chunkMeshes;
     std::vector<ChunkRenderable> m_solidDrawables;

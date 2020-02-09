@@ -26,30 +26,29 @@ void deleteChunkRenderable(const ChunkPosition& position,
     }
 }
 
-int renderChunks(const std::vector<ChunkRenderable>& chunks, const ViewFrustum& frustum,
-                 gl::UniformLocation chunkPositionLocation, size_t& bytes)
+void renderChunks(const std::vector<ChunkRenderable>& chunks, const ViewFrustum& frustum,
+                  gl::UniformLocation chunkPositionLocation, ChunkRenderResult& outResult)
 {
-    int renderedChunks = 0;
     for (const auto& chunk : chunks) {
         if (frustum.chunkIsInFrustum(chunk.position)) {
-            
+
             glm::vec3 cp{chunk.position.x, chunk.position.y, chunk.position.z};
             cp *= CHUNK_SIZE;
             gl::loadUniform(chunkPositionLocation, cp);
 
             chunk.vao.getDrawable().bindAndDraw();
-            renderedChunks++;
-            bytes += chunk.bufferSize;
+
+            outResult.chunksRendered++;
+            outResult.bytesInView += chunk.bufferSize;
         }
     }
-    return renderedChunks;
 }
 
 void bufferChunks(ChunkMesh& mesh, std::vector<ChunkRenderable>& renderList)
 {
     if (mesh.indicesCount > 0) {
-        renderList.push_back({mesh.position, mesh.createBuffer(),
-                              mesh.calculateBufferSize()});
+        renderList.push_back(
+            {mesh.position, mesh.createBuffer(), mesh.calculateBufferSize()});
     }
 }
 
@@ -90,9 +89,9 @@ void ChunkRenderer::updateMesh(const ChunkPosition& position,
     deleteChunkRenderables(position);
 }
 
-void ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
-                                 const ViewFrustum& frustum,
-                                 const glm::mat4& projectionViewMatrix)
+ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
+                                              const ViewFrustum& frustum,
+                                              const glm::mat4& projectionViewMatrix)
 {
     for (auto& meshes : m_chunkMeshes) {
         bufferChunks(meshes.blockMesh, m_solidDrawables);
@@ -101,30 +100,30 @@ void ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     }
     m_chunkMeshes.clear();
 
-    unsigned temp = 0;
     float time = m_animationTimer.getElapsedTime().asSeconds();
-
+    ChunkRenderResult result;
     // Solid blocks
     m_solidShader.program.bind();
     gl::loadUniform(m_solidShader.projectionViewLocation, projectionViewMatrix);
-    ::renderChunks(m_solidDrawables, frustum, m_solidShader.chunkPositionLocation, temp);
+    ::renderChunks(m_solidDrawables, frustum, m_solidShader.chunkPositionLocation,
+                   result);
 
     // Fluid blocks
     m_fluidShader.program.bind();
     gl::loadUniform(m_fluidShader.projectionViewLocation, projectionViewMatrix);
     gl::loadUniform(m_fluidShader.timeLocation, time);
-
     glCheck(glEnable(GL_BLEND));
-    ::renderChunks(m_fluidDrawables, frustum, m_fluidShader.chunkPositionLocation, temp);
+    ::renderChunks(m_fluidDrawables, frustum, m_fluidShader.chunkPositionLocation,
+                   result);
     glCheck(glDisable(GL_BLEND));
 
     // Flora blocks
     m_floraShader.program.bind();
     gl::loadUniform(m_floraShader.projectionViewLocation, projectionViewMatrix);
     gl::loadUniform(m_floraShader.timeLocation, time);
-
     glDisable(GL_CULL_FACE);
-    ::renderChunks(m_floraDrawables, frustum, m_floraShader.chunkPositionLocation, temp);
+    ::renderChunks(m_floraDrawables, frustum, m_floraShader.chunkPositionLocation,
+                   result);
     glEnable(GL_CULL_FACE);
 
     // TODO Player is in water and all that idk
@@ -132,6 +131,24 @@ void ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     // glCheck(glCullFace(GL_FRONT));
     //  here
     // glCheck(glCullFace(GL_BACK));
+    return result;
+}
+
+int ChunkRenderer::getTotalChunks() const
+{
+    return m_solidDrawables.size() + m_fluidDrawables.size() + m_floraDrawables.size();
+}
+
+int ChunkRenderer::getTotalBufferSize() const
+{
+    auto size = [](const std::vector<ChunkRenderable>& renderList) {
+        size_t totalSize = 0;
+        for (auto& chunk : renderList) {
+            totalSize += chunk.bufferSize;
+        }
+        return totalSize;
+    };
+    return size(m_solidDrawables) + size(m_floraDrawables) + size(m_solidDrawables);
 }
 
 void ChunkRenderer::deleteChunkRenderables(const ChunkPosition& position)

@@ -374,12 +374,13 @@ void Client::render(int width, int height)
             gl::loadUniform(m_basicShader.modelLocation, modelMatrix);
             drawable.draw();
         }
-    }
-
-    size_t bytesRendered = 0;
+    };
     // Render chunks
     m_voxelTextures.bind();
-    m_chunkRenderer.renderChunks(mp_player->position, m_frustum, playerProjectionView);
+    auto result = m_chunkRenderer.renderChunks(mp_player->position, m_frustum,
+                                               playerProjectionView);
+    m_debugStats.bytesRendered = result.bytesInView;
+    m_debugStats.renderedChunks = result.chunksRendered;
 
     // Render selection box
     if (m_blockSelected) {
@@ -398,33 +399,19 @@ void Client::render(int width, int height)
         m_selectionBox.getDrawable().bindAndDraw(GL_LINES);
         glCheck(glDisable(GL_BLEND));
     }
- 
-
-    m_debugStats.bytesRendered = bytesRendered;
 
     // GUI
     m_gui.render(width, height);
-    /*
+
     // Debug stats
     if (m_shouldRenderDebugInfo) {
 
         if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
             m_debugTextUpdateTimer.restart();
 
-            size_t totalBufferSize = [this]() {
-                auto& s = m_chunks.drawables;
-                auto& f = m_chunks.fluidDrawables;
-                auto getSize = [](const std::vector<ChunkDrawable>& drawables) {
-                    size_t s = 0;
-                    for (auto& d : drawables) {
-                        s += d.size;
-                    }
-                    return s;
-                };
-                return getSize(s) + getSize(f);
-            }();
-
-            totalBufferSize /= 0x100000;
+            // Get vertices total size in view and convert to MB
+            size_t buffSize = m_chunkRenderer.getTotalBufferSize();
+            buffSize /= 0x100000;
             m_debugStats.bytesRendered /= 0x100000;
 
             DebugStats& d = m_debugStats;
@@ -437,9 +424,9 @@ void Client::render(int width, int height)
             debugText << "Frame time: " << std::setprecision(3) << d.frameTime << "ms ";
             debugText << "FPS: " << std::floor(d.fps) << '\n';
             debugText << "Chunks: " << d.renderedChunks << " of "
-                      << m_chunks.drawables.size() << " drawn\n";
+                      << m_chunkRenderer.getTotalChunks() << " drawn\n";
             debugText << "Chunk VRAM: " << m_debugStats.bytesRendered << "Mb of "
-                      << totalBufferSize << "Mb drawn\n";
+                      << buffSize << "Mb drawn\n";
             debugText << "Position: " << p << '\n';
             debugText << "Chunk Position: " << cp << '\n';
             debugText << "Local Position: " << bp << '\n';
@@ -451,7 +438,6 @@ void Client::render(int width, int height)
         }
         m_gui.renderText(m_debugText);
     }
-    */
 }
 
 void Client::endGame()
