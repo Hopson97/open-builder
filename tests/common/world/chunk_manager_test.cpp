@@ -13,9 +13,9 @@ TEST_CASE("Chunks manager tests")
         ChunkPosition right(1, 0, 0);
 
         ChunkManager manager;
-        Chunk &leftChunk = manager.addChunk(left);
-        Chunk &middleChunk = manager.addChunk(middle);
-        Chunk &rightChunk = manager.addChunk(right);
+        Chunk& leftChunk = manager.addChunk(left);
+        Chunk& middleChunk = manager.addChunk(middle);
+        Chunk& rightChunk = manager.addChunk(right);
 
         BlockPosition setPosition;
         BlockPosition correctedPosition;

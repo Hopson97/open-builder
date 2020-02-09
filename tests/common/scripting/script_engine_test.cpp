@@ -14,7 +14,7 @@ TEST_CASE("Script engine tests")
     SECTION("By default, scripts have a 'game' global table")
     {
         REQUIRE(script.lua["game"].valid());
-    }   
+    }
 
     SECTION("Invalid scripts return false")
     {

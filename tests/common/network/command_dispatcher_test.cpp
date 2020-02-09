@@ -3,52 +3,49 @@
 #include <common/network/command_dispatcher.h>
 #include <common/network/net_command.h>
 
-enum class Command 
-{
+enum class Command {
     Add = 0,
     Subtract,
 
     COUNT
 };
 
-class Handler 
-{
+class Handler {
   public:
-      Handler()
-      {  
-          m_dispatcher.addCommand(Command::Add, &Handler::onAdd);
-          m_dispatcher.addCommand(Command::Subtract, &Handler::onSubtract);
-      }  
+    Handler()
+    {
+        m_dispatcher.addCommand(Command::Add, &Handler::onAdd);
+        m_dispatcher.addCommand(Command::Subtract, &Handler::onSubtract);
+    }
 
-      void handle(command_t command, sf::Packet& packet)
-      {
-          m_dispatcher.execute(*this, command, packet);
-      }
+    void handle(command_t command, sf::Packet& packet)
+    {
+        m_dispatcher.execute(*this, command, packet);
+    }
 
-      u8 counter = 0;
+    u8 counter = 0;
 
   private:
-      void onAdd(sf::Packet& packet)
-      {  
-          u8 adder = 0;
-          packet >> adder;
-          counter += adder;
-      }  
+    void onAdd(sf::Packet& packet)
+    {
+        u8 adder = 0;
+        packet >> adder;
+        counter += adder;
+    }
 
-      void onSubtract(sf::Packet& packet)
-      {            
-          u8 subber = 0;
-          packet >> subber;
-          counter -= subber;
-      }  
+    void onSubtract(sf::Packet& packet)
+    {
+        u8 subber = 0;
+        packet >> subber;
+        counter -= subber;
+    }
 
-      CommandDispatcher<Handler, Command> m_dispatcher;
+    CommandDispatcher<Handler, Command> m_dispatcher;
 };
 
 TEST_CASE("Command dispatcher tests")
 {
     Handler handler;
-    
 
     SECTION("The command dispatcher can handle one type of command")
     {
@@ -56,7 +53,7 @@ TEST_CASE("Command dispatcher tests")
         sf::Packet packet;
         packet << static_cast<command_t>(Command::Add) << adder;
 
-        //This would be done by net handler
+        // This would be done by net handler
         command_t command;
         packet >> command;
         handler.handle(command, packet);
@@ -72,7 +69,7 @@ TEST_CASE("Command dispatcher tests")
             sf::Packet packet;
             packet << static_cast<command_t>(Command::Add) << adder;
 
-            //This would be done by net handler
+            // This would be done by net handler
             command_t command;
             packet >> command;
             handler.handle(command, packet);
@@ -81,12 +78,11 @@ TEST_CASE("Command dispatcher tests")
             sf::Packet packet;
             packet << static_cast<command_t>(Command::Subtract) << subber;
 
-            //This would be done by net handler
+            // This would be done by net handler
             command_t command;
             packet >> command;
             handler.handle(command, packet);
         }
         REQUIRE(handler.counter == (adder - subber));
     }
-
 }

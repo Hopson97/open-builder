@@ -23,7 +23,7 @@ TEST_CASE("Coordinate systems can be correctly converted between")
 
         position = {-1, -CHUNK_SIZE * 2 + 5, CHUNK_SIZE};
         converted = {-1, -2, 1};
-        REQUIRE(toChunkPosition(position) == converted );
+        REQUIRE(toChunkPosition(position) == converted);
     }
 
     SECTION("Block positions can be correctly converted to an array index")
@@ -62,13 +62,15 @@ TEST_CASE("Coordinate systems can be correctly converted between")
     {
         {
             ChunkPosition position(5, 6, 2);
-            glm::vec3 worldPosition({CHUNK_SIZE * position.x, CHUNK_SIZE * position.y, CHUNK_SIZE * position.z});
+            glm::vec3 worldPosition({CHUNK_SIZE * position.x, CHUNK_SIZE * position.y,
+                                     CHUNK_SIZE * position.z});
 
             REQUIRE(worldToChunkPosition(worldPosition) == position);
         }
         {
             ChunkPosition position(-5, -6, -2);
-            glm::vec3 worldPosition({CHUNK_SIZE * position.x, CHUNK_SIZE * position.y, CHUNK_SIZE * position.z});
+            glm::vec3 worldPosition({CHUNK_SIZE * position.x, CHUNK_SIZE * position.y,
+                                     CHUNK_SIZE * position.z});
 
             REQUIRE(worldToChunkPosition(worldPosition).x + 1 == position.x);
             REQUIRE(worldToChunkPosition(worldPosition).y + 1 == position.y);
@@ -76,7 +78,8 @@ TEST_CASE("Coordinate systems can be correctly converted between")
         }
         {
             ChunkPosition position(-5, 60, -2);
-            glm::vec3 worldPosition({CHUNK_SIZE * position.x, CHUNK_SIZE * position.y, CHUNK_SIZE * position.z});
+            glm::vec3 worldPosition({CHUNK_SIZE * position.x, CHUNK_SIZE * position.y,
+                                     CHUNK_SIZE * position.z});
 
             REQUIRE(worldToChunkPosition(worldPosition).x + 1 == position.x);
             REQUIRE(worldToChunkPosition(worldPosition).y == position.y);
@@ -90,7 +93,7 @@ TEST_CASE("Coordinate systems can be correctly converted between")
             float x = 10;
             float y = 23212;
             float z = 1322;
-            
+
             glm::vec3 worldPosition(x, y, z);
 
             REQUIRE(toBlockPosition(worldPosition).x == static_cast<i32>(x));
@@ -101,7 +104,7 @@ TEST_CASE("Coordinate systems can be correctly converted between")
             float x = -10;
             float y = -23212;
             float z = -1322;
-            
+
             glm::vec3 worldPosition(x, y, z);
 
             REQUIRE(toBlockPosition(worldPosition).x == static_cast<i32>(x));
@@ -112,7 +115,7 @@ TEST_CASE("Coordinate systems can be correctly converted between")
             float x = -10465;
             float y = 422;
             float z = 13222;
-            
+
             glm::vec3 worldPosition(x, y, z);
 
             REQUIRE(toBlockPosition(worldPosition).x == static_cast<i32>(x));
@@ -120,5 +123,4 @@ TEST_CASE("Coordinate systems can be correctly converted between")
             REQUIRE(toBlockPosition(worldPosition).z == static_cast<i32>(z));
         }
     }
-
 }

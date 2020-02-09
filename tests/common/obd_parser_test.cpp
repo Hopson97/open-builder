@@ -1,10 +1,8 @@
 #include <catch2/catch.hpp>
 
-
 #include <common/obd_parser.h>
 
-const std::string dataObd = 
-"                               \n\
+const std::string dataObd = "                               \n\
 block                           \n\
     name grass                  \n\
     texture_top pack:grass      \n\
@@ -21,13 +19,13 @@ block                           \n\
     mesh cross                  \n\
     state flora                 \n\
 end                             \n\
-";  
+";
 
 TEST_CASE("OBD files can be read from correctly")
 {
     auto data = getObdDataRaw(dataObd);
 
-    SECTION("There are a correct number of parsed blocks") 
+    SECTION("There are a correct number of parsed blocks")
     {
         REQUIRE(data.size() == 2);
 
@@ -35,7 +33,7 @@ TEST_CASE("OBD files can be read from correctly")
         REQUIRE(data[1].data.size() == 4);
     }
 
-    SECTION("It correctly has data") 
+    SECTION("It correctly has data")
     {
         auto block = data[0];
 

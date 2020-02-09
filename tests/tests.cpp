@@ -20,7 +20,7 @@
 #pragma GCC diagnostic pop
 #endif
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     // sf::Window window({200, 200}, "Tests");
     // gladLoadGL();

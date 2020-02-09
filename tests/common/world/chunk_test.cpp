@@ -11,7 +11,7 @@ TEST_CASE("Chunks can get and set blocks")
     SECTION("Chunk blocks can be set and recieved correctly")
     {
         ChunkManager manager;
-        Chunk &chunk = manager.addChunk({0, 0, 0});
+        Chunk& chunk = manager.addChunk({0, 0, 0});
         BlockPosition blockPosition(1, 2, 3);
 
         chunk.qSetBlock(blockPosition, block);
@@ -24,8 +24,8 @@ TEST_CASE("Chunks can get and set blocks")
         ChunkPosition right(0, 0, 0);
 
         ChunkManager manager;
-        Chunk &leftChunk = manager.addChunk(left);
-        Chunk &rightChunk = manager.addChunk(right);
+        Chunk& leftChunk = manager.addChunk(left);
+        Chunk& rightChunk = manager.addChunk(right);
 
         BlockPosition setPosition;
         BlockPosition correctedPosition;
@@ -54,9 +54,9 @@ TEST_CASE("Chunks can get and set blocks")
         ChunkPosition up(0, 1, 0);
 
         ChunkManager manager;
-        Chunk &leftChunk = manager.addChunk(left);
-        Chunk &rightChunk = manager.addChunk(right);
-        Chunk &upChunk = manager.addChunk(up);
+        Chunk& leftChunk = manager.addChunk(left);
+        Chunk& rightChunk = manager.addChunk(right);
+        Chunk& upChunk = manager.addChunk(up);
 
         BlockPosition setPosition;
         BlockPosition correctedPosition;
@@ -80,7 +80,7 @@ TEST_CASE("Chunks can get and set blocks")
         ChunkPosition bottom(0, 0, 0);
         ChunkPosition up(0, 1, 0);
 
-        Chunk &chunk = manager.addChunk(bottom);
+        Chunk& chunk = manager.addChunk(bottom);
 
         BlockPosition setPosition;
         BlockPosition correctedPosition;
@@ -90,7 +90,7 @@ TEST_CASE("Chunks can get and set blocks")
 
         REQUIRE(manager.hasChunk(up));
 
-        if(manager.hasChunk(up)) {
+        if (manager.hasChunk(up)) {
             const Chunk& newChunk = manager.getChunk(up);
             REQUIRE(newChunk.getBlock(correctedPosition) == block);
             REQUIRE(newChunk.qGetBlock(correctedPosition) == block);
@@ -104,10 +104,9 @@ TEST_CASE("Chunk can be compressed and uncompressed")
     SECTION("The chunk can compress blocks")
     {
         ChunkManager manager;
-        Chunk &chunk = manager.addChunk({0, 0, 0});
+        Chunk& chunk = manager.addChunk({0, 0, 0});
 
-        SECTION(
-            "By default, a chunk is just air, so there is just one block type")
+        SECTION("By default, a chunk is just air, so there is just one block type")
         {
             auto compressed = compressBlockData(chunk.blocks);
             REQUIRE(compressed.size() == 1);
@@ -159,7 +158,7 @@ TEST_CASE("Chunk can be compressed and uncompressed")
         BlockPosition positionC(1, 30, 8);
 
         ChunkManager manager;
-        Chunk &chunk = manager.addChunk({0, 0, 0});
+        Chunk& chunk = manager.addChunk({0, 0, 0});
 
         chunk.qSetBlock(positionA, blockA);
         chunk.qSetBlock(positionB, blockB);

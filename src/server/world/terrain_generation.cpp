@@ -1,5 +1,6 @@
 #include "terrain_generation.h"
 
+#include <common/util/random_number_generator.h>
 #include <common/world/biome.h>
 #include <common/world/chunk.h>
 #include <common/world/voxel_data.h>
@@ -7,7 +8,6 @@
 #include <functional>
 #include <glm/gtc/noise.hpp>
 #include <iostream>
-#include <common/util/random_number_generator.h>
 
 namespace {
 
@@ -163,7 +163,8 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
                         block = voxelData.getVoxelId(CommonVoxel::Sand);
                     }
                     else {
-                        //Allows lua to override the top voxel (eg use dirt if they place a tree)
+                        // Allows lua to override the top voxel (eg use dirt if they place
+                        // a tree)
                         chunk.qSetBlock({x, y, z}, biome.topVoxel);
                         biome.onTopBlockSet(chunk, x, y + 1, z, rng);
                     }

@@ -11,7 +11,7 @@ class TestServer : public NetworkHost {
     }
 
   private:
-    void onPeerConnect(ENetPeer *peer) override
+    void onPeerConnect(ENetPeer* peer) override
     {
         sf::Packet packet;
         packet << ClientCommand::PeerId << static_cast<peer_id_t>(0);
@@ -19,16 +19,15 @@ class TestServer : public NetworkHost {
         sendToPeer(peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
     }
 
-    void onPeerDisconnect(ENetPeer *peer) override
+    void onPeerDisconnect(ENetPeer* peer) override
     {
     }
 
-    void onPeerTimeout(ENetPeer *peer) override
+    void onPeerTimeout(ENetPeer* peer) override
     {
     }
 
-    void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
-                          command_t command) override
+    void onCommandRecieve(ENetPeer* peer, sf::Packet& packet, command_t command) override
     {
     }
 };
@@ -41,20 +40,19 @@ class TestClient : public NetworkHost {
     }
 
   private:
-    void onPeerConnect(ENetPeer *peer) override
+    void onPeerConnect(ENetPeer* peer) override
     {
     }
 
-    void onPeerDisconnect(ENetPeer *peer) override
+    void onPeerDisconnect(ENetPeer* peer) override
     {
     }
 
-    void onPeerTimeout(ENetPeer *peer) override
+    void onPeerTimeout(ENetPeer* peer) override
     {
     }
 
-    void onCommandRecieve(ENetPeer *peer, sf::Packet &packet,
-                          command_t command) override
+    void onCommandRecieve(ENetPeer* peer, sf::Packet& packet, command_t command) override
     {
     }
 };
@@ -85,8 +83,7 @@ TEST_CASE("The client can interact with the server.")
         });
 
         TestClient client;
-        auto serverConnection =
-            client.createAsClient(LOCAL_HOST);
+        auto serverConnection = client.createAsClient(LOCAL_HOST);
 
         REQUIRE(serverConnection.has_value() == true);
         REQUIRE(server.getConnectedPeerCount() == 1);
@@ -107,8 +104,7 @@ TEST_CASE("The client can interact with the server.")
         });
 
         TestClient client;
-        auto serverConnection =
-            client.createAsClient(LOCAL_HOST);
+        auto serverConnection = client.createAsClient(LOCAL_HOST);
         client.disconnectFromPeer(*serverConnection);
 
         REQUIRE(server.getConnectedPeerCount() == 0);
