@@ -15,6 +15,7 @@
 
 #include <common/network/enet.h>
 #include <common/obd_parser.h>
+#include <common/file_io.h>
 
 // Enable nvidia
 #ifdef _WIN32
@@ -49,9 +50,8 @@ struct Config {
  */
 void loadFromConfigFile(Config& config)
 {
-    auto data = getObdData("config.obd");
-    auto clientData = data[0].data;
-    auto serverData = data[1].data;
+	auto clientData = parseObdData(loadFileContents("client.obd"));
+	auto serverData = parseObdData(loadFileContents("server.obd"));
 
     config.client.fullScreen = std::stoi(clientData["fullscreen"]);
     config.client.windowWidth = std::stoi(clientData["window_width"]);
