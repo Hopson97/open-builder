@@ -6,16 +6,16 @@ local function createCactusColumn(chunk, bx, by, bz, height)
     end
 end
 
-function createCactus(chunk, bx, by, bz)
-    local height = 5
+function createCactus(chunk, bx, by, bz, rng)
+    local height = rng:nextInt(4, 7)
 
     createCactusColumn(chunk, bx, by, bz, height)
 
     if (bx + bz % 2 == 0) then
-        chunk:setBlock(bx - 1, by + 4, bz, cactus)
-        chunk:setBlock(bx + 1, by + 3, bz, cactus)
+        chunk:setBlock(bx - 1, by + height / 2, bz, cactus)
+        chunk:setBlock(bx + 1, by + height / 2 - 1, bz, cactus)
     else
-        chunk:setBlock(bx, by + 4, bz - 1, cactus)
-        chunk:setBlock(bx, by + 3, bz + 1, cactus)
+        chunk:setBlock(bx, by + height / 2, bz - 1, cactus)
+        chunk:setBlock(bx, by + height / 2 - 1, bz + 1, cactus)
     end
 end

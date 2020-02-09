@@ -4,7 +4,7 @@ local sand = game.data.getVoxel("openbuilder_sand")
 function onTopBlockSet(chunk, x, y, z, rng)
     local n = rng:nextInt(0, 3000)
     if n < 2 then
-        createCactus(chunk, x, y, z)
+        createCactus(chunk, x, y, z, rng)
     elseif n < 5 then
         chunk:setBlock(x, y, z, deadShrub)
     end
