@@ -4,7 +4,7 @@
 
 class RandomNumberGenerator {
   public:
-    RandomNumberGenerator();
+    RandomNumberGenerator(int seed = 0);
 
     void setSeed(int seed);
 
