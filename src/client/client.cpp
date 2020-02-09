@@ -479,6 +479,7 @@ void Client::render(int width, int height)
                      bytesRendered);
 
     // Render the flora blocks
+   
     glDisable(GL_CULL_FACE);
     m_floraShader.program.bind();
     gl::loadUniform(m_floraShader.timeLocation, time);
