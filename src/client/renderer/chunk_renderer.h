@@ -39,7 +39,7 @@ class ChunkRenderer final {
 
     ChunkRenderResult renderChunks(const glm::vec3& cameraPosition,
                                    const ViewFrustum& frustum,
-                                   const glm::mat4& projectionViewMatrix);
+                                   const glm::mat4& projectionViewMatrix, bool cameraInWater);
 
     // Used for the debug stat view
     int getTotalChunks() const;

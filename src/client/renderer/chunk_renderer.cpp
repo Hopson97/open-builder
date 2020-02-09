@@ -91,7 +91,8 @@ void ChunkRenderer::updateMesh(const ChunkPosition& position,
 
 ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
                                               const ViewFrustum& frustum,
-                                              const glm::mat4& projectionViewMatrix)
+                                              const glm::mat4& projectionViewMatrix,
+                                              bool cameraInWater)
 {
     for (auto& meshes : m_chunkMeshes) {
         bufferChunks(meshes.blockMesh, m_solidDrawables);
@@ -113,8 +114,12 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     gl::loadUniform(m_fluidShader.projectionViewLocation, projectionViewMatrix);
     gl::loadUniform(m_fluidShader.timeLocation, time);
     glCheck(glEnable(GL_BLEND));
+    if (cameraInWater) {
+        glCheck(glCullFace(GL_FRONT));
+    }
     ::renderChunks(m_fluidDrawables, frustum, m_fluidShader.chunkPositionLocation,
                    result);
+    glCheck(glCullFace(GL_BACK));
     glCheck(glDisable(GL_BLEND));
 
     // Flora blocks
@@ -126,11 +131,6 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
                    result);
     glEnable(GL_CULL_FACE);
 
-    // TODO Player is in water and all that idk
-    // if in water blah blah
-    // glCheck(glCullFace(GL_FRONT));
-    //  here
-    // glCheck(glCullFace(GL_BACK));
     return result;
 }
 

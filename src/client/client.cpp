@@ -377,8 +377,11 @@ void Client::render(int width, int height)
     };
     // Render chunks
     m_voxelTextures.bind();
+    bool isPlayerInWater =
+        m_chunks.manager.getBlock(toBlockPosition(mp_player->position)) ==
+        m_voxelData.getVoxelId(CommonVoxel::Water);
     auto result = m_chunkRenderer.renderChunks(mp_player->position, m_frustum,
-                                               playerProjectionView);
+                                               playerProjectionView, isPlayerInWater);
     m_debugStats.bytesRendered = result.bytesInView;
     m_debugStats.renderedChunks = result.chunksRendered;
 
