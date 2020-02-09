@@ -19,9 +19,6 @@ struct ChunkMesh {
     size_t calculateBufferSize() const;
 
     std::vector<GLuint> vertexAndLight;
-    std::vector<GLuint> textureCoordIndex;
-    std::vector<GLuint> textureLayer;
-    //std::vector<GLfloat> textureCoords;
     std::vector<GLuint> indices;
     int indicesCount = 0;
 

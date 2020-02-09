@@ -1,8 +1,6 @@
 #version 330
 
 layout (location = 0) in uint inVertexCoord;
-layout (location = 1) in uint inTextureIndex;
-layout (location = 2) in uint inTextureLayer;
 
 uniform vec3 chunkPosition;
 
@@ -26,8 +24,12 @@ void main() {
     y += chunkPosition.y;
     z += chunkPosition.z;
     gl_Position = projectionViewMatrix * vec4(x, y, z, 1.0);
+
+    //Texture coords
+    uint index = (inVertexCoord & 0x600000u) >> 21u;
+    uint layer = (inVertexCoord & 0xFF800000u) >> 23u;
     
-    passTexCoord = vec3(texCoords[inTextureIndex], float(inTextureLayer));
+    passTexCoord = vec3(texCoords[index], float(layer));
     passBasicLight = float((inVertexCoord & 0x1C0000u) >> 18u) / 5.0f;
 }
     
