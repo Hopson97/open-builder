@@ -11,7 +11,8 @@ struct MeshFace {
 
 struct ChunkMesh {
     ChunkMesh(const ChunkPosition& chunkPosition);
-    void addFace(const MeshFace& face, const BlockPosition& blockPosition, int texture);
+    void addFace(const MeshFace& face, const BlockPosition& blockPosition,
+                 GLuint texture);
 
     gl::VertexArray createBuffer();
 
@@ -19,6 +20,8 @@ struct ChunkMesh {
 
     std::vector<GLuint> vertexAndLight;
     std::vector<GLfloat> textureCoords;
+    std::vector<GLuint> textureLayer;
+    //std::vector<GLfloat> textureCoords;
     std::vector<GLuint> indices;
     int indicesCount = 0;
 
