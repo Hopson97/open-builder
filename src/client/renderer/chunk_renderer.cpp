@@ -95,17 +95,18 @@ void ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
                                         meshes.blockMesh.createBuffer(),
                                         meshes.blockMesh.calculateBufferSize()});
         }
-        
+
         if (meshes.fluidMesh.indicesCount > 0) {
-            m_fluidDrawables.push_back(
-                {meshes.fluidMesh.position, meshes.fluidMesh.createBuffer(), meshes.fluidMesh.calculateBufferSize()});
+            m_fluidDrawables.push_back({meshes.fluidMesh.position,
+                                        meshes.fluidMesh.createBuffer(),
+                                        meshes.fluidMesh.calculateBufferSize()});
         }
-        /**
-        if (chunkMesh.floraMesh.indicesCount > 0) {
-            m_chunks.floraDrawables.push_back(
-                {chunkMesh.floraMesh.position, chunkMesh.floraMesh.createBuffer()});
+
+        if (meshes.floraMesh.indicesCount > 0) {
+            m_floraDrawables.push_back({meshes.floraMesh.position,
+                                        meshes.floraMesh.createBuffer(),
+                                        meshes.fluidMesh.calculateBufferSize()});
         }
-        */
     }
     m_chunkMeshes.clear();
 
@@ -123,18 +124,24 @@ void ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     gl::loadUniform(m_fluidShader.timeLocation, time);
 
     glCheck(glEnable(GL_BLEND));
-    ::renderChunks(m_fluidDrawables, frustum, m_fluidShader.chunkPositionLocation,
-                 temp);
+    ::renderChunks(m_fluidDrawables, frustum, m_fluidShader.chunkPositionLocation, temp);
     glCheck(glDisable(GL_BLEND));
 
-    //TODO Player is in water and all that idk
+    // Flora blocks
+    m_floraShader.program.bind();
+    gl::loadUniform(m_floraShader.projectionViewLocation, projectionViewMatrix);
+    gl::loadUniform(m_floraShader.timeLocation, time);
+
+    glDisable(GL_CULL_FACE);
+    ::renderChunks(m_floraDrawables, frustum,
+                   m_floraShader.chunkPositionLocation, temp);
+    glEnable(GL_CULL_FACE);
+
+    // TODO Player is in water and all that idk
     // if in water blah blah
     // glCheck(glCullFace(GL_FRONT));
     //  here
     // glCheck(glCullFace(GL_BACK));
-
-
-
 }
 
 void ChunkRenderer::deleteChunkRenderables(const ChunkPosition& position)
