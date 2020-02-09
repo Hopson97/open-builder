@@ -1,7 +1,6 @@
 #include "chunk_mesh.h"
 
 #include <common/world/world_constants.h>
-
 namespace {
 template <typename T>
 size_t vecSize(const std::vector<T> vect)
@@ -13,8 +12,7 @@ size_t vecSize(const std::vector<T> vect)
 ChunkMesh::ChunkMesh(const ChunkPosition& chunkPosition)
     : position(chunkPosition)
 {
-    vertexAndLight.reserve(CHUNK_VOLUME);
-    // textureCoords.reserve(CHUNK_VOLUME * 2);
+    vertexData.reserve(CHUNK_VOLUME * 2);
     indices.reserve(CHUNK_VOLUME * 2);
 }
 
@@ -27,10 +25,12 @@ void ChunkMesh::addFace(const MeshFace& face, const BlockPosition& blockPosition
         GLubyte y = face.vertices[index++] + blockPosition.y;
         GLubyte z = face.vertices[index++] + blockPosition.z;
 
+        // Packs the vertex coordinates, cardinal light, and texture coordinates into 4
+        // bytes
         GLuint vertex =
             x | y << 6 | z << 12 | face.lightLevel << 18 | i << 21 | texture << 23;
 
-        vertexAndLight.push_back(vertex);
+        vertexData.push_back(vertex);
     }
     indices.push_back(indicesCount);
     indices.push_back(indicesCount + 1);
@@ -45,14 +45,14 @@ gl::VertexArray ChunkMesh::createBuffer()
 {
     gl::VertexArray vao;
     vao.bind();
-    vao.addVertexBuffer(1, vertexAndLight);
+    vao.addVertexBuffer(1, vertexData);
     vao.addIndexBuffer(indices);
     return vao;
 }
 
 size_t ChunkMesh::calculateBufferSize() const
 {
-    return vecSize(vertexAndLight) + vecSize(indices);
+    return vecSize(vertexData) + vecSize(indices);
 }
 
 ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition& chunkPosition)
