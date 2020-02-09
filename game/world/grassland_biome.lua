@@ -2,9 +2,9 @@ local tallGrass = game.data.getVoxel("openbuilder_common_tallgrass")
 
 function onTopBlockSet(chunk, x, y, z, rng)
     local n = rng:nextInt(0, 3000)
-    if n < 20 then
+    if n < 15 then
         createTree(chunk, x, y, z, rng)
-    elseif n < n then
+    elseif n < 40 then
         chunk:setBlock(x, y, z, tallGrass)
     end
 end

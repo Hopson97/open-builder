@@ -5,6 +5,7 @@ add_library(ob-server
     world/terrain_generation.cpp
     lua/data_api.cpp 
     lua/world_api.cpp
+    lua/util_api.cpp
 )
 
 set_flags(ob-server)
