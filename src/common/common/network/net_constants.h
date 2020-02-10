@@ -12,6 +12,3 @@ constexpr int MIN_CONNECTIONS = 1;
 
 // The maximum number of connections the server can hold simultaneously
 constexpr int MAX_CONNECTIONS = 8;
-
-// Localhost
-const std::string LOCAL_HOST = "127.0.0.1";

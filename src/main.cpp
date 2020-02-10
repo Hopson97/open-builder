@@ -50,26 +50,59 @@ struct Config {
  */
 void loadFromConfigFile(Config& config)
 {
-	auto clientData = parseObdData(loadFileContents("client.obd"));
-	auto serverData = parseObdData(loadFileContents("server.obd"));
+	if (fileExists("client.obd")) {
+		auto clientData = parseObdData(loadFileContents("client.obd"));
 
-    config.client.fullScreen = std::stoi(clientData["fullscreen"]);
-    config.client.windowWidth = std::stoi(clientData["window_width"]);
-    config.client.windowHeight = std::stoi(clientData["window_height"]);
-    config.client.isFpsCapped = std::stoi(clientData["cap_fps"]);
-    config.client.shouldShowInstructions =
-        std::stoi(clientData["shouldShowInstructions"]);
-    config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
-    config.client.fov = std::stoi(clientData["fov"]);
-    config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
-    config.client.skinName = clientData["skin"];
-    config.client.texturePack = clientData["texture_pack"];
-    config.client.serverIp = clientData["server_ip"];
-    if (config.client.serverIp == "LOCAL") {
-        config.client.serverIp = LOCAL_HOST;
-    }
+		config.client.fullScreen = std::stoi(clientData["fullscreen"]);
+		config.client.windowWidth = std::stoi(clientData["window_width"]);
+		config.client.windowHeight = std::stoi(clientData["window_height"]);
+		config.client.isFpsCapped = std::stoi(clientData["cap_fps"]);
+		config.client.shouldShowInstructions =
+			std::stoi(clientData["shouldShowInstructions"]);
+		config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
+		config.client.fov = std::stoi(clientData["fov"]);
+		config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
+		config.client.skinName = clientData["skin"];
+		config.client.texturePack = clientData["texture_pack"];
+		config.client.serverIp = clientData["server_ip"];
+	}
+	else {
+		std::unordered_map<std::string, std::string> clientData;
+		clientData.insert(std::make_pair("fullscreen", config.client.fullScreen ? "1" : "0"));
+		clientData.insert(std::make_pair("window_width", std::to_string(config.client.windowWidth)));
+		clientData.insert(std::make_pair("window_height", std::to_string(config.client.windowHeight)));
+		clientData.insert(std::make_pair("cap_fps", config.client.isFpsCapped ? "1" : "0"));
+		clientData.insert(std::make_pair("shouldShowInstructions", config.client.shouldShowInstructions ? "1" : "0"));
+		clientData.insert(std::make_pair("fps_limit", std::to_string(config.client.fpsLimit)));
+		clientData.insert(std::make_pair("fov", std::to_string(config.client.fov)));
+		clientData.insert(std::make_pair("fps_limit", std::to_string(config.client.fpsLimit)));
+		clientData.insert(std::make_pair("skin", config.client.skinName));
+		clientData.insert(std::make_pair("texture_pack", config.client.texturePack));
+		clientData.insert(std::make_pair("server_ip", config.client.serverIp));
 
-    config.server.worldSize = std::stoi(serverData["world_size"]);
+		std::string clientDataSerialized = serializeObdData(clientData);
+		std::ofstream clientFile("client.obd");
+		if (!clientFile) {
+			std::cerr << "Cannot open client.obd for writing\n";
+		}
+		clientFile << clientDataSerialized << std::endl;
+	}
+	
+	if (fileExists("server.obd")) {
+		auto serverData = parseObdData(loadFileContents("server.obd"));
+		config.server.worldSize = std::stoi(serverData["world_size"]);
+	}
+	else {
+		std::unordered_map<std::string, std::string> serverData;
+		serverData.insert(std::make_pair("world_size", std::to_string(config.server.worldSize)));
+
+		std::string serverDataSerialized = serializeObdData(serverData);
+		std::ofstream serverFile("server.obd");
+		if (!serverFile) {
+			std::cerr << "Cannot open server.obd for writing\n";
+		}
+		serverFile << serverDataSerialized << std::endl;
+	}
 }
 
 /**

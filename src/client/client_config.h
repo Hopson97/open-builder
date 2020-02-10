@@ -22,5 +22,5 @@ struct ClientConfig {
     std::string skinName = "player";
     std::string texturePack = "default";
 
-    std::string serverIp = LOCAL_HOST;
+    std::string serverIp = "127.0.0.1";
 };

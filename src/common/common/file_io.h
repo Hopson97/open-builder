@@ -8,3 +8,4 @@
  * @return std::string Contents of the file
  */
 std::string loadFileContents(const std::string& path);
+bool fileExists(const std::string& path);

@@ -20,3 +20,12 @@ std::unordered_map<std::string, std::string> parseObdData(const std::string& obd
 
 	return data;
 }
+
+std::string serializeObdData(const std::unordered_map<std::string, std::string>& obdData)
+{
+	std::ostringstream output;
+	for (auto const& pair : obdData) {
+		output << pair.first << " " << pair.second << "\n";
+	}
+	return output.str();
+}
