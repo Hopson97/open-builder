@@ -167,7 +167,7 @@ void Text::render(const gl::UniformLocation& location)
 
     gl::loadUniform(location, modelMatrix);
 
-    m_vao.getDrawable().bindAndDraw();
+    m_vao.getDrawable().bindAndDrawElements();
     glCullFace(GL_BACK);
     glDisable(GL_BLEND);
 }

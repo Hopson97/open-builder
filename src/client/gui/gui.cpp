@@ -110,7 +110,7 @@ void Gui::render(float width, float height)
         gl::loadUniform(m_guiShader.modelLocation, modelMatrix);
         gl::loadUniform(m_guiShader.colorLocation, img.colour);
 
-        d.draw();
+        d.drawElements();
     }
 }
 

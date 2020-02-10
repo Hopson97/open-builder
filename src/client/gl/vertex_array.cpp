@@ -36,10 +36,16 @@ Drawable::Drawable(GLuint vao, GLsizei indices)
 {
 }
 
-void Drawable::bindAndDraw(GLenum drawMode) const
+void Drawable::bindAndDrawElements(GLenum drawMode) const
 {
     bind();
-    draw(drawMode);
+    drawElements(drawMode);
+}
+
+void Drawable::bindAndDrawArrays(GLenum drawMode) const
+{
+    bind();
+    drawArrays(drawMode);
 }
 
 void Drawable::bind() const
@@ -47,9 +53,14 @@ void Drawable::bind() const
     glCheck(glBindVertexArray(m_handle));
 }
 
-void Drawable::draw(GLenum drawMode) const
+void Drawable::drawElements(GLenum drawMode) const
 {
     glCheck(glDrawElements(drawMode, m_indicesCount, GL_UNSIGNED_INT, nullptr));
+}
+
+void Drawable::drawArrays(GLenum drawMode) const
+{
+    glCheck(glDrawArrays(drawMode, 0, m_indicesCount));
 }
 
 //
@@ -137,6 +148,11 @@ void VertexArray::addIndexBuffer(const std::vector<GLuint>& indices)
 
     m_bufferObjects.push_back(elementBuffer);
     m_indicesCount = indices.size();
+}
+
+void VertexArray::setIndicesCount(GLsizei count)
+{
+    m_indicesCount = count;
 }
 
 void VertexArray::reset()

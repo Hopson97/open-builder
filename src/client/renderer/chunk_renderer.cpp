@@ -57,7 +57,7 @@ void renderChunks(const ChunkRenderList& chunks, const ViewFrustum& frustum,
             cp *= CHUNK_SIZE;
             gl::loadUniform(chunkPositionLocation, cp);
 
-            chunk.vao.getDrawable().bindAndDraw();
+            chunk.vao.getDrawable().bindAndDrawArrays();
 
             outResult.chunksRendered++;
             outResult.bytesInView += chunk.bufferSize;
@@ -73,7 +73,7 @@ void renderChunks(const ChunkRenderList& chunks, const ViewFrustum& frustum,
  */
 void bufferChunks(ChunkMesh& mesh, ChunkRenderList& renderList)
 {
-    if (mesh.indicesCount > 0) {
+    if (mesh.vertexCount() > 0) {
         renderList.push_back(
             {mesh.position, mesh.createBuffer(), mesh.calculateBufferSize()});
     }

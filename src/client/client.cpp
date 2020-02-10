@@ -372,7 +372,7 @@ void Client::render(int width, int height)
             translateMatrix(modelMatrix,
                             {ent.position.x, ent.position.y, ent.position.z});
             gl::loadUniform(m_basicShader.modelLocation, modelMatrix);
-            drawable.draw();
+            drawable.drawElements();
         }
     };
     // Render chunks
@@ -400,7 +400,7 @@ void Client::render(int width, int height)
         scaleMatrix(modelMatrix, size);
         gl::loadUniform(m_selectionShader.modelLocation, modelMatrix);
         gl::loadUniform(m_selectionShader.projectionViewLocation, playerProjectionView);
-        m_selectionBox.getDrawable().bindAndDraw(GL_LINES);
+        m_selectionBox.getDrawable().bindAndDrawElements(GL_LINES);
         glCheck(glDisable(GL_BLEND));
     }
 

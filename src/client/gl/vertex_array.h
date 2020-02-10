@@ -5,17 +5,19 @@
 
 namespace gl {
 /**
- * @brief Minimal information for drawing with glDrawElements
+ * @brief Minimal information for drawing with glDrawElements/ glDrawArrays
  *
  */
 class Drawable final {
   public:
     Drawable(GLuint vao, GLsizei indices);
 
-    void bindAndDraw(GLenum drawMode = GL_TRIANGLES) const;
+    void bindAndDrawElements(GLenum drawMode = GL_TRIANGLES) const;
+    void bindAndDrawArrays(GLenum drawMode = GL_TRIANGLES) const;
 
     void bind() const;
-    void draw(GLenum drawMode = GL_TRIANGLES) const;
+    void drawElements(GLenum drawMode = GL_TRIANGLES) const;
+    void drawArrays(GLenum drawMode = GL_TRIANGLES) const;
 
   private:
     const GLuint m_handle = 0;
@@ -45,6 +47,11 @@ class VertexArray final {
     void addVertexBuffer(int magnitude, const std::vector<GLuint>& data);
     void addVertexBuffer(int magnitude, const std::vector<GLfloat>& data);
     void addIndexBuffer(const std::vector<GLuint>& indices);
+
+    /**
+        This is for drawing with glDrawArrays
+    */
+    void setIndicesCount(GLsizei count);
 
   private:
     void reset();
