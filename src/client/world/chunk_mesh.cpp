@@ -13,13 +13,14 @@ ChunkMesh::ChunkMesh(const ChunkPosition& chunkPosition)
     : position(chunkPosition)
 {
     vertexData.reserve(CHUNK_VOLUME * 2);
-    indices.reserve(CHUNK_VOLUME * 2);
 }
 
 void ChunkMesh::addFace(const MeshFace& face, const BlockPosition& blockPosition,
                         GLuint texture)
 {
     int index = 0;
+    std::vector<GLuint> quad;
+    quad.reserve(4);
     for (unsigned i = 0; i < 4; i++) {
         GLubyte x = face.vertices[index++] + blockPosition.x;
         GLubyte y = face.vertices[index++] + blockPosition.y;
@@ -30,29 +31,33 @@ void ChunkMesh::addFace(const MeshFace& face, const BlockPosition& blockPosition
         GLuint vertex =
             x | y << 6 | z << 12 | face.lightLevel << 18 | i << 21 | texture << 23;
 
-        vertexData.push_back(vertex);
+        quad.push_back(vertex);
     }
-    indices.push_back(indicesCount);
-    indices.push_back(indicesCount + 1);
-    indices.push_back(indicesCount + 2);
-    indices.push_back(indicesCount + 2);
-    indices.push_back(indicesCount + 3);
-    indices.push_back(indicesCount);
-    indicesCount += 4;
+    vertexData.push_back(quad[0]);
+    vertexData.push_back(quad[1]);
+    vertexData.push_back(quad[2]);
+    vertexData.push_back(quad[2]);
+    vertexData.push_back(quad[3]);
+    vertexData.push_back(quad[0]);
 }
 
 gl::VertexArray ChunkMesh::createBuffer()
 {
     gl::VertexArray vao;
     vao.bind();
+    vao.setIndicesCount(vertexData.size());
     vao.addVertexBuffer(1, vertexData);
-    vao.addIndexBuffer(indices);
     return vao;
 }
 
 size_t ChunkMesh::calculateBufferSize() const
 {
-    return vecSize(vertexData) + vecSize(indices);
+    return vecSize(vertexData);
+}
+
+size_t ChunkMesh::vertexCount() const
+{
+    return vertexData.size();
 }
 
 ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition& chunkPosition)

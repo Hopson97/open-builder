@@ -18,9 +18,9 @@ struct ChunkMesh {
 
     size_t calculateBufferSize() const;
 
+    size_t vertexCount() const;
+
     std::vector<GLuint> vertexData;
-    std::vector<GLuint> indices;
-    int indicesCount = 0;
 
     ChunkPosition position;
 };
