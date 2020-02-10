@@ -15,7 +15,7 @@ std::unordered_map<std::string, std::string> parseObdData(const std::string& obd
 
 	while (contents >> key) {
 		contents >> value;
-		data.insert(std::make_pair(key, value));
+		data.emplace(key, value);
 	}
 
 	return data;

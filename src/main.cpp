@@ -6,6 +6,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <filesystem>
 
 #include "client/client_engine.h"
 #include "server/server_engine.h"
@@ -50,7 +51,7 @@ struct Config {
  */
 void loadFromConfigFile(Config& config)
 {
-	if (fileExists("client.obd")) {
+	if (std::filesystem::exists("client.obd")) {
 		auto clientData = parseObdData(loadFileContents("client.obd"));
 
 		config.client.fullScreen = std::stoi(clientData["fullscreen"]);
@@ -68,17 +69,17 @@ void loadFromConfigFile(Config& config)
 	}
 	else {
 		std::unordered_map<std::string, std::string> clientData;
-		clientData.insert(std::make_pair("fullscreen", config.client.fullScreen ? "1" : "0"));
-		clientData.insert(std::make_pair("window_width", std::to_string(config.client.windowWidth)));
-		clientData.insert(std::make_pair("window_height", std::to_string(config.client.windowHeight)));
-		clientData.insert(std::make_pair("cap_fps", config.client.isFpsCapped ? "1" : "0"));
-		clientData.insert(std::make_pair("shouldShowInstructions", config.client.shouldShowInstructions ? "1" : "0"));
-		clientData.insert(std::make_pair("fps_limit", std::to_string(config.client.fpsLimit)));
-		clientData.insert(std::make_pair("fov", std::to_string(config.client.fov)));
-		clientData.insert(std::make_pair("fps_limit", std::to_string(config.client.fpsLimit)));
-		clientData.insert(std::make_pair("skin", config.client.skinName));
-		clientData.insert(std::make_pair("texture_pack", config.client.texturePack));
-		clientData.insert(std::make_pair("server_ip", config.client.serverIp));
+		clientData.emplace("fullscreen", config.client.fullScreen ? "1" : "0");
+		clientData.emplace("window_width", std::to_string(config.client.windowWidth));
+		clientData.emplace("window_height", std::to_string(config.client.windowHeight));
+		clientData.emplace("cap_fps", config.client.isFpsCapped ? "1" : "0");
+		clientData.emplace("shouldShowInstructions", config.client.shouldShowInstructions ? "1" : "0");
+		clientData.emplace("fps_limit", std::to_string(config.client.fpsLimit));
+		clientData.emplace("fov", std::to_string(config.client.fov));
+		clientData.emplace("fps_limit", std::to_string(config.client.fpsLimit));
+		clientData.emplace("skin", config.client.skinName);
+		clientData.emplace("texture_pack", config.client.texturePack);
+		clientData.emplace("server_ip", config.client.serverIp);
 
 		std::string clientDataSerialized = serializeObdData(clientData);
 		std::ofstream clientFile("client.obd");
@@ -88,13 +89,13 @@ void loadFromConfigFile(Config& config)
 		clientFile << clientDataSerialized << std::endl;
 	}
 	
-	if (fileExists("server.obd")) {
+	if (std::filesystem::exists("server.obd")) {
 		auto serverData = parseObdData(loadFileContents("server.obd"));
 		config.server.worldSize = std::stoi(serverData["world_size"]);
 	}
 	else {
 		std::unordered_map<std::string, std::string> serverData;
-		serverData.insert(std::make_pair("world_size", std::to_string(config.server.worldSize)));
+		serverData.emplace("world_size", std::to_string(config.server.worldSize));
 
 		std::string serverDataSerialized = serializeObdData(serverData);
 		std::ofstream serverFile("server.obd");

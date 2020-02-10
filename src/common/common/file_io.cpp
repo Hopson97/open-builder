@@ -15,9 +15,3 @@ std::string loadFileContents(const std::string& path)
     stream << inFile.rdbuf();
     return stream.str();
 }
-
-bool fileExists(const std::string& path)
-{
-    std::ifstream inFile(path);
-	return !!inFile;
-}
