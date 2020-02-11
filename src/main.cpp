@@ -15,7 +15,6 @@
 #include "server/server_config.h"
 
 #include <common/network/enet.h>
-#include <common/obd_parser.h>
 #include <common/file_io.h>
 
 // Enable nvidia
@@ -36,113 +35,23 @@ enum class LaunchType {
 };
 
 /**
- * @brief Holds config for both client and server
- */
-struct Config {
-    LaunchType launchType = LaunchType::Both;
-
-    ServerConfig server;
-    ClientConfig client;
-};
-
-/**
- * @brief Loads config eg window size from the config.txt file
- * @param config The config object to put the data into
- */
-void loadFromConfigFile(Config& config)
-{
-	if (std::filesystem::exists("client.obd")) {
-		auto clientData = parseObdData(loadFileContents("client.obd"));
-
-		config.client.fullScreen = std::stoi(clientData["fullscreen"]);
-		config.client.windowWidth = std::stoi(clientData["window_width"]);
-		config.client.windowHeight = std::stoi(clientData["window_height"]);
-		config.client.isFpsCapped = std::stoi(clientData["cap_fps"]);
-		config.client.shouldShowInstructions =
-			std::stoi(clientData["shouldShowInstructions"]);
-		config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
-		config.client.fov = std::stoi(clientData["fov"]);
-		config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
-		config.client.skinName = clientData["skin"];
-		config.client.texturePack = clientData["texture_pack"];
-		config.client.serverIp = clientData["server_ip"];
-	}
-	else {
-		std::unordered_map<std::string, std::string> clientData;
-		clientData.emplace("fullscreen", config.client.fullScreen ? "1" : "0");
-		clientData.emplace("window_width", std::to_string(config.client.windowWidth));
-		clientData.emplace("window_height", std::to_string(config.client.windowHeight));
-		clientData.emplace("cap_fps", config.client.isFpsCapped ? "1" : "0");
-		clientData.emplace("shouldShowInstructions", config.client.shouldShowInstructions ? "1" : "0");
-		clientData.emplace("fps_limit", std::to_string(config.client.fpsLimit));
-		clientData.emplace("fov", std::to_string(config.client.fov));
-		clientData.emplace("fps_limit", std::to_string(config.client.fpsLimit));
-		clientData.emplace("skin", config.client.skinName);
-		clientData.emplace("texture_pack", config.client.texturePack);
-		clientData.emplace("server_ip", config.client.serverIp);
-
-		std::string clientDataSerialized = serializeObdData(clientData);
-		std::ofstream clientFile("client.obd");
-		if (!clientFile) {
-			std::cerr << "Cannot open client.obd for writing\n";
-		}
-		clientFile << clientDataSerialized << std::endl;
-	}
-	
-	if (std::filesystem::exists("server.obd")) {
-		auto serverData = parseObdData(loadFileContents("server.obd"));
-		config.server.worldSize = std::stoi(serverData["world_size"]);
-	}
-	else {
-		std::unordered_map<std::string, std::string> serverData;
-		serverData.emplace("world_size", std::to_string(config.server.worldSize));
-
-		std::string serverDataSerialized = serializeObdData(serverData);
-		std::ofstream serverFile("server.obd");
-		if (!serverFile) {
-			std::cerr << "Cannot open server.obd for writing\n";
-		}
-		serverFile << serverDataSerialized << std::endl;
-	}
-}
-
-/**
  * @brief Parses the CLI arguments from the user
  * @param config The config to load data into
  * @param args CLI arguments paired as <argument, param>
  */
-void parseArgs(Config& config,
+void parseArgs(ClientConfig& config, LaunchType& launchType,
                const std::vector<std::pair<std::string, std::string>>& args)
 {
+	// set launch type
     for (const auto& option : args) {
-        // Set launch type to be server.
-        // Option: MAX_CONNECTIONS 2-16
         if (option.first == "-server") {
-            config.launchType = LaunchType::Server;
-            try {
-                int maxConnections = std::stoi(option.second);
-                if (maxConnections < 2) {
-                    throw std::invalid_argument("Max connections must be at least " +
-                                                std::to_string(MIN_CONNECTIONS) + ".\n");
-                }
-                else if (maxConnections > 16) {
-                    throw std::invalid_argument("Max connections must be " +
-                                                std::to_string(MAX_CONNECTIONS) +
-                                                " or below.\n");
-                }
-            }
-            catch (std::invalid_argument& e) {
-                std::cout << "Unable to set max connections, defaulting to "
-                             "4. Reason: "
-                          << e.what() << "\n";
-                config.server.maxConnections = 4;
-            }
+            launchType = LaunchType::Server;
         }
         else if (option.first == "-client") {
-            config.launchType = LaunchType::Client;
+            launchType = LaunchType::Client;
         }
         else if (option.first == "-skin") {
-            config.client.skinName = option.second;
+            config.set_skinName(option.second);
         }
     }
 }
@@ -221,7 +130,7 @@ void printInstructions()
  */
 int launchClient(const ClientConfig& config, bool launchingJustClient)
 {
-    if (launchingJustClient && config.shouldShowInstructions) {
+    if (launchingJustClient && config.get_shouldShowInstructions()) {
         printInstructions();
     }
     LOG("Launcher", "Launching client");
@@ -251,15 +160,15 @@ int launchClient(const ClientConfig& config, bool launchingJustClient)
  * @param config The config to be used by client/server engines
  * @return int Exit flag (Success, or Failure)
  */
-int launchBoth(const Config& config)
+int launchBoth(const ClientConfig& clientConfig, const ServerConfig& serverConfig)
 {
-    ServerLauncher server(config.server, sf::milliseconds(5000));
+    ServerLauncher server(serverConfig, sf::milliseconds(5000));
     std::thread serverThread([&server]() {
         LOG("Launcher", "Launching server");
         server.runServerEngine();
     });
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    int exit = launchClient(config.client, false);
+    int exit = launchClient(clientConfig, false);
     serverThread.join();
     return exit;
 }
@@ -269,18 +178,18 @@ int launchBoth(const Config& config)
  * @param config The config to be used by client/server engines
  * @return int Exit flag (Success, or Failure)
  */
-int launchServerAnd2Players(const Config& config)
+int launchServerAnd2Players(const ClientConfig& clientConfig, const ServerConfig& serverConfig)
 {
-    ServerLauncher server(config.server, sf::milliseconds(5000));
+    ServerLauncher server(serverConfig, sf::milliseconds(5000));
     std::thread serverThread([&server]() {
         LOG("Launcher", "Launching server");
         server.runServerEngine();
     });
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    std::thread client2(launchClient, config.client, false);
+    std::thread client2(launchClient, clientConfig, false);
 
-    int exit = launchClient(config.client, false);
+    int exit = launchClient(clientConfig, false);
 
     client2.join();
     serverThread.join();
@@ -290,12 +199,11 @@ int launchServerAnd2Players(const Config& config)
 
 int main(int argc, char** argv)
 {
-    Config config;
+	// read config files
+	ClientConfig clientConfig("client.obd");
+	ServerConfig serverConfig("server.obd");
 
-    if (enet_initialize() != 0) {
-        return exitFailure("Failed to initialise enet");
-    }
-
+	// parse command line arguments
     std::vector<std::pair<std::string, std::string>> args;
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-' && argc > i + 1) {
@@ -303,21 +211,43 @@ int main(int argc, char** argv)
         }
     }
 
-    loadFromConfigFile(config);
-    parseArgs(config, args);
+	LaunchType launchType;
+    parseArgs(clientConfig, launchType, args);
 
-    switch (config.launchType) {
+	try {
+		if (serverConfig.get_maxConnections() < 2) {
+			throw std::invalid_argument("Max connections must be at least " +
+					std::to_string(MIN_CONNECTIONS) + ".\n");
+		}
+		else if (serverConfig.get_maxConnections() > 16) {
+			throw std::invalid_argument("Max connections must be " +
+					std::to_string(MAX_CONNECTIONS) +
+					" or below.\n");
+		}
+	}
+	catch (std::invalid_argument& e) {
+		std::cout << "Unable to set max connections, defaulting to "
+			"4. Reason: "
+			<< e.what() << "\n";
+		serverConfig.set_maxConnections(4);
+	}
+
+    if (enet_initialize() != 0) {
+        return exitFailure("Failed to initialise enet");
+    }
+
+    switch (launchType) {
         case LaunchType::Both:
-            return launchBoth(config);
+            return launchBoth(clientConfig, serverConfig);
 
         case LaunchType::Server:
-            return launchServer(config.server);
+            return launchServer(serverConfig);
 
         case LaunchType::Client:
-            return launchClient(config.client, true);
+            return launchClient(clientConfig, true);
 
         case LaunchType::TwoPlayer:
-            return launchServerAnd2Players(config);
+            return launchServerAnd2Players(clientConfig, serverConfig);
     }
 
     enet_deinitialize();

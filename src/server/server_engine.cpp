@@ -16,7 +16,7 @@ ServerLauncher::ServerLauncher(const ServerConfig& config, sf::Time timeout)
 
 void ServerLauncher::runServerEngine()
 {
-    if (!m_server.createAsServer(m_config.maxConnections)) {
+    if (!m_server.createAsServer(m_config.get_maxConnections())) {
         std::cout << "Failed to create server.\n";
         return;
     }
