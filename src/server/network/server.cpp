@@ -48,7 +48,7 @@ Server::Server(const ServerConfig& config)
             for (int y = 0; y < std::max(1, maxHeight / CHUNK_SIZE + 1); y++) {
                 Chunk& chunk = m_world.chunks.addChunk({x, y, z});
                 createSmoothTerrain(chunk, heightMap, biomeMap, m_voxelData, m_biomeData,
-                                    0, seed);
+                                    seed);
                 m_world.chunks.ensureNeighbours({x, y, z});
             }
         }

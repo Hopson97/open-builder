@@ -48,3 +48,7 @@ Release/
 UnitTests/
 open-builder-unit-tests/
 
+# testing stuffs
+
+chunk_builder.h
+chunk_builder.cpp
