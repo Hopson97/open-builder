@@ -42,14 +42,8 @@ Server::Server(const ServerConfig& config)
 
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {
-            auto heightMap = createChunkHeightMap({x, 0, z}, (float)m_worldSize, seed);
-            auto biomeMap = createBiomeMap({x, 0, z}, seed * 2);
-            int maxHeight = *std::max_element(heightMap.cbegin(), heightMap.cend());
-            for (int y = 0; y < std::max(1, maxHeight / CHUNK_SIZE + 1); y++) {
-                Chunk& chunk = m_world.chunks.addChunk({x, y, z});
-                createTerrain(chunk, heightMap, biomeMap, m_voxelData, m_biomeData, seed);
-                m_world.chunks.ensureNeighbours({x, y, z});
-            }
+            generateTerrain(m_world.chunks, x, z, m_voxelData, m_biomeData, seed,
+                            m_worldSize);
         }
     }
 }

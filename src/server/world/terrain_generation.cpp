@@ -3,6 +3,7 @@
 #include <common/util/random_number_generator.h>
 #include <common/world/biome.h>
 #include <common/world/chunk.h>
+#include <common/world/chunk_manager.h>
 #include <common/world/voxel_data.h>
 #include <cstring>
 #include <functional>
@@ -67,8 +68,6 @@ float getNoiseAt(const glm::vec2& blockPosition, const glm::vec2& chunkPosition,
     }
     return value / accumulatedAmps;
 }
-
-} // namespace
 
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
                                                  float worldSize, float seed)
@@ -175,6 +174,25 @@ void createTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& heightMap,
                 }
             }
         }
+    }
+}
+
+} // namespace
+
+void generateTerrain(ChunkManager& chunkManager, int chunkX, int chunkZ,
+                     const VoxelDataManager& voxelData, const BiomeDataManager& biomeData,
+                     int seed, int worldSize)
+{
+    ChunkPosition position{chunkX, 0, chunkZ};
+
+    auto heightMap = createChunkHeightMap(position, worldSize, seed);
+    auto biomeMap = createBiomeMap(position, seed * 2);
+    int maxHeight = *std::max_element(heightMap.cbegin(), heightMap.cend());
+
+    for (int y = 0; y < std::max(1, maxHeight / CHUNK_SIZE + 1); y++) {
+        Chunk& chunk = chunkManager.addChunk({chunkX, y, chunkZ});
+        createTerrain(chunk, heightMap, biomeMap, voxelData, biomeData, seed);
+        chunkManager.ensureNeighbours(chunk.getPosition());
     }
 }
 
