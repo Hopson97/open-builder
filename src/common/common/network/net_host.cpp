@@ -92,7 +92,7 @@ std::optional<ENetPeer*> NetworkHost::createAsClient(const std::string& ip)
         LOG(m_name.c_str(), "Error: Failed to connect to server.");
         return {};
     }
-    flush();
+    enet_host_flush(mp_host);
 
     int id = getPeerIdFromServer(mp_host);
     if (id == -1) {
@@ -124,7 +124,7 @@ void NetworkHost::disconnectFromPeer(ENetPeer* peer)
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
-                flush();
+                enet_host_flush(mp_host);
                 return;
 
             default:
@@ -178,25 +178,13 @@ int NetworkHost::getMaxConnections() const
 void NetworkHost::sendToPeer(ENetPeer* peer, sf::Packet& packet, u8 channel, u32 flags)
 {
     ENetPacket* pkt = createPacket(packet, flags);
-    //  QueuedPacket qp;
-    // qp.packet = pkt;
-    // qp.peer = peer;
-    // qp.style = QueuedPacket::Style::One;
-    // qp.channel = channel;
-    // m_queue.push_back(qp);
-
     enet_peer_send(peer, channel, pkt);
 }
 
 void NetworkHost::broadcastToPeers(sf::Packet& packet, u8 channel, u32 flags)
 {
     ENetPacket* pkt = createPacket(packet, flags);
-    // QueuedPacket qp;
-    // qp.packet = pkt;
-    /// qp.style = QueuedPacket::Style::Broadcast;
-    // qp.channel = channel;
     enet_host_broadcast(mp_host, channel, pkt);
-    // m_queue.push_back(qp);
 }
 
 void NetworkHost::tick()
@@ -215,12 +203,10 @@ void NetworkHost::tick()
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
-                removePeerFromPacketQueue(event.peer);
                 onPeerDisconnect(event.peer);
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
-                removePeerFromPacketQueue(event.peer);
                 onPeerTimeout(event.peer);
                 break;
 
@@ -237,22 +223,4 @@ void NetworkHost::onCommandRecieve(ENetPeer* peer, const ENetPacket& enetPacket)
     command_t command;
     packet >> command;
     onCommandRecieve(peer, packet, command);
-}
-
-void NetworkHost::flush()
-{
-    enet_host_flush(mp_host);
-}
-
-void NetworkHost::removePeerFromPacketQueue(ENetPeer* peer)
-{
-    for (auto itr = m_queue.cbegin(); itr != m_queue.cend();) {
-        if (itr->style == QueuedPacket::Style::One &&
-            itr->peer->connectID == peer->connectID) {
-            itr = m_queue.erase(itr);
-        }
-        else {
-            itr++;
-        }
-    }
 }
