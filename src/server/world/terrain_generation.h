@@ -13,9 +13,9 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
 
 std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float seed);
 
-void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& heightMap,
-                         const std::array<int, CHUNK_AREA>& biomeMap,
-                         const VoxelDataManager& voxelData,
-                         const BiomeDataManager& biomeData, unsigned seed);
+void createTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& heightMap,
+                   const std::array<int, CHUNK_AREA>& biomeMap,
+                   const VoxelDataManager& voxelData, const BiomeDataManager& biomeData,
+                   unsigned seed);
 
 float generateSeed(const std::string& input);
