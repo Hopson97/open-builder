@@ -11,7 +11,6 @@ add_library(ob-client
     renderer/chunk_renderer.cpp
     network/client_commands.cpp
     client.cpp
-	client_config.cpp
     maths.cpp
     client_engine.cpp
     window.cpp

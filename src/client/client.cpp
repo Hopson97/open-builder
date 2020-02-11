@@ -23,7 +23,7 @@ bool isVoxelSelectable(VoxelType voxelType)
 
 Client::Client(const ClientConfig& config)
     : NetworkHost("Client")
-    , m_gui(config.get_windowWidth(), config.get_windowHeight())
+    , m_gui(config.windowWidth, config.windowHeight)
 {
     // clang-format off
     m_commandDispatcher.addCommand(ClientCommand::BlockUpdate, &Client::onBlockUpdate);
@@ -70,10 +70,10 @@ bool Client::init(const ClientConfig& config, float aspect)
     m_errorSkinTexture.create("skins/error");
     m_errorSkinTexture.bind();
 
-    m_texturePack = config.get_texturePack();
+    m_texturePack = config.texturePack;
 
     // Set up the server connection
-    auto peer = NetworkHost::createAsClient(config.get_serverIp());
+    auto peer = NetworkHost::createAsClient(config.serverIp);
     if (!peer) {
         return false;
     }
@@ -83,14 +83,14 @@ bool Client::init(const ClientConfig& config, float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
-    m_rawPlayerSkin = gl::loadRawImageFile("skins/" + config.get_skinName());
+    m_rawPlayerSkin = gl::loadRawImageFile("skins/" + config.skinName);
     sendPlayerSkin(m_rawPlayerSkin);
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
 
     // Font and text
     m_debugTextFont.init("res/VeraMono-Bold.ttf", 512);
-    m_debugText.setPosition({2, config.get_windowHeight() - 16, 0});
+    m_debugText.setPosition({2, config.windowHeight - 16, 0});
     m_debugText.setCharSize(16);
     m_debugText.setFont(m_debugTextFont);
     m_debugText.setText("Current FPS: 60");

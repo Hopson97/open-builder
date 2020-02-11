@@ -11,9 +11,11 @@
 
 #include "../world/terrain_generation.h"
 
+#include <common/obd_parser.h>
+
 Server::Server(const ServerConfig& config)
     : NetworkHost("Server")
-    , m_worldSize(config.get_worldSize())
+    , m_worldSize(config.worldSize)
 {
     // clang-format off
     m_commandDispatcher.addCommand(ServerCommand::BlockEdit, &Server::onBlockEdit);

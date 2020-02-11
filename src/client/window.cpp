@@ -7,20 +7,20 @@
 Window::Window(const ClientConfig& config)
 {
     window.setKeyRepeatEnabled(false);
-    if (config.get_fullScreen()) {
+    if (config.fullScreen) {
         create(sf::VideoMode::getDesktopMode(), sf::Style::Fullscreen);
         width = window.getSize().x;
         height = window.getSize().y;
         aspect = static_cast<float>(width) / static_cast<float>(height);
     }
     else {
-        width = static_cast<unsigned>(config.get_windowWidth());
-        height = static_cast<unsigned>(config.get_windowHeight());
+        width = static_cast<unsigned>(config.windowWidth);
+        height = static_cast<unsigned>(config.windowHeight);
         aspect = static_cast<float>(width) / static_cast<float>(height);
         create({width, height}, sf::Style::Close);
     }
-    if (config.get_isFpsCapped()) {
-        window.setFramerateLimit(config.get_fpsLimit());
+    if (config.isFpsCapped) {
+        window.setFramerateLimit(config.fpsLimit);
     }
 }
 
