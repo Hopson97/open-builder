@@ -226,94 +226,52 @@ void Client::update(float dt, float frameTime, float fps)
         auto chunkPosition = toChunkPosition(blockUpdate.position);
         m_chunks.manager.ensureNeighbours(chunkPosition);
         m_chunks.manager.setBlock(blockUpdate.position, blockUpdate.block);
-        m_chunks.updates.push_back(chunkPosition);
+        m_chunks.updates.emplace(chunkPosition);
 
         auto p = chunkPosition;
         auto localBlockPostion = toLocalBlockPosition(blockUpdate.position);
         if (localBlockPostion.x == 0) {
-            m_chunks.updates.push_back({p.x - 1, p.y, p.z});
+            m_chunks.updates.emplace(ChunkPosition{p.x - 1, p.y, p.z});
         }
         else if (localBlockPostion.x == CHUNK_SIZE - 1) {
-            m_chunks.updates.push_back({p.x + 1, p.y, p.z});
+            m_chunks.updates.emplace(ChunkPosition{p.x + 1, p.y, p.z});
         }
 
         if (localBlockPostion.y == 0) {
-            m_chunks.updates.push_back({p.x, p.y - 1, p.z});
+            m_chunks.updates.emplace(ChunkPosition{p.x, p.y - 1, p.z});
         }
         else if (localBlockPostion.y == CHUNK_SIZE - 1) {
-            m_chunks.updates.push_back({p.x, p.y + 1, p.z});
+            m_chunks.updates.emplace(ChunkPosition{p.x, p.y + 1, p.z});
         }
 
         if (localBlockPostion.z == 0) {
-            m_chunks.updates.push_back({p.x, p.y, p.z - 1});
+            m_chunks.updates.emplace(ChunkPosition{p.x, p.y, p.z - 1});
         }
         else if (localBlockPostion.z == CHUNK_SIZE - 1) {
-            m_chunks.updates.push_back({p.x, p.y, p.z + 1});
+            m_chunks.updates.emplace(ChunkPosition{p.x, p.y, p.z + 1});
         }
     }
     m_chunks.blockUpdates.clear();
 
-    auto playerChunk = worldToChunkPosition(mp_player->position);
-    auto distanceToPlayer = [&playerChunk](const ChunkPosition& chunkPosition) {
-        return glm::abs(playerChunk.x - chunkPosition.x) +
-               glm::abs(playerChunk.y - chunkPosition.y) +
-               glm::abs(playerChunk.z - chunkPosition.z);
-    };
+    // Find first "meshable" chunk
+    int count = 0;
+    for (auto itr = m_chunks.updates.cbegin(); itr != m_chunks.updates.cend();) {
+        if (m_chunks.manager.hasNeighbours(*itr)) {
+            auto& chunk = m_chunks.manager.getChunk(*itr);
 
-    if (!m_chunks.updates.empty()) {
-        // Sort chunk updates by distance if the update vector is not
-        // sorted already
-        if (!std::is_sorted(m_chunks.updates.begin(), m_chunks.updates.end(),
-                            [&](const auto& a, const auto& b) {
-                                return distanceToPlayer(a) < distanceToPlayer(b);
-                            })) {
-            // Remove non-unique elements
-            std::unordered_set<ChunkPosition, ChunkPositionHash> updates;
-            for (auto& update : m_chunks.updates) {
-                updates.insert(update);
+            auto buffer = makeChunkMesh(chunk, m_voxelData);
+            m_chunkRenderer.updateMesh(*itr, std::move(buffer));
+            itr = m_chunks.updates.erase(itr);
+
+            // Break so that the game still runs while world is being built
+            // TODO: Work out a way to make this concurrent (aka run seperate from rest of
+            // application)
+            if (count++ > 3) {
+                break;
             }
-
-            m_chunks.updates.assign(updates.cbegin(), updates.cend());
-
-            // Sort it to find chunk mesh cloest to the player
-            std::sort(m_chunks.updates.begin(), m_chunks.updates.end(),
-                      [&](const auto& a, const auto& b) {
-                          return distanceToPlayer(a) < distanceToPlayer(b);
-                      });
         }
-
-        if (m_noMeshingCount != m_chunks.updates.size()) {
-            m_blockMeshing = false;
-        }
-
-        // Find first "meshable" chunk
-        int count = 0;
-        if (!m_blockMeshing) {
-            m_noMeshingCount = 0;
-            for (auto itr = m_chunks.updates.cbegin(); itr != m_chunks.updates.cend();) {
-                if (m_chunks.manager.hasNeighbours(*itr)) {
-                    auto& chunk = m_chunks.manager.getChunk(*itr);
-
-                    auto buffer = makeChunkMesh(chunk, m_voxelData);
-                    m_chunkRenderer.updateMesh(*itr, std::move(buffer));
-                    itr = m_chunks.updates.erase(itr);
-
-                    // Break so that the game still runs while world is
-                    // being built
-                    // TODO: Work out a way to make this concurrent (aka
-                    // run seperate from rest of application)
-                    if (count++ > 3) {
-                        break;
-                    }
-                }
-                else {
-                    m_noMeshingCount++;
-                    itr++;
-                }
-            }
-            if (m_noMeshingCount == m_chunks.updates.size()) {
-                m_blockMeshing = true;
-            }
+        else {
+            itr++;
         }
     }
 

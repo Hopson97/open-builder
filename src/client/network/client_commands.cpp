@@ -112,7 +112,7 @@ void Client::onChunkData(sf::Packet& packet)
         chunk.blocks = decompressBlockData(compressed);
 
         // Add to chunk updates
-        m_chunks.updates.push_back(position);
+        m_chunks.updates.emplace(position);
     }
 }
 

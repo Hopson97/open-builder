@@ -131,7 +131,7 @@ class Client final : public NetworkHost {
 
     struct {
         ChunkManager manager;
-        std::vector<ChunkPosition> updates;
+        std::unordered_set<ChunkPosition, ChunkPositionHash> updates;
         std::vector<BlockUpdate> blockUpdates;
     } m_chunks;
 
@@ -153,7 +153,4 @@ class Client final : public NetworkHost {
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
     bool m_isMouseLocked = false;
-
-    unsigned m_noMeshingCount = 0;
-    bool m_blockMeshing = false;
 };
