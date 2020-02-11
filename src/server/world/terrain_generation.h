@@ -8,10 +8,6 @@ class Chunk;
 class BiomeDataManager;
 class VoxelDataManager;
 
-void makeFlatTerrain(Chunk* chunk, int worldSize);
-void makeStepTerrain(Chunk* chunk);
-void makeRandomTerrain(Chunk* chunk);
-
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
                                                  float worldSize, float seed);
 
