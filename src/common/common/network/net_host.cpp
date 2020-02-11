@@ -178,55 +178,29 @@ int NetworkHost::getMaxConnections() const
 void NetworkHost::sendToPeer(ENetPeer* peer, sf::Packet& packet, u8 channel, u32 flags)
 {
     ENetPacket* pkt = createPacket(packet, flags);
-    QueuedPacket qp;
-    qp.packet = pkt;
-    qp.peer = peer;
-    qp.style = QueuedPacket::Style::One;
-    qp.channel = channel;
-    m_queue.push_back(qp);
+    //  QueuedPacket qp;
+    // qp.packet = pkt;
+    // qp.peer = peer;
+    // qp.style = QueuedPacket::Style::One;
+    // qp.channel = channel;
+    // m_queue.push_back(qp);
+
+    enet_peer_send(peer, channel, pkt);
 }
 
 void NetworkHost::broadcastToPeers(sf::Packet& packet, u8 channel, u32 flags)
 {
     ENetPacket* pkt = createPacket(packet, flags);
-    QueuedPacket qp;
-    qp.packet = pkt;
-    qp.style = QueuedPacket::Style::Broadcast;
-    qp.channel = channel;
-    m_queue.push_back(qp);
+    // QueuedPacket qp;
+    // qp.packet = pkt;
+    /// qp.style = QueuedPacket::Style::Broadcast;
+    // qp.channel = channel;
+    enet_host_broadcast(mp_host, channel, pkt);
+    // m_queue.push_back(qp);
 }
 
 void NetworkHost::tick()
 {
-    // Send the queued packets, but not too many at once
-    const int MAX__SEND_LIMIT = 1024;
-
-    int bytesSent = 0;
-
-    while (!m_queue.empty()) {
-        auto qp = m_queue.front();
-        m_queue.pop_front();
-        bytesSent += qp.packet->dataLength;
-
-        switch (qp.style) {
-            case QueuedPacket::Style::Broadcast:
-                enet_host_broadcast(mp_host, qp.channel, qp.packet);
-                break;
-
-            case QueuedPacket::Style::One:
-                enet_peer_send(qp.peer, qp.channel, qp.packet);
-                break;
-
-            default:
-                break;
-        }
-
-        flush();
-        if (bytesSent > MAX__SEND_LIMIT) {
-            break;
-        }
-    }
-
     assert(mp_host);
     ENetEvent event;
     while (enet_host_service(mp_host, &event, 0) > 0) {
