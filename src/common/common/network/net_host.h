@@ -12,17 +12,6 @@
 
 #include <SFML/System/Clock.hpp>
 
-struct QueuedPacket {
-    enum class Style {
-        One,
-        Broadcast,
-    };
-    ENetPeer* peer = nullptr;
-    ENetPacket* packet = nullptr;
-    Style style = Style::Broadcast;
-    u8 channel = 0;
-};
-
 /**
  * @brief Base class for network hosts (clients/ servers)
  */
@@ -100,7 +89,6 @@ class NetworkHost {
     void broadcastToPeers(sf::Packet& packet, u8 channel, u32 flags);
 
   private:
-    void removePeerFromPacketQueue(ENetPeer* peer);
     virtual void onPeerConnect(ENetPeer* peer) = 0;
     virtual void onPeerDisconnect(ENetPeer* peer) = 0;
     virtual void onPeerTimeout(ENetPeer* peer) = 0;
@@ -108,10 +96,6 @@ class NetworkHost {
                                   command_t command) = 0;
 
     void onCommandRecieve(ENetPeer* peer, const ENetPacket& packet);
-
-    void flush();
-
-    std::deque<QueuedPacket> m_queue;
 
     ENetHost* mp_host = nullptr;
     const std::string m_name;

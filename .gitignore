@@ -48,7 +48,8 @@ Release/
 UnitTests/
 open-builder-unit-tests/
 
-# testing stuffs
+# Experimental 
 
 chunk_builder.h
 chunk_builder.cpp
+

@@ -40,7 +40,6 @@ struct Entity final {
 };
 
 struct DebugStats {
-    float fps = 0;
     float frameTime = 0;
     int renderedChunks = 0;
     size_t bytesRendered = 0;
@@ -55,7 +54,7 @@ class Client final : public NetworkHost {
     void onKeyRelease(sf::Keyboard::Key key);
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
-    void update(float dt, float frameTime, float fps);
+    void update(float dt, float frameTime);
     void render(int width, int height);
     void endGame();
 

@@ -206,9 +206,8 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
     }
 }
 
-void Client::update(float dt, float frameTime, float fps)
+void Client::update(float dt, float frameTime)
 {
-    m_debugStats.fps = fps;
     m_debugStats.frameTime = frameTime;
 
     NetworkHost::tick();
@@ -425,8 +424,7 @@ void Client::render(int width, int height)
             auto cp = toChunkPosition(p.x, p.y, p.z);
 
             std::ostringstream debugText;
-            debugText << "Frame time: " << std::setprecision(3) << d.frameTime << "ms ";
-            debugText << "FPS: " << std::floor(d.fps) << '\n';
+            debugText << "Frame time: " << std::setprecision(3) << d.frameTime << "ms\n";
             debugText << "Chunks: " << d.renderedChunks << " of "
                       << m_chunkRenderer.getTotalChunks() << " drawn\n";
             debugText << "Chunk VRAM: " << m_debugStats.bytesRendered << "Mb of "

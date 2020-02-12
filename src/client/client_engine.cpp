@@ -15,7 +15,6 @@ struct FPSCounter final {
 
     int updates = 0;
 
-    float fps = 0;
     float frameTime = 0;
 
     sf::Time totalTime;
@@ -27,7 +26,6 @@ struct FPSCounter final {
         if (timer.getElapsedTime() > sf::seconds(0.25)) {
             auto time = timer.getElapsedTime();
 
-            fps = frameCount / time.asSeconds();
             frameTime = time.asMilliseconds() / frameCount;
 
             if (updates++ > 20) {
@@ -37,13 +35,6 @@ struct FPSCounter final {
             timer.restart();
             frameCount = 0;
         }
-    }
-
-    void printFinal()
-    {
-        std::cout << updates << std::endl;
-        fps = totalFrames / totalTime.asSeconds();
-        frameTime = totalTime.asMilliseconds() / totalFrames;
     }
 };
 } // namespace
@@ -93,7 +84,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
         gameClient.handleInput(window.window, keyboard);
 
         // Update
-        gameClient.update(clock.restart().asSeconds(), counter.frameTime, counter.fps);
+        gameClient.update(clock.restart().asSeconds(), counter.frameTime);
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -106,8 +97,6 @@ EngineStatus runClientEngine(const ClientConfig& config)
             status = gameClient.currentStatus();
         }
     }
-    counter.printFinal();
-    std::cout << "FINAL: " << counter.fps << " " << counter.frameTime << '\n';
     window.window.close();
     gameClient.endGame();
     return status;
