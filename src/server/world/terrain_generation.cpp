@@ -3,6 +3,7 @@
 #include <common/util/random_number_generator.h>
 #include <common/world/biome.h>
 #include <common/world/chunk.h>
+#include <common/world/chunk_manager.h>
 #include <common/world/voxel_data.h>
 #include <cstring>
 #include <functional>
@@ -68,8 +69,6 @@ float getNoiseAt(const glm::vec2& blockPosition, const glm::vec2& chunkPosition,
     return value / accumulatedAmps;
 }
 
-} // namespace
-
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
                                                  float worldSize, float seed)
 {
@@ -117,8 +116,8 @@ std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float 
     NoiseOptions biomeMapNoise;
     biomeMapNoise.amplitude = 100;
     biomeMapNoise.octaves = 4;
-    biomeMapNoise.smoothness = 505.f;
-    biomeMapNoise.roughness = 0.6f;
+    biomeMapNoise.smoothness = 200.f;
+    biomeMapNoise.roughness = 0.5f;
     biomeMapNoise.offset = 18;
 
     std::array<int, CHUNK_AREA> biomeMap;
@@ -133,24 +132,19 @@ std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float 
     return biomeMap;
 }
 
-void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& heightMap,
-                         const std::array<int, CHUNK_AREA>& biomeMap,
-                         const VoxelDataManager& voxelData,
-                         const BiomeDataManager& biomeData, int baseChunk, unsigned seed)
+void createTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& heightMap,
+                   const std::array<int, CHUNK_AREA>& biomeMap,
+                   const VoxelDataManager& voxelData, const BiomeDataManager& biomeData,
+                   unsigned seed)
 {
-
-    // TO DO: Eventully tree gen chance stuff can be done from lua
     RandomNumberGenerator rng(seed + chunk.getPosition().x * 16 + chunk.getPosition().z);
-
-    auto base = chunk.getPosition().y - baseChunk;
-
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             int height = heightMap[z * CHUNK_SIZE + x];
             int biomeVal = biomeMap[z * CHUNK_SIZE + x];
-            auto& biome = biomeData.getBiomeData(biomeVal > 40 ? 0 : 1);
+            auto& biome = biomeData.getBiomeData(biomeVal > 60 ? 0 : 1);
             for (int y = 0; y < CHUNK_SIZE; y++) {
-                int blockY = base * CHUNK_SIZE + y;
+                int blockY = chunk.getPosition().y * CHUNK_SIZE + y;
                 block_t block = 0;
 
                 if (blockY > height) {
@@ -182,44 +176,23 @@ void createSmoothTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& height
         }
     }
 }
-void makeFlatTerrain(Chunk* chunk, int worldSize)
+
+} // namespace
+
+void generateTerrain(ChunkManager& chunkManager, int chunkX, int chunkZ,
+                     const VoxelDataManager& voxelData, const BiomeDataManager& biomeData,
+                     int seed, int worldSize)
 {
-    auto cp = chunk->getPosition();
-    auto cx = cp.x;
-    auto cy = cp.y;
-    auto cz = cp.z;
+    ChunkPosition position{chunkX, 0, chunkZ};
 
-    if (cy < worldSize - 1 && cy > 0 && cx < worldSize - 1 && cx > 0 &&
-        cz < worldSize - 1 && cz > 0) {
-        chunk->blocks.fill(1);
-    }
-}
+    auto heightMap = createChunkHeightMap(position, worldSize, seed);
+    auto biomeMap = createBiomeMap(position, seed * 2);
+    int maxHeight = *std::max_element(heightMap.cbegin(), heightMap.cend());
 
-void makeStepTerrain(Chunk* chunk)
-{
-    for (int y = 0; y < CHUNK_SIZE; y++) {
-        int realY = y + chunk->getPosition().y * CHUNK_SIZE;
-        for (int z = 0; z < CHUNK_SIZE; z++) {
-            for (int x = 0; x < CHUNK_SIZE; x++) {
-
-                int height = chunk->getPosition().x * CHUNK_SIZE + x +
-                             chunk->getPosition().z * CHUNK_SIZE + z;
-                if (height > realY) {
-                    chunk->qSetBlock({x, y, z}, 1);
-                }
-            }
-        }
-    }
-}
-
-void makeRandomTerrain(Chunk* chunk)
-{
-    for (int y = 0; y < CHUNK_SIZE; y++) {
-        for (int z = 0; z < CHUNK_SIZE; z++) {
-            for (int x = 0; x < CHUNK_SIZE; x++) {
-                chunk->qSetBlock({x, y, z}, rand() % 64 > 60 ? 1 : 0);
-            }
-        }
+    for (int y = 0; y < std::max(1, maxHeight / CHUNK_SIZE + 1); y++) {
+        Chunk& chunk = chunkManager.addChunk({chunkX, y, chunkZ});
+        createTerrain(chunk, heightMap, biomeMap, voxelData, biomeData, seed);
+        chunkManager.ensureNeighbours(chunk.getPosition());
     }
 }
 
