@@ -122,8 +122,7 @@ void Texture2d::create(const std::string& file)
 {
     bind();
 
-    auto path = "res/" + file + ".png";
-    bufferImage(GL_TEXTURE_2D, path);
+    bufferImage(GL_TEXTURE_2D, file);
 
     glCheck(glGenerateMipmap(GL_TEXTURE_2D));
     glCheck(

@@ -6,7 +6,7 @@
 GuiMaster::GuiMaster(float viewportWidth, float viewportHeight)
     : m_quadVao(makeQuadVertexArray(1.f, 1.f))
     , m_viewport(viewportWidth, viewportHeight)
-{ 
+{
     m_guiShader.program.create("gui", "gui");
     m_guiShader.program.bind();
     m_guiShader.modelLocation = m_guiShader.program.getUniformLocation("modelMatrix");

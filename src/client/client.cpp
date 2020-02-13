@@ -71,7 +71,7 @@ bool Client::init(const ClientConfig& config, float aspect)
         m_basicShader.program.getUniformLocation("projectionViewMatrix");
 
     // Texture for the player model
-    m_errorSkinTexture.create("skins/error");
+    m_errorSkinTexture.create("res/skins/error.png");
     m_errorSkinTexture.bind();
 
     m_texturePack = config.texturePack;
