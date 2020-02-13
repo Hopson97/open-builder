@@ -6,6 +6,7 @@
 #include "gl/vertex_array.h"
 #include "gui/gui.h"
 #include "gui/text.h"
+#include "gui/gui_master.h"
 #include "maths.h"
 #include "world/chunk_mesh.h"
 #include <SFML/Network/Packet.hpp>
@@ -141,6 +142,8 @@ class Client final : public NetworkHost {
 
     // GUI
     Gui m_gui;
+
+    GuiMaster m_guiMaster;
 
     // Debug stats stuff
     DebugStats m_debugStats{};

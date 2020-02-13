@@ -1,4 +1,4 @@
-#pragma
+#pragma once
 
 #include "../gl/shader.h"
 #include "../gl/textures.h"
