@@ -7,17 +7,10 @@ GuiMaster::GuiMaster(float viewportWidth, float viewportHeight)
     : m_quadVao(makeQuadVertexArray(1.f, 1.f))
     , m_viewport(viewportWidth, viewportHeight)
 {
-    m_guiShader.program.create("gui", "gui");
-    m_guiShader.program.bind();
-    m_guiShader.modelLocation = m_guiShader.program.getUniformLocation("modelMatrix");
-    m_guiShader.colorLocation = m_guiShader.program.getUniformLocation("colour");
-
     m_projection = glm::ortho(0.0f, viewportWidth, 0.0f, viewportHeight, -1.0f, 1.0f);
 
-    m_guiShader.projectionLocation =
-        m_guiShader.program.getUniformLocation("projectionMatrix");
-
-    gl::loadUniform(m_guiShader.projectionLocation, m_projection);
+    m_shader.bind();
+    m_shader.updateProjection(m_projection);
 }
 
 void GuiMaster::addGui(GuiContainer& container)
@@ -27,9 +20,11 @@ void GuiMaster::addGui(GuiContainer& container)
 
 void GuiMaster::render()
 {
-    m_quadVao.bind();
+    auto quad = m_quadVao.getDrawable();
+    quad.bind();
+    m_shader.bind();
     for (auto container : m_containers) {
-        container->render();
+        container->render(m_shader, m_viewport, quad);
     }
 }
 

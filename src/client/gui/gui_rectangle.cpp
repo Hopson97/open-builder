@@ -30,4 +30,6 @@ glm::mat4 GuiRectangle::getRenderTransform(const glm::vec2& viewport) const
     glm::mat4 modelMatrix{1.0f};
     modelMatrix = glm::translate(modelMatrix, {position.x, position.y, 0.0f});
     modelMatrix = glm::scale(modelMatrix, {scale.x, scale.y, 0.0f});
+
+    return modelMatrix;
 }

@@ -1,5 +1,15 @@
 #pragma once
 
+#include <glm/vec2.hpp>
+#include <vector>
+
+class GuiRectangle;
+class GuiShader;
+
+namespace gl {
+class Drawable;
+}
+
 class GuiContainer final {
   public:
     GuiContainer();
@@ -7,11 +17,14 @@ class GuiContainer final {
     void hide();
     void show();
 
-    void render();
+    void render(GuiShader& shader, const glm::vec2& viewport, const gl::Drawable& quad);
 
   private:
     static int uidCount;
     int m_uid;
+
+    // Stored by lua
+    std::vector<GuiRectangle*> m_guiRectangles;
 
     bool m_isHidden = true;
 };
