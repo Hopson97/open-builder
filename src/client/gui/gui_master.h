@@ -12,8 +12,8 @@
  */
 class GuiMaster {
   public:
-    GuiMaster(int viewportWidth, int viewportHeight);
-    
+    GuiMaster(float viewportWidth, float viewportHeight);
+
     void addGui(GuiContainer& container);
 
     void render();
@@ -21,9 +21,9 @@ class GuiMaster {
     int getTexture(const std::string& textureName);
 
   private:
-    //Pointers to containers (stored in lua or elsewhere)
+    // Pointers to containers (stored in lua or elsewhere)
     std::vector<GuiContainer*> m_containers;
-    
+
     // Maps a string to a texture index of m_textures
     std::unordered_map<std::string, int> m_textureIds;
     std::vector<gl::Texture2d> m_textures;
@@ -40,4 +40,6 @@ class GuiMaster {
     gl::VertexArray m_quadVao;
 
     glm::mat4 m_projection;
+
+    glm::vec2 m_viewport;
 };
