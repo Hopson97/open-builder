@@ -141,8 +141,6 @@ class Client final : public NetworkHost {
     ScriptEngine m_lua;
 
     // GUI
-    Gui m_gui;
-
     GuiMaster m_guiMaster;
 
     // Debug stats stuff

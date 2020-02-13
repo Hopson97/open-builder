@@ -14,6 +14,7 @@ class Text;
 // Todo: Maybe move these out into their own files
 
 // Stores the scale and offset of a GUI element in 2 dimensions
+/*
 struct GuiDimension {
     glm::vec2 scale{0.0f};
     glm::vec2 offset{0.0f};
@@ -71,3 +72,4 @@ class Gui final {
 };
 
 sol::table createGuiApi(ScriptEngine& engine);
+*/
