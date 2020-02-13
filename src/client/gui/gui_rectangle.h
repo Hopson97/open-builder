@@ -20,8 +20,8 @@ struct GuiRectangle final {
 
     glm::mat4 getRenderTransform(const glm::vec2& viewport) const;
 
-  private:
-    GuiDimension m_position;
-    GuiDimension m_scale;
+    GuiDimension position;
+    GuiDimension scale;
+
     int m_texture = 0;
 };
