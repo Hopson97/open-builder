@@ -5,6 +5,10 @@ project(open-builder
     VERSION 1.0
 )
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    include_directories(/usr/local/include)
+endif()
+
 function (set_flags target)
     #Set C++17
     target_compile_features(${target} 
