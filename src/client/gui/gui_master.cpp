@@ -37,7 +37,7 @@ int GuiMaster::getTexture(const std::string& textureName)
 {
     assert(m_textureIds.size() == m_textures.size());
     auto itr = m_textureIds.find(textureName);
-    if (itr == m_textureIds.end()) {
+    if (itr != m_textureIds.end()) {
         return itr->second;
     }
     else {
