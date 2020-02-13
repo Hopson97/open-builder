@@ -38,7 +38,7 @@ Client::Client(const ClientConfig& config)
     m_commandDispatcher.addCommand(ClientCommand::NewPlayerSkin, &Client::onPlayerSkinReceive);
     // clang-format on
 
-    initGuiApi(m_lua);
+    initGuiApi(m_lua, m_guiMaster);
 
     auto gui = createGuiApi(m_lua);
     gui["addImage"] = [&](const sol::userdata& image) { m_gui.addImage(image); };

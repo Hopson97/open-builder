@@ -6,7 +6,7 @@
 GuiMaster::GuiMaster(float viewportWidth, float viewportHeight)
     : m_quadVao(makeQuadVertexArray(1.f, 1.f))
     , m_viewport(viewportWidth, viewportHeight)
-{ // GUI Shader
+{ 
     m_guiShader.program.create("gui", "gui");
     m_guiShader.program.bind();
     m_guiShader.modelLocation = m_guiShader.program.getUniformLocation("modelMatrix");
@@ -35,6 +35,7 @@ void GuiMaster::render()
 
 int GuiMaster::getTexture(const std::string& textureName)
 {
+    assert(m_textureIds.size() == m_textures.size());
     auto itr = m_textureIds.find(textureName);
     if (itr == m_textureIds.end()) {
         return itr->second;
@@ -46,4 +47,14 @@ int GuiMaster::getTexture(const std::string& textureName)
         m_textureIds.emplace(textureName, index);
         return index;
     }
+}
+
+int GuiMaster::guiCount() const
+{
+    return m_containers.size();
+}
+
+int GuiMaster::textureCount() const
+{
+    return m_containers.size();
 }

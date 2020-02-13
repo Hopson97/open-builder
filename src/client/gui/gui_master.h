@@ -20,6 +20,10 @@ class GuiMaster {
 
     int getTexture(const std::string& textureName);
 
+    // For testing purposes
+    int guiCount() const;
+    int textureCount() const;
+
   private:
     // Pointers to containers (stored in lua or elsewhere)
     std::vector<GuiContainer*> m_containers;

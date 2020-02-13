@@ -6,3 +6,14 @@ GuiContainer::GuiContainer()
     : m_uid(uidCount++)
 {
 }
+
+void GuiContainer::hide()
+{
+}
+void GuiContainer::show()
+{
+}
+
+void GuiContainer::render()
+{
+}
