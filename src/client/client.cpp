@@ -2,8 +2,8 @@
 
 #include "gl/gl_errors.h"
 #include "gl/primitive.h"
-#include "lua/client_lua_api.h"
 #include "input/keyboard.h"
+#include "lua/client_lua_api.h"
 #include "world/chunk_mesh_generation.h"
 #include <SFML/Window/Mouse.hpp>
 #include <common/debug.h>
@@ -414,6 +414,8 @@ void Client::render(int width, int height)
 
     // GUI
     m_gui.render(width, height);
+
+    m_guiMaster.render();
 
     // Debug stats
     if (m_shouldRenderDebugInfo) {

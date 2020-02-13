@@ -1,5 +1,9 @@
 #include "gui_master.h"
 
+GuiMaster::GuiMaster(int viewportWidth, int viewportHeight)
+{
+
+}
 
 void GuiMaster::addGui()
 {
