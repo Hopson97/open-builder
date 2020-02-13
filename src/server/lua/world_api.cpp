@@ -1,4 +1,4 @@
-#include "lua_api.h"
+#include "server_lua_api.h"
 
 #include <common/world/chunk.h>
 
