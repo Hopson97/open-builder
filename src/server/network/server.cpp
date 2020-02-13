@@ -1,17 +1,14 @@
 #include "server.h"
 
+#include "../lua/server_lua_api.h"
 #include "../server_config.h"
+#include "../world/terrain_generation.h"
 #include <SFML/System/Clock.hpp>
 #include <algorithm>
 #include <common/debug.h>
+#include <common/obd_parser.h>
 #include <iostream>
 #include <thread>
-
-#include "../lua/lua_api.h"
-
-#include "../world/terrain_generation.h"
-
-#include <common/obd_parser.h>
 
 Server::Server(const ServerConfig& config)
     : NetworkHost("Server")
