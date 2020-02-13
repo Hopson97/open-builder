@@ -2,6 +2,7 @@
 
 #include "gl/gl_errors.h"
 #include "gl/primitive.h"
+#include "lua/client_lua_api.h"
 #include "input/keyboard.h"
 #include "world/chunk_mesh_generation.h"
 #include <SFML/Window/Mouse.hpp>
@@ -35,6 +36,8 @@ Client::Client(const ClientConfig& config)
     m_commandDispatcher.addCommand(ClientCommand::SpawnPoint, &Client::onSpawnPoint);
     m_commandDispatcher.addCommand(ClientCommand::NewPlayerSkin, &Client::onPlayerSkinReceive);
     // clang-format on
+
+    initGuiApi(m_lua);
 
     auto gui = createGuiApi(m_lua);
     gui["addImage"] = [&](const sol::userdata& image) { m_gui.addImage(image); };

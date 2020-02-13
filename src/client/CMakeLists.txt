@@ -8,6 +8,7 @@ add_library(ob-client
     gl/primitive.cpp
     gui/gui.cpp
     gui/text.cpp
+    lua/gui_api.cpp
     renderer/chunk_renderer.cpp
     network/client_commands.cpp
     client.cpp
