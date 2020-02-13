@@ -51,6 +51,35 @@ sudo bash scripts/install.sh
 
 from the project root directory. If you are interested in the [manual way of installation](https://github.com/Hopson97/open-builder#manual-installation), check below instructions. To then finally run the application see [Running](https://github.com/Hopson97/open-builder#running) below.
 
+### MacOS
+
+First install SFML:
+
+```
+brew install SFML
+```
+
+Next, build with cmake:
+(from root directory)
+```
+mkdir build
+cd build
+cmake ..
+make
+```
+
+Run using:
+
+```
+./build/open-builder
+```
+
+Can also run client and server separately:
+
+```
+./build/open-builder -server 8
+./build/open-builder -client xyz
+
 #### Manual Installation
 
 ##### Libraries
