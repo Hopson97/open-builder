@@ -438,7 +438,7 @@ void Client::render(int width, int height)
 
             m_debugText.setText(debugText.str());
         }
-        //m_gui.renderText(m_debugText);
+        // m_gui.renderText(m_debugText);
     }
 }
 

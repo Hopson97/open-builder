@@ -10,7 +10,7 @@
  * @brief Render master for the GUIs
  *
  */
-class GuiMaster {
+class GuiMaster final {
   public:
     GuiMaster(float viewportWidth, float viewportHeight);
 

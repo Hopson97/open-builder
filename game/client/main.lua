@@ -2,6 +2,31 @@
 
 local hud = GuiContainer.new()
 
+local texCrosshair = game.gui.getTexture("res/crosshair.png")
+
+
+game.gui.add(hud)
+
+--
+--  GOAL
+--
+--local hud = GUI.container.new()
+--
+--local crosshair = GUI.rectangle.new()
+--crosshair.image = "crosshair.png"
+--crosshair.position = GDim.new(0.5, -16, 0.5, -16)
+--crosshair.size = GDim.new(0, 32, 0, 32)
+--hud:add(crosshair)
+--
+--game.gui.add(hud)
+--
+----eg could also do this stuff
+--hud:show()
+--hud:hide()
+
+--
+--  CURRENT
+--
 -- Main crosshair (to be used in final)
 --local crosshair = game.GUI.Image.new()
 --crosshair:setSource("crosshair")

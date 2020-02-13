@@ -1,6 +1,6 @@
 #pragma once
 
-class GuiContainer {
+class GuiContainer final {
   public:
     GuiContainer();
 
