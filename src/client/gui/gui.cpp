@@ -6,7 +6,7 @@
 #include <common/debug.h>
 
 #include <iostream>
-
+/*
 //
 //  Gui Dimensions
 //
@@ -137,3 +137,4 @@ sol::table createGuiApi(ScriptEngine& engine)
 
     return gui;
 }
+*/

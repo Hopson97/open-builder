@@ -24,7 +24,6 @@ bool isVoxelSelectable(VoxelType voxelType)
 
 Client::Client(const ClientConfig& config)
     : NetworkHost("Client")
-    , m_gui(config.windowWidth, config.windowHeight)
     , m_guiMaster(config.windowWidth, config.windowHeight)
 {
     // clang-format off
@@ -39,9 +38,6 @@ Client::Client(const ClientConfig& config)
     // clang-format on
 
     initGuiApi(m_lua, m_guiMaster);
-
-    auto gui = createGuiApi(m_lua);
-    gui["addImage"] = [&](const sol::userdata& image) { m_gui.addImage(image); };
 
     m_lua.runLuaFile("game/client/main.lua");
 }
@@ -414,8 +410,6 @@ void Client::render(int width, int height)
     }
 
     // GUI
-    m_gui.render(width, height);
-
     m_guiMaster.render();
 
     // Debug stats
@@ -450,7 +444,7 @@ void Client::render(int width, int height)
 
             m_debugText.setText(debugText.str());
         }
-        m_gui.renderText(m_debugText);
+        //m_gui.renderText(m_debugText);
     }
 }
 
