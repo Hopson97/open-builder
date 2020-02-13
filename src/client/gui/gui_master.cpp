@@ -1,18 +1,24 @@
 #include "gui_master.h"
 
+#include "../gl/primitive.h"
+
 GuiMaster::GuiMaster(int viewportWidth, int viewportHeight)
+    : m_quadVao(makeQuadVertexArray(1.f, 1.f))
 {
 
 }
 
-void GuiMaster::addGui()
+void GuiMaster::addGui(GuiContainer& container)
 {
-    
+    m_containers.push_back(&container);
 }
 
 void GuiMaster::render()
 {
-
+    m_quadVao.bind();
+    for (auto container : m_containers) {
+        container->render();
+    }
 }
 
 int GuiMaster::getTexture(const std::string& textureName)

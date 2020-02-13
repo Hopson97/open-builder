@@ -4,19 +4,26 @@
 #include "../gl/textures.h"
 #include "../gl/vertex_array.h"
 
+#include "gui_container.h"
+
 /**
  * @brief Render master for the GUIs
  *
  */
 class GuiMaster {
   public:
-    void addGui();
+    GuiMaster(int viewportWidth, int viewportHeight);
+    
+    void addGui(GuiContainer& container);
 
     void render();
 
     int getTexture(const std::string& textureName);
 
   private:
+    //Pointers to containers (stored in lua or elsewhere)
+    std::vector<GuiContainer*> m_containers;
+    
     // Maps a string to a texture index of m_textures
     std::unordered_map<std::string, int> m_textureIds;
     std::vector<gl::Texture2d> m_textures;

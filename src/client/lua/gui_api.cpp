@@ -3,11 +3,9 @@
 namespace {
 void addGuiContainerApi(ScriptEngine& engine)
 {
-
 }
 } // namespace
 
 void initGuiApi(ScriptEngine& engine)
 {
-    
 }
