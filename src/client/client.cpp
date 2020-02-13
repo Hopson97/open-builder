@@ -110,7 +110,13 @@ void Client::handleInput(const sf::Window& window, const Keyboard& keyboard)
         mp_player->rotation.y += static_cast<float>(change.x / 8.0f);
         sf::Mouse::setPosition({(int)window.getSize().x / 2, (int)window.getSize().y / 2},
                                window);
+// This fixes mouse jittering on mac
+#ifndef __APPLE__
         lastMousePosition = sf::Mouse::getPosition(window);
+#else
+        lastMousePosition.x = (int)window.getSize().x / 2;
+        lastMousePosition.y = (int)window.getSize().y / 2;
+#endif
     }
 
     // Handle keyboard input
