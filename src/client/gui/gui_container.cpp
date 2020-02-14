@@ -22,6 +22,11 @@ void GuiContainer::show()
     m_isHidden = false;
 }
 
+void GuiContainer::addRectangle(GuiRectangle& rectangle)
+{
+    m_guiRectangles.push_back(&rectangle);
+}
+
 void GuiContainer::render(GuiShader& shader, const glm::vec2& viewport,
                           const gl::Drawable& quad)
 {

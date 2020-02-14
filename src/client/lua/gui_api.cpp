@@ -24,6 +24,7 @@ void addGuiContainerApi(ScriptEngine& engine)
 
     containerApi["show"] = &GuiContainer::hide;
     containerApi["hide"] = &GuiContainer::hide;
+    containerApi["add"] = &GuiContainer::addRectangle;
 }
 
 void addGuiDimensionApi(ScriptEngine& engine)
@@ -39,8 +40,8 @@ void addGuiRectangleApi(ScriptEngine& engine)
         sol::constructors<GuiRectangle(),
                           GuiRectangle(const GuiDimension&, const GuiDimension&)>());
 
-    rectangleApi["position"] = sol::var(&GuiRectangle::position);
-    rectangleApi["scale"] = sol::var(&GuiRectangle::position);
+    rectangleApi["position"] = sol::property(&GuiRectangle::setPosition);
+    rectangleApi["size"] = sol::property(&GuiRectangle::setSize);
 }
 
 } // namespace

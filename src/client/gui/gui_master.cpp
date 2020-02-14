@@ -20,11 +20,12 @@ void GuiMaster::addGui(GuiContainer& container)
 
 void GuiMaster::render()
 {
+    glm::vec2 viewport = m_viewport / 100.0f;
     auto quad = m_quadVao.getDrawable();
     quad.bind();
     m_shader.bind();
     for (auto container : m_containers) {
-        container->render(m_shader, m_viewport, quad);
+        container->render(m_shader, viewport, quad);
     }
 }
 
