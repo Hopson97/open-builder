@@ -16,21 +16,30 @@ glm::vec2 GuiDimension::apply(float width, float height) const
     return vector + offset;
 }
 
-GuiRectangle::GuiRectangle(const GuiDimension& rectPostion, const GuiDimension& rectScale)
-    : position(rectPostion)
-    , scale(rectScale)
+GuiRectangle::GuiRectangle(const GuiDimension& position, const GuiDimension& size)
+    : m_position(position)
+    , m_size(size)
 {
 }
 
 glm::mat4 GuiRectangle::getRenderTransform(const glm::vec2& viewport) const
 {
-    glm::vec2 positionTransform = position.apply(viewport.x, viewport.y);
-    glm::vec2 scaleTransform = scale.apply(viewport.x, viewport.y);
+    glm::vec2 positionTransform = m_position.apply(viewport.x, viewport.y);
+    glm::vec2 scaleTransform = m_size.apply(viewport.x, viewport.y);
 
     glm::mat4 modelMatrix{1.0f};
     modelMatrix =
         glm::translate(modelMatrix, {positionTransform.x, positionTransform.y, 0.0f});
     modelMatrix = glm::scale(modelMatrix, {scaleTransform.x, scaleTransform.y, 0.0f});
-
     return modelMatrix;
+}
+
+void GuiRectangle::setPosition(const GuiDimension& position)
+{
+    m_position = position;
+}
+
+void GuiRectangle::setSize(const GuiDimension& size)
+{
+    m_size = size;
 }

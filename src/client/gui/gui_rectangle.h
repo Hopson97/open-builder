@@ -16,12 +16,16 @@ struct GuiDimension final {
 struct GuiRectangle final {
   public:
     GuiRectangle() = default;
-    GuiRectangle(const GuiDimension& position, const GuiDimension& scale);
+    GuiRectangle(const GuiDimension& position, const GuiDimension& size);
 
     glm::mat4 getRenderTransform(const glm::vec2& viewport) const;
 
-    GuiDimension position;
-    GuiDimension scale;
+    void setPosition(const GuiDimension& position);
+    void setSize(const GuiDimension& size);
+
+  private:
+    GuiDimension m_position;
+    GuiDimension m_size;
 
     int m_texture = 0;
 };
