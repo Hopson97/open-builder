@@ -1,7 +1,3 @@
-
-
-
-
 local texCrosshair = game.gui.getTexture("res/crosshair.png")
 local crosshair = GuiRectangle.new()
 crosshair.position = GuiDim.new(0.5, -16, 0.5, -16)
