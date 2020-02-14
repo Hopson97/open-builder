@@ -25,7 +25,7 @@ void GuiMaster::render()
     quad.bind();
     m_shader.bind();
     for (auto container : m_containers) {
-        container->render(m_shader, viewport, quad);
+        container->render(m_shader, viewport, quad, m_textures);
     }
 }
 

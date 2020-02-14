@@ -1,14 +1,15 @@
 
 
-local hud = GuiContainer.new()
+
 
 local texCrosshair = game.gui.getTexture("res/crosshair.png")
-
 local crosshair = GuiRectangle.new()
 crosshair.position = GuiDim.new(0.5, -16, 0.5, -16)
-crosshair.scale = GuiDim.new(0, 32, 0, 32)
-print("OK I AM RUNNING BTW")
+crosshair.size = GuiDim.new(0, 32, 0, 32)
+crosshair.texture = texCrosshair
 
+local hud = GuiContainer.new()
+hud:add(crosshair)
 
 game.gui.add(hud)
 

@@ -42,6 +42,7 @@ void addGuiRectangleApi(ScriptEngine& engine)
 
     rectangleApi["position"] = sol::property(&GuiRectangle::setPosition);
     rectangleApi["size"] = sol::property(&GuiRectangle::setSize);
+    rectangleApi["texture"] = sol::property(&GuiRectangle::setTexture);
 }
 
 } // namespace

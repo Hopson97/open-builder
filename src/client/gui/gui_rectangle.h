@@ -20,12 +20,16 @@ struct GuiRectangle final {
 
     glm::mat4 getRenderTransform(const glm::vec2& viewport) const;
 
+    // Setters rather than "public" as it makes it a lot easier for a clean lua api
     void setPosition(const GuiDimension& position);
     void setSize(const GuiDimension& size);
+    void setTexture(int texture);
+
+    int getTexture() const;
 
   private:
     GuiDimension m_position;
     GuiDimension m_size;
 
-    int m_texture = 0;
+    int m_texture = -1;
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../gl/textures.h"
 #include <glm/vec2.hpp>
 #include <vector>
 
@@ -19,7 +20,8 @@ class GuiContainer final {
 
     void addRectangle(GuiRectangle& rectangle);
 
-    void render(GuiShader& shader, const glm::vec2& viewport, const gl::Drawable& quad);
+    void render(GuiShader& shader, const glm::vec2& viewport, const gl::Drawable& quad,
+                const std::vector<gl::Texture2d>& textures);
 
   private:
     static int uidCount;
