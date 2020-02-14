@@ -6,7 +6,6 @@ add_library(ob-client
     gl/textures.cpp
     gl/gl_errors.cpp
     gl/primitive.cpp
-    gui/gui.cpp
     gui/gui_master.cpp
     gui/gui_container.cpp
     gui/gui_rectangle.cpp

@@ -2,7 +2,7 @@
 
 #include "../gl/shader.h"
 
-class GuiShader {
+class GuiShader final {
 
   public:
     GuiShader();
@@ -11,10 +11,11 @@ class GuiShader {
 
     void updateProjection(const glm::mat4& projectionMatrix);
     void updateTransform(const glm::mat4& modelMatrix);
+    void updateColour(const glm::vec3& colour);
 
   private:
     gl::Shader m_program;
     gl::UniformLocation m_projectionLocation;
     gl::UniformLocation m_modelLocation;
-    gl::UniformLocation m_colorLocation;
+    gl::UniformLocation m_colourLocation;
 };

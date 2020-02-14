@@ -24,12 +24,15 @@ struct GuiRectangle final {
     void setPosition(const GuiDimension& position);
     void setSize(const GuiDimension& size);
     void setTexture(int texture);
+    void setColour(float r, float g, float b);
 
     int getTexture() const;
+    const glm::vec3& getColour() const;
 
   private:
     GuiDimension m_position;
     GuiDimension m_size;
+    glm::vec3 m_colour{1.0f};
 
     int m_texture = -1;
 };
