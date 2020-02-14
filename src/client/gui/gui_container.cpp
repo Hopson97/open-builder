@@ -28,7 +28,8 @@ void GuiContainer::addRectangle(GuiRectangle& rectangle)
 }
 
 void GuiContainer::render(GuiShader& shader, const glm::vec2& viewport,
-                          const gl::Drawable& quad)
+                          const gl::Drawable& quad,
+                          const std::vector<gl::Texture2d>& textures)
 {
     // TODO Maybe render to a framebuffer to avoid having to bind a bunch of textures over
     // and over
@@ -36,6 +37,12 @@ void GuiContainer::render(GuiShader& shader, const glm::vec2& viewport,
         // TODO Bind the texture?
         glm::mat4 transform = rect->getRenderTransform(viewport);
         shader.updateTransform(transform);
+
+        int texture = rect->getTexture();
+        if (texture > -1) {
+            textures.at(texture).bind();
+        }
         quad.draw();
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 }

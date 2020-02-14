@@ -43,3 +43,13 @@ void GuiRectangle::setSize(const GuiDimension& size)
 {
     m_size = size;
 }
+
+void GuiRectangle::setTexture(int texture)
+{
+    m_texture = texture;
+}
+
+int GuiRectangle::getTexture() const
+{
+    return m_texture;
+}
