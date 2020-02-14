@@ -17,6 +17,8 @@ class GuiContainer final {
     void hide();
     void show();
 
+    void addRectangle(GuiRectangle& rectangle);
+
     void render(GuiShader& shader, const glm::vec2& viewport, const gl::Drawable& quad);
 
   private:
