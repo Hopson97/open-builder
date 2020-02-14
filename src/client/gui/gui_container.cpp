@@ -34,9 +34,11 @@ void GuiContainer::render(GuiShader& shader, const glm::vec2& viewport,
     // TODO Maybe render to a framebuffer to avoid having to bind a bunch of textures over
     // and over
     for (auto rect : m_guiRectangles) {
-        // TODO Bind the texture?
-        glm::mat4 transform = rect->getRenderTransform(viewport);
+        auto transform = rect->getRenderTransform(viewport);
         shader.updateTransform(transform);
+
+        auto& colour = rect->getColour();
+        shader.updateColour(colour);
 
         int texture = rect->getTexture();
         if (texture > -1) {

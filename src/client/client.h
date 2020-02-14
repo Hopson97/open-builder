@@ -4,7 +4,6 @@
 #include "gl/shader.h"
 #include "gl/textures.h"
 #include "gl/vertex_array.h"
-#include "gui/gui.h"
 #include "gui/gui_master.h"
 #include "gui/text.h"
 #include "maths.h"

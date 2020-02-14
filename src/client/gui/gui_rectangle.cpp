@@ -49,7 +49,17 @@ void GuiRectangle::setTexture(int texture)
     m_texture = texture;
 }
 
+void GuiRectangle::setColour(float r, float g, float b)
+{
+    m_colour = {r, g, b};
+}
+
 int GuiRectangle::getTexture() const
 {
     return m_texture;
+}
+
+const glm::vec3& GuiRectangle::getColour() const
+{
+    return m_colour;
 }
