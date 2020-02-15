@@ -1,14 +1,11 @@
 #pragma once
 
-#include <glm/vec3.hpp>
-#include <glm/glm.hpp>
 #include "gui_dimension.h"
+#include <glm/glm.hpp>
+#include <glm/vec3.hpp>
 
 struct GuiRectangle final {
   public:
-    GuiRectangle() = default;
-    GuiRectangle(const GuiDimension& position, const GuiDimension& size);
-
     glm::mat4 getRenderTransform(const glm::vec2& viewport) const;
 
     // Setters rather than "public" as it makes it a lot easier for a clean lua api

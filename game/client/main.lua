@@ -1,13 +1,41 @@
+
 local texCrosshair = game.gui.getTexture("res/crosshair.png")
-local crosshair = GuiRectangle.new()
+local hud = game.gui.makeGui()
+
+local crosshair = hud:addRect()
 crosshair.position = GuiDim.new(0.5, -16, 0.5, -16)
 crosshair.size = GuiDim.new(0, 32, 0, 32)
 crosshair.texture = texCrosshair
 
-local hud = GuiContainer.new()
-hud:add(crosshair)
+local crossSpinner = hud:addRect()
+crossSpinner.position = GuiDim.new(0.5, -16, 0.5, -16)
+crossSpinner.size = GuiDim.new(0, 32, 0, 32)
+crossSpinner.texture = texCrosshair
 
-game.gui.add(hud)
+local p = 0
+function spinner(delta)
+    --f_crosshair.colour = (math.sin(p) / (math.pi/2) * 0.5 + 0.5, 0, 0));
+	crossSpinner.position = GuiDim.new(0.5, -16 + math.sin(p) * 50, 0.5, -16 + math.cos(p)*50)
+	p = p + (delta * math.pi*2)
+end
+
+--local crossSpinner = GuiRectangle.new()
+--crossSpinner.position = GuiDim.new(0.5, -16, 0.5, -16)
+--crossSpinner.size = GuiDim.new(0, 32, 0, 32)
+--crossSpinner.texture = texCrosshair
+--
+--local p = 0
+--function spinner(delta)
+--    --f_crosshair.colour = (math.sin(p) / (math.pi/2) * 0.5 + 0.5, 0, 0));
+--	crossSpinner.position = GuiDim.new(0.5, -16 + math.sin(p) * 50, 0.5, -16 + math.cos(p)*50)
+--	p = p + (delta * math.pi*2)
+--end
+
+--local hud = GuiContainer.new()
+--hud:add(crosshair)
+--hud:add(crossSpinner)
+
+--game.gui.add(hud)
 
 --
 --  GOAL
