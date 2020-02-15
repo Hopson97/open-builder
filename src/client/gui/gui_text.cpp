@@ -2,6 +2,7 @@
 
 #include "../maths.h"
 #include "gui_shader.h"
+#include "text.h"
 
 namespace {
 struct Mesh {
@@ -76,10 +77,8 @@ void addCharacter(Mesh& mesh, const sf::Glyph& glyph, float size,
 
 } // namespace
 
-GuiText::GuiText(const GuiDimension& position, float fontSize, const std::string& text)
-    : m_position(position)
-    , m_text(text)
-    , m_fontSize(fontSize)
+GuiText::GuiText(Font& font)
+    : mp_font(&font)
 {
 }
 
@@ -102,7 +101,7 @@ void GuiText::setFontSize(float size)
 
 void GuiText::setText(const std::string& text)
 {
-    //todo maybe std::move, need to check if possible
+    // todo maybe std::move, need to check if possible
     m_text = text;
     m_isGeometryUpdateNeeded = true;
 }
