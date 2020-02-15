@@ -11,11 +11,14 @@ GuiMaster::GuiMaster(float viewportWidth, float viewportHeight)
 
     m_shader.bind();
     m_shader.updateProjection(m_projection);
+
+    // Todo, maybe change font in config?
+    m_font.init("res/VeraMono-Bold.ttf", 512);
 }
 
 GuiContainer* GuiMaster::addGui()
 {
-    return m_containers.emplace_back(std::make_unique<GuiContainer>()).get();
+    return m_containers.emplace_back(std::make_unique<GuiContainer>(m_font)).get();
 }
 
 void GuiMaster::render()

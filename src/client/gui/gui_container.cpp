@@ -3,13 +3,15 @@
 #include "../gl/vertex_array.h"
 #include "gui_rectangle.h"
 #include "gui_shader.h"
+#include "gui_text.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
 int GuiContainer::uidCount = 0;
 
-GuiContainer::GuiContainer()
+GuiContainer::GuiContainer(Font& font)
     : m_uid(uidCount++)
+    , mp_font(&font)
 {
 }
 
@@ -26,6 +28,11 @@ void GuiContainer::show()
 GuiRectangle* GuiContainer::addRectangle()
 {
     return m_guiRectangles.emplace_back(std::make_unique<GuiRectangle>()).get();
+}
+
+GuiText* GuiContainer::addText()
+{
+    return m_guiTexts.emplace_back(std::make_unique<GuiText>(*mp_font)).get();
 }
 
 void GuiContainer::render(GuiShader& shader, const glm::vec2& viewport,

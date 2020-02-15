@@ -2,15 +2,14 @@
 
 #include "../gl/vertex_array.h"
 #include "gui_dimension.h"
-#include "text.h"
 #include <string>
 
 class GuiShader;
+class Font;
 
 class GuiText {
   public:
-    GuiText() = default;
-    GuiText(const GuiDimension& position, float fontSize, const std::string& text);
+    GuiText(Font& font);
 
     void setFont(const Font& font);
 
