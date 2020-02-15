@@ -3,6 +3,7 @@
 #include "../maths.h"
 #include "gui_shader.h"
 #include "text.h"
+#include <iostream>
 
 namespace {
 struct Mesh {

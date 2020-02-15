@@ -36,7 +36,7 @@ void GuiMaster::render()
     glCullFace(GL_FRONT);
     glEnable(GL_BLEND);
     for (auto& container : m_containers) {
-        container->renderText(m_shader, m_viewport);
+        container->renderText(m_shader, viewport);
     }
 
     glDisable(GL_BLEND);
