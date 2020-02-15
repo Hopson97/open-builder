@@ -203,7 +203,6 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
 
         case sf::Keyboard::F3:
             m_shouldRenderDebugInfo = !m_shouldRenderDebugInfo;
-            std::cout << m_shouldRenderDebugInfo << std::endl;
             break;
 
         default:

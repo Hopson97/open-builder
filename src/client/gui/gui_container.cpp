@@ -8,15 +8,16 @@
 
 int GuiContainer::uidCount = 0;
 
-GuiContainer::GuiContainer(gl::Font& font)
+GuiContainer::GuiContainer(gl::Font& font, const glm::vec2& viewport)
     : m_uid(uidCount++)
     , mp_font(&font)
+    , m_viewport(viewport)
 {
 }
 
 GuiRectangle* GuiContainer::addRectangle()
 {
-    return m_guiRectangles.emplace_back(std::make_unique<GuiRectangle>()).get();
+    return m_guiRectangles.emplace_back(std::make_unique<GuiRectangle>(m_viewport)).get();
 }
 
 GuiText* GuiContainer::addText()
@@ -24,8 +25,7 @@ GuiText* GuiContainer::addText()
     return m_guiTexts.emplace_back(std::make_unique<GuiText>(*mp_font)).get();
 }
 
-void GuiContainer::renderRects(GuiShader& shader, const glm::vec2& viewport,
-                               const gl::Drawable& quad,
+void GuiContainer::renderRects(GuiShader& shader, const gl::Drawable& quad,
                                const std::vector<gl::Texture2d>& textures)
 {
     // TODO Maybe render to a framebuffer to avoid having to bind a bunch of textures over
@@ -35,7 +35,7 @@ void GuiContainer::renderRects(GuiShader& shader, const glm::vec2& viewport,
         if (rect->isHidden()) {
             continue;
         }
-        auto transform = rect->getRenderTransform(viewport);
+        auto transform = rect->getRenderTransform();
         shader.updateTransform(transform);
 
         auto& colour = rect->getColour();
@@ -50,8 +50,9 @@ void GuiContainer::renderRects(GuiShader& shader, const glm::vec2& viewport,
     }
 }
 
-void GuiContainer::renderText(GuiShader& shader, const glm::vec2& viewport)
+void GuiContainer::renderText(GuiShader& shader)
 {
+    auto viewport = m_viewport / 100.0f;
     for (auto& text : m_guiTexts) {
         text->render(shader, viewport);
     }

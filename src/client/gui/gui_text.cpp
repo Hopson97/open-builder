@@ -117,7 +117,7 @@ void GuiText::render(GuiShader& shader, const glm::vec2& viewport)
     glm::mat4 modelMatrix{1.0f};
     float scale = m_fontSize / mp_font->getBitmapSize();
 
-    auto transform = m_position.apply(viewport.x, viewport.y);
+    auto transform = m_position.apply(viewport);
 
     translateMatrix(modelMatrix, {transform.x, transform.y, 0.0f});
     rotateMatrix(modelMatrix, {180.0f, 0.0f, 0.0f});
