@@ -8,7 +8,7 @@ namespace gl {
  * @brief Opengl supporting font
  *
  */
-class Font {
+class Font final {
   public:
     void init(const std::string& fontFile, unsigned bitmapScale);
     const sf::Glyph& getGlyph(char character) const;
