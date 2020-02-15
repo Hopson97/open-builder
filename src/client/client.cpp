@@ -91,8 +91,7 @@ bool Client::init(const ClientConfig& config, float aspect)
     auto container = m_guiMaster.addGui();
     m_debugStatsText = container->addText();
     m_debugStatsText->setFontSize(16);
-    m_debugStatsText->setText("Current FPS: 60");
-    m_debugStatsText->setPosition({0.0f, 0, 1.0f, -16});
+    m_debugStatsText->setPosition({0.0f, 4.0f, 1.0f, -16.0f});
     return true;
 }
 
@@ -198,6 +197,7 @@ void Client::onKeyRelease(sf::Keyboard::Key key)
 
         case sf::Keyboard::F3:
             m_shouldRenderDebugInfo = !m_shouldRenderDebugInfo;
+            std::cout << m_shouldRenderDebugInfo << std::endl;
             break;
 
         default:
@@ -400,7 +400,7 @@ void Client::render(int width, int height)
 
     // Debug stats
     if (m_shouldRenderDebugInfo) {
-
+        m_debugStatsText->show();
         if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
             m_debugTextUpdateTimer.restart();
 
@@ -430,6 +430,9 @@ void Client::render(int width, int height)
 
             m_debugStatsText->setText(debugText.str());
         }
+    }
+    else {
+        m_debugStatsText->hide();
     }
 }
 

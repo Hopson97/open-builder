@@ -5,7 +5,6 @@
 #include "gui_shader.h"
 #include "gui_text.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
 
 int GuiContainer::uidCount = 0;
 
