@@ -19,6 +19,11 @@ class GuiContainer final {
     void hide();
     void show();
 
+    /**
+     * @brief Creates a rectangle object and returns it.
+     *  The lifetime of the object is handled by this class
+     * @return GuiRectangle*
+     */
     GuiRectangle* addRectangle();
 
     void render(GuiShader& shader, const glm::vec2& viewport, const gl::Drawable& quad,
@@ -28,7 +33,9 @@ class GuiContainer final {
     static int uidCount;
     int m_uid;
 
-    std::vector<GuiRectangle> m_guiRectangles;
+    // Stored as unique ptr to ensure lifetime of the pointer returned
+    // so that Lua is able reference elements as the vector grows
+    std::vector<std::unique_ptr<GuiRectangle>> m_guiRectangles;
 
     bool m_isHidden = true;
 };
