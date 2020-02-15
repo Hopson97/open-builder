@@ -2,10 +2,23 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-glm::mat4 GuiRectangle::getRenderTransform(const glm::vec2& viewport) const
+GuiRectangle::GuiRectangle(const glm::vec2& viewport)
+    : m_viewport(viewport)
 {
-    glm::vec2 positionTransform = m_position.apply(viewport.x, viewport.y);
-    glm::vec2 scaleTransform = m_size.apply(viewport.x, viewport.y);
+    updateBounds();
+}
+
+void GuiRectangle::updateViewport(const glm::vec2& viewport)
+{
+    m_viewport = viewport;
+    updateBounds();
+}
+
+glm::mat4 GuiRectangle::getRenderTransform() const
+{
+    auto viewport = m_viewport / 100.0f;
+    glm::vec2 positionTransform = m_position.apply(viewport);
+    glm::vec2 scaleTransform = m_size.apply(viewport);
 
     glm::mat4 modelMatrix{1.0f};
     modelMatrix =
@@ -17,11 +30,13 @@ glm::mat4 GuiRectangle::getRenderTransform(const glm::vec2& viewport) const
 void GuiRectangle::setPosition(const GuiDimension& position)
 {
     m_position = position;
+    updateBounds();
 }
 
 void GuiRectangle::setSize(const GuiDimension& size)
 {
     m_size = size;
+    updateBounds();
 }
 
 void GuiRectangle::setTexture(int texture)
@@ -57,4 +72,8 @@ void GuiRectangle::show()
 bool GuiRectangle::isHidden() const
 {
     return m_isHidden;
+}
+
+void GuiRectangle::updateBounds()
+{
 }

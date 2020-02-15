@@ -19,19 +19,18 @@ GuiMaster::GuiMaster(float viewportWidth, float viewportHeight)
 
 GuiContainer* GuiMaster::addGui()
 {
-    return m_containers.emplace_back(std::make_unique<GuiContainer>(m_font)).get();
+    return m_containers.emplace_back(std::make_unique<GuiContainer>(m_font, m_viewport))
+        .get();
 }
 
 void GuiMaster::render()
 {
     m_shader.bind();
-
-    glm::vec2 viewport = m_viewport / 100.0f;
     auto quad = m_quadVao.getDrawable();
     quad.bind();
     for (auto& container : m_containers) {
         if (!container->isHidden()) {
-            container->renderRects(m_shader, viewport, quad, m_textures);
+            container->renderRects(m_shader, quad, m_textures);
         }
     }
 
@@ -40,7 +39,7 @@ void GuiMaster::render()
     glEnable(GL_BLEND);
     for (auto& container : m_containers) {
         if (!container->isHidden()) {
-            container->renderText(m_shader, viewport);
+            container->renderText(m_shader);
         }
     }
     glCullFace(GL_BACK);

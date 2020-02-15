@@ -1,12 +1,16 @@
 #pragma once
 
 #include "gui_dimension.h"
+#include <SFML/Graphics/Rect.hpp>
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp>
 
 struct GuiRectangle final {
   public:
-    glm::mat4 getRenderTransform(const glm::vec2& viewport) const;
+    GuiRectangle(const glm::vec2& viewport);
+    void updateViewport(const glm::vec2& viewport);
+
+    glm::mat4 getRenderTransform() const;
 
     // Setters rather than "public" as it makes it a lot easier for a clean lua api
     void setPosition(const GuiDimension& position);
@@ -22,6 +26,10 @@ struct GuiRectangle final {
     bool isHidden() const;
 
   private:
+    void updateBounds();
+
+    sf::FloatRect m_bounds;
+    glm::vec2 m_viewport;
     GuiDimension m_position;
     GuiDimension m_size;
     glm::vec3 m_colour{1.0f};

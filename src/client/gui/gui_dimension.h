@@ -14,11 +14,11 @@ struct GuiDimension final {
     {
     }
 
-    glm::vec2 apply(float width, float height) const
+    glm::vec2 apply(const glm::vec2& viewport) const
     {
         glm::vec2 vector;
-        vector.x = scale.x * width * 100.0f;
-        vector.y = scale.y * height * 100.0f;
+        vector.x = scale.x * viewport.x * 100.0f;
+        vector.y = scale.y * viewport.y * 100.0f;
         return vector + offset;
     }
 };
