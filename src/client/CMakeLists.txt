@@ -11,7 +11,7 @@ add_library(ob-client
     gui/gui_rectangle.cpp
     gui/gui_shader.cpp
     gui/gui_text.cpp
-    gui/text.cpp
+    gl/font.cpp
     lua/gui_api.cpp
     renderer/chunk_renderer.cpp
     network/client_commands.cpp

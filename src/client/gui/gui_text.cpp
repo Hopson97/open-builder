@@ -1,9 +1,8 @@
 #include "gui_text.h"
 
+#include "../gl/font.h"
 #include "../maths.h"
 #include "gui_shader.h"
-#include "text.h"
-#include <iostream>
 
 namespace {
 struct Mesh {
@@ -78,12 +77,12 @@ void addCharacter(Mesh& mesh, const sf::Glyph& glyph, float size,
 
 } // namespace
 
-GuiText::GuiText(Font& font)
+GuiText::GuiText(gl::Font& font)
     : mp_font(&font)
 {
 }
 
-void GuiText::setFont(const Font& font)
+void GuiText::setFont(const gl::Font& font)
 {
     mp_font = &font;
 }
@@ -119,8 +118,6 @@ void GuiText::render(GuiShader& shader, const glm::vec2& viewport)
     float scale = m_fontSize / mp_font->getBitmapSize();
 
     auto transform = m_position.apply(viewport.x, viewport.y);
-
-    std::cout << transform.x << " " << transform.y << std::endl;
 
     translateMatrix(modelMatrix, {transform.x, transform.y, 0.0f});
     rotateMatrix(modelMatrix, {180.0f, 0.0f, 0.0f});

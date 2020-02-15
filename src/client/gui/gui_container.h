@@ -7,16 +7,16 @@
 #include <memory>
 #include <vector>
 
-class Font;
 class GuiShader;
 
 namespace gl {
 class Drawable;
-}
+class Font;
+} // namespace gl
 
 class GuiContainer final {
   public:
-    GuiContainer(Font& font);
+    GuiContainer(gl::Font& font);
 
     void hide();
     void show();
@@ -39,7 +39,7 @@ class GuiContainer final {
     // so that Lua is able reference elements as the vector grows
     std::vector<std::unique_ptr<GuiRectangle>> m_guiRectangles;
     std::vector<std::unique_ptr<GuiText>> m_guiTexts;
-    Font* mp_font;
+    gl::Font* mp_font;
 
     bool m_isHidden = true;
 };

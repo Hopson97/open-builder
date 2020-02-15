@@ -5,13 +5,16 @@
 #include <string>
 
 class GuiShader;
+
+namespace gl {
 class Font;
+}
 
 class GuiText {
   public:
-    GuiText(Font& font);
+    GuiText(gl::Font& font);
 
-    void setFont(const Font& font);
+    void setFont(const gl::Font& font);
 
     void setPosition(const GuiDimension& position);
     void setFontSize(float size);
@@ -27,7 +30,7 @@ class GuiText {
     GuiDimension m_position;
     float m_fontSize = 0;
 
-    const Font* mp_font = nullptr;
+    const gl::Font* mp_font = nullptr;
 
     bool m_isGeometryUpdateNeeded = true;
 };
