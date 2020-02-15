@@ -88,12 +88,11 @@ bool Client::init(const ClientConfig& config, float aspect)
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
 
-    // Font and text
-    m_debugTextFont.init("res/VeraMono-Bold.ttf", 512);
-    m_debugText.setPosition({2, config.windowHeight - 16, 0});
-    m_debugText.setCharSize(16);
-    m_debugText.setFont(m_debugTextFont);
-    m_debugText.setText("Current FPS: 60");
+    auto container = m_guiMaster.addGui();
+    m_debugStatsText = container->addText();
+    m_debugStatsText->setFontSize(16);
+    m_debugStatsText->setText("Current FPS: 60");
+    m_debugStatsText->setPosition({0.0f, 0, 1.0f, -16});
     return true;
 }
 
@@ -328,16 +327,6 @@ void Client::update(float dt, float frameTime)
             break;
         }
     }
-
-    // Call update function on the GUI script
-    // Note: This part is quite dangerous, if there's no update() or there's an
-    // error
-    //       in the script then it will cause a crash
-    // sol::function p_update = m_lua.lua["update"];
-    // p_update(dt);
-
-    sol::function f = m_lua.lua["spinner"];
-    f(dt);
 }
 
 void Client::render(int width, int height)
@@ -439,9 +428,8 @@ void Client::render(int width, int height)
             debugText << "In Chunk? " << (m_chunks.manager.hasChunk(cp) ? "Yes" : "No")
                       << '\n';
 
-            m_debugText.setText(debugText.str());
+            m_debugStatsText->setText(debugText.str());
         }
-        // m_gui.renderText(m_debugText);
     }
 }
 

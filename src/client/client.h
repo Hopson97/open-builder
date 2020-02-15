@@ -141,11 +141,10 @@ class Client final : public NetworkHost {
 
     // GUI
     GuiMaster m_guiMaster;
+    GuiText* m_debugStatsText;
 
     // Debug stats stuff
     DebugStats m_debugStats{};
-    Text m_debugText;
-    Font m_debugTextFont;
     sf::Clock m_debugTextUpdateTimer;
     bool m_shouldRenderDebugInfo = false;
 
