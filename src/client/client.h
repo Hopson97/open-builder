@@ -141,7 +141,7 @@ class Client final : public NetworkHost {
 
     // GUI
     GuiMaster m_guiMaster;
-    GuiText* m_debugStatsText;
+    GuiText* m_debugStatsText = nullptr;
 
     // Debug stats stuff
     DebugStats m_debugStats{};

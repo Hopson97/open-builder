@@ -12,7 +12,7 @@ class Font;
 
 class GuiText {
   public:
-    GuiText(gl::Font& font);
+    GuiText(const gl::Font& font);
 
     void setFont(const gl::Font& font);
 

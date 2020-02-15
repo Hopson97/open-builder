@@ -43,7 +43,7 @@ void GuiMaster::render()
             container->renderText(m_shader, viewport);
         }
     }
-
+    glCullFace(GL_BACK);
     glDisable(GL_BLEND);
 }
 

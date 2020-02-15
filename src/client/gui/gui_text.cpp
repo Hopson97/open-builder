@@ -77,7 +77,7 @@ void addCharacter(Mesh& mesh, const sf::Glyph& glyph, float size,
 
 } // namespace
 
-GuiText::GuiText(gl::Font& font)
+GuiText::GuiText(const gl::Font& font)
     : mp_font(&font)
 {
 }
@@ -126,8 +126,6 @@ void GuiText::render(GuiShader& shader, const glm::vec2& viewport)
     shader.updateTransform(modelMatrix);
 
     m_textQuads.getDrawable().bindAndDraw();
-    glCullFace(GL_BACK);
-    glDisable(GL_BLEND);
 }
 
 void GuiText::hide()
