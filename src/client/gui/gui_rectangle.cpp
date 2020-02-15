@@ -76,4 +76,9 @@ bool GuiRectangle::isHidden() const
 
 void GuiRectangle::updateBounds()
 {
+    auto viewport = m_viewport / 100.0f;
+    auto topLeft = m_position.apply(viewport);
+    auto size = m_size.apply(viewport);
+
+    m_bounds = {topLeft.x, topLeft.y, size.x, size.y};
 }
