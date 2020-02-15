@@ -1,11 +1,11 @@
 #pragma once
 
+#include "../gl/font.h"
 #include "../gl/shader.h"
 #include "../gl/textures.h"
 #include "../gl/vertex_array.h"
 #include "gui_container.h"
 #include "gui_shader.h"
-#include "text.h"
 #include <memory>
 
 /**
@@ -34,7 +34,7 @@ class GuiMaster final {
     // Maps a string to a texture index of m_textures
     std::unordered_map<std::string, int> m_textureIds;
     std::vector<gl::Texture2d> m_textures;
-    Font m_font;
+    gl::Font m_font;
 
     // OpenGL Rendering stuff
     GuiShader m_shader;

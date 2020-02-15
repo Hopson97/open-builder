@@ -17,7 +17,6 @@ texture_packs/ElijahHyper
 *.srctrldb
 *.srctrlbm
 
-custom_run.sh
 
 #
 #   Linux
@@ -26,6 +25,8 @@ custom_run.sh
 build/
 bin/
 custom_run.sh
+zcustom_run.sh
+ybuild.sh
 
 #
 #   Windows

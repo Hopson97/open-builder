@@ -9,7 +9,7 @@
 
 int GuiContainer::uidCount = 0;
 
-GuiContainer::GuiContainer(Font& font)
+GuiContainer::GuiContainer(gl::Font& font)
     : m_uid(uidCount++)
     , mp_font(&font)
 {

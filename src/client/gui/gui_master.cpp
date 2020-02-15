@@ -1,6 +1,7 @@
 #include "gui_master.h"
 
 #include "../gl/primitive.h"
+#include "gui_container.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 GuiMaster::GuiMaster(float viewportWidth, float viewportHeight)
