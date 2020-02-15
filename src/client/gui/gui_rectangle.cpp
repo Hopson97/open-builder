@@ -43,3 +43,18 @@ const glm::vec3& GuiRectangle::getColour() const
 {
     return m_colour;
 }
+
+void GuiRectangle::hide()
+{
+    m_isHidden = true;
+}
+
+void GuiRectangle::show()
+{
+    m_isHidden = false;
+}
+
+bool GuiRectangle::isHidden() const
+{
+    return m_isHidden;
+}

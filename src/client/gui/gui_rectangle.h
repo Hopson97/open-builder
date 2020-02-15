@@ -17,10 +17,16 @@ struct GuiRectangle final {
     int getTexture() const;
     const glm::vec3& getColour() const;
 
+    void hide();
+    void show();
+    bool isHidden() const;
+
   private:
     GuiDimension m_position;
     GuiDimension m_size;
     glm::vec3 m_colour{1.0f};
 
     int m_texture = -1;
+
+    bool m_isHidden = false;
 };

@@ -22,6 +22,9 @@ class GuiText {
 
     void render(GuiShader& shader, const glm::vec2& viewport);
 
+    void hide();
+    void show();
+
   private:
     void updateGeometry();
 
@@ -33,4 +36,5 @@ class GuiText {
     const gl::Font* mp_font = nullptr;
 
     bool m_isGeometryUpdateNeeded = true;
+    bool m_isHidden = false;
 };

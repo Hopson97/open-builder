@@ -108,7 +108,7 @@ void GuiText::setText(const std::string& text)
 
 void GuiText::render(GuiShader& shader, const glm::vec2& viewport)
 {
-    if (!mp_font) {
+    if (!mp_font || m_isHidden) {
         return;
     }
     if (m_isGeometryUpdateNeeded) {
@@ -128,6 +128,16 @@ void GuiText::render(GuiShader& shader, const glm::vec2& viewport)
     m_textQuads.getDrawable().bindAndDraw();
     glCullFace(GL_BACK);
     glDisable(GL_BLEND);
+}
+
+void GuiText::hide()
+{
+    m_isHidden = true;
+}
+
+void GuiText::show()
+{
+    m_isHidden = false;
 }
 
 void GuiText::updateGeometry()
