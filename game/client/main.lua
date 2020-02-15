@@ -12,10 +12,27 @@ crossSpinner.position = GuiDim.new(0.5, -16, 0.5, -16)
 crossSpinner.size = GuiDim.new(0, 32, 0, 32)
 crossSpinner.texture = texCrosshair
 
+local crossSpinner2 = hud:addRect()
+crossSpinner2.position = GuiDim.new(0.5, -16, 0.5, -16)
+crossSpinner2.size = GuiDim.new(0, 32, 0, 32)
+crossSpinner2.texture = texCrosshair
+
+local crossSpinner3 = hud:addRect()
+crossSpinner3.position = GuiDim.new(0.5, -16, 0.5, -16)
+crossSpinner3.size = GuiDim.new(0, 32, 0, 32)
+crossSpinner3.texture = texCrosshair
+
+local crossSpinner4 = hud:addRect()
+crossSpinner4.position = GuiDim.new(0.5, -16, 0.5, -16)
+crossSpinner4.size = GuiDim.new(0, 32, 0, 32)
+crossSpinner4.texture = texCrosshair
+
 local p = 0
 function spinner(delta)
-    --f_crosshair.colour = (math.sin(p) / (math.pi/2) * 0.5 + 0.5, 0, 0));
 	crossSpinner.position = GuiDim.new(0.5, -16 + math.sin(p) * 50, 0.5, -16 + math.cos(p)*50)
+	crossSpinner2.position = GuiDim.new(0.2, -16 + math.sin(p) * 50, 0.5, -16 + math.cos(p)*50)
+	crossSpinner3.position = GuiDim.new(0.2, -16 + math.sin(p) * 50, 0.3, -16 + math.cos(p)*50)
+	crossSpinner4.position = GuiDim.new(0.8, -16 + math.sin(p) * 50, 0.5, -16 + math.cos(p)*50)
 	p = p + (delta * math.pi*2)
 end
 

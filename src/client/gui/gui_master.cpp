@@ -15,7 +15,7 @@ GuiMaster::GuiMaster(float viewportWidth, float viewportHeight)
 
 GuiContainer* GuiMaster::addGui()
 {
-    return &m_containers.emplace_back();
+    return m_containers.emplace_back(std::make_unique<GuiContainer>()).get();
 }
 
 void GuiMaster::render()
@@ -25,7 +25,7 @@ void GuiMaster::render()
     quad.bind();
     m_shader.bind();
     for (auto& container : m_containers) {
-        container.render(m_shader, viewport, quad, m_textures);
+        container->render(m_shader, viewport, quad, m_textures);
     }
 }
 

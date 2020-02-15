@@ -25,7 +25,7 @@ void GuiContainer::show()
 
 GuiRectangle* GuiContainer::addRectangle()
 {
-    return &m_guiRectangles.emplace_back();
+    return m_guiRectangles.emplace_back(std::make_unique<GuiRectangle>()).get();
 }
 
 void GuiContainer::render(GuiShader& shader, const glm::vec2& viewport,
@@ -36,13 +36,13 @@ void GuiContainer::render(GuiShader& shader, const glm::vec2& viewport,
     // and over
 
     for (auto& rect : m_guiRectangles) {
-        auto transform = rect.getRenderTransform(viewport);
+        auto transform = rect->getRenderTransform(viewport);
         shader.updateTransform(transform);
 
-        auto& colour = rect.getColour();
+        auto& colour = rect->getColour();
         shader.updateColour(colour);
 
-        int texture = rect.getTexture();
+        int texture = rect->getTexture();
         if (texture > -1) {
             textures.at(texture).bind();
         }

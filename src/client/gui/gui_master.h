@@ -5,6 +5,7 @@
 #include "../gl/vertex_array.h"
 #include "gui_container.h"
 #include "gui_shader.h"
+#include <memory>
 
 /**
  * @brief Render master for the GUIs
@@ -25,8 +26,9 @@ class GuiMaster final {
     int textureCount() const;
 
   private:
-    // Pointers to containers (stored in lua or elsewhere)
-    std::vector<GuiContainer> m_containers;
+    // Stored as unique ptr to ensure lifetime of the pointer returned
+    // so that Lua is able reference elements as the vector grows
+    std::vector<std::unique_ptr<GuiContainer>> m_containers;
 
     // Maps a string to a texture index of m_textures
     std::unordered_map<std::string, int> m_textureIds;
