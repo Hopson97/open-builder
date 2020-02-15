@@ -35,9 +35,9 @@ GuiText* GuiContainer::addText()
     return m_guiTexts.emplace_back(std::make_unique<GuiText>(*mp_font)).get();
 }
 
-void GuiContainer::render(GuiShader& shader, const glm::vec2& viewport,
-                          const gl::Drawable& quad,
-                          const std::vector<gl::Texture2d>& textures)
+void GuiContainer::renderRects(GuiShader& shader, const glm::vec2& viewport,
+                               const gl::Drawable& quad,
+                               const std::vector<gl::Texture2d>& textures)
 {
     // TODO Maybe render to a framebuffer to avoid having to bind a bunch of textures over
     // and over
@@ -55,5 +55,12 @@ void GuiContainer::render(GuiShader& shader, const glm::vec2& viewport,
         }
         quad.draw();
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+}
+
+void GuiContainer::renderText(GuiShader& shader, const glm::vec2& viewport)
+{
+    for (auto& text : m_guiTexts) {
+        text->render(shader, viewport);
     }
 }
