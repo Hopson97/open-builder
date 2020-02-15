@@ -18,9 +18,6 @@ class GuiContainer final {
   public:
     GuiContainer(gl::Font& font);
 
-    void hide();
-    void show();
-
     /// lifetime managed by the gui container (this)
     GuiRectangle* addRectangle();
     GuiText* addText();
@@ -30,6 +27,10 @@ class GuiContainer final {
                      const std::vector<gl::Texture2d>& textures);
 
     void renderText(GuiShader& shader, const glm::vec2& viewport);
+
+    void show();
+    void hide();
+    bool isHidden() const;
 
   private:
     static int uidCount;
@@ -41,5 +42,5 @@ class GuiContainer final {
     std::vector<std::unique_ptr<GuiText>> m_guiTexts;
     gl::Font* mp_font;
 
-    bool m_isHidden = true;
+    bool m_isHidden = false;
 };

@@ -15,16 +15,6 @@ GuiContainer::GuiContainer(gl::Font& font)
 {
 }
 
-void GuiContainer::hide()
-{
-    m_isHidden = true;
-}
-
-void GuiContainer::show()
-{
-    m_isHidden = false;
-}
-
 GuiRectangle* GuiContainer::addRectangle()
 {
     return m_guiRectangles.emplace_back(std::make_unique<GuiRectangle>()).get();
@@ -43,6 +33,9 @@ void GuiContainer::renderRects(GuiShader& shader, const glm::vec2& viewport,
     // and over
 
     for (auto& rect : m_guiRectangles) {
+        if (rect->isHidden()) {
+            continue;
+        }
         auto transform = rect->getRenderTransform(viewport);
         shader.updateTransform(transform);
 
@@ -63,4 +56,19 @@ void GuiContainer::renderText(GuiShader& shader, const glm::vec2& viewport)
     for (auto& text : m_guiTexts) {
         text->render(shader, viewport);
     }
+}
+
+void GuiContainer::show()
+{
+    m_isHidden = false;
+}
+
+void GuiContainer::hide()
+{
+    m_isHidden = true;
+}
+
+bool GuiContainer::isHidden() const
+{
+    return m_isHidden;
 }

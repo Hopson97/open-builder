@@ -30,14 +30,18 @@ void GuiMaster::render()
     auto quad = m_quadVao.getDrawable();
     quad.bind();
     for (auto& container : m_containers) {
-        container->renderRects(m_shader, viewport, quad, m_textures);
+        if (!container->isHidden()) {
+            container->renderRects(m_shader, viewport, quad, m_textures);
+        }
     }
 
     m_font.bindTexture();
     glCullFace(GL_FRONT);
     glEnable(GL_BLEND);
     for (auto& container : m_containers) {
-        container->renderText(m_shader, viewport);
+        if (!container->isHidden()) {
+            container->renderText(m_shader, viewport);
+        }
     }
 
     glDisable(GL_BLEND);

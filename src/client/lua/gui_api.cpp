@@ -21,7 +21,7 @@ void addGuiContainerApi(ScriptEngine& engine)
 {
     auto containerApi = engine.lua.new_usertype<GuiContainer>("GuiContainer");
 
-    containerApi["show"] = &GuiContainer::hide;
+    containerApi["show"] = &GuiContainer::show;
     containerApi["hide"] = &GuiContainer::hide;
     containerApi["addRect"] = &GuiContainer::addRectangle;
     containerApi["addText"] = &GuiContainer::addText;
@@ -37,6 +37,8 @@ void addGuiRectangleApi(ScriptEngine& engine)
 {
     auto rectangleApi = engine.lua.new_usertype<GuiRectangle>("GuiRectangle");
 
+    rectangleApi["show"] = &GuiRectangle::show;
+    rectangleApi["hide"] = &GuiRectangle::hide;
     rectangleApi["position"] = sol::property(&GuiRectangle::setPosition);
     rectangleApi["size"] = sol::property(&GuiRectangle::setSize);
     rectangleApi["texture"] = sol::property(&GuiRectangle::setTexture);
@@ -47,6 +49,8 @@ void addGuiTextApi(ScriptEngine& engine)
 {
     auto textApi = engine.lua.new_usertype<GuiText>("GuiText");
 
+    textApi["show"] = &GuiText::show;
+    textApi["hide"] = &GuiText::hide;
     textApi["position"] = sol::property(&GuiText::setPosition);
     textApi["text"] = sol::property(&GuiText::setText);
     textApi["size"] = sol::property(&GuiText::setFontSize);
