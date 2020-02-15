@@ -13,9 +13,9 @@ GuiMaster::GuiMaster(float viewportWidth, float viewportHeight)
     m_shader.updateProjection(m_projection);
 }
 
-void GuiMaster::addGui(GuiContainer& container)
+GuiContainer* GuiMaster::addGui()
 {
-    m_containers.push_back(&container);
+    return &m_containers.emplace_back();
 }
 
 void GuiMaster::render()
@@ -24,8 +24,8 @@ void GuiMaster::render()
     auto quad = m_quadVao.getDrawable();
     quad.bind();
     m_shader.bind();
-    for (auto container : m_containers) {
-        container->render(m_shader, viewport, quad, m_textures);
+    for (auto& container : m_containers) {
+        container.render(m_shader, viewport, quad, m_textures);
     }
 }
 

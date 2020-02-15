@@ -14,17 +14,16 @@ void addGuiMasterApi(ScriptEngine& engine, GuiMaster& guiMaster)
         return guiMaster.getTexture(path);
     };
 
-    gui["add"] = [&guiMaster](GuiContainer& container) { guiMaster.addGui(container); };
+    gui["makeGui"] = [&guiMaster]() { return guiMaster.addGui(); };
 }
 
 void addGuiContainerApi(ScriptEngine& engine)
 {
-    auto containerApi = engine.lua.new_usertype<GuiContainer>(
-        "GuiContainer", sol::constructors<GuiContainer>());
+    auto containerApi = engine.lua.new_usertype<GuiContainer>("GuiContainer");
 
     containerApi["show"] = &GuiContainer::hide;
     containerApi["hide"] = &GuiContainer::hide;
-    containerApi["add"] = &GuiContainer::addRectangle;
+    containerApi["addRect"] = &GuiContainer::addRectangle;
 }
 
 void addGuiDimensionApi(ScriptEngine& engine)
@@ -35,10 +34,7 @@ void addGuiDimensionApi(ScriptEngine& engine)
 
 void addGuiRectangleApi(ScriptEngine& engine)
 {
-    auto rectangleApi = engine.lua.new_usertype<GuiRectangle>(
-        "GuiRectangle",
-        sol::constructors<GuiRectangle(),
-                          GuiRectangle(const GuiDimension&, const GuiDimension&)>());
+    auto rectangleApi = engine.lua.new_usertype<GuiRectangle>("GuiRectangle");
 
     rectangleApi["position"] = sol::property(&GuiRectangle::setPosition);
     rectangleApi["size"] = sol::property(&GuiRectangle::setSize);

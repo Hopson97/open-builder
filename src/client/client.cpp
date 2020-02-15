@@ -341,6 +341,9 @@ void Client::update(float dt, float frameTime)
     //       in the script then it will cause a crash
     // sol::function p_update = m_lua.lua["update"];
     // p_update(dt);
+
+    sol::function f = m_lua.lua["spinner"];
+    f(dt);
 }
 
 void Client::render(int width, int height)

@@ -2,12 +2,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-GuiRectangle::GuiRectangle(const GuiDimension& position, const GuiDimension& size)
-    : m_position(position)
-    , m_size(size)
-{
-}
-
 glm::mat4 GuiRectangle::getRenderTransform(const glm::vec2& viewport) const
 {
     glm::vec2 positionTransform = m_position.apply(viewport.x, viewport.y);

@@ -14,7 +14,7 @@ class GuiMaster final {
   public:
     GuiMaster(float viewportWidth, float viewportHeight);
 
-    void addGui(GuiContainer& container);
+    GuiContainer* addGui();
 
     void render();
 
@@ -26,7 +26,7 @@ class GuiMaster final {
 
   private:
     // Pointers to containers (stored in lua or elsewhere)
-    std::vector<GuiContainer*> m_containers;
+    std::vector<GuiContainer> m_containers;
 
     // Maps a string to a texture index of m_textures
     std::unordered_map<std::string, int> m_textureIds;

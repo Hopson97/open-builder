@@ -4,6 +4,7 @@
 #include "gui_rectangle.h"
 #include "gui_shader.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 int GuiContainer::uidCount = 0;
 
@@ -22,9 +23,9 @@ void GuiContainer::show()
     m_isHidden = false;
 }
 
-void GuiContainer::addRectangle(GuiRectangle& rectangle)
+GuiRectangle* GuiContainer::addRectangle()
 {
-    m_guiRectangles.push_back(&rectangle);
+    return &m_guiRectangles.emplace_back();
 }
 
 void GuiContainer::render(GuiShader& shader, const glm::vec2& viewport,
@@ -33,14 +34,15 @@ void GuiContainer::render(GuiShader& shader, const glm::vec2& viewport,
 {
     // TODO Maybe render to a framebuffer to avoid having to bind a bunch of textures over
     // and over
-    for (auto rect : m_guiRectangles) {
-        auto transform = rect->getRenderTransform(viewport);
+
+    for (auto& rect : m_guiRectangles) {
+        auto transform = rect.getRenderTransform(viewport);
         shader.updateTransform(transform);
 
-        auto& colour = rect->getColour();
+        auto& colour = rect.getColour();
         shader.updateColour(colour);
 
-        int texture = rect->getTexture();
+        int texture = rect.getTexture();
         if (texture > -1) {
             textures.at(texture).bind();
         }
