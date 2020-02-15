@@ -17,7 +17,7 @@ class GuiText {
     void setFontSize(float size);
     void setText(const std::string& text);
 
-    void render(GuiShader& shader);
+    void render(GuiShader& shader, const glm::vec2& viewport);
 
   private:
     void updateGeometry();
@@ -25,9 +25,9 @@ class GuiText {
     gl::VertexArray m_textQuads;
     std::string m_text;
     GuiDimension m_position;
-    float m_fontSize;
+    float m_fontSize = 0;
 
-    const Font* mp_font;
+    const Font* mp_font = nullptr;
 
     bool m_isGeometryUpdateNeeded = true;
 };

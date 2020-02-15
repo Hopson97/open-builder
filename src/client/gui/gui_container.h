@@ -25,8 +25,11 @@ class GuiContainer final {
     GuiRectangle* addRectangle();
     GuiText* addText();
 
-    void render(GuiShader& shader, const glm::vec2& viewport, const gl::Drawable& quad,
-                const std::vector<gl::Texture2d>& textures);
+    void renderRects(GuiShader& shader, const glm::vec2& viewport,
+                     const gl::Drawable& quad,
+                     const std::vector<gl::Texture2d>& textures);
+
+    void renderText(GuiShader& shader, const glm::vec2& viewport);
 
   private:
     static int uidCount;

@@ -106,11 +106,8 @@ void GuiText::setText(const std::string& text)
     m_isGeometryUpdateNeeded = true;
 }
 
-void GuiText::render(GuiShader& shader)
+void GuiText::render(GuiShader& shader, const glm::vec2& viewport)
 {
-    // TODO Move this to some text rendering thing rather than here
-    glCullFace(GL_FRONT);
-    glEnable(GL_BLEND);
     if (!mp_font) {
         return;
     }
@@ -120,13 +117,15 @@ void GuiText::render(GuiShader& shader)
     glm::mat4 modelMatrix{1.0f};
     float scale = m_fontSize / mp_font->getBitmapSize();
 
-    glm::mat4 model{1.0f};
+    auto transform = m_position.apply(viewport.x, viewport.y);
 
-    translateMatrix(model, glm::vec3{500, 500, 0});
-    rotateMatrix(model, {180.0f, 0.0f, 0.0f});
-    scaleMatrix(model, scale);
+    std::cout << transform.x << " " << transform.y << std::endl;
 
-    shader.updateTransform(model);
+    translateMatrix(modelMatrix, {transform.x, transform.y, 0.0f});
+    rotateMatrix(modelMatrix, {180.0f, 0.0f, 0.0f});
+    scaleMatrix(modelMatrix, scale);
+
+    shader.updateTransform(modelMatrix);
 
     m_textQuads.getDrawable().bindAndDraw();
     glCullFace(GL_BACK);

@@ -23,13 +23,23 @@ GuiContainer* GuiMaster::addGui()
 
 void GuiMaster::render()
 {
+    m_shader.bind();
+
     glm::vec2 viewport = m_viewport / 100.0f;
     auto quad = m_quadVao.getDrawable();
     quad.bind();
-    m_shader.bind();
     for (auto& container : m_containers) {
-        container->render(m_shader, viewport, quad, m_textures);
+        container->renderRects(m_shader, viewport, quad, m_textures);
     }
+
+    m_font.bindTexture();
+    glCullFace(GL_FRONT);
+    glEnable(GL_BLEND);
+    for (auto& container : m_containers) {
+        container->renderText(m_shader, m_viewport);
+    }
+
+    glDisable(GL_BLEND);
 }
 
 int GuiMaster::getTexture(const std::string& textureName)
