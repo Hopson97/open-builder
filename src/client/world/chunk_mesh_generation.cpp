@@ -37,9 +37,9 @@ bool makeFace(const VoxelDataManager& voxelData, voxel_t thisId, voxel_t compare
 
 ChunkMeshCollection makeChunkMesh(const Chunk& chunk, const VoxelDataManager& voxelData)
 {
-    sf::Clock clock;
-    static int count = 0;
-    static float totalTime = 0;
+    // sf::Clock clock;
+    // static int count = 0;
+    // static float totalTime = 0;
     ChunkMeshCollection meshes(chunk.getPosition());
 
     for (int y = 0; y < CHUNK_SIZE; y++) {
@@ -104,8 +104,8 @@ ChunkMeshCollection makeChunkMesh(const Chunk& chunk, const VoxelDataManager& vo
             }
         }
     }
-    //totalTime += clock.getElapsedTime().asSeconds() * 1000.0f;
-    //if (count++ % 100 == 0) {
+    // totalTime += clock.getElapsedTime().asSeconds() * 1000.0f;
+    // if (count++ % 100 == 0) {
     //    std::cout << count << ' ' << totalTime << ' ' << totalTime / count << '\n';
     //}
     return meshes;
