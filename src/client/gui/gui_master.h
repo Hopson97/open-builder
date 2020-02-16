@@ -7,6 +7,7 @@
 #include "gui_container.h"
 #include "gui_shader.h"
 #include <memory>
+#include <unordered_map>
 
 /**
  * @brief Render master for the GUIs
