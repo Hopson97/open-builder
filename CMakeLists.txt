@@ -59,6 +59,7 @@ function (link_exe target)
         ob-server
         glad
         enet
+        fastnoise
         ${CMAKE_DL_LIBS}
     )
 endfunction(link_exe)

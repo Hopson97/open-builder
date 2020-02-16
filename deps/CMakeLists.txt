@@ -1,8 +1,11 @@
-#Glad
+# GLAD
 add_library(glad glad/glad.c)
 
-#enet
+# ENet
 add_library(enet enet/enet_impl.cpp)
 
-#lua
+# Lua
 add_subdirectory(lua)
+
+# Fast Noise
+add_library(fastnoise FastNoise/FastNoise.cpp)
