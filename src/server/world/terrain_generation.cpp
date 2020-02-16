@@ -114,7 +114,7 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
 std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float seed)
 {
     NoiseOptions biomeMapNoise;
-    biomeMapNoise.amplitude = 100;
+    biomeMapNoise.amplitude = 120;
     biomeMapNoise.octaves = 4;
     biomeMapNoise.smoothness = 200.f;
     biomeMapNoise.roughness = 0.5f;
@@ -142,7 +142,7 @@ void createTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& heightMap,
         for (int x = 0; x < CHUNK_SIZE; x++) {
             int height = heightMap[z * CHUNK_SIZE + x];
             int biomeVal = biomeMap[z * CHUNK_SIZE + x];
-            auto& biome = biomeData.getBiomeData(biomeVal > 60 ? 0 : 1);
+            auto& biome = biomeData.getBiomeData(biomeVal > 50 ? 0 : 1);
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 int blockY = chunk.getPosition().y * CHUNK_SIZE + y;
                 block_t block = 0;
@@ -186,7 +186,7 @@ void generateTerrain(ChunkManager& chunkManager, int chunkX, int chunkZ,
     ChunkPosition position{chunkX, 0, chunkZ};
 
     auto heightMap = createChunkHeightMap(position, worldSize, seed);
-    auto biomeMap = createBiomeMap(position, seed * 2);
+    auto biomeMap = createBiomeMap(position, 9876);
     int maxHeight = *std::max_element(heightMap.cbegin(), heightMap.cend());
 
     for (int y = 0; y < std::max(1, maxHeight / CHUNK_SIZE + 1); y++) {
