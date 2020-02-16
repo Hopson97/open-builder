@@ -44,12 +44,12 @@ float rounded(const glm::vec2& coord)
     return b * 0.9f;
 }
 
-float getNoiseAt(const glm::vec2& blockPosition, const glm::vec2& chunkPosition,
+float getNoiseAt(const glm::vec2& voxelPosition, const glm::vec2& chunkPosition,
                  const NoiseOptions& options, float seed)
 {
     // Get voxel X/Z positions
-    float voxelX = blockPosition.x + chunkPosition.x * CHUNK_SIZE;
-    float voxelZ = blockPosition.y + chunkPosition.y * CHUNK_SIZE;
+    float voxelX = voxelPosition.x + chunkPosition.x * CHUNK_SIZE;
+    float voxelZ = voxelPosition.y + chunkPosition.y * CHUNK_SIZE;
 
     // Begin iterating through the octaves
     float value = 0;
@@ -144,33 +144,33 @@ void createTerrain(Chunk& chunk, const std::array<int, CHUNK_AREA>& heightMap,
             int biomeVal = biomeMap[z * CHUNK_SIZE + x];
             auto& biome = biomeData.getBiomeData(biomeVal > 50 ? 0 : 1);
             for (int y = 0; y < CHUNK_SIZE; y++) {
-                int blockY = chunk.getPosition().y * CHUNK_SIZE + y;
-                block_t block = 0;
+                int voxelY = chunk.getPosition().y * CHUNK_SIZE + y;
+                voxel_t voxel = 0;
 
-                if (blockY > height) {
-                    if (blockY < WATER_LEVEL) {
-                        block = voxelData.getVoxelId(CommonVoxel::Water);
+                if (voxelY > height) {
+                    if (voxelY < WATER_LEVEL) {
+                        voxel = voxelData.getVoxelId(CommonVoxel::Water);
                     }
                 }
-                else if (blockY == height) {
-                    if (blockY < WATER_LEVEL + 3) {
-                        block = voxelData.getVoxelId(CommonVoxel::Sand);
+                else if (voxelY == height) {
+                    if (voxelY < WATER_LEVEL + 3) {
+                        voxel = voxelData.getVoxelId(CommonVoxel::Sand);
                     }
                     else {
                         // Allows lua to override the top voxel (eg use dirt if they place
                         // a tree)
-                        chunk.qSetBlock({x, y, z}, biome.topVoxel);
-                        biome.onTopBlockSet(chunk, x, y + 1, z, rng);
+                        chunk.qSetVoxel({x, y, z}, biome.topVoxel);
+                        biome.onTopVoxelSet(chunk, x, y + 1, z, rng);
                     }
                 }
-                else if (blockY > height - biome.depth) {
-                    block = biome.undergroundVoxel;
+                else if (voxelY > height - biome.depth) {
+                    voxel = biome.undergroundVoxel;
                 }
                 else {
-                    block = voxelData.getVoxelId(CommonVoxel::Stone);
+                    voxel = voxelData.getVoxelId(CommonVoxel::Stone);
                 }
-                if (block > 0) {
-                    chunk.qSetBlock({x, y, z}, block);
+                if (voxel > 0) {
+                    chunk.qSetVoxel({x, y, z}, voxel);
                 }
             }
         }

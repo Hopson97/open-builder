@@ -126,7 +126,7 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     auto& floraDrawables = m_chunkRenderables[static_cast<int>(ChunkRenderType::Flora)];
 
     for (auto& meshes : m_chunkMeshes) {
-        bufferChunks(meshes.blockMesh, solidDrawables);
+        bufferChunks(meshes.voxelMesh, solidDrawables);
         bufferChunks(meshes.fluidMesh, fluidDrawables);
         bufferChunks(meshes.floraMesh, floraDrawables);
     }
@@ -134,12 +134,12 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
 
     float time = m_animationTimer.getElapsedTime().asSeconds();
     ChunkRenderResult result;
-    // Solid blocks
+    // Solid voxels
     m_solidShader.program.bind();
     gl::loadUniform(m_solidShader.projectionViewLocation, projectionViewMatrix);
     ::renderChunks(solidDrawables, frustum, m_solidShader.chunkPositionLocation, result);
 
-    // Fluid blocks
+    // Fluid voxels
     m_fluidShader.program.bind();
     gl::loadUniform(m_fluidShader.projectionViewLocation, projectionViewMatrix);
     gl::loadUniform(m_fluidShader.timeLocation, time);
@@ -151,7 +151,7 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     glCheck(glCullFace(GL_BACK));
     glCheck(glDisable(GL_BLEND));
 
-    // Flora blocks
+    // Flora voxels
     m_floraShader.program.bind();
     gl::loadUniform(m_floraShader.projectionViewLocation, projectionViewMatrix);
     gl::loadUniform(m_floraShader.timeLocation, time);

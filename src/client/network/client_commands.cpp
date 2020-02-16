@@ -12,11 +12,11 @@ void Client::sendPlayerPosition(const glm::vec3& position)
     NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
 }
 
-void Client::sendBlockUpdate(const BlockUpdate& update)
+void Client::sendVoxelUpdate(const VoxelUpdate& update)
 {
     sf::Packet packet;
-    packet << ServerCommand::BlockEdit << update.position.x << update.position.y
-           << update.position.z << update.block;
+    packet << ServerCommand::VoxelEdit << update.position.x << update.position.y
+           << update.position.z << update.voxel;
     NetworkHost::sendToPeer(mp_serverPeer, packet, 0, 0);
 }
 
@@ -99,17 +99,17 @@ void Client::onChunkData(sf::Packet& packet)
         Chunk& chunk = m_chunks.manager.addChunk(position);
 
         u32 size;
-        CompressedBlocks compressed;
+        CompressedVoxels compressed;
         packet >> size;
         for (u32 i = 0; i < size; i++) {
-            block_t type;
+            voxel_t type;
             u16 count;
             packet >> type >> count;
             compressed.emplace_back(type, count);
         }
 
-        // Uncompress the block data
-        chunk.blocks = decompressBlockData(compressed);
+        // Uncompress the voxel data
+        chunk.voxels = decompressVoxelData(compressed);
 
         // Add to chunk updates
         m_chunks.updates.push_back(position);
@@ -124,15 +124,15 @@ void Client::onSpawnPoint(sf::Packet& packet)
     }
 }
 
-void Client::onBlockUpdate(sf::Packet& packet)
+void Client::onVoxelUpdate(sf::Packet& packet)
 {
     u16 count = 0;
     packet >> count;
     for (u32 i = 0; i < count; i++) {
-        BlockUpdate blockUpdate;
-        packet >> blockUpdate.position.x >> blockUpdate.position.y >>
-            blockUpdate.position.z >> blockUpdate.block;
-        m_chunks.blockUpdates.push_back(blockUpdate);
+        VoxelUpdate voxelUpdate;
+        packet >> voxelUpdate.position.x >> voxelUpdate.position.y >>
+            voxelUpdate.position.z >> voxelUpdate.voxel;
+        m_chunks.voxelUpdates.push_back(voxelUpdate);
     }
 }
 
@@ -151,7 +151,7 @@ void Client::onPlayerSkinReceive(sf::Packet& packet)
 void Client::onGameRegistryData(sf::Packet& packet)
 {
     //  ====
-    //  Get all blocks from the server
+    //  Get all voxels from the server
     //
     // Maps tewxture names to their respective IDs in the
     // OpenGL texture array
@@ -166,15 +166,15 @@ void Client::onGameRegistryData(sf::Packet& packet)
         return itr->second;
     };
 
-    u16 numBlocks;
-    packet >> numBlocks;
+    u16 numVoxels;
+    packet >> numVoxels;
     // todo
     // 1. Need to somehow work out the exact amount of textures needed
     // 2. Need to pass in the actual texture pack resolution
-    m_voxelTextures.create(numBlocks * 3, 16);
+    m_voxelTextures.create(numVoxels * 3, 16);
 
-    const std::string texturePath = "texture_packs/" + m_texturePack + "/blocks/";
-    for (u16 i = 0; i < numBlocks; i++) {
+    const std::string texturePath = "texture_packs/" + m_texturePack + "/voxels/";
+    for (u16 i = 0; i < numVoxels; i++) {
         std::string name;
         std::string textureTop;
         std::string textureSide;

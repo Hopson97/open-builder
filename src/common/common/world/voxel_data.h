@@ -9,7 +9,7 @@
 #include <vector>
 
 enum class VoxelMeshStyle : u8 {
-    Block = 0,
+    Voxel = 0,
     Cross = 1,
     None = 2,
 
@@ -30,7 +30,7 @@ enum class VoxelType : u8 {
  * The purpose of this is to give quick access to common voxel from
  * client/server engine
  */
-enum class CommonVoxel : block_t {
+enum class CommonVoxel : voxel_t {
     Air = 0,
     Stone,
     Sand,
@@ -40,7 +40,7 @@ enum class CommonVoxel : block_t {
 };
 
 struct VoxelData {
-    block_t id = 0;
+    voxel_t id = 0;
     std::string name;
     std::string topTexture;
     std::string sideTexture;
@@ -51,7 +51,7 @@ struct VoxelData {
     GLuint sideTextureId = 0;
     GLuint bottomTextureId = 0;
 
-    VoxelMeshStyle meshStyle = VoxelMeshStyle::Block;
+    VoxelMeshStyle meshStyle = VoxelMeshStyle::Voxel;
     VoxelType type = VoxelType::Solid;
 
     bool isCollidable = true;
@@ -62,18 +62,18 @@ class VoxelDataManager {
     VoxelDataManager();
     void initCommonVoxelTypes();
 
-    block_t addVoxelData(const VoxelData& voxel);
+    voxel_t addVoxelData(const VoxelData& voxel);
 
-    const VoxelData& getVoxelData(block_t id) const;
+    const VoxelData& getVoxelData(voxel_t id) const;
     const VoxelData& getVoxelData(const std::string& name) const;
 
-    block_t getVoxelId(CommonVoxel commonVoxel) const;
-    block_t getVoxelId(const std::string& name) const;
+    voxel_t getVoxelId(CommonVoxel commonVoxel) const;
+    voxel_t getVoxelId(const std::string& name) const;
 
     const std::vector<VoxelData>& getVoxelData() const;
 
   private:
     std::vector<VoxelData> m_voxels;
-    std::vector<block_t> m_commonVoxels;
-    std::unordered_map<std::string, block_t> m_voxelMap;
+    std::vector<voxel_t> m_commonVoxels;
+    std::unordered_map<std::string, voxel_t> m_voxelMap;
 };

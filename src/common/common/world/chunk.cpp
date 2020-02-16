@@ -9,37 +9,37 @@ Chunk::Chunk(ChunkManager& manager, const ChunkPosition& position)
 {
 }
 
-block_t Chunk::qGetBlock(const BlockPosition& blockPosition) const
+voxel_t Chunk::qGetVoxel(const VoxelPosition& voxelPosition) const
 {
-    return blocks.at(toLocalBlockIndex(blockPosition));
+    return voxels.at(toLocalVoxelIndex(voxelPosition));
 }
 
-void Chunk::qSetBlock(const BlockPosition& blockPosition, block_t block)
+void Chunk::qSetVoxel(const VoxelPosition& voxelPosition, voxel_t voxel)
 {
-    blocks.at(toLocalBlockIndex(blockPosition)) = block;
+    voxels.at(toLocalVoxelIndex(voxelPosition)) = voxel;
 }
 
 // clang-format off
-block_t Chunk::getBlock(const BlockPosition& blockPosition) const
+voxel_t Chunk::getVoxel(const VoxelPosition& voxelPosition) const
 {
-    if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
-        blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE ||
-        blockPosition.z < 0 || blockPosition.z >= CHUNK_SIZE) {
-        return mp_manager.getBlock(
-            toGlobalBlockPosition(blockPosition, m_position));
+    if (voxelPosition.x < 0 || voxelPosition.x >= CHUNK_SIZE ||
+        voxelPosition.y < 0 || voxelPosition.y >= CHUNK_SIZE ||
+        voxelPosition.z < 0 || voxelPosition.z >= CHUNK_SIZE) {
+        return mp_manager.getVoxel(
+            toGlobalVoxelPosition(voxelPosition, m_position));
     }
-    return qGetBlock(blockPosition);
+    return qGetVoxel(voxelPosition);
 }
 
-void Chunk::setBlock(const BlockPosition& blockPosition, block_t block)
+void Chunk::setVoxel(const VoxelPosition& voxelPosition, voxel_t voxel)
 {
-    if (blockPosition.x < 0 || blockPosition.x >= CHUNK_SIZE ||
-        blockPosition.y < 0 || blockPosition.y >= CHUNK_SIZE ||
-        blockPosition.z < 0 || blockPosition.z >= CHUNK_SIZE) {
-        return mp_manager.setBlock(
-            toGlobalBlockPosition(blockPosition, m_position), block);
+    if (voxelPosition.x < 0 || voxelPosition.x >= CHUNK_SIZE ||
+        voxelPosition.y < 0 || voxelPosition.y >= CHUNK_SIZE ||
+        voxelPosition.z < 0 || voxelPosition.z >= CHUNK_SIZE) {
+        return mp_manager.setVoxel(
+            toGlobalVoxelPosition(voxelPosition, m_position), voxel);
     }
-    qSetBlock(blockPosition, block);
+    qSetVoxel(voxelPosition, voxel);
 }
 // clang-format on
 
@@ -48,38 +48,38 @@ const ChunkPosition& Chunk::getPosition() const
     return m_position;
 }
 
-CompressedBlocks compressBlockData(const BlockArray& blocks)
+CompressedVoxels compressVoxelData(const VoxelArray& voxels)
 {
-    CompressedBlocks compressed;
-    block_t currentBlock = blocks[0];
-    u32 blockCount = 1;
+    CompressedVoxels compressed;
+    voxel_t currentVoxel = voxels[0];
+    u32 voxelCount = 1;
 
-    for (unsigned i = 1; i < blocks.size(); i++) {
-        auto block = blocks[i];
-        if (block == currentBlock) {
-            blockCount++;
+    for (unsigned i = 1; i < voxels.size(); i++) {
+        auto voxel = voxels[i];
+        if (voxel == currentVoxel) {
+            voxelCount++;
         }
         else {
-            compressed.emplace_back(currentBlock, blockCount);
-            currentBlock = blocks[i];
-            blockCount = 1;
+            compressed.emplace_back(currentVoxel, voxelCount);
+            currentVoxel = voxels[i];
+            voxelCount = 1;
         }
     }
-    compressed.emplace_back(currentBlock, blockCount);
+    compressed.emplace_back(currentVoxel, voxelCount);
     return compressed;
 }
 
-BlockArray decompressBlockData(const CompressedBlocks& blocks)
+VoxelArray decompressVoxelData(const CompressedVoxels& voxels)
 {
-    BlockArray blockData;
-    int blockPointer = 0;
-    for (auto& block : blocks) {
-        auto type = block.first;
-        auto count = block.second;
+    VoxelArray voxelData;
+    int voxelPointer = 0;
+    for (auto& voxel : voxels) {
+        auto type = voxel.first;
+        auto count = voxel.second;
 
         for (u16 i = 0; i < count; i++) {
-            blockData[blockPointer++] = type;
+            voxelData[voxelPointer++] = type;
         }
     }
-    return blockData;
+    return voxelData;
 }

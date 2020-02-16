@@ -4,9 +4,9 @@
 
 TEST_CASE("Coordinate systems can be correctly converted between")
 {
-    SECTION("Block positions can be correctly converted to chunk positions")
+    SECTION("Voxel positions can be correctly converted to chunk positions")
     {
-        BlockPosition position;
+        VoxelPosition position;
         ChunkPosition converted;
 
         position = {0, 0, 0};
@@ -26,36 +26,36 @@ TEST_CASE("Coordinate systems can be correctly converted between")
         REQUIRE(toChunkPosition(position) == converted);
     }
 
-    SECTION("Block positions can be correctly converted to an array index")
+    SECTION("Voxel positions can be correctly converted to an array index")
     {
-        BlockPosition position;
+        VoxelPosition position;
         int converted;
 
         position = {0, 0, 0};
         converted = 0;
-        REQUIRE(toLocalBlockIndex(position) == converted);
+        REQUIRE(toLocalVoxelIndex(position) == converted);
     }
 
-    SECTION("Block positions can be converted to local block postions")
+    SECTION("Voxel positions can be converted to local voxel postions")
     {
-        BlockPosition position;
-        BlockPosition converted;
+        VoxelPosition position;
+        VoxelPosition converted;
 
         position = {0, 0, 0};
         converted = {0, 0, 0};
-        REQUIRE(toLocalBlockPosition(position) == converted);
+        REQUIRE(toLocalVoxelPosition(position) == converted);
 
         position = {CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE};
         converted = {0, 0, 0};
-        REQUIRE(toLocalBlockPosition(position) == converted);
+        REQUIRE(toLocalVoxelPosition(position) == converted);
 
         position = {CHUNK_SIZE + 10, CHUNK_SIZE - 1, CHUNK_SIZE};
         converted = {10, CHUNK_SIZE - 1, 0};
-        REQUIRE(toLocalBlockPosition(position) == converted);
+        REQUIRE(toLocalVoxelPosition(position) == converted);
 
         position = {-1, 0, 0};
         converted = {CHUNK_SIZE - 1, 0, 0};
-        REQUIRE(toLocalBlockPosition(position) == converted);
+        REQUIRE(toLocalVoxelPosition(position) == converted);
     }
 
     SECTION("World positions can be converted to chunk positions")
@@ -87,7 +87,7 @@ TEST_CASE("Coordinate systems can be correctly converted between")
         }
     }
 
-    SECTION("World positions can be converted to global block positions")
+    SECTION("World positions can be converted to global voxel positions")
     {
         {
             float x = 10;
@@ -96,9 +96,9 @@ TEST_CASE("Coordinate systems can be correctly converted between")
 
             glm::vec3 worldPosition(x, y, z);
 
-            REQUIRE(toBlockPosition(worldPosition).x == static_cast<i32>(x));
-            REQUIRE(toBlockPosition(worldPosition).y == static_cast<i32>(y));
-            REQUIRE(toBlockPosition(worldPosition).z == static_cast<i32>(z));
+            REQUIRE(toVoxelPosition(worldPosition).x == static_cast<i32>(x));
+            REQUIRE(toVoxelPosition(worldPosition).y == static_cast<i32>(y));
+            REQUIRE(toVoxelPosition(worldPosition).z == static_cast<i32>(z));
         }
         {
             float x = -10;
@@ -107,9 +107,9 @@ TEST_CASE("Coordinate systems can be correctly converted between")
 
             glm::vec3 worldPosition(x, y, z);
 
-            REQUIRE(toBlockPosition(worldPosition).x == static_cast<i32>(x));
-            REQUIRE(toBlockPosition(worldPosition).y == static_cast<i32>(y));
-            REQUIRE(toBlockPosition(worldPosition).z == static_cast<i32>(z));
+            REQUIRE(toVoxelPosition(worldPosition).x == static_cast<i32>(x));
+            REQUIRE(toVoxelPosition(worldPosition).y == static_cast<i32>(y));
+            REQUIRE(toVoxelPosition(worldPosition).z == static_cast<i32>(z));
         }
         {
             float x = -10465;
@@ -118,9 +118,9 @@ TEST_CASE("Coordinate systems can be correctly converted between")
 
             glm::vec3 worldPosition(x, y, z);
 
-            REQUIRE(toBlockPosition(worldPosition).x == static_cast<i32>(x));
-            REQUIRE(toBlockPosition(worldPosition).y == static_cast<i32>(y));
-            REQUIRE(toBlockPosition(worldPosition).z == static_cast<i32>(z));
+            REQUIRE(toVoxelPosition(worldPosition).x == static_cast<i32>(x));
+            REQUIRE(toVoxelPosition(worldPosition).y == static_cast<i32>(y));
+            REQUIRE(toVoxelPosition(worldPosition).z == static_cast<i32>(z));
         }
     }
 }

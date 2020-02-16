@@ -18,8 +18,8 @@ class ChunkManager final {
 
     const Chunk& getChunk(const ChunkPosition& chunk);
 
-    block_t getBlock(const BlockPosition& blockPosition) const;
-    void setBlock(const BlockPosition& blockPosition, block_t block);
+    voxel_t getVoxel(const VoxelPosition& voxelPosition) const;
+    void setVoxel(const VoxelPosition& voxelPosition, voxel_t voxel);
 
     /**
      * @brief Check if a chunk exists at this position

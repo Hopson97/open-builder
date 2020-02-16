@@ -25,9 +25,9 @@
 class Keyboard;
 class GuiText;
 
-struct BlockUpdate {
-    BlockPosition position;
-    block_t block = 0;
+struct VoxelUpdate {
+    VoxelPosition position;
+    voxel_t voxel = 0;
 };
 
 struct Entity final {
@@ -64,7 +64,7 @@ class Client final : public NetworkHost {
     // Network functions; defined in the src/client/network/client_command.cpp
     // directory
     void sendPlayerPosition(const glm::vec3& position);
-    void sendBlockUpdate(const BlockUpdate& update);
+    void sendVoxelUpdate(const VoxelUpdate& update);
     void sendPlayerSkin(const sf::Image& playerSkin);
 
     void onPeerConnect(ENetPeer* peer) override;
@@ -77,7 +77,7 @@ class Client final : public NetworkHost {
     void onSnapshot(sf::Packet& packet);
     void onChunkData(sf::Packet& packet);
     void onSpawnPoint(sf::Packet& packet);
-    void onBlockUpdate(sf::Packet& packet);
+    void onVoxelUpdate(sf::Packet& packet);
     void onPlayerSkinReceive(sf::Packet& packet);
 
     void onGameRegistryData(sf::Packet& packet);
@@ -122,8 +122,8 @@ class Client final : public NetworkHost {
     // Gameplay/ World
     std::array<Entity, 512> m_entities;
 
-    BlockPosition m_currentSelectedBlockPos;
-    bool m_blockSelected = false;
+    VoxelPosition m_currentSelectedVoxelPos;
+    bool m_voxelSelected = false;
 
     Entity* mp_player = nullptr;
     Entity m_externalCamera;
@@ -131,7 +131,7 @@ class Client final : public NetworkHost {
     struct {
         ChunkManager manager;
         std::vector<ChunkPosition> updates;
-        std::vector<BlockUpdate> blockUpdates;
+        std::vector<VoxelUpdate> voxelUpdates;
     } m_chunks;
 
     VoxelDataManager m_voxelData;
@@ -153,5 +153,5 @@ class Client final : public NetworkHost {
     bool m_isMouseLocked = false;
 
     unsigned m_noMeshingCount = 0;
-    bool m_blockMeshing = false;
+    bool m_voxelMeshing = false;
 };

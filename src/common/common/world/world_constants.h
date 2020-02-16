@@ -2,7 +2,7 @@
 
 #include "../types.h"
 
-using block_t = u8;
+using voxel_t = u8;
 
 constexpr int CHUNK_SIZE = 32;
 constexpr int CHUNK_AREA = CHUNK_SIZE * CHUNK_SIZE;

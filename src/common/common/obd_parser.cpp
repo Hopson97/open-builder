@@ -19,9 +19,9 @@ std::string cleanString(const std::string& line)
 }
 } // namespace
 
-std::vector<DataBlock> getObdDataRaw(const std::string& obd)
+std::vector<DataVoxel> getObdDataRaw(const std::string& obd)
 {
-    std::vector<DataBlock> data;
+    std::vector<DataVoxel> data;
     std::istringstream stream(obd);
     std::string line;
 
@@ -30,8 +30,8 @@ std::vector<DataBlock> getObdDataRaw(const std::string& obd)
         if (line.empty()) {
             continue;
         }
-        DataBlock block;
-        block.type = line;
+        DataVoxel voxel;
+        voxel.type = line;
         while (stream >> line) {
             if (line.empty()) {
                 continue;
@@ -42,15 +42,15 @@ std::vector<DataBlock> getObdDataRaw(const std::string& obd)
             else {
                 std::string value;
                 stream >> value;
-                block.data.emplace(line, value);
+                voxel.data.emplace(line, value);
             }
         }
-        data.push_back(std::move(block));
+        data.push_back(std::move(voxel));
     }
     return data;
 }
 
-std::vector<DataBlock> getObdData(const std::string& filename)
+std::vector<DataVoxel> getObdData(const std::string& filename)
 {
     return getObdDataRaw(loadFileContents(filename));
 }

@@ -8,8 +8,8 @@ namespace {
 void addApiChunk(ScriptEngine& script)
 {
     auto chunkApi = script.lua.new_usertype<Chunk>("Chunk");
-    chunkApi["setBlock"] = [&](Chunk& chunk, int x, int y, int z, int block) {
-        chunk.setBlock({x, y, z}, block);
+    chunkApi["setVoxel"] = [&](Chunk& chunk, int x, int y, int z, int voxel) {
+        chunk.setVoxel({x, y, z}, voxel);
     };
 }
 } // namespace

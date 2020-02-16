@@ -27,7 +27,7 @@ Client::Client(const ClientConfig& config)
     , m_guiMaster(config.windowWidth, config.windowHeight)
 {
     // clang-format off
-    m_commandDispatcher.addCommand(ClientCommand::BlockUpdate, &Client::onBlockUpdate);
+    m_commandDispatcher.addCommand(ClientCommand::VoxelUpdate, &Client::onVoxelUpdate);
     m_commandDispatcher.addCommand(ClientCommand::ChunkData, &Client::onChunkData);
     m_commandDispatcher.addCommand(ClientCommand::GameRegistryData, &Client::onGameRegistryData);
     m_commandDispatcher.addCommand(ClientCommand::PlayerJoin, &Client::onPlayerJoin);
@@ -155,31 +155,31 @@ void Client::handleInput(const sf::Window& window, const Keyboard& keyboard)
 void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
                             [[maybe_unused]] int y)
 {
-    // Handle block removal/ block placing events
+    // Handle voxel removal/ voxel placing events
 
-    auto blocks =
-        getIntersectedBlocks(mp_player->position, forwardsVector(mp_player->rotation), 8);
+    auto voxels =
+        getIntersectedVoxels(mp_player->position, forwardsVector(mp_player->rotation), 8);
 
-    BlockPosition& previous = blocks.at(0);
-    for (auto& position : blocks) {
-        auto& voxel = m_voxelData.getVoxelData(m_chunks.manager.getBlock(position));
+    VoxelPosition& previous = voxels.at(0);
+    for (auto& position : voxels) {
+        auto& voxel = m_voxelData.getVoxelData(m_chunks.manager.getVoxel(position));
 
         if (isVoxelSelectable(voxel.type)) {
-            BlockUpdate blockUpdate;
-            blockUpdate.block = button == sf::Mouse::Left ? 0 : 1;
+            VoxelUpdate voxelUpdate;
+            voxelUpdate.voxel = button == sf::Mouse::Left ? 0 : 1;
             if (button == sf::Mouse::Left) {
-                blockUpdate.position = position;
+                voxelUpdate.position = position;
             }
-            else if (previous == toBlockPosition(mp_player->position)) {
-                // prevents players from replacing blocks they're inside of
+            else if (previous == toVoxelPosition(mp_player->position)) {
+                // prevents players from replacing voxels they're inside of
                 break;
             }
             else {
-                blockUpdate.position = previous;
+                voxelUpdate.position = previous;
             }
-            blockUpdate.position = button == sf::Mouse::Left ? position : previous;
-            m_chunks.blockUpdates.push_back(blockUpdate);
-            sendBlockUpdate(blockUpdate);
+            voxelUpdate.position = button == sf::Mouse::Left ? position : previous;
+            m_chunks.voxelUpdates.push_back(voxelUpdate);
+            sendVoxelUpdate(voxelUpdate);
             break;
         }
         previous = position;
@@ -224,37 +224,37 @@ void Client::update(float dt, float frameTime)
 
     sendPlayerPosition(mp_player->position);
 
-    // Update blocks
-    for (auto& blockUpdate : m_chunks.blockUpdates) {
-        auto chunkPosition = toChunkPosition(blockUpdate.position);
+    // Update voxels
+    for (auto& voxelUpdate : m_chunks.voxelUpdates) {
+        auto chunkPosition = toChunkPosition(voxelUpdate.position);
         m_chunks.manager.ensureNeighbours(chunkPosition);
-        m_chunks.manager.setBlock(blockUpdate.position, blockUpdate.block);
+        m_chunks.manager.setVoxel(voxelUpdate.position, voxelUpdate.voxel);
         m_chunks.updates.push_back(chunkPosition);
 
         auto p = chunkPosition;
-        auto localBlockPostion = toLocalBlockPosition(blockUpdate.position);
-        if (localBlockPostion.x == 0) {
+        auto localVoxelPostion = toLocalVoxelPosition(voxelUpdate.position);
+        if (localVoxelPostion.x == 0) {
             m_chunks.updates.push_back({p.x - 1, p.y, p.z});
         }
-        else if (localBlockPostion.x == CHUNK_SIZE - 1) {
+        else if (localVoxelPostion.x == CHUNK_SIZE - 1) {
             m_chunks.updates.push_back({p.x + 1, p.y, p.z});
         }
 
-        if (localBlockPostion.y == 0) {
+        if (localVoxelPostion.y == 0) {
             m_chunks.updates.push_back({p.x, p.y - 1, p.z});
         }
-        else if (localBlockPostion.y == CHUNK_SIZE - 1) {
+        else if (localVoxelPostion.y == CHUNK_SIZE - 1) {
             m_chunks.updates.push_back({p.x, p.y + 1, p.z});
         }
 
-        if (localBlockPostion.z == 0) {
+        if (localVoxelPostion.z == 0) {
             m_chunks.updates.push_back({p.x, p.y, p.z - 1});
         }
-        else if (localBlockPostion.z == CHUNK_SIZE - 1) {
+        else if (localVoxelPostion.z == CHUNK_SIZE - 1) {
             m_chunks.updates.push_back({p.x, p.y, p.z + 1});
         }
     }
-    m_chunks.blockUpdates.clear();
+    m_chunks.voxelUpdates.clear();
 
     auto playerChunk = worldToChunkPosition(mp_player->position);
     auto distanceToPlayer = [&playerChunk](const ChunkPosition& chunkPosition) {
@@ -286,12 +286,12 @@ void Client::update(float dt, float frameTime)
         }
 
         if (m_noMeshingCount != m_chunks.updates.size()) {
-            m_blockMeshing = false;
+            m_voxelMeshing = false;
         }
 
         // Find first "meshable" chunk
         int count = 0;
-        if (!m_blockMeshing) {
+        if (!m_voxelMeshing) {
             m_noMeshingCount = 0;
             for (auto itr = m_chunks.updates.cbegin(); itr != m_chunks.updates.cend();) {
                 if (m_chunks.manager.hasNeighbours(*itr)) {
@@ -315,20 +315,20 @@ void Client::update(float dt, float frameTime)
                 }
             }
             if (m_noMeshingCount == m_chunks.updates.size()) {
-                m_blockMeshing = true;
+                m_voxelMeshing = true;
             }
         }
     }
 
-    // Determine if a player is selecting a block & if so, which
-    m_blockSelected = false;
-    auto blocks =
-        getIntersectedBlocks(mp_player->position, forwardsVector(mp_player->rotation), 8);
-    for (auto& position : blocks) {
-        auto& voxel = m_voxelData.getVoxelData(m_chunks.manager.getBlock(position));
+    // Determine if a player is selecting a voxel & if so, which
+    m_voxelSelected = false;
+    auto voxels =
+        getIntersectedVoxels(mp_player->position, forwardsVector(mp_player->rotation), 8);
+    for (auto& position : voxels) {
+        auto& voxel = m_voxelData.getVoxelData(m_chunks.manager.getVoxel(position));
         if (isVoxelSelectable(voxel.type)) {
-            m_currentSelectedBlockPos = position;
-            m_blockSelected = true;
+            m_currentSelectedVoxelPos = position;
+            m_voxelSelected = true;
             break;
         }
     }
@@ -375,7 +375,7 @@ void Client::render(int width, int height)
     m_voxelTextures.bind();
 
     bool isPlayerInWater =
-        m_chunks.manager.getBlock(toBlockPosition(mp_player->position)) ==
+        m_chunks.manager.getVoxel(toVoxelPosition(mp_player->position)) ==
         m_voxelData.getVoxelId(CommonVoxel::Water);
     auto result = m_chunkRenderer.renderChunks(mp_player->position, m_frustum,
                                                playerProjectionView, isPlayerInWater);
@@ -383,16 +383,16 @@ void Client::render(int width, int height)
     m_debugStats.renderedChunks = result.chunksRendered;
 
     // Render selection box
-    if (m_blockSelected) {
+    if (m_voxelSelected) {
         glCheck(glEnable(GL_BLEND));
         glCheck(glEnable(GL_LINE_SMOOTH));
         glCheck(glLineWidth(2.0));
         m_selectionShader.program.bind();
         glm::mat4 modelMatrix{1.0};
         float size = 1.005f;
-        translateMatrix(modelMatrix, {m_currentSelectedBlockPos.x - (size - 1) / 2,
-                                      m_currentSelectedBlockPos.y - (size - 1) / 2,
-                                      m_currentSelectedBlockPos.z - (size - 1) / 2});
+        translateMatrix(modelMatrix, {m_currentSelectedVoxelPos.x - (size - 1) / 2,
+                                      m_currentSelectedVoxelPos.y - (size - 1) / 2,
+                                      m_currentSelectedVoxelPos.z - (size - 1) / 2});
         scaleMatrix(modelMatrix, size);
         gl::loadUniform(m_selectionShader.modelLocation, modelMatrix);
         gl::loadUniform(m_selectionShader.projectionViewLocation, playerProjectionView);
@@ -417,7 +417,7 @@ void Client::render(int width, int height)
             DebugStats& d = m_debugStats;
             glm::vec3& p = mp_player->position;
             glm::vec3& r = mp_player->rotation;
-            auto bp = toLocalBlockPosition(p.x, p.y, p.z);
+            auto bp = toLocalVoxelPosition(p.x, p.y, p.z);
             auto cp = toChunkPosition(p.x, p.y, p.z);
 
             std::ostringstream debugText;

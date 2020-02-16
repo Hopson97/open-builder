@@ -169,8 +169,8 @@ void printInstructions()
     printInstruction("D", "Move Right");
 
     printInstruction("CTRL", "Sprint");
-    printInstruction("Right Click", "Place A Block");
-    printInstruction("Left Click", "Removes A Block");
+    printInstruction("Right Click", "Place A Voxel");
+    printInstruction("Left Click", "Removes A Voxel");
 
     printInstruction("Move Mouse", "Look");
 

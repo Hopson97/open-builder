@@ -80,14 +80,14 @@ glm::vec3 rightVector(const glm::vec3& rotation)
 // ===============================================
 
 // uses fast voxel traversal to get the voxels intersected by a ray of length `range`
-// assumes blocks are 1x1x1
-std::vector<BlockPosition> getIntersectedBlocks(const glm::vec3& startPoint,
+// assumes voxels are 1x1x1
+std::vector<VoxelPosition> getIntersectedVoxels(const glm::vec3& startPoint,
                                                 const glm::vec3& direction, float range)
 {
     // Ensures passed direction is normalized
     auto nDirection = glm::normalize(direction);
     auto endPoint = startPoint + nDirection * range;
-    auto startVoxel = toBlockPosition(startPoint);
+    auto startVoxel = toVoxelPosition(startPoint);
 
     // +1, -1, or 0
     i32 stepX = (nDirection.x > 0) ? 1 : ((nDirection.x < 0) ? -1 : 0);
@@ -109,7 +109,7 @@ std::vector<BlockPosition> getIntersectedBlocks(const glm::vec3& startPoint,
                               : tDeltaZ * (startPoint.z - startVoxel.z);
 
     auto currentVoxel = startVoxel;
-    std::vector<BlockPosition> intersected;
+    std::vector<VoxelPosition> intersected;
     intersected.push_back(startVoxel);
 
     // sanity check to prevent leak

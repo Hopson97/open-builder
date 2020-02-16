@@ -15,7 +15,7 @@ Server::Server(const ServerConfig& config)
     , m_worldSize(config.worldSize)
 {
     // clang-format off
-    m_commandDispatcher.addCommand(ServerCommand::BlockEdit, &Server::onBlockEdit);
+    m_commandDispatcher.addCommand(ServerCommand::VoxelEdit, &Server::onVoxelEdit);
     m_commandDispatcher.addCommand(ServerCommand::PlayerPosition, &Server::onPlayerPosition);
     m_commandDispatcher.addCommand(ServerCommand::PlayerSkin, &Server::onPlayerSkin);
     // clang-format on
@@ -66,10 +66,10 @@ void Server::sendChunk(peer_id_t peerId, const ChunkPosition& position)
     packet << ClientCommand::ChunkData << chunk.getPosition().x << chunk.getPosition().y
            << chunk.getPosition().z;
 
-    auto compressedChunk = compressBlockData(chunk.blocks);
+    auto compressedChunk = compressVoxelData(chunk.voxels);
     packet << static_cast<u32>(compressedChunk.size());
-    for (auto& block : compressedChunk) {
-        packet << block.first << block.second;
+    for (auto& voxel : compressedChunk) {
+        packet << voxel.first << voxel.second;
     }
 
     // Send chunk data to client
@@ -200,12 +200,12 @@ void Server::onPlayerPosition(sf::Packet& packet)
         m_entities[id].position.z;
 }
 
-void Server::onBlockEdit(sf::Packet& packet)
+void Server::onVoxelEdit(sf::Packet& packet)
 {
-    BlockPosition position;
-    block_t block;
-    packet >> position.x >> position.y >> position.z >> block;
-    m_world.blockUpdates.push_back({position, block});
+    VoxelPosition position;
+    voxel_t voxel;
+    packet >> position.x >> position.y >> position.z >> voxel;
+    m_world.voxelUpdates.push_back({position, voxel});
 }
 
 void Server::onPlayerSkin(sf::Packet& packet)
@@ -236,23 +236,23 @@ void Server::update()
 {
     {
         sf::Packet packet;
-        if (m_world.blockUpdates.size() > 0) {
+        if (m_world.voxelUpdates.size() > 0) {
 
-            u16 size = static_cast<u16>(m_world.blockUpdates.size());
-            packet << ClientCommand::BlockUpdate << size;
+            u16 size = static_cast<u16>(m_world.voxelUpdates.size());
+            packet << ClientCommand::VoxelUpdate << size;
 
-            for (auto& blockUpdate : m_world.blockUpdates) {
-                auto chunkPosition = toChunkPosition(blockUpdate.position);
+            for (auto& voxelUpdate : m_world.voxelUpdates) {
+                auto chunkPosition = toChunkPosition(voxelUpdate.position);
                 m_world.chunks.ensureNeighbours(chunkPosition);
-                m_world.chunks.setBlock(blockUpdate.position, blockUpdate.block);
+                m_world.chunks.setVoxel(voxelUpdate.position, voxelUpdate.voxel);
 
-                packet << blockUpdate.position.x << blockUpdate.position.y
-                       << blockUpdate.position.z << blockUpdate.block;
+                packet << voxelUpdate.position.x << voxelUpdate.position.y
+                       << voxelUpdate.position.z << voxelUpdate.voxel;
             }
-            // TODO: Try find a way to not send block updates to players
+            // TODO: Try find a way to not send voxel updates to players
             // that created them
             broadcastToPeers(packet, 0, ENET_PACKET_FLAG_RELIABLE);
-            m_world.blockUpdates.clear();
+            m_world.voxelUpdates.clear();
         }
     }
 
@@ -323,11 +323,11 @@ glm::vec3 Server::findPlayerSpawnPosition()
         chunkPosition.y = chunkY;
         auto& spawn = m_world.chunks.getChunk(chunkPosition);
 
-        for (int blockY = CHUNK_SIZE - 1; blockY >= 0; blockY--) {
-            auto blockPosition = toLocalBlockPosition({x, 0, z});
-            blockPosition.y = blockY;
-            if (spawn.qGetBlock(blockPosition) != 0) {
-                auto worldY = chunkY * CHUNK_SIZE + blockY + 3;
+        for (int voxelY = CHUNK_SIZE - 1; voxelY >= 0; voxelY--) {
+            auto voxelPosition = toLocalVoxelPosition({x, 0, z});
+            voxelPosition.y = voxelY;
+            if (spawn.qGetVoxel(voxelPosition) != 0) {
+                auto worldY = chunkY * CHUNK_SIZE + voxelY + 3;
                 return {x, worldY, z};
             }
         }

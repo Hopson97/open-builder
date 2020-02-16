@@ -30,10 +30,10 @@ enum class ClientCommand : command_t {
     // float[3]: The X, Y, Z position of the entity
     Snapshot,
 
-    // The block data of a chunk
+    // The voxel data of a chunk
     // Data:
     // i32[3] The position of the chunk
-    // block[CHUNK_VOLUME] The block data
+    // voxel[CHUNK_VOLUME] The voxel data
     ChunkData,
 
     // Position for player when they spawn
@@ -41,13 +41,13 @@ enum class ClientCommand : command_t {
     // float[3]: The X, Y, Z position of the entity
     SpawnPoint,
 
-    // Command to say that a block was updated
+    // Command to say that a voxel was updated
     // Data:
-    // u32: Number of block updates
-    // [For each block update...]
-    // i32[3]: The X, Y, Z position of the block edit
-    // block_t: The block it has been changed to
-    BlockUpdate,
+    // u32: Number of voxel updates
+    // [For each voxel update...]
+    // i32[3]: The X, Y, Z position of the voxel edit
+    // voxel_t: The voxel it has been changed to
+    VoxelUpdate,
 
     // Command to update the skin of a player in-game
     // Data:
@@ -55,19 +55,19 @@ enum class ClientCommand : command_t {
     // u8[8192]: Skin data (RGBA8 format)
     NewPlayerSkin,
 
-    // The data needed for the blocks, entities etc
+    // The data needed for the voxels, entities etc
     // The client will not process data/render anything until this has been
     // recieved
     // Data:
-    // u16: Number of block types
-    // [For each block type (Sent in order of Block ID)...]
+    // u16: Number of voxel types
+    // [For each voxel type (Sent in order of Voxel ID)...]
     // String: name
     // String: the voxel's top texture
     // String: the voxel's side texture
     // String: the voxel's bottom texture
     // u8: The voxels mesh style aka VoxelMeshStyle
     // u8: The voxels state/type aka VoxelType
-    // u8: Whether the block is collidable or not
+    // u8: Whether the voxel is collidable or not
     GameRegistryData,
 
     // For getting the number of commands, used by CommandDispatcher
@@ -84,11 +84,11 @@ enum class ServerCommand : command_t {
     // float[3]: The x, y, z position of the player
     PlayerPosition,
 
-    // Command to say that a block was edited
+    // Command to say that a voxel was edited
     // Data:
-    // i32[3]: The X, Y, Z position of the block edit
-    // block_t: The block it has been changed to
-    BlockEdit,
+    // i32[3]: The X, Y, Z position of the voxel edit
+    // voxel_t: The voxel it has been changed to
+    VoxelEdit,
 
     // Command that sends the player's skin
     // Data:

@@ -3,16 +3,16 @@
 #include <common/obd_parser.h>
 
 const std::string dataObd = "                               \n\
-block                           \n\
+voxel                           \n\
     name grass                  \n\
     texture_top pack:grass      \n\
     texture_side pack:grasside  \n\
     texture_bottom pack:dirt    \n\
-    mesh block                  \n\
+    mesh voxel                  \n\
     state solid                 \n\
 end                             \n\
                                 \n\
-block                           \n\
+voxel                           \n\
     name dirt                   \n\
                                 \n\
     texture_top pack:dirt       \n\
@@ -25,7 +25,7 @@ TEST_CASE("OBD files can be read from correctly")
 {
     auto data = getObdDataRaw(dataObd);
 
-    SECTION("There are a correct number of parsed blocks")
+    SECTION("There are a correct number of parsed voxels")
     {
         REQUIRE(data.size() == 2);
 
@@ -35,20 +35,20 @@ TEST_CASE("OBD files can be read from correctly")
 
     SECTION("It correctly has data")
     {
-        auto block = data[0];
+        auto voxel = data[0];
 
-        REQUIRE(block.data["name"] == "grass");
-        REQUIRE(block.data["texture_top"] == "pack:grass");
-        REQUIRE(block.data["texture_side"] == "pack:grasside");
-        REQUIRE(block.data["texture_bottom"] == "pack:dirt");
-        REQUIRE(block.data["mesh"] == "block");
-        REQUIRE(block.data["state"] == "solid");
+        REQUIRE(voxel.data["name"] == "grass");
+        REQUIRE(voxel.data["texture_top"] == "pack:grass");
+        REQUIRE(voxel.data["texture_side"] == "pack:grasside");
+        REQUIRE(voxel.data["texture_bottom"] == "pack:dirt");
+        REQUIRE(voxel.data["mesh"] == "voxel");
+        REQUIRE(voxel.data["state"] == "solid");
 
-        auto block2 = data[1];
+        auto voxel2 = data[1];
 
-        REQUIRE(block2.data["name"] == "dirt");
-        REQUIRE(block2.data["texture_top"] == "pack:dirt");
-        REQUIRE(block2.data["mesh"] == "cross");
-        REQUIRE(block2.data["state"] == "flora");
+        REQUIRE(voxel2.data["name"] == "dirt");
+        REQUIRE(voxel2.data["texture_top"] == "pack:dirt");
+        REQUIRE(voxel2.data["mesh"] == "cross");
+        REQUIRE(voxel2.data["state"] == "flora");
     }
 }

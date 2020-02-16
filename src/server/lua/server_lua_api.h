@@ -6,14 +6,14 @@ class VoxelDataManager;
 
 /**
  * @brief Gives Lua the ability to call functions on the world itself
- * For example, add and remove blocks from a chunk
+ * For example, add and remove voxels from a chunk
  * @param script The script engine with the Lua state
  */
 void luaInitWorldApi(ScriptEngine& script);
 
 /**
  * @brief Gives Lua the ability to add data to the game
- * For example, block types, biome types etc
+ * For example, voxel types, biome types etc
  * @param script The script engine with the Lua state
  * @param biomeManager Container for the biome types to be used from Lua
  * @param voxelManager Container for the voxel types to be used from Lua

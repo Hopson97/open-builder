@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 using ChunkPosition = sf::Vector3<i32>;
-using BlockPosition = sf::Vector3<i32>;
+using VoxelPosition = sf::Vector3<i32>;
 
 struct ChunkPositionHash {
     // http://www.beosil.com/download/CollisionDetectionHashing_VMV03.pdf
@@ -20,12 +20,12 @@ template <typename T>
 using ChunkPositionMap = std::unordered_map<ChunkPosition, T, ChunkPositionHash>;
 
 /**
- * @brief Converts a local block position to an index of a block array
+ * @brief Converts a local voxel position to an index of a voxel array
  *
- * @param position Local block position of a chunk
- * @return int The block array index
+ * @param position Local voxel position of a chunk
+ * @return int The voxel array index
  */
-int toLocalBlockIndex(const BlockPosition& position);
+int toLocalVoxelIndex(const VoxelPosition& position);
 
 /**
  * @brief Converts world coordinates (Eg player position) to chunk coordinates
@@ -36,52 +36,52 @@ int toLocalBlockIndex(const BlockPosition& position);
 ChunkPosition worldToChunkPosition(const glm::vec3& position);
 
 /**
- * @brief Converts a world block position to a chunk position
+ * @brief Converts a world voxel position to a chunk position
  *
- * @param position The world block position
- * @return ChunkPosition The converted chunk position at the block position
+ * @param position The world voxel position
+ * @return ChunkPosition The converted chunk position at the voxel position
  */
-ChunkPosition toChunkPosition(const BlockPosition& position);
+ChunkPosition toChunkPosition(const VoxelPosition& position);
 
 /**
- * @brief Converts a world block position to a chunk position
+ * @brief Converts a world voxel position to a chunk position
  *
- * @param position The world block position
- * @return ChunkPosition The converted chunk position at the block position
+ * @param position The world voxel position
+ * @return ChunkPosition The converted chunk position at the voxel position
  */
 ChunkPosition toChunkPosition(float xp, float yp, float zp);
 
 /**
- * @brief Converts a world block position to a local chunk block position
+ * @brief Converts a world voxel position to a local chunk voxel position
  *
- * @param position The world block position to convert
- * @return BlockPosition The converted local-chunk block position
+ * @param position The world voxel position to convert
+ * @return VoxelPosition The converted local-chunk voxel position
  */
-BlockPosition toLocalBlockPosition(float xp, float yp, float zp);
+VoxelPosition toLocalVoxelPosition(float xp, float yp, float zp);
 
 /**
- * @brief Converts a world block position to a local chunk block position
+ * @brief Converts a world voxel position to a local chunk voxel position
  *
- * @param position The world block position to convert
- * @return BlockPosition The converted local-chunk block position
+ * @param position The world voxel position to convert
+ * @return VoxelPosition The converted local-chunk voxel position
  */
-BlockPosition toLocalBlockPosition(const BlockPosition& position);
+VoxelPosition toLocalVoxelPosition(const VoxelPosition& position);
 
 /**
- * @brief Converts a local block position and chunk position to world-block
+ * @brief Converts a local voxel position and chunk position to world-voxel
  * position
  *
- * @param blockPosition The local block position
+ * @param voxelPosition The local voxel position
  * @param localChunkPosition The chunk position
- * @return BlockPosition The world block position at those coordinates
+ * @return VoxelPosition The world voxel position at those coordinates
  */
-BlockPosition toGlobalBlockPosition(const BlockPosition& blockPosition,
+VoxelPosition toGlobalVoxelPosition(const VoxelPosition& voxelPosition,
                                     const ChunkPosition& localChunkPosition);
 
 /**
- * @brief Converts world position to a world block position
+ * @brief Converts world position to a world voxel position
  *
  * @param vec The world position to convert
- * @return BlockPosition The block coordinate at that world position
+ * @return VoxelPosition The voxel coordinate at that world position
  */
-BlockPosition toBlockPosition(const glm::vec3& vec);
+VoxelPosition toVoxelPosition(const glm::vec3& vec);

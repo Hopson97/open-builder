@@ -75,14 +75,14 @@ glm::vec3 leftVector(const glm::vec3& rotation);
 glm::vec3 rightVector(const glm::vec3& rotation);
 
 /**
- * @brief Returns a list of intersected BlockPositions given a starting point, direction,
+ * @brief Returns a list of intersected VoxelPositions given a starting point, direction,
  * and range
  *
  * @param startPoint The position at which to begin testing for intersections
  * @param direction Direction to travel away from the start point
  * @param range Maximum distance to travel from the start point
  */
-std::vector<BlockPosition> getIntersectedBlocks(const glm::vec3& startPoint,
+std::vector<VoxelPosition> getIntersectedVoxels(const glm::vec3& startPoint,
                                                 const glm::vec3& direction, float range);
 
 /**

@@ -4,9 +4,9 @@
 
 TEST_CASE("Chunks manager tests")
 {
-    block_t block = 10;
+    voxel_t voxel = 10;
 
-    SECTION("The chunk manager will correctly set and get neighbouring blocks")
+    SECTION("The chunk manager will correctly set and get neighbouring voxels")
     {
         ChunkPosition left(-1, 0, 0);
         ChunkPosition middle(0, 0, 0);
@@ -17,32 +17,32 @@ TEST_CASE("Chunks manager tests")
         Chunk& middleChunk = manager.addChunk(middle);
         Chunk& rightChunk = manager.addChunk(right);
 
-        BlockPosition setPosition;
-        BlockPosition correctedPosition;
+        VoxelPosition setPosition;
+        VoxelPosition correctedPosition;
 
         setPosition = {CHUNK_SIZE, 0, 0};
         correctedPosition = {0, 0, 0};
-        manager.setBlock(setPosition, block);
-        REQUIRE(rightChunk.qGetBlock(correctedPosition) == block);
-        REQUIRE(manager.getBlock(setPosition) == block);
+        manager.setVoxel(setPosition, voxel);
+        REQUIRE(rightChunk.qGetVoxel(correctedPosition) == voxel);
+        REQUIRE(manager.getVoxel(setPosition) == voxel);
 
         setPosition = {-1, 20, 0};
         correctedPosition = {CHUNK_SIZE - 1, 20, 0};
-        manager.setBlock(setPosition, block);
-        REQUIRE(leftChunk.qGetBlock(correctedPosition) == block);
-        REQUIRE(manager.getBlock(setPosition) == block);
+        manager.setVoxel(setPosition, voxel);
+        REQUIRE(leftChunk.qGetVoxel(correctedPosition) == voxel);
+        REQUIRE(manager.getVoxel(setPosition) == voxel);
 
         setPosition = {-10, 0, 0};
         correctedPosition = {CHUNK_SIZE - 10, 0, 0};
-        manager.setBlock(setPosition, block);
-        REQUIRE(leftChunk.qGetBlock(correctedPosition) == block);
-        REQUIRE(manager.getBlock(setPosition) == block);
+        manager.setVoxel(setPosition, voxel);
+        REQUIRE(leftChunk.qGetVoxel(correctedPosition) == voxel);
+        REQUIRE(manager.getVoxel(setPosition) == voxel);
 
         setPosition = {5, 10, 20};
         correctedPosition = {5, 10, 20};
-        manager.setBlock(setPosition, block);
-        REQUIRE(middleChunk.qGetBlock(correctedPosition) == block);
-        REQUIRE(manager.getBlock(setPosition) == block);
+        manager.setVoxel(setPosition, voxel);
+        REQUIRE(middleChunk.qGetVoxel(correctedPosition) == voxel);
+        REQUIRE(manager.getVoxel(setPosition) == voxel);
     }
 
     SECTION("The chunk manager correctly identifies it has neighbours for a "

@@ -16,14 +16,14 @@ ChunkMesh::ChunkMesh(const ChunkPosition& chunkPosition)
     indices.reserve(CHUNK_VOLUME * 2);
 }
 
-void ChunkMesh::addFace(const MeshFace& face, const BlockPosition& blockPosition,
+void ChunkMesh::addFace(const MeshFace& face, const VoxelPosition& voxelPosition,
                         GLuint texture)
 {
     int index = 0;
     for (unsigned i = 0; i < 4; i++) {
-        GLubyte x = face.vertices[index++] + blockPosition.x;
-        GLubyte y = face.vertices[index++] + blockPosition.y;
-        GLubyte z = face.vertices[index++] + blockPosition.z;
+        GLubyte x = face.vertices[index++] + voxelPosition.x;
+        GLubyte y = face.vertices[index++] + voxelPosition.y;
+        GLubyte z = face.vertices[index++] + voxelPosition.z;
 
         // Packs the vertex coordinates, cardinal light, and texture coordinates into 4
         // bytes
@@ -56,7 +56,7 @@ size_t ChunkMesh::calculateBufferSize() const
 }
 
 ChunkMeshCollection::ChunkMeshCollection(const ChunkPosition& chunkPosition)
-    : blockMesh(chunkPosition)
+    : voxelMesh(chunkPosition)
     , fluidMesh(chunkPosition)
     , floraMesh(chunkPosition)
 {

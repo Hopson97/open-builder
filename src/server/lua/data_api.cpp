@@ -37,7 +37,7 @@ void addBiomeApi(sol::table dataTable, VoxelDataManager& voxelManager,
 
         biome.name = biomeData["name"].get<std::string>();
         biome.depth = biomeData["depth"].get<int>();
-        biome.onTopBlockSet = biomeData["onTopBlockSet"];
+        biome.onTopVoxelSet = biomeData["onTopVoxelSet"];
 
         std::string topVoxel = biomeData["top_voxel"].get<std::string>();
         std::string undergroundVoxel = biomeData["underground_voxel"].get<std::string>();
@@ -51,7 +51,7 @@ void addBiomeApi(sol::table dataTable, VoxelDataManager& voxelManager,
 void addEnums(ScriptEngine& script)
 {
     auto meshStyle = script.addTable("MeshStyle");
-    meshStyle["Block"] = VoxelMeshStyle::Block;
+    meshStyle["Voxel"] = VoxelMeshStyle::Voxel;
     meshStyle["Cross"] = VoxelMeshStyle::Cross;
     meshStyle["None"] = VoxelMeshStyle::None;
 
