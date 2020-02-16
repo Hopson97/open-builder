@@ -35,7 +35,7 @@ Server::Server(const ServerConfig& config)
 
     m_voxelData.initCommonVoxelTypes();
 
-    float seed = generateSeed("test");
+    float seed = generateSeed("4325fc   558ucxj28   rc2 874");
 
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {

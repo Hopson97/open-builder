@@ -45,7 +45,7 @@ float rounded(const glm::vec2& coord)
 }
 
 float getNoiseAt(const glm::vec2& voxelPosition, const glm::vec2& chunkPosition,
-                 const NoiseOptions& options, float seed)
+                 const NoiseOptions& options, FastNoise& noiseGen)
 {
     // Get voxel X/Z positions
     float voxelX = voxelPosition.x + chunkPosition.x * CHUNK_SIZE;
@@ -61,7 +61,7 @@ float getNoiseAt(const glm::vec2& voxelPosition, const glm::vec2& chunkPosition,
         float x = voxelX * frequency / options.smoothness;
         float y = voxelZ * frequency / options.smoothness;
 
-        float noise = glm::simplex(glm::vec3{seed + x, seed + y, seed});
+        float noise = noiseGen.GetSimplexFractal(x, y);
         noise = (noise + 1.0f) / 2.0f;
         value += noise * amplitude;
         accumulatedAmps += amplitude;
@@ -70,7 +70,7 @@ float getNoiseAt(const glm::vec2& voxelPosition, const glm::vec2& chunkPosition,
 }
 
 std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
-                                                 float worldSize, float seed)
+                                                 float worldSize, FastNoise& noiseGen)
 {
     const float WOLRD_SIZE = worldSize * CHUNK_SIZE;
 
@@ -98,8 +98,9 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
 
             glm::vec2 coord = (glm::vec2{bx, bz} - WOLRD_SIZE / 2.0f) / WOLRD_SIZE * 2.0f;
 
-            auto noise = getNoiseAt({x, z}, chunkXZ, firstNoise, seed);
-            auto noise2 = getNoiseAt({x, z}, {position.x, position.z}, secondNoise, seed);
+            auto noise = getNoiseAt({x, z}, chunkXZ, firstNoise, noiseGen);
+            auto noise2 =
+                getNoiseAt({x, z}, {position.x, position.z}, secondNoise, noiseGen);
             auto island = rounded(coord) * 1.25;
             float result = noise * noise2;
 
@@ -111,7 +112,8 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
     return heightMap;
 }
 
-std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float seed)
+std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position,
+                                           FastNoise& noiseGen)
 {
     NoiseOptions biomeMapNoise;
     biomeMapNoise.amplitude = 120;
@@ -124,7 +126,7 @@ std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float 
     glm::vec2 chunkXZ = {position.x, position.z};
     for (int z = 0; z < CHUNK_SIZE; z++) {
         for (int x = 0; x < CHUNK_SIZE; x++) {
-            auto noise = getNoiseAt({x, z}, chunkXZ, biomeMapNoise, seed);
+            auto noise = getNoiseAt({x, z}, chunkXZ, biomeMapNoise, noiseGen);
 
             biomeMap[z * CHUNK_SIZE + x] = noise * biomeMapNoise.amplitude;
         }
@@ -184,9 +186,11 @@ void generateTerrain(ChunkManager& chunkManager, int chunkX, int chunkZ,
                      int seed, int worldSize)
 {
     ChunkPosition position{chunkX, 0, chunkZ};
-
-    auto heightMap = createChunkHeightMap(position, worldSize, seed);
-    auto biomeMap = createBiomeMap(position, 9876);
+    FastNoise noise;
+    noise.SetFrequency(0.8);
+    noise.SetSeed(seed);
+    auto heightMap = createChunkHeightMap(position, worldSize, noise);
+    auto biomeMap = createBiomeMap(position, noise);
     int maxHeight = *std::max_element(heightMap.cbegin(), heightMap.cend());
 
     for (int y = 0; y < std::max(1, maxHeight / CHUNK_SIZE + 1); y++) {
@@ -199,9 +203,5 @@ void generateTerrain(ChunkManager& chunkManager, int chunkX, int chunkZ,
 float generateSeed(const std::string& input)
 {
     std::hash<std::string> strhash;
-
-    float seed_float;
-    uint32_t hash = strhash(input);
-    std::memcpy(&seed_float, &hash, sizeof(float));
-    return seed_float;
+    return strhash(input);
 }

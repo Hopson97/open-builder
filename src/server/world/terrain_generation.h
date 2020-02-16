@@ -1,5 +1,6 @@
 #pragma once
 
+#include <FastNoise/FastNoise.h>
 #include <array>
 #include <common/world/coordinate.h>
 #include <common/world/world_constants.h>
