@@ -1,7 +1,16 @@
 #include "chunk.h"
 #include "chunk_manager.h"
 
-// TODO Replace the .at with operator[] (when can be sure its safe to do so)
+namespace {
+// clang-format off
+    bool voxelPositionOutOfChunkBounds(const VoxelPosition& voxelPosition) {
+        return 
+        voxelPosition.x < 0 || voxelPosition.x >= CHUNK_SIZE ||
+        voxelPosition.y < 0 || voxelPosition.y >= CHUNK_SIZE ||
+        voxelPosition.z < 0 || voxelPosition.z >= CHUNK_SIZE;
+    }
+// clang-format on
+} // namespace
 
 Chunk::Chunk(ChunkManager& manager, const ChunkPosition& position)
     : mp_manager(manager)
@@ -19,29 +28,22 @@ void Chunk::qSetVoxel(const VoxelPosition& voxelPosition, voxel_t voxel)
     voxels.at(toLocalVoxelIndex(voxelPosition)) = voxel;
 }
 
-// clang-format off
 voxel_t Chunk::getVoxel(const VoxelPosition& voxelPosition) const
 {
-    if (voxelPosition.x < 0 || voxelPosition.x >= CHUNK_SIZE ||
-        voxelPosition.y < 0 || voxelPosition.y >= CHUNK_SIZE ||
-        voxelPosition.z < 0 || voxelPosition.z >= CHUNK_SIZE) {
-        return mp_manager.getVoxel(
-            toGlobalVoxelPosition(voxelPosition, m_position));
+    if (voxelPositionOutOfChunkBounds(voxelPosition)) {
+        return mp_manager.getVoxel(toGlobalVoxelPosition(voxelPosition, m_position));
     }
     return qGetVoxel(voxelPosition);
 }
 
 void Chunk::setVoxel(const VoxelPosition& voxelPosition, voxel_t voxel)
 {
-    if (voxelPosition.x < 0 || voxelPosition.x >= CHUNK_SIZE ||
-        voxelPosition.y < 0 || voxelPosition.y >= CHUNK_SIZE ||
-        voxelPosition.z < 0 || voxelPosition.z >= CHUNK_SIZE) {
-        return mp_manager.setVoxel(
-            toGlobalVoxelPosition(voxelPosition, m_position), voxel);
+    if (voxelPositionOutOfChunkBounds(voxelPosition)) {
+        return mp_manager.setVoxel(toGlobalVoxelPosition(voxelPosition, m_position),
+                                   voxel);
     }
     qSetVoxel(voxelPosition, voxel);
 }
-// clang-format on
 
 const ChunkPosition& Chunk::getPosition() const
 {
