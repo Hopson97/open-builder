@@ -20,12 +20,14 @@ Chunk::Chunk(ChunkManager& manager, const ChunkPosition& position)
 
 voxel_t Chunk::qGetVoxel(const VoxelPosition& voxelPosition) const
 {
-    return voxels.at(toLocalVoxelIndex(voxelPosition));
+    assert(voxelPositionOutOfChunkBounds(voxelPosition));
+    return voxels[toLocalVoxelIndex(voxelPosition)];
 }
 
 void Chunk::qSetVoxel(const VoxelPosition& voxelPosition, voxel_t voxel)
 {
-    voxels.at(toLocalVoxelIndex(voxelPosition)) = voxel;
+    assert(voxelPositionOutOfChunkBounds(voxelPosition));
+    voxels[toLocalVoxelIndex(voxelPosition)] = voxel;
 }
 
 voxel_t Chunk::getVoxel(const VoxelPosition& voxelPosition) const
