@@ -67,7 +67,7 @@ bool Client::init(const ClientConfig& config, float aspect)
         m_basicShader.program.getUniformLocation("projectionViewMatrix");
 
     // Texture for the player model
-    m_errorSkinTexture.create("res/skins/error.png");
+    m_errorSkinTexture.create("res/skins/error.png", false);
     m_errorSkinTexture.bind();
 
     m_texturePack = config.texturePack;
@@ -334,7 +334,7 @@ void Client::update(float dt, float frameTime)
     }
 }
 
-void Client::render(int width, int height)
+void Client::render()
 {
     // TODO [Hopson] Clean this up
     if (!m_hasReceivedGameData) {

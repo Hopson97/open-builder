@@ -37,7 +37,7 @@ class Texture2d final {
     Texture2d& operator=(const Texture2d&) = delete;
 
     void create(const sf::Image& image);
-    void create(const std::string& file);
+    void create(const std::string& file, bool flipImage);
     void create(unsigned int width, unsigned int height, const sf::Uint8* pixels);
     void destroy();
     void bind() const;

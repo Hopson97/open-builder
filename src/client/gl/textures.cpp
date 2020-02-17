@@ -17,12 +17,15 @@ void texImage2d(GLenum param, const sf::Image& image)
                          GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr()));
 }
 
-bool bufferImage(GLenum param, const std::string& file)
+bool bufferImage(GLenum param, const std::string& file, bool flipImage)
 {
     sf::Image img;
     if (!img.loadFromFile(file)) {
         std::cerr << "Could not load: " << file << '\n';
         return false;
+    }
+    if (flipImage) {
+        img.flipVertically();
     }
     texImage2d(param, img);
     return true;
@@ -118,11 +121,11 @@ void Texture2d::create(const sf::Image& image)
     m_hasTexture = true;
 }
 
-void Texture2d::create(const std::string& file)
+void Texture2d::create(const std::string& file, bool flipImage)
 {
     bind();
 
-    bufferImage(GL_TEXTURE_2D, file);
+    bufferImage(GL_TEXTURE_2D, file, flipImage);
 
     glCheck(glGenerateMipmap(GL_TEXTURE_2D));
     glCheck(

@@ -56,7 +56,7 @@ int GuiMaster::getTexture(const std::string& textureName)
     else {
         int index = m_textures.size();
         gl::Texture2d& texture = m_textures.emplace_back();
-        texture.create(textureName);
+        texture.create(textureName, true);
         m_textureIds.emplace(textureName, index);
         return index;
     }

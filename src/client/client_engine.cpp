@@ -90,7 +90,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        gameClient.render(window.width, window.height);
+        gameClient.render();
         window.window.display();
 
         // Stats and stuff
