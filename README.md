@@ -10,11 +10,11 @@ This was made mostly for a YouTube series which can be found here: **[Lets Code 
 
 ## Compiling/ Running
 
-[Windows With Visual Studio](https://github.com/Hopson97/open-builder/tree/master/docs/Building_windows_vs.md)
+[Windows With Visual Studio](https://github.com/Hopson97/open-builder/blob/master/docs/building/Building_windows_vs.md)
 
-[MacOS With CMake](https://github.com/Hopson97/open-builder/tree/master/docs/Building_macos_cmake.md)
+[MacOS With CMake](https://github.com/Hopson97/open-builder/blob/master/docs/building/Building_macos_cmake.md)
 
-[Linux With CMake](https://github.com/Hopson97/open-builder/tree/master/docs/Building_linux_cmake.md)
+[Linux With CMake](https://github.com/Hopson97/open-builder/blob/master/docs/building/Building_linux_cmake.md)
 
 ## Project Structure
 
