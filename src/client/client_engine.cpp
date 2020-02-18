@@ -93,6 +93,14 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
                 case sf::Event::KeyReleased:
                     client.onKeyRelease(event.key.code);
+                    switch (event.key.code) {
+                        case sf::Keyboard::Escape:
+                            status = EngineStatus::Exit;
+                            break;
+
+                        default:
+                            break;
+                    }
                     break;
 
                 case sf::Event::MouseButtonReleased:
@@ -117,10 +125,11 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
         client.render(*debugStatsText);
 
-        // 3d stuff here
-
         guiMaster.render();
         window.display();
+
+        // Stats
+        fps.update();
     }
     client.endGame();
     return status;
