@@ -139,6 +139,14 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     gl::loadUniform(m_solidShader.projectionViewLocation, projectionViewMatrix);
     ::renderChunks(solidDrawables, frustum, m_solidShader.chunkPositionLocation, result);
 
+    // Flora voxels
+    m_floraShader.program.bind();
+    gl::loadUniform(m_floraShader.projectionViewLocation, projectionViewMatrix);
+    gl::loadUniform(m_floraShader.timeLocation, time);
+    glDisable(GL_CULL_FACE);
+    ::renderChunks(floraDrawables, frustum, m_floraShader.chunkPositionLocation, result);
+    glEnable(GL_CULL_FACE);
+
     // Fluid voxels
     m_fluidShader.program.bind();
     gl::loadUniform(m_fluidShader.projectionViewLocation, projectionViewMatrix);
@@ -150,14 +158,6 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     ::renderChunks(fluidDrawables, frustum, m_fluidShader.chunkPositionLocation, result);
     glCheck(glCullFace(GL_BACK));
     glCheck(glDisable(GL_BLEND));
-
-    // Flora voxels
-    m_floraShader.program.bind();
-    gl::loadUniform(m_floraShader.projectionViewLocation, projectionViewMatrix);
-    gl::loadUniform(m_floraShader.timeLocation, time);
-    glDisable(GL_CULL_FACE);
-    ::renderChunks(floraDrawables, frustum, m_floraShader.chunkPositionLocation, result);
-    glEnable(GL_CULL_FACE);
 
     return result;
 }
