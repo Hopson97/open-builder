@@ -49,7 +49,7 @@ class Client final : public NetworkHost {
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
     void update(float dt, float frameTime);
-    void render();
+    void render(GuiText& debugText);
     void endGame();
 
     EngineStatus currentStatus() const;
@@ -125,7 +125,6 @@ class Client final : public NetworkHost {
     } m_mouseSensitivity;
 
     Entity* mp_player = nullptr;
-    Entity m_externalCamera;
 
     struct {
         ChunkManager manager;
@@ -134,9 +133,6 @@ class Client final : public NetworkHost {
     } m_chunks;
 
     VoxelDataManager m_voxelData;
-
-    // GUI
-    GuiText* m_debugStatsText = nullptr;
 
     // Debug stats stuff
     DebugStats m_debugStats{};
