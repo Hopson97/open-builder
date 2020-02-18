@@ -8,28 +8,16 @@
 
 namespace {
 struct FPSCounter final {
-    float frameCount = 0;
     sf::Clock timer;
-
-    int updates = 0;
-
     float frameTime = 0;
+    float frameCount = 0;
 
-    sf::Time totalTime;
-    float totalFrames = 0;
-
-    void update()
+    void update(int ticks)
     {
         frameCount++;
         if (timer.getElapsedTime() > sf::seconds(0.25)) {
             auto time = timer.getElapsedTime();
-
             frameTime = time.asMilliseconds() / frameCount;
-
-            if (updates++ > 20) {
-                totalFrames += frameCount;
-                totalTime += timer.getElapsedTime();
-            }
             timer.restart();
             frameCount = 0;
         }
