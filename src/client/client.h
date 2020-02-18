@@ -56,6 +56,7 @@ class Client final : public NetworkHost {
 
     void update(float dt, float frameTime);
     void render(int width, int height);
+    void render();
     void endGame();
 
     EngineStatus currentStatus() const;
@@ -124,6 +125,11 @@ class Client final : public NetworkHost {
 
     VoxelPosition m_currentSelectedVoxelPos;
     bool m_voxelSelected = false;
+
+    struct {
+        float vertical;
+        float horizontal;
+    } m_mouseSensitivity;
 
     Entity* mp_player = nullptr;
     Entity m_externalCamera;
