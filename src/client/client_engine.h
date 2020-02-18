@@ -10,5 +10,3 @@ struct ClientConfig;
  * @return EngineStatus The status of the engine on exit
  */
 EngineStatus runClientEngine(const ClientConfig& config);
-
-EngineStatus runClientEngine2(const ClientConfig& config);

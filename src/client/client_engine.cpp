@@ -1,8 +1,10 @@
 #include "client_engine.h"
 
+#include "client.h"
 #include "gl/gl_errors.h"
 #include "gui/gui_master.h"
 #include "lua/client_lua_api.h"
+#include "renderer/chunk_renderer.h"
 #include "window.h"
 #include <SFML/System/Clock.hpp>
 #include <common/scripting/script_engine.h>
@@ -25,24 +27,11 @@ struct FPSCounter final {
         }
     }
 };
-} // namespace
 
-EngineStatus runClientEngine(const ClientConfig& config)
+bool initOpenGL(const sf::Window& window)
 {
-    (void)config;
-    return EngineStatus::Ok;
-}
-
-EngineStatus runClientEngine2(const ClientConfig& config)
-{
-    // Window setup
-    sf::Window window;
-    window.setFramerateLimit(60);
-    createWindow(window, config);
-
-    // OpenGL setup
     if (!gladLoadGL()) {
-        return EngineStatus::GLInitError;
+        return false;
     }
 #ifndef __APPLE__
     initGLDebug();
@@ -51,12 +40,26 @@ EngineStatus runClientEngine2(const ClientConfig& config)
     glCheck(glViewport(0, 0, window.getSize().x, window.getSize().y));
     glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     glCheck(glEnable(GL_DEPTH_TEST));
+    return true;
+}
+} // namespace
+
+EngineStatus runClientEngine(const ClientConfig& config)
+{
+    // Window/ OpenGL context setup
+    sf::Window window;
+    window.setFramerateLimit(60);
+    createWindow(window, config);
+    if (!initOpenGL(window)) {
+        return EngineStatus::GLInitError;
+    }
 
     // Client engine stuff
     EngineStatus status = EngineStatus::Ok;
     Keyboard keys;
     FPSCounter fps;
     GuiMaster guiMaster(window.getSize().x, window.getSize().y);
+    sf::Clock gameTimer;
     int tickCount = 0;
 
     // Init Lua scripting
@@ -65,6 +68,10 @@ EngineStatus runClientEngine2(const ClientConfig& config)
     scriptEngine.runLuaFile("game/client/main.lua");
 
     // Init screens here
+    Client client(config);
+    if (!client.init(config, getWindowAspect(window))) {
+        return EngineStatus::CouldNotConnect;
+    }
 
     // Main loop of the client code
     while (status == EngineStatus::Ok) {
@@ -78,6 +85,15 @@ EngineStatus runClientEngine2(const ClientConfig& config)
                     status = EngineStatus::Exit;
                     break;
 
+                case sf::Event::KeyReleased:
+                    client.onKeyRelease(event.key.code);
+                    break;
+
+                case sf::Event::MouseButtonReleased:
+                    client.onMouseRelease(event.mouseButton.button, event.mouseButton.x,
+                                          event.mouseButton.y);
+                    break;
+
                 default:
                     break;
             }
@@ -85,11 +101,15 @@ EngineStatus runClientEngine2(const ClientConfig& config)
         tickCount++;
 
         // Input
+        client.handleInput(window, keys);
 
         // Update
+        client.update(gameTimer.getElapsedTime().asSeconds(), fps.frameTime);
 
         // Render
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+        client.render();
 
         // 3d stuff here
 

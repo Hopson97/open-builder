@@ -55,7 +55,6 @@ class Client final : public NetworkHost {
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
     void update(float dt, float frameTime);
-    void render(int width, int height);
     void render();
     void endGame();
 
@@ -142,11 +141,7 @@ class Client final : public NetworkHost {
 
     VoxelDataManager m_voxelData;
 
-    // Lua
-    ScriptEngine m_lua;
-
     // GUI
-    GuiMaster m_guiMaster;
     GuiText* m_debugStatsText = nullptr;
 
     // Debug stats stuff
