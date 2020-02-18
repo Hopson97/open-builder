@@ -7,6 +7,9 @@ CLIENT_DATA
     window_width 1600
     window_height 900
 
+    vertical_sensitivity 1
+    horizontal_sensitivity 1
+    
     skin player
     texture_pack default
     shouldShowInstructions 1

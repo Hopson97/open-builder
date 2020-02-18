@@ -16,6 +16,9 @@ struct ClientConfig {
     int fpsLimit = 60;
     int fov = 65;
 
+    float verticalSensitivity = 1.f;
+    float horizontalSensitivity = 1.f;
+
     bool isFpsCapped = true;
     bool shouldShowInstructions = true;
 
