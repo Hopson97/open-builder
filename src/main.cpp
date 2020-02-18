@@ -275,10 +275,6 @@ int main(int argc, char** argv)
     loadFromConfigFile(config);
     parseArgs(config, args);
 
-    runClientEngine2(config.client);
-    enet_deinitialize();
-    return 0;
-
     switch (config.launchType) {
         case LaunchType::Both:
             return launchBoth(config);
