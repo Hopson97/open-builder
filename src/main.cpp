@@ -62,10 +62,8 @@ void loadFromConfigFile(Config& config)
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
     config.client.fov = std::stoi(clientData["fov"]);
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
-    config.client.verticalSensitivity = 
-        std::stof(clientData["vertical_sensitivity"]);
-    config.client.horizontalSensitivity = 
-        std::stof(clientData["horizontal_sensitivity"]);
+    config.client.verticalSensitivity = std::stof(clientData["vertical_sensitivity"]);
+    config.client.horizontalSensitivity = std::stof(clientData["horizontal_sensitivity"]);
     config.client.skinName = clientData["skin"];
     config.client.texturePack = clientData["texture_pack"];
     config.client.serverIp = clientData["server_ip"];
@@ -260,6 +258,7 @@ int launchServerAnd2Players(const Config& config)
 
 int main(int argc, char** argv)
 {
+
     Config config;
 
     if (enet_initialize() != 0) {
@@ -275,6 +274,10 @@ int main(int argc, char** argv)
 
     loadFromConfigFile(config);
     parseArgs(config, args);
+
+    runClientEngine2(config.client);
+    enet_deinitialize();
+    return 0;
 
     switch (config.launchType) {
         case LaunchType::Both:
