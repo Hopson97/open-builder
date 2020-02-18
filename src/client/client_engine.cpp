@@ -62,6 +62,12 @@ EngineStatus runClientEngine(const ClientConfig& config)
     sf::Clock gameTimer;
     int tickCount = 0;
 
+    // Init the "debug prompt" F3 GUI
+    auto container = guiMaster.addGui();
+    auto debugStatsText = container->addText();
+    debugStatsText->setFontSize(16);
+    debugStatsText->setPosition({0.0f, 4.0f, 1.0f, -16.0f});
+
     // Init Lua scripting
     ScriptEngine scriptEngine;
     initGuiApi(scriptEngine, guiMaster);
@@ -104,17 +110,18 @@ EngineStatus runClientEngine(const ClientConfig& config)
         client.handleInput(window, keys);
 
         // Update
-        client.update(gameTimer.getElapsedTime().asSeconds(), fps.frameTime);
+        client.update(gameTimer.restart().asSeconds(), fps.frameTime);
 
         // Render
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-        client.render();
+        client.render(*debugStatsText);
 
         // 3d stuff here
 
         guiMaster.render();
         window.display();
     }
+    client.endGame();
     return status;
 }
