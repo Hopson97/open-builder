@@ -1,6 +1,8 @@
 #include "client_engine.h"
 
 #include "gl/gl_errors.h"
+#include "gui/gui_master.h"
+#include "lua/client_lua_api.h"
 #include "window.h"
 #include <SFML/System/Clock.hpp>
 #include <common/scripting/script_engine.h>
@@ -12,7 +14,7 @@ struct FPSCounter final {
     float frameTime = 0;
     float frameCount = 0;
 
-    void update(int ticks)
+    void update()
     {
         frameCount++;
         if (timer.getElapsedTime() > sf::seconds(0.25)) {
@@ -28,6 +30,7 @@ struct FPSCounter final {
 EngineStatus runClientEngine(const ClientConfig& config)
 {
     (void)config;
+    return EngineStatus::Ok;
 }
 
 EngineStatus runClientEngine2(const ClientConfig& config)
@@ -49,16 +52,19 @@ EngineStatus runClientEngine2(const ClientConfig& config)
     glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     glCheck(glEnable(GL_DEPTH_TEST));
 
-    // Init Lua scripting
-    ScriptEngine engine;
-
     // Client engine stuff
     EngineStatus status = EngineStatus::Ok;
     Keyboard keys;
     FPSCounter fps;
+    GuiMaster guiMaster(window.getSize().x, window.getSize().y);
     int tickCount = 0;
 
-    //Init screens here
+    // Init Lua scripting
+    ScriptEngine scriptEngine;
+    initGuiApi(scriptEngine, guiMaster);
+    scriptEngine.runLuaFile("game/client/main.lua");
+
+    // Init screens here
 
     // Main loop of the client code
     while (status == EngineStatus::Ok) {
@@ -85,6 +91,9 @@ EngineStatus runClientEngine2(const ClientConfig& config)
         // Render
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+        // 3d stuff here
+
+        guiMaster.render();
         window.display();
     }
     return status;
