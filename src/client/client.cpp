@@ -1,19 +1,14 @@
 #include "client.h"
 
+#include "client_config.h"
 #include "gl/gl_errors.h"
 #include "gl/primitive.h"
 #include "input/keyboard.h"
-#include "lua/client_lua_api.h"
 #include "world/chunk_mesh_generation.h"
-#include <SFML/Window/Mouse.hpp>
+#include <SFML/Window/Window.hpp>
 #include <common/debug.h>
 #include <common/network/net_command.h>
 #include <common/network/net_constants.h>
-#include <iomanip>
-#include <numeric>
-#include <thread>
-
-#include "client_config.h"
 
 namespace {
 bool isVoxelSelectable(VoxelType voxelType)
@@ -22,7 +17,7 @@ bool isVoxelSelectable(VoxelType voxelType)
 }
 } // namespace
 
-Client::Client(const ClientConfig& config)
+Client::Client()
     : NetworkHost("Client")
 {
     // clang-format off

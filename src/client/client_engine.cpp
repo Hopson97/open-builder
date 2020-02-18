@@ -68,7 +68,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     scriptEngine.runLuaFile("game/client/main.lua");
 
     // Init screens here
-    Client client(config);
+    Client client;
     if (!client.init(config, getWindowAspect(window))) {
         return EngineStatus::CouldNotConnect;
     }
