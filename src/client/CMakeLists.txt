@@ -13,6 +13,7 @@ add_library(ob-client
     gui/gui_text.cpp
     gl/font.cpp
     lua/gui_api.cpp
+    lua/client_callback_api.cpp
     renderer/chunk_renderer.cpp
     network/client_commands.cpp
     client.cpp
