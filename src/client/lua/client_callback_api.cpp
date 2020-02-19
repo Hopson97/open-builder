@@ -3,9 +3,9 @@
 #include "client_lua_callback.h"
 #include <common/scripting/script_engine.h>
 
-void initClientCallbackApi(ScriptEngine& engine, ClientLuaCallbacks& callbacks)
+void initClientCallbackApi(ScriptEngine& scriptEngine, ClientLuaCallbacks& callbacks)
 {
-    engine.addFunction("onClientStartup", [&callbacks](sol::function f) {
+    scriptEngine.addFunction("onClientStartup", [&callbacks](sol::function f) {
         callbacks.onClientStartup.push_back(f);
     });
 }

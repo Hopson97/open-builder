@@ -5,16 +5,16 @@
 #include <common/scripting/script_engine.h>
 
 namespace {
-void addApiChunk(ScriptEngine& script)
+void addApiChunk(ScriptEngine& scriptEngine)
 {
-    auto chunkApi = script.lua.new_usertype<Chunk>("Chunk");
+    auto chunkApi = scriptEngine.lua.new_usertype<Chunk>("Chunk");
     chunkApi["setVoxel"] = [&](Chunk& chunk, int x, int y, int z, int voxel) {
         chunk.setVoxel({x, y, z}, voxel);
     };
 }
 } // namespace
 
-void luaInitWorldApi(ScriptEngine& script)
+void luaInitWorldApi(ScriptEngine& scriptEngine)
 {
-    addApiChunk(script);
+    addApiChunk(scriptEngine);
 }
