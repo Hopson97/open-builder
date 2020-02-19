@@ -34,10 +34,13 @@ struct ScriptEngine {
     std::optional<R> runLuaFunctionSafe(const char* functionName, Args&&... args);
 
     template <typename... Args>
-    auto addTable(const std::string& tableName, Args&&... args);
+    auto addTable(const char* tableName, Args&&... args);
 
     template <typename T, typename... Args>
-    auto addType(const std::string& name, Args&&... args);
+    auto addType(const char* name, Args&&... args);
+
+    template <typename F>
+    auto addFunction(const char* name, F function);
 
     sol::state lua;
     sol::table gameTable;
@@ -62,15 +65,21 @@ std::optional<R> ScriptEngine::runLuaFunctionSafe(const char* functionName,
 }
 
 template <typename T, typename... Args>
-auto ScriptEngine::addType(const std::string& name, Args&&... args)
+auto ScriptEngine::addType(const char* name, Args&&... args)
 {
     return lua.new_usertype<T>(name, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-auto ScriptEngine::addTable(const std::string& tableName, Args&&... args)
+auto ScriptEngine::addTable(const char* tableName, Args&&... args)
 {
     return gameTable.create_named(tableName, std::forward<Args>(args)...);
+}
+
+template <typename F>
+auto ScriptEngine::addFunction(const char* name, F function)
+{
+    return gameTable[name] = function;
 }
 
 /**
