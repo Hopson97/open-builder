@@ -5,7 +5,7 @@
 
 void luaInitServerCallbackApi(ScriptEngine& script, ServerLuaCallbacks& callbacks)
 {
-    script.gameTable["onPlayerJoin"] = [&callbacks](sol::function f) {
+    script.addFunction("onPlayerJoin", [&callbacks](sol::function f) {
         callbacks.onPlayerJoinCallbacks.push_back(f);
-    };
+    });
 }
