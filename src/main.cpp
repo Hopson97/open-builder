@@ -62,10 +62,8 @@ void loadFromConfigFile(Config& config)
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
     config.client.fov = std::stoi(clientData["fov"]);
     config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
-    config.client.verticalSensitivity = 
-        std::stof(clientData["vertical_sensitivity"]);
-    config.client.horizontalSensitivity = 
-        std::stof(clientData["horizontal_sensitivity"]);
+    config.client.verticalSensitivity = std::stof(clientData["vertical_sensitivity"]);
+    config.client.horizontalSensitivity = std::stof(clientData["horizontal_sensitivity"]);
     config.client.skinName = clientData["skin"];
     config.client.texturePack = clientData["texture_pack"];
     config.client.serverIp = clientData["server_ip"];

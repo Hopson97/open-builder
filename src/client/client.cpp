@@ -83,10 +83,7 @@ bool Client::init(const ClientConfig& config, float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
-    m_mouseSensitivity = {
-        config.verticalSensitivity,
-        config.horizontalSensitivity
-    };
+    m_mouseSensitivity = {config.verticalSensitivity, config.horizontalSensitivity};
 
     m_rawPlayerSkin = gl::loadRawImageFile("skins/" + config.skinName);
     sendPlayerSkin(m_rawPlayerSkin);
@@ -109,8 +106,10 @@ void Client::handleInput(const sf::Window& window, const Keyboard& keyboard)
 
     if (!m_isMouseLocked && window.hasFocus() && sf::Mouse::getPosition(window).y >= 0) {
         auto change = sf::Mouse::getPosition(window) - lastMousePosition;
-        mp_player->rotation.x += static_cast<float>(change.y / 8.0f * m_mouseSensitivity.vertical);
-        mp_player->rotation.y += static_cast<float>(change.x / 8.0f * m_mouseSensitivity.horizontal);
+        mp_player->rotation.x +=
+            static_cast<float>(change.y / 8.0f * m_mouseSensitivity.vertical);
+        mp_player->rotation.y +=
+            static_cast<float>(change.x / 8.0f * m_mouseSensitivity.horizontal);
         sf::Mouse::setPosition({(int)window.getSize().x / 2, (int)window.getSize().y / 2},
                                window);
 // This fixes mouse jittering on mac
