@@ -51,3 +51,8 @@ sol::function ScriptEngine::getLuaFunction(const char* functionName)
 {
     return gameTable[functionName];
 }
+
+void ScriptEngine::addCallbackApi(const char* name, std::vector<sol::function>& callbacks)
+{
+    addFunction(name, [&callbacks](sol::function f) { callbacks.push_back(f); });
+}

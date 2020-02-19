@@ -3,12 +3,15 @@
 #include <iostream>
 #include <optional>
 #include <sol/sol.hpp>
+#include <vector>
 
 struct ScriptEngine {
     ScriptEngine();
 
     bool runLuaString(const std::string& script);
     bool runLuaFile(const std::string& path);
+
+    void addCallbackApi(const char* name, std::vector<sol::function>& callbackList);
 
     /**
      * @brief Gets a Lua function

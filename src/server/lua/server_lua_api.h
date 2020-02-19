@@ -3,7 +3,6 @@
 struct ScriptEngine;
 class BiomeDataManager;
 class VoxelDataManager;
-struct ServerLuaCallbacks;
 
 /**
  * @brief Gives Lua the ability to call functions on the world itself
@@ -27,11 +26,3 @@ void luaInitDataApi(ScriptEngine& scriptEngine, BiomeDataManager& biomeManager,
  * @param script The script engine with the Lua state
  */
 void luaInitUtilApi(ScriptEngine& scriptEngine);
-
-/**
- * @brief Gives the server lua the ability to run functions when certain events happen on
- * the server-side For example, a player joining the game etc
- * @param script The
- * @param callbacks
- */
-void luaInitServerCallbackApi(ScriptEngine& scriptEngine, ServerLuaCallbacks& callbacks);
