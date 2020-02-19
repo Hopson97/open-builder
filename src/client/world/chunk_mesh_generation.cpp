@@ -33,6 +33,13 @@ bool makeFace(const VoxelDataManager& voxelData, voxel_t thisId, voxel_t compare
     return false;
 }
 
+// TODO: Generalize this check to any block and any face.
+bool shouldRenderTop(const VoxelDataManager& voxelData, const VoxelData* actualVoxData, voxel_t* topVoxel) {
+    return (actualVoxData->type == VoxelType::Fluid) ?
+        (voxelData.getVoxelData(*topVoxel).type != VoxelType::Fluid) :
+        false;  // Skips topVoxData check if actualVoxData is not a fluid
+}
+
 } // namespace
 
 ChunkMeshCollection makeChunkMesh(const Chunk& chunk, const VoxelDataManager& voxelData)
@@ -96,11 +103,10 @@ ChunkMeshCollection makeChunkMesh(const Chunk& chunk, const VoxelDataManager& vo
                                       voxData.bottomTextureId);
                     }
 
-                    bool renderTopIfFluid = (voxData.type == VoxelType::Fluid) &&	// Render the top face if this voxel is fluid...
-                        (voxelData.getVoxelData(chunk.getVoxel({x, y + 1, z})).type != VoxelType::Fluid);	// and this one not.
-                        
+                    auto topVoxel = chunk.getVoxel({x, y + 1, z});
+
                     // Top chunk face
-                    if (makeFace(voxelData, voxel, chunk.getVoxel({x, y + 1, z})) || renderTopIfFluid) {
+                    if (makeFace(voxelData, voxel, topVoxel) || shouldRenderTop(voxelData, &voxData, &topVoxel)) {
                         mesh->addFace(TOP_FACE, voxelPosition, voxData.topTextureId);
                     }
                 }
