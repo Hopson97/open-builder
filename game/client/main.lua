@@ -7,6 +7,8 @@ crosshair.position = GuiDim.new(0.5, -16, 0.5, -16)
 crosshair.size = GuiDim.new(0, 32, 0, 32)
 crosshair.texture = texCrosshair
 
+game.onClientStartup(function() print("Hello") end)
+
 --local W = 0.2
 --local H = 0.3
 --
