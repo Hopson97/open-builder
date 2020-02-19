@@ -96,8 +96,11 @@ ChunkMeshCollection makeChunkMesh(const Chunk& chunk, const VoxelDataManager& vo
                                       voxData.bottomTextureId);
                     }
 
+                    bool renderTopIfFluid = (voxData.type == VoxelType::Fluid) &&	// Render the top face if this voxel is fluid...
+                        (voxelData.getVoxelData(chunk.getVoxel({x, y + 1, z})).type != VoxelType::Fluid);	// and this one not.
+                        
                     // Top chunk face
-                    if (makeFace(voxelData, voxel, chunk.getVoxel({x, y + 1, z}))) {
+                    if (makeFace(voxelData, voxel, chunk.getVoxel({x, y + 1, z})) || renderTopIfFluid) {
                         mesh->addFace(TOP_FACE, voxelPosition, voxData.topTextureId);
                     }
                 }
