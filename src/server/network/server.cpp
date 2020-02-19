@@ -302,6 +302,8 @@ void Server::removePeer(u32 connectionId)
     assert(itr != m_connectedClients.cend());
     if (itr != m_connectedClients.cend()) {
         LOGVAR("Server", "Client disconnected, Peer Id:", (int)itr->entityId);
+        m_luaCallbacks.runPlayerLeaveCallbacks();
+        
         m_entities[itr->entityId].active = false;
         m_entities[itr->entityId].hasSkin = false;
         itr->connected = false;
