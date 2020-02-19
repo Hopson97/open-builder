@@ -72,3 +72,18 @@ auto ScriptEngine::addTable(const std::string& tableName, Args&&... args)
 {
     return gameTable.create_named(tableName, std::forward<Args>(args)...);
 }
+
+/**
+ * @brief Runs Lua callbacks
+ * As in, functions defined in Lua that have registered as a callback
+ * @tparam Args The arguments to the callback function
+ * @param callbacks List of functions to be called
+ * @param args The arguments to the callback function
+ */
+template <typename... Args>
+void runLuaCallbacks(const std::vector<sol::function>& callbacks, Args&&... args)
+{
+    for (auto& callback : callbacks) {
+        callback(std::forward<Args>(args)...);
+    }
+}
