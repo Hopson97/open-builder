@@ -1,19 +1,17 @@
 #include "client.h"
 
+#include "client_config.h"
 #include "gl/gl_errors.h"
 #include "gl/primitive.h"
+#include "gui/gui_text.h"
 #include "input/keyboard.h"
-#include "lua/client_lua_api.h"
 #include "world/chunk_mesh_generation.h"
-#include <SFML/Window/Mouse.hpp>
+#include <SFML/Window/Window.hpp>
 #include <common/debug.h>
 #include <common/network/net_command.h>
 #include <common/network/net_constants.h>
 #include <iomanip>
-#include <numeric>
-#include <thread>
-
-#include "client_config.h"
+#include <sstream>
 
 namespace {
 bool isVoxelSelectable(VoxelType voxelType)
@@ -22,9 +20,8 @@ bool isVoxelSelectable(VoxelType voxelType)
 }
 } // namespace
 
-Client::Client(const ClientConfig& config)
+Client::Client()
     : NetworkHost("Client")
-    , m_guiMaster(config.windowWidth, config.windowHeight)
 {
     // clang-format off
     m_commandDispatcher.addCommand(ClientCommand::VoxelUpdate, &Client::onVoxelUpdate);
@@ -36,10 +33,6 @@ Client::Client(const ClientConfig& config)
     m_commandDispatcher.addCommand(ClientCommand::SpawnPoint, &Client::onSpawnPoint);
     m_commandDispatcher.addCommand(ClientCommand::NewPlayerSkin, &Client::onPlayerSkinReceive);
     // clang-format on
-
-    initGuiApi(m_lua, m_guiMaster);
-
-    m_lua.runLuaFile("game/client/main.lua");
 }
 
 bool Client::init(const ClientConfig& config, float aspect)
@@ -89,11 +82,6 @@ bool Client::init(const ClientConfig& config, float aspect)
     sendPlayerSkin(m_rawPlayerSkin);
 
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
-
-    auto container = m_guiMaster.addGui();
-    m_debugStatsText = container->addText();
-    m_debugStatsText->setFontSize(16);
-    m_debugStatsText->setPosition({0.0f, 4.0f, 1.0f, -16.0f});
     return true;
 }
 
@@ -338,7 +326,7 @@ void Client::update(float dt, float frameTime)
     }
 }
 
-void Client::render()
+void Client::render(GuiText& debugTextDisplay)
 {
     // TODO [Hopson] Clean this up
     if (!m_hasReceivedGameData) {
@@ -404,12 +392,9 @@ void Client::render()
         glCheck(glDisable(GL_BLEND));
     }
 
-    // GUI
-    m_guiMaster.render();
-
     // Debug stats
     if (m_shouldRenderDebugInfo) {
-        m_debugStatsText->show();
+        debugTextDisplay.show();
         if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
             m_debugTextUpdateTimer.restart();
 
@@ -437,11 +422,11 @@ void Client::render()
             debugText << "In Chunk? " << (m_chunks.manager.hasChunk(cp) ? "Yes" : "No")
                       << '\n';
 
-            m_debugStatsText->setText(debugText.str());
+            debugTextDisplay.setText(debugText.str());
         }
     }
     else {
-        m_debugStatsText->hide();
+        debugTextDisplay.hide();
     }
 }
 

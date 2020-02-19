@@ -4,27 +4,9 @@
 #include <SFML/Window/Event.hpp>
 #include <glad/glad.h>
 
-Window::Window(const ClientConfig& config)
-{
-    window.setKeyRepeatEnabled(false);
-    if (config.fullScreen) {
-        create(sf::VideoMode::getDesktopMode(), sf::Style::Fullscreen);
-        width = window.getSize().x;
-        height = window.getSize().y;
-        aspect = static_cast<float>(width) / static_cast<float>(height);
-    }
-    else {
-        width = static_cast<unsigned>(config.windowWidth);
-        height = static_cast<unsigned>(config.windowHeight);
-        aspect = static_cast<float>(width) / static_cast<float>(height);
-        create({width, height}, sf::Style::Close);
-    }
-    if (config.isFpsCapped) {
-        window.setFramerateLimit(config.fpsLimit);
-    }
-}
+namespace {
 
-void Window::create(const sf::VideoMode& mode, u32 style)
+void createWindow(sf::Window& window, const sf::VideoMode& mode, u32 style)
 {
     sf::ContextSettings settings;
     settings.depthBits = 24;
@@ -41,4 +23,28 @@ void Window::create(const sf::VideoMode& mode, u32 style)
 #endif
 
     window.create(mode, "Open Builder", style, settings);
+}
+
+} // namespace
+
+void createWindow(sf::Window& window, const ClientConfig& config)
+{
+    window.setKeyRepeatEnabled(false);
+    if (config.fullScreen) {
+        createWindow(window, sf::VideoMode::getDesktopMode(), sf::Style::Fullscreen);
+    }
+    else {
+        unsigned width = static_cast<unsigned>(config.windowWidth);
+        unsigned height = static_cast<unsigned>(config.windowHeight);
+        createWindow(window, {width, height}, sf::Style::Close);
+    }
+    if (config.isFpsCapped) {
+        window.setFramerateLimit(config.fpsLimit);
+    }
+}
+
+float getWindowAspect(const sf::Window& window)
+{
+    return static_cast<float>(window.getSize().x) /
+           static_cast<float>(window.getSize().y);
 }

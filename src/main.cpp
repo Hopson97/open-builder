@@ -258,6 +258,7 @@ int launchServerAnd2Players(const Config& config)
 
 int main(int argc, char** argv)
 {
+
     Config config;
 
     if (enet_initialize() != 0) {

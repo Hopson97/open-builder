@@ -1,29 +1,23 @@
 #pragma once
 
-#include "client_engine.h"
+#include "engine_status.h"
 #include "gl/shader.h"
 #include "gl/textures.h"
 #include "gl/vertex_array.h"
-#include "gui/gui_master.h"
+#include "input/keyboard.h"
 #include "maths.h"
-#include "world/chunk_mesh.h"
-#include <SFML/Network/Packet.hpp>
-#include <SFML/Window/Keyboard.hpp>
+#include "renderer/chunk_renderer.h"
 #include <SFML/Window/Mouse.hpp>
-#include <SFML/Window/Window.hpp>
 #include <common/network/command_dispatcher.h>
-#include <common/network/enet.h>
 #include <common/network/net_host.h>
-#include <common/network/net_types.h>
-#include <common/scripting/script_engine.h>
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_data.h>
+#include <common/world/world_constants.h>
 #include <unordered_set>
-
-#include "renderer/chunk_renderer.h"
 
 class Keyboard;
 class GuiText;
+class ClientConfig;
 
 struct VoxelUpdate {
     VoxelPosition position;
@@ -47,7 +41,7 @@ struct DebugStats {
 
 class Client final : public NetworkHost {
   public:
-    Client(const ClientConfig& config);
+    Client();
 
     bool init(const ClientConfig& config, float aspect);
     void handleInput(const sf::Window& window, const Keyboard& keyboard);
@@ -55,8 +49,7 @@ class Client final : public NetworkHost {
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
     void update(float dt, float frameTime);
-    void render(int width, int height);
-    void render();
+    void render(GuiText& debugText);
     void endGame();
 
     EngineStatus currentStatus() const;
@@ -132,7 +125,6 @@ class Client final : public NetworkHost {
     } m_mouseSensitivity;
 
     Entity* mp_player = nullptr;
-    Entity m_externalCamera;
 
     struct {
         ChunkManager manager;
@@ -141,13 +133,6 @@ class Client final : public NetworkHost {
     } m_chunks;
 
     VoxelDataManager m_voxelData;
-
-    // Lua
-    ScriptEngine m_lua;
-
-    // GUI
-    GuiMaster m_guiMaster;
-    GuiText* m_debugStatsText = nullptr;
 
     // Debug stats stuff
     DebugStats m_debugStats{};

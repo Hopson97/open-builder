@@ -2,104 +2,135 @@
 
 #include "client.h"
 #include "gl/gl_errors.h"
+#include "gui/gui_master.h"
+#include "lua/client_lua_api.h"
+#include "renderer/chunk_renderer.h"
 #include "window.h"
 #include <SFML/System/Clock.hpp>
-#include <common/debug.h>
+#include <common/scripting/script_engine.h>
 #include <glad/glad.h>
-#include <iostream>
 
 namespace {
 struct FPSCounter final {
-    float frameCount = 0;
     sf::Clock timer;
-
-    int updates = 0;
-
     float frameTime = 0;
-
-    sf::Time totalTime;
-    float totalFrames = 0;
+    float frameCount = 0;
 
     void update()
     {
         frameCount++;
         if (timer.getElapsedTime() > sf::seconds(0.25)) {
             auto time = timer.getElapsedTime();
-
             frameTime = time.asMilliseconds() / frameCount;
-
-            if (updates++ > 20) {
-                totalFrames += frameCount;
-                totalTime += timer.getElapsedTime();
-            }
             timer.restart();
             frameCount = 0;
         }
     }
 };
+
+bool initOpenGL(const sf::Window& window)
+{
+    if (!gladLoadGL()) {
+        return false;
+    }
+#ifndef __APPLE__
+    initGLDebug();
+#endif
+    glCheck(glClearColor(0.25f, 0.75f, 1.0f, 1.0f));
+    glCheck(glViewport(0, 0, window.getSize().x, window.getSize().y));
+    glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    glCheck(glEnable(GL_DEPTH_TEST));
+    return true;
+}
 } // namespace
 
 EngineStatus runClientEngine(const ClientConfig& config)
 {
-    // Create the window
-    Window window(config);
-    window.window.setMouseCursorVisible(false);
-
-    // Setup OpenGL
-    if (!gladLoadGL()) {
+    // Window/ OpenGL context setup
+    sf::Window window;
+    window.setFramerateLimit(60);
+    createWindow(window, config);
+    if (!initOpenGL(window)) {
         return EngineStatus::GLInitError;
     }
 
-    glClearColor(0.25f, 0.75f, 1.0f, 1.0f);
-    // glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glViewport(0, 0, window.width, window.height);
-
-    glCheck(glEnable(GL_DEPTH_TEST));
-    glCheck(glEnable(GL_CULL_FACE));
-    glCheck(glCullFace(GL_BACK));
-    glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-#ifndef __APPLE__
-    initGLDebug();
-#endif
-
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-    Client gameClient(config);
-    Keyboard keyboard;
+    // Client engine stuff
     EngineStatus status = EngineStatus::Ok;
-    FPSCounter counter;
+    Keyboard keys;
+    FPSCounter fps;
+    GuiMaster guiMaster(window.getSize().x, window.getSize().y);
+    sf::Clock gameTimer;
+    int tickCount = 0;
 
-    if (!gameClient.init(config, window.aspect)) {
+    // Init the "debug prompt" F3 GUI
+    auto container = guiMaster.addGui();
+    auto debugStatsText = container->addText();
+    debugStatsText->setFontSize(16);
+    debugStatsText->setPosition({0.0f, 4.0f, 1.0f, -16.0f});
+
+    // Init Lua scripting
+    ScriptEngine scriptEngine;
+    initGuiApi(scriptEngine, guiMaster);
+    scriptEngine.runLuaFile("game/client/main.lua");
+
+    // Init screens here
+    Client client;
+    if (!client.init(config, getWindowAspect(window))) {
         return EngineStatus::CouldNotConnect;
     }
 
-    LOG("Client", "Starting game.");
-    sf::Clock clock;
+    // Main loop of the client code
     while (status == EngineStatus::Ok) {
-        // Input
-        status = window.pollEvents(
-            keyboard, [&gameClient](auto key) { gameClient.onKeyRelease(key); },
-            [&gameClient](auto button, int x, int y) {
-                gameClient.onMouseRelease(button, x, y);
-            });
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (window.hasFocus()) {
+                keys.update(event);
+            }
+            switch (event.type) {
+                case sf::Event::Closed:
+                    status = EngineStatus::Exit;
+                    break;
 
-        gameClient.handleInput(window.window, keyboard);
+                case sf::Event::KeyReleased:
+                    client.onKeyRelease(event.key.code);
+                    switch (event.key.code) {
+                        case sf::Keyboard::Escape:
+                            status = EngineStatus::Exit;
+                            break;
+
+                        default:
+                            break;
+                    }
+                    break;
+
+                case sf::Event::MouseButtonReleased:
+                    client.onMouseRelease(event.mouseButton.button, event.mouseButton.x,
+                                          event.mouseButton.y);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        tickCount++;
+
+        // Input
+        client.handleInput(window, keys);
 
         // Update
-        gameClient.update(clock.restart().asSeconds(), counter.frameTime);
+        client.update(gameTimer.restart().asSeconds(), fps.frameTime);
 
         // Render
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        gameClient.render();
-        window.window.display();
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-        // Stats and stuff
-        counter.update();
-        if (status == EngineStatus::Ok) {
-            status = gameClient.currentStatus();
-        }
+        client.render(*debugStatsText);
+
+        guiMaster.render();
+        window.display();
+
+        // Stats
+        fps.update();
     }
-    window.window.close();
-    gameClient.endGame();
+    client.endGame();
     return status;
 }
