@@ -4,12 +4,12 @@
 #include "gl/gl_errors.h"
 #include "gui/gui_master.h"
 #include "lua/client_lua_api.h"
+#include "lua/client_lua_callback.h"
 #include "renderer/chunk_renderer.h"
 #include "window.h"
 #include <SFML/System/Clock.hpp>
 #include <common/scripting/script_engine.h>
 #include <glad/glad.h>
-
 namespace {
 struct FPSCounter final {
     sf::Clock timer;
@@ -70,8 +70,13 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
     // Init Lua scripting
     ScriptEngine scriptEngine;
+    ClientLuaCallbacks callbacks;
+
+    initClientCallbackApi(scriptEngine, callbacks);
     initGuiApi(scriptEngine, guiMaster);
     scriptEngine.runLuaFile("game/client/main.lua");
+
+    runClientStartupCallback(callbacks.onClientStartup);
 
     // Init screens here
     Client client;
