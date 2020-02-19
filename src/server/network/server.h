@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../lua/server_lua_callback.h"
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/network/command_dispatcher.h>
@@ -70,6 +71,7 @@ class Server final : public NetworkHost {
     const int m_worldSize;
 
     ScriptEngine m_script;
+    ServerLuaCallbacks m_luaCallbacks;
     VoxelDataManager m_voxelData;
     BiomeDataManager m_biomeData;
 

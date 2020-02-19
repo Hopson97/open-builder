@@ -25,6 +25,7 @@ Server::Server(const ServerConfig& config)
     luaInitDataApi(m_script, m_biomeData, m_voxelData);
     luaInitWorldApi(m_script);
     luaInitUtilApi(m_script);
+    luaInitServerCallbackApi(m_script, m_luaCallbacks);
 
     // Load game in this order
     // Voxels then Biomes
@@ -148,6 +149,8 @@ void Server::onPeerConnect(ENetPeer* peer)
         spawn << ClientCommand::SpawnPoint << player.position.x << player.position.y
               << player.position.z;
         sendToPeer(peer, spawn, 0, ENET_PACKET_FLAG_RELIABLE);
+
+        m_luaCallbacks.runPlayerJoinCallbacks();
 
         // Send chunks around the player to the client (Spawn chunks)
         // "Radius" and "player chunk" position
