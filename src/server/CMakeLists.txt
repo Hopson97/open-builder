@@ -6,6 +6,7 @@ add_library(ob-server
     lua/data_api.cpp 
     lua/world_api.cpp
     lua/util_api.cpp
+    lua/server_lua_callback.cpp
 )
 
 set_flags(ob-server)
