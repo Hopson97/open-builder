@@ -6,9 +6,9 @@
 #include <common/scripting/script_engine.h>
 
 namespace {
-void addGuiMasterApi(ScriptEngine& engine, GuiMaster& guiMaster)
+void addGuiMasterApi(ScriptEngine& scriptEngine, GuiMaster& guiMaster)
 {
-    auto gui = engine.addTable("gui");
+    auto gui = scriptEngine.addTable("gui");
 
     gui["getTexture"] = [&guiMaster](const std::string& path) {
         return guiMaster.getTexture(path);
@@ -17,9 +17,9 @@ void addGuiMasterApi(ScriptEngine& engine, GuiMaster& guiMaster)
     gui["makeGui"] = [&guiMaster]() { return guiMaster.addGui(); };
 }
 
-void addGuiContainerApi(ScriptEngine& engine)
+void addGuiContainerApi(ScriptEngine& scriptEngine)
 {
-    auto containerApi = engine.lua.new_usertype<GuiContainer>("GuiContainer");
+    auto containerApi = scriptEngine.lua.new_usertype<GuiContainer>("GuiContainer");
 
     containerApi["show"] = &GuiContainer::show;
     containerApi["hide"] = &GuiContainer::hide;
@@ -27,15 +27,15 @@ void addGuiContainerApi(ScriptEngine& engine)
     containerApi["addText"] = &GuiContainer::addText;
 }
 
-void addGuiDimensionApi(ScriptEngine& engine)
+void addGuiDimensionApi(ScriptEngine& scriptEngine)
 {
-    auto gdimApi = engine.lua.new_usertype<GuiDimension>(
+    auto gdimApi = scriptEngine.lua.new_usertype<GuiDimension>(
         "GuiDim", sol::constructors<GuiDimension(float, float, float, float)>());
 }
 
-void addGuiRectangleApi(ScriptEngine& engine)
+void addGuiRectangleApi(ScriptEngine& scriptEngine)
 {
-    auto rectangleApi = engine.lua.new_usertype<GuiRectangle>("GuiRectangle");
+    auto rectangleApi = scriptEngine.lua.new_usertype<GuiRectangle>("GuiRectangle");
 
     rectangleApi["show"] = &GuiRectangle::show;
     rectangleApi["hide"] = &GuiRectangle::hide;
@@ -45,9 +45,9 @@ void addGuiRectangleApi(ScriptEngine& engine)
     rectangleApi["colour"] = sol::property(&GuiRectangle::setColour);
 }
 
-void addGuiTextApi(ScriptEngine& engine)
+void addGuiTextApi(ScriptEngine& scriptEngine)
 {
-    auto textApi = engine.lua.new_usertype<GuiText>("GuiText");
+    auto textApi = scriptEngine.lua.new_usertype<GuiText>("GuiText");
 
     textApi["show"] = &GuiText::show;
     textApi["hide"] = &GuiText::hide;
@@ -58,11 +58,11 @@ void addGuiTextApi(ScriptEngine& engine)
 
 } // namespace
 
-void initGuiApi(ScriptEngine& engine, GuiMaster& guiMaster)
+void initGuiApi(ScriptEngine& scriptEngine, GuiMaster& guiMaster)
 {
-    addGuiMasterApi(engine, guiMaster);
-    addGuiContainerApi(engine);
-    addGuiDimensionApi(engine);
-    addGuiRectangleApi(engine);
-    addGuiTextApi(engine);
+    addGuiMasterApi(scriptEngine, guiMaster);
+    addGuiContainerApi(scriptEngine);
+    addGuiDimensionApi(scriptEngine);
+    addGuiRectangleApi(scriptEngine);
+    addGuiTextApi(scriptEngine);
 }

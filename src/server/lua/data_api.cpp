@@ -48,14 +48,14 @@ void addBiomeApi(sol::table dataTable, VoxelDataManager& voxelManager,
     };
 }
 
-void addEnums(ScriptEngine& script)
+void addEnums(ScriptEngine& scriptEngine)
 {
-    auto meshStyle = script.addTable("MeshStyle");
+    auto meshStyle = scriptEngine.addTable("MeshStyle");
     meshStyle["Voxel"] = VoxelMeshStyle::Voxel;
     meshStyle["Cross"] = VoxelMeshStyle::Cross;
     meshStyle["None"] = VoxelMeshStyle::None;
 
-    auto voxelType = script.addTable("VoxelType");
+    auto voxelType = scriptEngine.addTable("VoxelType");
     voxelType["Solid"] = VoxelType::Solid;
     voxelType["Flora"] = VoxelType::Flora;
     voxelType["Fluid"] = VoxelType::Fluid;
@@ -63,13 +63,13 @@ void addEnums(ScriptEngine& script)
 }
 } // namespace
 
-void luaInitDataApi(ScriptEngine& script, BiomeDataManager& biomeManager,
+void luaInitDataApi(ScriptEngine& scriptEngine, BiomeDataManager& biomeManager,
                     VoxelDataManager& voxelManager)
 {
-    auto dataTable = script.addTable("data");
+    auto dataTable = scriptEngine.addTable("data");
     addVoxelApi(dataTable, voxelManager);
     addBiomeApi(dataTable, voxelManager, biomeManager);
-    addEnums(script);
+    addEnums(scriptEngine);
 
     dataTable["getVoxel"] = [&](const std::string& voxelName) {
         return voxelManager.getVoxelId(voxelName);

@@ -10,7 +10,7 @@ struct ServerLuaCallbacks;
  * For example, add and remove voxels from a chunk
  * @param script The script engine with the Lua state
  */
-void luaInitWorldApi(ScriptEngine& script);
+void luaInitWorldApi(ScriptEngine& scriptEngine);
 
 /**
  * @brief Gives Lua the ability to add data to the game
@@ -19,14 +19,14 @@ void luaInitWorldApi(ScriptEngine& script);
  * @param biomeManager Container for the biome types to be used from Lua
  * @param voxelManager Container for the voxel types to be used from Lua
  */
-void luaInitDataApi(ScriptEngine& script, BiomeDataManager& biomeManager,
+void luaInitDataApi(ScriptEngine& scriptEngine, BiomeDataManager& biomeManager,
                     VoxelDataManager& voxelManager);
 /**
  * For example, random number generators etc
  * @brief Gives Lua some utility functionality
  * @param script The script engine with the Lua state
  */
-void luaInitUtilApi(ScriptEngine& engine);
+void luaInitUtilApi(ScriptEngine& scriptEngine);
 
 /**
  * @brief Gives the server lua the ability to run functions when certain events happen on
@@ -34,4 +34,4 @@ void luaInitUtilApi(ScriptEngine& engine);
  * @param script The
  * @param callbacks
  */
-void luaInitServerCallbackApi(ScriptEngine& script, ServerLuaCallbacks& callbacks);
+void luaInitServerCallbackApi(ScriptEngine& scriptEngine, ServerLuaCallbacks& callbacks);
