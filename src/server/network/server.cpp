@@ -13,6 +13,7 @@
 Server::Server(const ServerConfig& config)
     : NetworkHost("Server")
     , m_worldSize(config.worldSize)
+    , m_luaCallbacks(m_script)
 {
     // clang-format off
     m_commandDispatcher.addCommand(ServerCommand::VoxelEdit, &Server::onVoxelEdit);
@@ -25,7 +26,6 @@ Server::Server(const ServerConfig& config)
     luaInitDataApi(m_script, m_biomeData, m_voxelData);
     luaInitWorldApi(m_script);
     luaInitUtilApi(m_script);
-    luaInitServerCallbackApi(m_script, m_luaCallbacks);
 
     // Load game in this order
     // Voxels then Biomes
