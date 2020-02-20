@@ -9,8 +9,8 @@ class ClientLuaCallbacks {
   public:
     ClientLuaCallbacks(ScriptEngine& scriptEngine);
 
-    void runClientStartupCallbacks();
+    void onClientStartup();
 
   private:
-    std::vector<sol::function> onClientStartup;
+    std::vector<sol::function> m_onClientStartupCallbacks;
 };

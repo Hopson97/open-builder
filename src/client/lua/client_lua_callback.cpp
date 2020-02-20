@@ -4,10 +4,10 @@
 
 ClientLuaCallbacks::ClientLuaCallbacks(ScriptEngine& scriptEngine)
 {
-    scriptEngine.addCallbackApi("onClientStartup", onClientStartup);
+    scriptEngine.addCallbackApi("onClientStartup", m_onClientStartupCallbacks);
 }
 
-void ClientLuaCallbacks::runClientStartupCallbacks()
+void ClientLuaCallbacks::onClientStartup()
 {
-    runLuaCallbacks(onClientStartup);
+    runLuaCallbacks(m_onClientStartupCallbacks);
 }

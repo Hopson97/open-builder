@@ -1,5 +1,9 @@
 #include "client_lua_api.h"
 
+#include "../gui/gui_master.h"
+#include <common/scripting/script_engine.h>
+
+/*
 #include "../gui/gui_container.h"
 #include "../gui/gui_master.h"
 #include "../gui/gui_rectangle.h"
@@ -65,4 +69,9 @@ void initGuiApi(ScriptEngine& scriptEngine, GuiMaster& guiMaster)
     addGuiDimensionApi(scriptEngine);
     addGuiRectangleApi(scriptEngine);
     addGuiTextApi(scriptEngine);
+}
+
+*/
+void luaInitGuiApi(ScriptEngine& scriptEngine, GuiMaster& guiMaster)
+{
 }

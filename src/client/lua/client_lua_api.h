@@ -3,4 +3,4 @@
 class ScriptEngine;
 class GuiMaster;
 
-void initGuiApi(ScriptEngine& scriptEngine, GuiMaster& guiMaster);
+void luaInitGuiApi(ScriptEngine& scriptEngine, GuiMaster& guiMaster);
