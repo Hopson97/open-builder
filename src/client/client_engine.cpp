@@ -71,11 +71,10 @@ EngineStatus runClientEngine(const ClientConfig& config)
     // Init Lua scripting
     ScriptEngine scriptEngine;
     ClientLuaCallbacks callbacks(scriptEngine);
+    luaInitGuiApi(scriptEngine, guiMaster);
 
-    initGuiApi(scriptEngine, guiMaster);
     scriptEngine.runLuaFile("game/client/main.lua");
-
-    callbacks.runClientStartupCallbacks();
+    callbacks.onClientStartup();
 
     // Init screens here
     Client client;
