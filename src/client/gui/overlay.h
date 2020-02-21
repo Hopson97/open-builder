@@ -11,4 +11,5 @@ struct Overlay {
     }
     const OverlayDefinition* p_definition;
 };
+
 } // namespace gui

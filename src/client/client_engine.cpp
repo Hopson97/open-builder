@@ -3,6 +3,7 @@
 #include "client.h"
 #include "gl/gl_errors.h"
 #include "gui/gui_master.h"
+#include "gui/overlay_stack.h"
 #include "gui/overlay_factory.h"
 #include "lua/client_lua_api.h"
 #include "lua/client_lua_callback.h"
@@ -76,6 +77,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
     // Gui
     gui::OverlayFactory overlayFactory;
+    gui::OverlayStack overlayStack;
     luaInitGuiApi(scriptEngine, overlayFactory);
 
     scriptEngine.runLuaFile("game/client/main.lua");
