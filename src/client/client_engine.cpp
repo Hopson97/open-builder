@@ -3,8 +3,8 @@
 #include "client.h"
 #include "gl/gl_errors.h"
 #include "gui/gui_master.h"
-#include "gui/overlay_stack.h"
 #include "gui/overlay_factory.h"
+#include "gui/overlay_stack.h"
 #include "lua/client_lua_api.h"
 #include "lua/client_lua_callback.h"
 #include "renderer/chunk_renderer.h"
@@ -80,6 +80,8 @@ EngineStatus runClientEngine(const ClientConfig& config)
     gui::OverlayStack overlayStack;
     luaInitGuiApi(scriptEngine, overlayFactory);
 
+    // overlayStack.pushLayer(overlayFactory.createOverlay("main_menu"));
+
     scriptEngine.runLuaFile("game/client/main.lua");
     callbacks.onClientStartup();
 
@@ -103,6 +105,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
                 case sf::Event::KeyReleased:
                     client.onKeyRelease(event.key.code);
+                    overlayStack.handleKeyRelease(event.key.code);
                     switch (event.key.code) {
                         case sf::Keyboard::Escape:
                             status = EngineStatus::Exit;
@@ -113,7 +116,12 @@ EngineStatus runClientEngine(const ClientConfig& config)
                     }
                     break;
 
+                case sf::Event::MouseMoved:
+                    overlayStack.handleMouseMove(event.mouseMove);
+                    break;
+
                 case sf::Event::MouseButtonReleased:
+                    overlayStack.handleClick(event.mouseButton.button);
                     client.onMouseRelease(event.mouseButton.button, event.mouseButton.x,
                                           event.mouseButton.y);
                     break;
