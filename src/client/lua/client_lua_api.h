@@ -1,6 +1,9 @@
 #pragma once
 
 class ScriptEngine;
-class GuiMaster;
 
-void luaInitGuiApi(ScriptEngine& scriptEngine, GuiMaster& guiMaster);
+namespace gui {
+class OverlayFactory;
+}
+
+void luaInitGuiApi(ScriptEngine& scriptEngine, gui::OverlayFactory& overlayFactory);
