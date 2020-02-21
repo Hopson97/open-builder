@@ -27,7 +27,7 @@ TEST_CASE("GUI API Tests")
     {
         scriptEngine.runLuaString(guiCreateScript);
         auto overlay = overlayFactory.createOverlay("test_gui");
-        REQUIRE(overlay->p_definition->id == "test_gui");
-        REQUIRE(overlay->p_definition->title == "Test GUI");
+        REQUIRE(overlay->definition.id == "test_gui");
+        REQUIRE(overlay->definition.title == "Test GUI");
     }
 }

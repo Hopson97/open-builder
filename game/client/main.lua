@@ -8,3 +8,7 @@ crosshair.size = GuiDim.new(0, 32, 0, 32)
 crosshair.texture = texCrosshair
 
 game.onClientStartup(function() print("Hello from the other side") end)
+
+
+
+
