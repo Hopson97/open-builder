@@ -100,6 +100,7 @@ link_exe(${PROJECT_NAME})
 #Create the unit test executable
 add_executable(tests
     tests/tests.cpp
+
     tests/common/world/chunk_manager_test.cpp
     tests/common/world/coordinate_test.cpp
     tests/common/world/chunk_test.cpp
@@ -107,6 +108,8 @@ add_executable(tests
     tests/common/network/command_dispatcher_test.cpp
     tests/common/obd_parser_test.cpp
     tests/common/scripting/script_engine_test.cpp
+    tests/client/gui/gui_api_test.cpp
+
 )
 
 include_dirs(tests)

@@ -3,6 +3,7 @@
 #include "client.h"
 #include "gl/gl_errors.h"
 #include "gui/gui_master.h"
+#include "gui/overlay_factory.h"
 #include "lua/client_lua_api.h"
 #include "lua/client_lua_callback.h"
 #include "renderer/chunk_renderer.h"
@@ -10,6 +11,7 @@
 #include <SFML/System/Clock.hpp>
 #include <common/scripting/script_engine.h>
 #include <glad/glad.h>
+
 namespace {
 struct FPSCounter final {
     sf::Clock timer;
@@ -71,7 +73,10 @@ EngineStatus runClientEngine(const ClientConfig& config)
     // Init Lua scripting
     ScriptEngine scriptEngine;
     ClientLuaCallbacks callbacks(scriptEngine);
-    luaInitGuiApi(scriptEngine, guiMaster);
+
+    // Gui
+    gui::OverlayFactory overlayFactory;
+    luaInitGuiApi(scriptEngine, overlayFactory);
 
     scriptEngine.runLuaFile("game/client/main.lua");
     callbacks.onClientStartup();
