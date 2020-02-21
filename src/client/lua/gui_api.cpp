@@ -1,7 +1,31 @@
 #include "client_lua_api.h"
 
-#include "../gui/gui_master.h"
 #include <common/scripting/script_engine.h>
+
+#include "../gui/overlay.h"
+#include "../gui/overlay_factory.h"
+
+namespace {
+void initOverlayDefinitionCreateApi(ScriptEngine& scriptEngine,
+                                    gui::OverlayFactory& overlayFactory)
+{
+    auto gui = scriptEngine.addTable("gui");
+    gui["defineGui"] = [&](const sol::table& guiTable) {
+        gui::OverlayDefinition overlay;
+
+        overlay.id = guiTable["id"];
+        overlay.title = guiTable["title"];
+        overlay.create = guiTable["create"];
+
+        overlayFactory.addOverlay(overlay);
+    };
+}
+} // namespace
+
+void luaInitGuiApi(ScriptEngine& scriptEngine, gui::OverlayFactory& overlayFactory)
+{
+    initOverlayDefinitionCreateApi(scriptEngine, overlayFactory);
+}
 
 /*
 #include "../gui/gui_container.h"
@@ -72,6 +96,29 @@ void initGuiApi(ScriptEngine& scriptEngine, GuiMaster& guiMaster)
 }
 
 */
+
+/*
+struct GuiScreen {
+    std::string name;
+    sol::function onCreate;
+};
+
+namespace {
+void initDefineGuiApi(ScriptEngine& scriptEngine, GuiMaster& guiMaster)
+{
+    auto gui = scriptEngine.addTable("gui");
+    gui["defineGui"] = [&](sol::table guiTable) {
+        GuiScreen screen;
+        screen.name = guiTable.get<std::string>("name");
+        screen.onCreate = guiTable.get<sol::function>("onCreate");
+
+        // add thing to master idk
+    };
+}
+} // namespace
+
 void luaInitGuiApi(ScriptEngine& scriptEngine, GuiMaster& guiMaster)
 {
+    initDefineGuiApi(scriptEngine, guiMaster);
 }
+*/
