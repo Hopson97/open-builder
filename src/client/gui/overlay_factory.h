@@ -8,7 +8,7 @@
 
 namespace gui {
 
-struct OverlayDefintion {
+struct OverlayDefinition {
     std::string id;
     std::string title;
 
@@ -17,11 +17,11 @@ struct OverlayDefintion {
 
 class OverlayFactory {
   public:
-    void addOverlay(const OverlayDefintion& overlay);
+    void addOverlay(const OverlayDefinition& overlay);
     std::unique_ptr<Overlay> createOverlay(const std::string& name);
 
   private:
-    std::vector<OverlayDefintion> m_overlays;
+    std::vector<OverlayDefinition> m_overlays;
     std::unordered_map<std::string, int> m_overlayMap;
 };
 } // namespace gui
