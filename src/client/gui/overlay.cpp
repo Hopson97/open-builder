@@ -23,10 +23,10 @@ LabelWidget* Overlay::addLabel()
     return dynamic_cast<LabelWidget*>(widget);
 }
 
-void Overlay::handleClick(sf::Mouse::Button button)
+void Overlay::handleClick(sf::Mouse::Button button, float mx, float my)
 {
     for (auto& widget : m_widgets) {
-        widget->handleClick(button);
+        widget->handleClick(button, mx, my);
     }
 }
 

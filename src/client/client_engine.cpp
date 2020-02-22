@@ -125,7 +125,8 @@ EngineStatus runClientEngine(const ClientConfig& config)
                     break;
 
                 case sf::Event::MouseButtonReleased:
-                    overlayStack.handleClick(event.mouseButton.button);
+                    overlayStack.handleClick(event.mouseButton.button,
+                                             event.mouseButton.x, event.mouseButton.y);
                     client.onMouseRelease(event.mouseButton.button, event.mouseButton.x,
                                           event.mouseButton.y);
                     break;

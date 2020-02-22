@@ -24,10 +24,10 @@ void OverlayStack::removeLayerByName(const std::string& overlayId)
     }
 }
 
-void OverlayStack::handleClick(sf::Mouse::Button button)
+void OverlayStack::handleClick(sf::Mouse::Button button, float mx, float my)
 {
     for (auto& layer : overlays) {
-        layer->handleClick(button);
+        layer->handleClick(button, mx, my);
     }
 }
 

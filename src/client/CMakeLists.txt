@@ -27,6 +27,7 @@ add_library(ob-client
 
     gui/widget/image_widget.cpp
     gui/widget/label_widget.cpp
+    gui/widget/button_widget.cpp
 
     window.cpp
 

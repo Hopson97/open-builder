@@ -61,9 +61,11 @@ struct RectangleComponent final {
     void show();
     bool isHidden() const;
 
-  private:
-    void updateBounds();
+    bool isInBounds(float x, float y) const;
 
+    void updateBounds(const glm::vec2& viewport);
+
+  private:
     sf::FloatRect m_bounds;
     GuiDimension m_position;
     GuiDimension m_size;
