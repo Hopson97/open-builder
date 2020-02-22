@@ -9,7 +9,7 @@ void OverlayStack::pushLayer(std::unique_ptr<Overlay> overlay)
 
 void OverlayStack::popLayer()
 {
-    overlays.pop_back();
+    m_shouldPop = true;
 }
 
 void OverlayStack::removeLayerByName(const std::string& overlayId)
@@ -45,4 +45,13 @@ void OverlayStack::handleKeyRelease(sf::Keyboard::Key key)
     }
 }
 
+void OverlayStack::update()
+{
+    if (m_shouldPop) {
+        m_shouldPop = false;
+        if (overlays.size() > 0) {
+            overlays.pop_back();
+        }
+    }
+}
 } // namespace gui

@@ -33,6 +33,8 @@ void initGuiStackApi(sol::table& guiTable, gui::OverlayFactory& overlayFactory,
     guiTable["push"] = [&](const std::string guiId) {
         overlayStack.pushLayer(overlayFactory.createOverlay(guiId));
     };
+
+    guiTable["pop"] = [&]() { overlayStack.popLayer(); };
 }
 
 } // namespace
