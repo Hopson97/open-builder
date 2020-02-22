@@ -17,6 +17,7 @@ add_library(ob-client
 
     lua/client_lua_callback.cpp
     lua/gui_api.cpp
+    lua/gui_widget_api.cpp
 
     gui/gui_container.cpp
     gui/overlay_stack.cpp
@@ -29,7 +30,7 @@ add_library(ob-client
     gui/widget/image_widget.cpp
 
     window.cpp
-    
+
     network/client_commands.cpp
 
     renderer/gui_renderer.cpp

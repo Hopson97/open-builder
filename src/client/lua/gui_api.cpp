@@ -71,7 +71,7 @@ void addGuiContainerApi(ScriptEngine& scriptEngine)
 {
     auto containerApi = scriptEngine.lua.new_usertype<GuiContainer>("GuiContainer");
 
-    containerApi["show"] = &GuiContainer::show; 
+    containerApi["show"] = &GuiContainer::show;
     containerApi["hide"] = &GuiContainer::hide;
     containerApi["addRect"] = &GuiContainer::addRectangle;
     containerApi["addText"] = &GuiContainer::addText;
