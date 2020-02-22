@@ -12,7 +12,10 @@ ButtonWidget::ButtonWidget(TextComponent* textComponent,
     : mp_text(textComponent)
     , mp_rectangle(rectangleComponent)
 {
+    componentList.push_back(mp_text);
+    componentList.push_back(mp_rectangle);
 }
+
 void ButtonWidget::setPosition(const GuiDimension& position)
 {
     mp_rectangle->setPosition(position);

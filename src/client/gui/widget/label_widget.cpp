@@ -7,7 +7,9 @@ namespace gui {
 LabelWidget::LabelWidget(TextComponent* textComponent)
     : mp_text(textComponent)
 {
+    componentList.push_back(mp_text);
 }
+
 void LabelWidget::setPosition(const GuiDimension& position)
 {
     mp_text->setPosition(position);

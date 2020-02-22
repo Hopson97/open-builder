@@ -2,11 +2,13 @@
 
 #include <SFML/Window/Event.hpp>
 #include <sol/sol.hpp>
+#include <vector>
 
 namespace gui {
 struct GuiDimension;
 class RectangleComponent;
 class TextComponent;
+class Component;
 
 /**
  * @brief Base class for different widgets that can makeup a GUI overlay
@@ -19,6 +21,11 @@ struct Widget {
 
     virtual void setPosition(const GuiDimension& position) = 0;
     virtual void setSize(const GuiDimension& size) = 0;
+
+    void hide();
+    void show();
+
+    std::vector<Component*> componentList;
 };
 
 /**

@@ -26,6 +26,7 @@ add_library(ob-client
     gui/component/rectangle_component.cpp
     gui/component/text_component.cpp
 
+    gui/widget/widget.cpp
     gui/widget/image_widget.cpp
     gui/widget/label_widget.cpp
     gui/widget/button_widget.cpp

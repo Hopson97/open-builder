@@ -42,7 +42,7 @@ class Component {
   public:
     virtual ~Component() = default;
 
-    void ide()
+    void hide()
     {
         m_isHidden = true;
     }
