@@ -82,6 +82,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
     // Lua API set up
     luaInitGuiApi(scriptEngine, overlayFactory, overlayStack, &guiRenderer);
+    luaInitGuiWidgetApi(scriptEngine);
 
     // overlayStack.pushLayer(overlayFactory.createOverlay("main_menu"));
 
