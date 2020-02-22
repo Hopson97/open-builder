@@ -1,5 +1,7 @@
 #include "../widget.h"
 
+#include <iostream>
+
 #include "../component.h"
 
 namespace gui {

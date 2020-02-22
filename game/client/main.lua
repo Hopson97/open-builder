@@ -11,6 +11,14 @@ local function createHud(overlay)
     label.text = "hello"
     label.textSize = 50
     label.position = GuiDim.new(0.1, -16, 0.9, -16)
+
+    local button = overlay:addButton()
+    button.text = "hello"
+    button.textSize = 50
+    button.position = GuiDim.new(0.6, 0, 0.6, 0)
+    button.size = GuiDim.new(0.2, 0, 0.1, 0)
+    button.onClick = function() print("Clicked") end
+
 end 
 
 game.gui.addGui{

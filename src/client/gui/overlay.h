@@ -31,17 +31,11 @@ class Overlay final {
     void handleMouseMove(sf::Event::MouseMoveEvent);
     void handleKeyRelease(sf::Keyboard::Key);
 
-    /**
-     * @brief Adds a new image the overlay
-     * @return ImageWidget* Non-Owning pointer to the new image widget created
-     */
+    // These widget adding function return non-owning pointers
+    // They are mostly called via Lua code, which is why it is pointers
     ImageWidget* addImage();
-
-    /**
-     * @brief Adds a new label the overlay
-     * @return LabelWidget* Non-Owning pointer to the new label widget created
-     */
     LabelWidget* addLabel();
+    ButtonWidget* addButton();
 
     // The overlay defintion that created this overlay
     const OverlayDefinition& definition;

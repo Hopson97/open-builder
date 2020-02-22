@@ -48,7 +48,6 @@ void addGuiButtonApi(ScriptEngine& engine)
     buttonApi["onClick"] = sol::property(&gui::ButtonWidget::setOnClick);
     buttonApi["onMouseOver"] = sol::property(&gui::ButtonWidget::setOnMouseOver);
 
-
     addCommonAPI(buttonApi);
 }
 
@@ -57,6 +56,7 @@ void initGuiOverlayApi(ScriptEngine& engine)
     auto overlayApi = engine.lua.new_usertype<gui::Overlay>("GuiOverlay");
     overlayApi["addImage"] = &gui::Overlay::addImage;
     overlayApi["addLabel"] = &gui::Overlay::addLabel;
+    overlayApi["addButton"] = &gui::Overlay::addButton;
 }
 
 } // namespace
