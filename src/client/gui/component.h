@@ -5,6 +5,11 @@
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp>
 
+/**
+ * Components are the rendererable primitives of a ui overlay
+ *
+ */
+
 namespace gl {
 class Font;
 }
@@ -12,6 +17,11 @@ class GuiShader;
 
 namespace gui {
 
+/**
+ * @brief Descibes offset and scale of either a size or position
+ * For example, a position scale of (0.2, 0.4) would be 20% from the bottom and 40% from
+ * the left of the screen
+ */
 struct GuiDimension final {
     glm::vec2 scale{0.0f};
     glm::vec2 offset{0.0f};
@@ -37,7 +47,8 @@ struct RectangleComponent final {
   public:
     glm::mat4 getRenderTransform(const glm::vec2& viewport) const;
 
-    // Setters rather than "public" as it makes it a lot easier for a clean lua api
+    // Setters rather than public properties as it makes it a lot easier for a clean lua
+    // api
     void setPosition(const GuiDimension& position);
     void setSize(const GuiDimension& size);
     void setTexture(int texture);
@@ -77,7 +88,7 @@ class TextComponent {
   private:
     void updateGeometry(const gl::Font& font);
 
-    ::gl::VertexArray m_textQuads;
+    gl::VertexArray m_textQuads;
     std::string m_text;
     GuiDimension m_position;
     float m_fontSize = 0;

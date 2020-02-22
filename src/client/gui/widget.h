@@ -7,6 +7,9 @@ struct GuiDimension;
 class RectangleComponent;
 class TextComponent;
 
+/**
+ * @brief Base class for different widgets that can makeup a GUI overlay
+ */
 struct Widget {
     virtual void handleClick(sf::Mouse::Button){};
     virtual void handleMouseMove(sf::Event::MouseMoveEvent){};
@@ -16,6 +19,9 @@ struct Widget {
     virtual void setSize(const GuiDimension& size) = 0;
 };
 
+/**
+ * @brief Raw image overlay widget
+ */
 class ImageWidget final : public Widget {
   public:
     ImageWidget(RectangleComponent* rectangleComponent);
@@ -28,6 +34,9 @@ class ImageWidget final : public Widget {
     RectangleComponent* mp_rectangle;
 };
 
+/**
+ * @brief Raw text widget
+ */
 class LabelWidget final : public Widget {
   public:
     LabelWidget(TextComponent* textComponent);
