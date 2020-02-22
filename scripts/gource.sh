@@ -1,3 +1,3 @@
 #!/bin/bash
 
-gource --seconds-per-day 2 -auto-skip-seconds 1 --file-idle-time 0 --key
+gource -1920x1080 --stop-at-end --file-idle-time 0 --seconds-per-day 1.5 --file-filter deps --key

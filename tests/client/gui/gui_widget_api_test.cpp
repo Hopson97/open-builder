@@ -7,7 +7,8 @@
 const std::string guiCreateScript = R"(
 
     function create(overlay)
-
+        local image = overlay:addImage()
+        image.image = 52
     end
 
     game.gui.addGui{
@@ -15,9 +16,7 @@ const std::string guiCreateScript = R"(
         title = "Test GUI",
         create = create
     }
-)";
 
-const std::string guiAddScript = R"(
     game.gui.push("test_gui")
 )";
 
@@ -27,20 +26,14 @@ TEST_CASE("GUI API Tests")
     gui::OverlayFactory overlayFactory;
     gui::OverlayStack overlayStack;
     luaInitGuiApi(scriptEngine, overlayFactory, overlayStack);
+    luaInitGuiWidgetApi(scriptEngine);
 
-    SECTION("GUIs can be registered to a GUI factory")
+    SECTION("GUIs can have widgets added to them by Lua scripts")
     {
         scriptEngine.runLuaString(guiCreateScript);
-        auto overlay = overlayFactory.createOverlay("test_gui");
-        REQUIRE(overlay->definition.id == "test_gui");
-        REQUIRE(overlay->definition.title == "Test GUI");
-    }
 
-    SECTION("GUIs can be shown using the API")
-    {
-        scriptEngine.runLuaString(guiCreateScript);
-        scriptEngine.runLuaString(guiAddScript);
-
-        REQUIRE(overlayStack.overlays.size() == 1);
+        auto& overlay = overlayStack.overlays.back();
+        REQUIRE(overlay->rectangleComponents.size() == 1);
+        REQUIRE(overlay->widgetCount() == 1);
     }
 }

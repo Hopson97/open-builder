@@ -35,4 +35,9 @@ void Overlay::handleKeyRelease(sf::Keyboard::Key key)
         widget->handleKeyRelease(key);
     }
 }
+
+int Overlay::widgetCount() const
+{
+    return m_widgets.size();
+}
 } // namespace gui
