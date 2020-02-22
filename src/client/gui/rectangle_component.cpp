@@ -1,7 +1,7 @@
 #include "component.h"
 
 #include <glm/gtc/matrix_transform.hpp>
-
+#include <iostream>
 namespace gui {
 
 glm::mat4 RectangleComponent::getRenderTransform(const glm::vec2& viewport) const
@@ -72,8 +72,7 @@ void RectangleComponent::updateBounds(const glm::vec2& viewport)
     auto scaledViewport = viewport / 100.0f;
     auto topLeft = m_position.apply(scaledViewport);
     auto size = m_size.apply(scaledViewport);
-
-    m_bounds = {topLeft.x, topLeft.y, size.x, size.y};
+    m_bounds = {topLeft.x, viewport.y - topLeft.y - size.y, size.x, size.y};
 }
 
 } // namespace gui
