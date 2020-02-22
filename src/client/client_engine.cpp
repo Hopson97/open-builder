@@ -2,8 +2,7 @@
 
 #include "client.h"
 #include "gl/gl_errors.h"
-#include "gui/overlay_factory.h"
-#include "gui/overlay_stack.h"
+#include "gui/overlay.h"
 #include "lua/client_lua_api.h"
 #include "lua/client_lua_callback.h"
 #include "renderer/chunk_renderer.h"
