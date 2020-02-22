@@ -5,6 +5,8 @@
 namespace gui {
 struct GuiDimension;
 class RectangleComponent;
+class TextComponent;
+
 struct Widget {
     virtual void handleClick(sf::Mouse::Button){};
     virtual void handleMouseMove(sf::Event::MouseMoveEvent){};
@@ -24,5 +26,18 @@ class ImageWidget final : public Widget {
 
   private:
     RectangleComponent* mp_rectangle;
+};
+
+class LabelWidget final : public Widget {
+  public:
+    LabelWidget(TextComponent* textComponent);
+    void setPosition(const GuiDimension& position) final override;
+    void setSize(const GuiDimension& size) final override;
+
+    void setText(const std::string& text);
+    void setTextSize(float size);
+
+  private:
+    TextComponent* mp_text;
 };
 } // namespace gui

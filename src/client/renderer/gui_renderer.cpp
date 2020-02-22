@@ -62,7 +62,7 @@ void GuiRenderer::render(const gui::Overlay& overlay)
     glEnable(GL_BLEND);
     auto vp = m_viewport / 100.0f;
     for (auto& text : overlay.textComponents) {
-        text->render(m_shader, vp);
+        text->render(m_font, m_shader, vp);
     }
     glCullFace(GL_BACK);
     glDisable(GL_BLEND);
