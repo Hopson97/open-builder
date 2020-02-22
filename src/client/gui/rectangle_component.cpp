@@ -1,4 +1,4 @@
-#include "overlay_component.h"
+#include "component.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

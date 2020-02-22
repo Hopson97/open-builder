@@ -1,7 +1,7 @@
 #include "../gl/font.h"
 #include "../maths.h"
 #include "../renderer/gui_shader.h"
-#include "overlay_component.h"
+#include "component.h"
 
 namespace {
 struct Mesh {

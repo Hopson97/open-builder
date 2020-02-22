@@ -1,7 +1,6 @@
 #pragma once
 
-#include "overlay.h"
-#include <SFML/Window/Event.hpp>
+#include "widget.h"
 #include <memory>
 #include <sol/sol.hpp>
 #include <unordered_map>
@@ -16,12 +15,6 @@ struct OverlayDefinition {
     sol::function create;
 };
 
-struct Widget {
-    virtual void handleClick(sf::Mouse::Button){};
-    virtual void handleMouseMove(sf::Event::MouseMoveEvent){};
-    virtual void handleKeyRelease(sf::Keyboard::Key){};
-};
-
 struct Overlay {
     Overlay(const OverlayDefinition& overlayDefinition);
 
@@ -34,6 +27,11 @@ struct Overlay {
     const OverlayDefinition& definition;
 
     std::vector<std::unique_ptr<Widget>> widgets;
+
+    // Stored as pointers to allow them to be stored by the Lua code
+    std::vector<std::unique_ptr<RectangleComponent>> rectangleComponent;
+    std::vector<std::unique_ptr<RectangleComponent>> textComponents;
+
 };
 
 struct OverlayStack {
