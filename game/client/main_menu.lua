@@ -1,5 +1,4 @@
 
-local crosshairTexture = game.gui.getTexture("res/crosshair.png")
 local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
 local logoTexture = game.gui.getTexture("res/logo.png")
 
@@ -23,12 +22,14 @@ end
 local function singleplayerClicked()
     print("Singleplayer clicked")
     game.gui.pop()
+    game.gui.push("hud")
    -- controller:startGame()
    -- game.gui.push("loading")
 end
 
-    print("Singleplayer clicked")
-    local function multiplayerClicked()
+
+local function multiplayerClicked()
+    print("Multiplayer clicked")
     --  controller:exit() --This should disconnect client too duh
 end
 
