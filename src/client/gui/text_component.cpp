@@ -97,7 +97,7 @@ void TextComponent::setText(const std::string& text)
     m_isGeometryUpdateNeeded = true;
 }
 
-void TextComponent::render(const gl::Font& font, GuiShader2& shader,
+void TextComponent::render(const gl::Font& font, GuiShader& shader,
                            const glm::vec2& viewport)
 {
     if (m_isHidden) {
