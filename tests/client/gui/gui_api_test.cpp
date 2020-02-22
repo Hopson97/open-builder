@@ -4,24 +4,29 @@
 #include <client/lua/client_lua_api.h>
 #include <common/scripting/script_engine.h>
 
-const char* guiCreateScript = R"(
+const std::string guiCreateScript = R"(
 
     function create()
         print("Why")
     end
 
-    game.gui.defineGui{
+    game.gui.addGui{
         id = "test_gui",
         title = "Test GUI",
         create = create
     }
 )";
 
+const std::string guiAddScript = R"(
+    game.gui.push("test_gui")
+)";
+
 TEST_CASE("GUI API Tests")
 {
     ScriptEngine scriptEngine;
     gui::OverlayFactory overlayFactory;
-    luaInitGuiApi(scriptEngine, overlayFactory, nullptr);
+    gui::OverlayStack overlayStack;
+    luaInitGuiApi(scriptEngine, overlayFactory, overlayStack);
 
     SECTION("GUIs can be registered to a GUI factory")
     {
@@ -29,5 +34,13 @@ TEST_CASE("GUI API Tests")
         auto overlay = overlayFactory.createOverlay("test_gui");
         REQUIRE(overlay->definition.id == "test_gui");
         REQUIRE(overlay->definition.title == "Test GUI");
+    }
+
+    SECTION("GUIs can be shown using the API")
+    {
+        scriptEngine.runLuaString(guiCreateScript);
+        scriptEngine.runLuaString(guiAddScript);
+
+        REQUIRE(overlayStack.overlays.size() == 1);
     }
 }

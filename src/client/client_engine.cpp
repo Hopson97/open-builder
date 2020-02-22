@@ -81,7 +81,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     GuiRenderer guiRenderer(window.getSize().x, window.getSize().y);
 
     // Lua API set up
-    luaInitGuiApi(scriptEngine, overlayFactory, &guiRenderer);
+    luaInitGuiApi(scriptEngine, overlayFactory, overlayStack, &guiRenderer);
 
     // overlayStack.pushLayer(overlayFactory.createOverlay("main_menu"));
 
@@ -146,7 +146,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
         client.render();
 
-        for (auto& overlay : overlayStack.m_overlayStack) {
+        for (auto& overlay : overlayStack.overlays) {
             guiRenderer.render(*overlay);
         }
         window.display();
