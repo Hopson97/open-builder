@@ -12,6 +12,8 @@ namespace gui {
 class TextComponent final : public Component {
   public:
     void setPosition(const GuiDimension& position) final override;
+    void setSize(const GuiDimension& size) final override;
+
     void setFontSize(float size);
     void setText(const std::string& text);
 

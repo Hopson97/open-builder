@@ -12,7 +12,7 @@ struct RectangleComponent final : public Component {
     // Setters rather than public properties as it makes it a lot easier for a clean lua
     // api
     void setPosition(const GuiDimension& position) final override;
-    void setSize(const GuiDimension& size);
+    void setSize(const GuiDimension& size) final override;
     void setTexture(int texture);
     void setColour(float r, float g, float b);
 

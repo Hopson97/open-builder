@@ -85,6 +85,11 @@ void TextComponent::setPosition(const GuiDimension& position)
     m_isGeometryUpdateNeeded = true;
 }
 
+void TextComponent::setSize(const GuiDimension&)
+{
+    // Intentionally empty
+}
+
 void TextComponent::setFontSize(float size)
 {
     m_fontSize = size;

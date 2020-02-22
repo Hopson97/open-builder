@@ -1,4 +1,4 @@
-#include "../widget.h"
+#include "widget.h"
 
 #include "../component/rectangle_component.h"
 
