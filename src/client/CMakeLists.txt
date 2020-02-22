@@ -18,6 +18,7 @@ add_library(ob-client
     lua/gui_api.cpp
     lua/client_lua_callback.cpp
     renderer/chunk_renderer.cpp
+    renderer/gui_renderer.cpp
     network/client_commands.cpp
     client.cpp
     maths.cpp

@@ -4,27 +4,35 @@
 
 #include "../gui/overlay.h"
 #include "../gui/overlay_factory.h"
+#include "../renderer/gui_renderer.h"
 
 namespace {
-void initOverlayDefinitionCreateApi(ScriptEngine& scriptEngine,
+void initOverlayDefinitionCreateApi(sol::table& guiTable,
                                     gui::OverlayFactory& overlayFactory)
 {
-    auto gui = scriptEngine.addTable("gui");
-    gui["defineGui"] = [&](const sol::table& guiTable) {
+    guiTable["defineGui"] = [&](const sol::table& guiDefintion) {
         gui::OverlayDefinition overlay;
 
-        overlay.id = guiTable["id"];
-        overlay.title = guiTable["title"];
-        overlay.create = guiTable["create"];
+        overlay.id = guiDefintion["id"];
+        overlay.title = guiDefintion["title"];
+        overlay.create = guiDefintion["create"];
 
         overlayFactory.addOverlay(overlay);
     };
 }
+
 } // namespace
 
 void luaInitGuiApi(ScriptEngine& scriptEngine, gui::OverlayFactory& overlayFactory)
 {
-    initOverlayDefinitionCreateApi(scriptEngine, overlayFactory);
+    auto guiTable = scriptEngine.addTable("gui");
+    initOverlayDefinitionCreateApi(guiTable, overlayFactory);
+}
+
+void luaIntGuiRenderApi(ScriptEngine& scriptEngine, GuiRenderer& guiRenderer)
+{
+    scriptEngine.lua["game"]["gui"]["getTexture"] =
+        [&guiRenderer](const std::string& path) { return guiRenderer.getTexture(path); };
 }
 
 /*
