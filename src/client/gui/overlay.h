@@ -2,7 +2,7 @@
 
 #include "component/rectangle_component.h"
 #include "component/text_component.h"
-#include "widget.h"
+#include "widget/widget.h"
 #include <memory>
 #include <queue>
 #include <sol/sol.hpp>
