@@ -3,7 +3,6 @@
 #include "client_config.h"
 #include "gl/gl_errors.h"
 #include "gl/primitive.h"
-#include "gui/component.h"
 #include "input/keyboard.h"
 #include "world/chunk_mesh_generation.h"
 #include <SFML/Window/Window.hpp>

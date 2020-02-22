@@ -1,6 +1,5 @@
 #include "client_lua_api.h"
 
-#include "../gui/component.h"
 #include "../gui/overlay.h"
 #include "../gui/widget.h"
 #include <common/scripting/script_engine.h>

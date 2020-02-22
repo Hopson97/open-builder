@@ -1,6 +1,6 @@
 #include "../widget.h"
 
-#include "../component.h"
+#include "../component/rectangle_component.h"
 
 namespace gui {
 

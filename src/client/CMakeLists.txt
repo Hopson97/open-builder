@@ -22,8 +22,9 @@ add_library(ob-client
     gui/overlay_stack.cpp
     gui/overlay.cpp
     gui/overlay_factory.cpp
-    gui/rectangle_component.cpp
-    gui/text_component.cpp
+    
+    gui/component/rectangle_component.cpp
+    gui/component/text_component.cpp
 
     gui/widget/image_widget.cpp
     gui/widget/label_widget.cpp
