@@ -6,15 +6,32 @@ Overlay::Overlay(const OverlayDefinition& overlayDefinition)
 {
 }
 
-void Overlay::handleClick(sf::Mouse::Button)
+ImageWidget* Overlay::addImage()
 {
+    auto rectangle = rectangleComponents.emplace_back(std::make_unique<RectangleComponent>()).get();
+    auto image = std::make_unique<ImageWidget>(rectangle);
+    auto widget = widgets.emplace_back(std::move(image)).get();
+    return dynamic_cast<ImageWidget*>(widget);
 }
 
-void Overlay::handleMouseMove(sf::Event::MouseMoveEvent)
+void Overlay::handleClick(sf::Mouse::Button button)
 {
+    for (auto& widget : widgets) {
+        widget->handleClick(button);
+    }
 }
 
-void Overlay::handleKeyRelease(sf::Keyboard::Key)
+void Overlay::handleMouseMove(sf::Event::MouseMoveEvent mouseMoveEvent)
 {
+    for (auto& widget : widgets) {
+        widget->handleMouseMove(mouseMoveEvent);
+    }
+}
+
+void Overlay::handleKeyRelease(sf::Keyboard::Key key)
+{
+    for (auto& widget : widgets) {
+        widget->handleKeyRelease(key);
+    }
 }
 } // namespace gui

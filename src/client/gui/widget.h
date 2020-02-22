@@ -20,6 +20,8 @@ class ImageWidget final : public Widget {
     void setPosition(const GuiDimension& position) final override;
     void setSize(const GuiDimension& size) final override;
 
+    void setImage(int image);
+
   private:
     RectangleComponent* mp_rectangle;
 };

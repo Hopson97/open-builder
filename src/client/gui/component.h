@@ -35,10 +35,7 @@ struct GuiDimension final {
 
 struct RectangleComponent final {
   public:
-    RectangleComponent(const glm::vec2& viewport);
-    void updateViewport(const glm::vec2& viewport);
-
-    glm::mat4 getRenderTransform() const;
+    glm::mat4 getRenderTransform(const glm::vec2& viewport) const;
 
     // Setters rather than "public" as it makes it a lot easier for a clean lua api
     void setPosition(const GuiDimension& position);
@@ -57,7 +54,6 @@ struct RectangleComponent final {
     void updateBounds();
 
     sf::FloatRect m_bounds;
-    glm::vec2 m_viewport;
     GuiDimension m_position;
     GuiDimension m_size;
     glm::vec3 m_colour{1.0f};

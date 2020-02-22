@@ -18,4 +18,9 @@ void ImageWidget::setSize(const GuiDimension& size)
     mp_rectangle->setSize(size);
 }
 
+void ImageWidget::setImage(int image)
+{
+    mp_rectangle->setTexture(image);
+}
+
 } // namespace gui

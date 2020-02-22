@@ -23,15 +23,15 @@ struct Overlay final {
     void handleMouseMove(sf::Event::MouseMoveEvent);
     void handleKeyRelease(sf::Keyboard::Key);
 
-    void addRectangle();
+    ImageWidget* addImage();
 
     const OverlayDefinition& definition;
 
     std::vector<std::unique_ptr<Widget>> widgets;
 
     // Stored as pointers to allow them to be stored by the Lua code
-    std::vector<std::unique_ptr<RectangleComponent>> rectangleComponent;
-    std::vector<std::unique_ptr<RectangleComponent>> textComponents;
+    std::vector<std::unique_ptr<RectangleComponent>> rectangleComponents;
+    std::vector<std::unique_ptr<TextComponent>> textComponents;
 };
 
 struct OverlayStack final {
