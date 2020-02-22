@@ -3,6 +3,7 @@
 #include "component.h"
 #include "widget.h"
 #include <memory>
+#include <queue>
 #include <sol/sol.hpp>
 #include <unordered_map>
 #include <vector>
@@ -54,6 +55,14 @@ class Overlay final {
  * @brief Stores the current overlays of the game
  */
 struct OverlayStack final {
+    enum class ActionType { PushLayer, PopLayer };
+
+    struct Action {
+        ActionType type;
+        std::string id;
+        std::unique_ptr<Overlay> overlay;
+    };
+
     void pushLayer(std::unique_ptr<Overlay>);
     void popLayer();
     void removeLayerByName(const std::string& overlayId);
@@ -67,7 +76,7 @@ struct OverlayStack final {
     std::vector<std::unique_ptr<Overlay>> overlays;
 
   private:
-    bool m_shouldPop = false;
+    std::queue<Action> m_pendingActions;
 };
 
 /**

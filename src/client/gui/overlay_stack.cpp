@@ -4,12 +4,17 @@ namespace gui {
 
 void OverlayStack::pushLayer(std::unique_ptr<Overlay> overlay)
 {
-    overlays.push_back(std::move(overlay));
+    Action action;
+    action.type = ActionType::PushLayer;
+    action.overlay = std::move(overlay);
+    m_pendingActions.push(std::move(action));
 }
 
 void OverlayStack::popLayer()
 {
-    m_shouldPop = true;
+    Action action;
+    action.type = ActionType::PopLayer;
+    m_pendingActions.push(std::move(action));
 }
 
 void OverlayStack::removeLayerByName(const std::string& overlayId)
@@ -47,10 +52,23 @@ void OverlayStack::handleKeyRelease(sf::Keyboard::Key key)
 
 void OverlayStack::update()
 {
-    if (m_shouldPop) {
-        m_shouldPop = false;
-        if (overlays.size() > 0) {
-            overlays.pop_back();
+    while (!m_pendingActions.empty()) {
+        auto action = std::move(m_pendingActions.front());
+        m_pendingActions.pop();
+
+        switch (action.type) {
+            case ActionType::PopLayer:
+                if (overlays.size() > 0) {
+                    overlays.pop_back();
+                }
+                break;
+
+            case ActionType::PushLayer:
+                overlays.push_back(std::move(action.overlay));
+                break;
+
+            default:
+                break;
         }
     }
 }
