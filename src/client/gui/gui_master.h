@@ -1,5 +1,7 @@
 #pragma once
 
+/*
+
 #include "../gl/font.h"
 #include "../gl/shader.h"
 #include "../gl/textures.h"
@@ -12,7 +14,7 @@
 /**
  * @brief Render master for the GUIs
  *
- */
+ *
 class GuiMaster final {
   public:
     GuiMaster(float viewportWidth, float viewportHeight);
@@ -43,3 +45,4 @@ class GuiMaster final {
     glm::mat4 m_projection;
     glm::vec2 m_viewport;
 };
+*/

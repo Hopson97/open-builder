@@ -8,9 +8,9 @@ add_library(ob-client
     gl/primitive.cpp
     gui/gui_master.cpp
     gui/gui_container.cpp
-    gui/gui_rectangle.cpp
     gui/gui_shader.cpp
-    gui/gui_text.cpp
+    gui/text_component.cpp
+    gui/rectangle_component.cpp
     gui/overlay_factory.cpp
     gui/overlay_stack.cpp
     gui/overlay.cpp

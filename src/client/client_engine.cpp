@@ -2,7 +2,6 @@
 
 #include "client.h"
 #include "gl/gl_errors.h"
-#include "gui/gui_master.h"
 #include "gui/overlay_factory.h"
 #include "gui/overlay_stack.h"
 #include "lua/client_lua_api.h"
@@ -62,15 +61,16 @@ EngineStatus runClientEngine(const ClientConfig& config)
     EngineStatus status = EngineStatus::Ok;
     Keyboard keys;
     FPSCounter fps;
-    GuiMaster guiMaster(window.getSize().x, window.getSize().y);
     sf::Clock gameTimer;
     int tickCount = 0;
 
     // Init the "debug prompt" F3 GUI
+    /*
     auto container = guiMaster.addGui();
     auto debugStatsText = container->addText();
     debugStatsText->setFontSize(16);
     debugStatsText->setPosition({0.0f, 4.0f, 1.0f, -16.0f});
+    */
 
     // Init Lua scripting
     ScriptEngine scriptEngine;
@@ -145,9 +145,11 @@ EngineStatus runClientEngine(const ClientConfig& config)
         // Render
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-        client.render(*debugStatsText);
+        client.render();
 
-        guiMaster.render();
+        for (auto& overlay : overlayStack.m_overlayStack) {
+            guiRenderer.render(*overlay);
+        }
         window.display();
 
         // Stats

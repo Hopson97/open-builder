@@ -16,8 +16,11 @@
 #include <unordered_set>
 
 class Keyboard;
-class GuiText;
 class ClientConfig;
+
+namespace gui {
+class TextComponent;
+}
 
 struct VoxelUpdate {
     VoxelPosition position;
@@ -49,7 +52,7 @@ class Client final : public NetworkHost {
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
     void update(float dt, float frameTime);
-    void render(GuiText& debugText);
+    void render();
     void endGame();
 
     EngineStatus currentStatus() const;
