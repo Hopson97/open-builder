@@ -39,7 +39,12 @@ void GuiRenderer::render(const gui::Overlay& overlay)
     m_shader.bind();
     auto quad = m_quadVao.getDrawable();
     quad.bind();
-    for (auto& rect : overlay.rectangleComponents) {
+
+    // Reverse itr to allow lua to define components in a "First in, First Drawn" basis
+    // Without revising, it seems to render the elements added first on-top of everything
+    for (auto itr = overlay.rectangleComponents.rbegin();
+         itr != overlay.rectangleComponents.rend(); itr++) {
+        auto& rect = *itr;
         if (!rect->isHidden()) {
             // TODO Make this line more efficent (maybe?)
             rect->updateBounds(m_viewport);
@@ -69,4 +74,5 @@ void GuiRenderer::render(const gui::Overlay& overlay)
     }
     glCullFace(GL_BACK);
     glDisable(GL_BLEND);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
