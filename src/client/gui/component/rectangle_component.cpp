@@ -1,7 +1,8 @@
-#include "component.h"
+#include "rectangle_component.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+
 namespace gui {
 
 glm::mat4 RectangleComponent::getRenderTransform(const glm::vec2& viewport) const
@@ -45,21 +46,6 @@ int RectangleComponent::getTexture() const
 const glm::vec3& RectangleComponent::getColour() const
 {
     return m_colour;
-}
-
-void RectangleComponent::hide()
-{
-    m_isHidden = true;
-}
-
-void RectangleComponent::show()
-{
-    m_isHidden = false;
-}
-
-bool RectangleComponent::isHidden() const
-{
-    return m_isHidden;
 }
 
 bool RectangleComponent::isInBounds(float x, float y) const

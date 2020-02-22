@@ -1,6 +1,7 @@
 #pragma once
 
-#include "component.h"
+#include "component/rectangle_component.h"
+#include "component/text_component.h"
 #include "widget.h"
 #include <memory>
 #include <queue>
@@ -9,6 +10,7 @@
 #include <vector>
 
 namespace gui {
+
 /**
  * @brief Defines how a GUI should be created.
  * This is created in the Client Lua code

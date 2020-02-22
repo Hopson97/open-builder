@@ -1,7 +1,8 @@
-#include "../gl/font.h"
-#include "../maths.h"
-#include "../renderer/gui_shader.h"
-#include "component.h"
+#include "text_component.h"
+
+#include "../../gl/font.h"
+#include "../../maths.h"
+#include "../../renderer/gui_shader.h"
 
 namespace {
 struct Mesh {
@@ -100,7 +101,7 @@ void TextComponent::setText(const std::string& text)
 void TextComponent::render(const gl::Font& font, GuiShader& shader,
                            const glm::vec2& viewport)
 {
-    if (m_isHidden) {
+    if (isHidden()) {
         return;
     }
     if (m_isGeometryUpdateNeeded) {
@@ -118,16 +119,6 @@ void TextComponent::render(const gl::Font& font, GuiShader& shader,
     shader.updateTransform(modelMatrix);
 
     m_textQuads.getDrawable().bindAndDraw();
-}
-
-void TextComponent::hide()
-{
-    m_isHidden = true;
-}
-
-void TextComponent::show()
-{
-    m_isHidden = false;
 }
 
 void TextComponent::updateGeometry(const gl::Font& font)
