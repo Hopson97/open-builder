@@ -65,28 +65,22 @@ struct RectangleComponent final {
 
 class TextComponent {
   public:
-    TextComponent(const gl::Font& font);
-
-    void setFont(const gl::Font& font);
-
     void setPosition(const GuiDimension& position);
     void setFontSize(float size);
     void setText(const std::string& text);
 
-    void render(GuiShader2& shader, const glm::vec2& viewport);
+    void render(const gl::Font& font, GuiShader2& shader, const glm::vec2& viewport);
 
     void hide();
     void show();
 
   private:
-    void updateGeometry();
+    void updateGeometry(const gl::Font& font);
 
     ::gl::VertexArray m_textQuads;
     std::string m_text;
     GuiDimension m_position;
     float m_fontSize = 0;
-
-    const gl::Font* mp_font = nullptr;
 
     bool m_isGeometryUpdateNeeded = true;
     bool m_isHidden = false;

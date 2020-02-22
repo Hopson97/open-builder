@@ -15,6 +15,14 @@ ImageWidget* Overlay::addImage()
     return dynamic_cast<ImageWidget*>(widget);
 }
 
+LabelWidget* Overlay::addLabel()
+{
+    auto text = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
+    auto label = std::make_unique<LabelWidget>(text);
+    auto widget = m_widgets.emplace_back(std::move(label)).get();
+    return dynamic_cast<LabelWidget*>(widget);
+}
+
 void Overlay::handleClick(sf::Mouse::Button button)
 {
     for (auto& widget : m_widgets) {

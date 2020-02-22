@@ -78,16 +78,6 @@ void addCharacter(Mesh& mesh, const sf::Glyph& glyph, float size,
 
 namespace gui {
 
-TextComponent::TextComponent(const gl::Font& font)
-    : mp_font(&font)
-{
-}
-
-void TextComponent::setFont(const gl::Font& font)
-{
-    mp_font = &font;
-}
-
 void TextComponent::setPosition(const GuiDimension& position)
 {
     m_position = position;
@@ -107,16 +97,17 @@ void TextComponent::setText(const std::string& text)
     m_isGeometryUpdateNeeded = true;
 }
 
-void TextComponent::render(GuiShader2& shader, const glm::vec2& viewport)
+void TextComponent::render(const gl::Font& font, GuiShader2& shader,
+                           const glm::vec2& viewport)
 {
-    if (!mp_font || m_isHidden) {
+    if (m_isHidden) {
         return;
     }
     if (m_isGeometryUpdateNeeded) {
-        updateGeometry();
+        updateGeometry(font);
     }
     glm::mat4 modelMatrix{1.0f};
-    float scale = m_fontSize / mp_font->getBitmapSize();
+    float scale = m_fontSize / font.getBitmapSize();
 
     auto transform = m_position.apply(viewport);
 
@@ -139,7 +130,7 @@ void TextComponent::show()
     m_isHidden = false;
 }
 
-void TextComponent::updateGeometry()
+void TextComponent::updateGeometry(const gl::Font& font)
 {
     m_textQuads.destroy();
     Mesh mesh;
@@ -148,20 +139,20 @@ void TextComponent::updateGeometry()
     sf::Vector2f pos{0, 0};
     char previous = 0;
     for (auto character : m_text) {
-        pos.x += mp_font->getKerning(previous, character);
+        pos.x += font.getKerning(previous, character);
         previous = character;
 
         // New line handler
         if (character == '\n') {
-            pos.y += mp_font->getLineHeight();
+            pos.y += font.getLineHeight();
             pos.x = 0;
             previous = 0;
             continue;
         }
 
         // Create a single quad for the char
-        auto& glyph = mp_font->getGlyph(character);
-        addCharacter(mesh, glyph, mp_font->getTextureAtlasSize(), pos);
+        auto& glyph = font.getGlyph(character);
+        addCharacter(mesh, glyph, font.getTextureAtlasSize(), pos);
         pos.x += glyph.advance;
     }
 

@@ -25,6 +25,7 @@ class Overlay final {
     void handleKeyRelease(sf::Keyboard::Key);
 
     ImageWidget* addImage();
+    LabelWidget* addLabel();
 
     const OverlayDefinition& definition;
     // Stored as pointers to allow them to be stored by the Lua code
