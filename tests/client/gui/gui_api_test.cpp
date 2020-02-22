@@ -6,8 +6,9 @@
 
 const std::string guiCreateScript = R"(
 
-    function create()
-        print("Why")
+    function create(overlay)
+        local image = overlay:addImage()
+        image.image = 52
     end
 
     game.gui.addGui{
@@ -27,6 +28,7 @@ TEST_CASE("GUI API Tests")
     gui::OverlayFactory overlayFactory;
     gui::OverlayStack overlayStack;
     luaInitGuiApi(scriptEngine, overlayFactory, overlayStack);
+    luaInitGuiWidgetApi(scriptEngine);
 
     SECTION("GUIs can be registered to a GUI factory")
     {

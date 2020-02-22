@@ -8,29 +8,30 @@ Overlay::Overlay(const OverlayDefinition& overlayDefinition)
 
 ImageWidget* Overlay::addImage()
 {
-    auto rectangle = rectangleComponents.emplace_back(std::make_unique<RectangleComponent>()).get();
+    auto rectangle =
+        rectangleComponents.emplace_back(std::make_unique<RectangleComponent>()).get();
     auto image = std::make_unique<ImageWidget>(rectangle);
-    auto widget = widgets.emplace_back(std::move(image)).get();
+    auto widget = m_widgets.emplace_back(std::move(image)).get();
     return dynamic_cast<ImageWidget*>(widget);
 }
 
 void Overlay::handleClick(sf::Mouse::Button button)
 {
-    for (auto& widget : widgets) {
+    for (auto& widget : m_widgets) {
         widget->handleClick(button);
     }
 }
 
 void Overlay::handleMouseMove(sf::Event::MouseMoveEvent mouseMoveEvent)
 {
-    for (auto& widget : widgets) {
+    for (auto& widget : m_widgets) {
         widget->handleMouseMove(mouseMoveEvent);
     }
 }
 
 void Overlay::handleKeyRelease(sf::Keyboard::Key key)
 {
-    for (auto& widget : widgets) {
+    for (auto& widget : m_widgets) {
         widget->handleKeyRelease(key);
     }
 }
