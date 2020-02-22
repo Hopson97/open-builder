@@ -41,6 +41,9 @@ void GuiRenderer::render(const gui::Overlay& overlay)
     quad.bind();
     for (auto& rect : overlay.rectangleComponents) {
         if (!rect->isHidden()) {
+            // TODO Make this line more efficent (maybe?)
+            rect->updateBounds(m_viewport);
+
             auto transform = rect->getRenderTransform(m_viewport);
             m_shader.updateTransform(transform);
 

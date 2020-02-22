@@ -20,13 +20,11 @@ glm::mat4 RectangleComponent::getRenderTransform(const glm::vec2& viewport) cons
 void RectangleComponent::setPosition(const GuiDimension& position)
 {
     m_position = position;
-    // updateBounds();
 }
 
 void RectangleComponent::setSize(const GuiDimension& size)
 {
     m_size = size;
-    // updateBounds();
 }
 
 void RectangleComponent::setTexture(int texture)
@@ -63,14 +61,19 @@ bool RectangleComponent::isHidden() const
 {
     return m_isHidden;
 }
-/*
-void RectangleComponent::updateBounds()
+
+bool RectangleComponent::isInBounds(float x, float y) const
 {
-    auto viewport = m_viewport / 100.0f;
-    auto topLeft = m_position.apply(viewport);
-    auto size = m_size.apply(viewport);
+    return m_bounds.contains({x, y});
+}
+
+void RectangleComponent::updateBounds(const glm::vec2& viewport)
+{
+    auto scaledViewport = viewport / 100.0f;
+    auto topLeft = m_position.apply(scaledViewport);
+    auto size = m_size.apply(scaledViewport);
 
     m_bounds = {topLeft.x, topLeft.y, size.x, size.y};
-}*/
+}
 
 } // namespace gui

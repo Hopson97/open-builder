@@ -27,7 +27,7 @@ class Overlay final {
   public:
     Overlay(const OverlayDefinition& overlayDefinition);
 
-    void handleClick(sf::Mouse::Button);
+    void handleClick(sf::Mouse::Button button, float mx, float my);
     void handleMouseMove(sf::Event::MouseMoveEvent);
     void handleKeyRelease(sf::Keyboard::Key);
 
@@ -64,7 +64,7 @@ struct OverlayStack final {
     void popLayer();
     void removeLayerByName(const std::string& overlayId);
 
-    void handleClick(sf::Mouse::Button);
+    void handleClick(sf::Mouse::Button button, float mx, float my);
     void handleMouseMove(sf::Event::MouseMoveEvent);
     void handleKeyRelease(sf::Keyboard::Key);
 

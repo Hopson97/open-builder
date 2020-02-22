@@ -37,6 +37,21 @@ void addGuiLabelApi(ScriptEngine& engine)
     addCommonAPI(labelApi);
 }
 
+void addGuiButtonApi(ScriptEngine& engine)
+{
+    auto buttonApi = engine.lua.new_usertype<gui::ButtonWidget>("ButtonWidget");
+    buttonApi["text"] = sol::property(&gui::ButtonWidget::setText);
+    buttonApi["textSize"] = sol::property(&gui::ButtonWidget::setTextSize);
+
+    buttonApi["image"] = sol::property(&gui::ButtonWidget::setImage);
+
+    buttonApi["onClick"] = sol::property(&gui::ButtonWidget::setOnClick);
+    buttonApi["onMouseOver"] = sol::property(&gui::ButtonWidget::setOnMouseOver);
+
+
+    addCommonAPI(buttonApi);
+}
+
 void initGuiOverlayApi(ScriptEngine& engine)
 {
     auto overlayApi = engine.lua.new_usertype<gui::Overlay>("GuiOverlay");
@@ -48,8 +63,10 @@ void initGuiOverlayApi(ScriptEngine& engine)
 
 void luaInitGuiWidgetApi(ScriptEngine& scriptEngine)
 {
+    initGuiOverlayApi(scriptEngine);
+
     addGuiDimensionApi(scriptEngine);
     addGuiImageApi(scriptEngine);
-    initGuiOverlayApi(scriptEngine);
     addGuiLabelApi(scriptEngine);
+    addGuiButtonApi(scriptEngine);
 }

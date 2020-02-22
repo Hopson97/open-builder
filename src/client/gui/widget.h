@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Window/Event.hpp>
+#include <sol/sol.hpp>
 
 namespace gui {
 struct GuiDimension;
@@ -11,7 +12,8 @@ class TextComponent;
  * @brief Base class for different widgets that can makeup a GUI overlay
  */
 struct Widget {
-    virtual void handleClick(sf::Mouse::Button){};
+    virtual ~Widget() = default;
+    virtual void handleClick(sf::Mouse::Button, float, float){};
     virtual void handleMouseMove(sf::Event::MouseMoveEvent){};
     virtual void handleKeyRelease(sf::Keyboard::Key){};
 
@@ -48,5 +50,31 @@ class LabelWidget final : public Widget {
 
   private:
     TextComponent* mp_text;
+    RectangleComponent* mp_rectangle;
+};
+
+class ButtonWidget final : public Widget {
+  public:
+    ButtonWidget(TextComponent* textComponent, RectangleComponent* mp_rectangle);
+    void setPosition(const GuiDimension& position) final override;
+    void setSize(const GuiDimension& size) final override;
+
+    void setImage(int image);
+
+    void setText(const std::string& text);
+    void setTextSize(float size);
+
+    void handleClick(sf::Mouse::Button button, float mx, float my) final override;
+    void handleMouseMove(sf::Event::MouseMoveEvent) final override;
+
+    void setOnClick(sol::function function);
+    void setOnMouseOver(sol::function function);
+
+  private:
+    TextComponent* mp_text;
+    RectangleComponent* mp_rectangle;
+
+    sol::function m_onClick;
+    sol::function m_onMoveOver;
 };
 } // namespace gui
