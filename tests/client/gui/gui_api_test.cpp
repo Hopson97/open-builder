@@ -41,6 +41,8 @@ TEST_CASE("GUI API Tests")
         scriptEngine.runLuaString(guiCreateScript);
         scriptEngine.runLuaString(guiAddScript);
 
+        overlayStack.update();
+
         REQUIRE(overlayStack.overlays.size() == 1);
     }
 }

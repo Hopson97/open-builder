@@ -7,7 +7,9 @@ namespace gui {
 ImageWidget::ImageWidget(RectangleComponent* rectangleComponent)
     : mp_rectangle(rectangleComponent)
 {
+    componentList.push_back(mp_rectangle);
 }
+
 void ImageWidget::setPosition(const GuiDimension& position)
 {
     mp_rectangle->setPosition(position);
