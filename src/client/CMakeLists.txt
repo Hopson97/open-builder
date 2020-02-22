@@ -1,31 +1,39 @@
 
 add_library(ob-client
     input/keyboard.cpp
-    gl/vertex_array.cpp
+    world/chunk_mesh.cpp
+    world/chunk_mesh_generation.cpp
+    maths.cpp
+
+    gl/textures.cpp
     gl/shader.cpp
-    gl/textures.cpp  
+    gl/font.cpp
+    gl/vertex_array.cpp
     gl/gl_errors.cpp
     gl/primitive.cpp
-    gui/gui_master.cpp
-    gui/gui_container.cpp
-    gui/gui_shader.cpp
-    gui/text_component.cpp
-    gui/rectangle_component.cpp
-    gui/overlay_factory.cpp
-    gui/overlay_stack.cpp
-    gui/overlay.cpp
-    gl/font.cpp
-    lua/gui_api.cpp
-    lua/client_lua_callback.cpp
-    renderer/chunk_renderer.cpp
-    renderer/gui_renderer.cpp
-    network/client_commands.cpp
-    client.cpp
-    maths.cpp
+
     client_engine.cpp
+    client.cpp
+
+    lua/client_lua_callback.cpp
+    lua/gui_api.cpp
+
+    gui/gui_container.cpp
+    gui/overlay_stack.cpp
+    gui/gui_shader.cpp
+    gui/overlay.cpp
+    gui/gui_master.cpp
+    gui/overlay_factory.cpp
+    gui/rectangle_component.cpp
+    gui/text_component.cpp
+    gui/widget/image_widget.cpp
+
     window.cpp
-    world/chunk_mesh_generation.cpp
-    world/chunk_mesh.cpp
+    
+    network/client_commands.cpp
+
+    renderer/gui_renderer.cpp
+    renderer/chunk_renderer.cpp
 )
 
 set_flags(ob-client)

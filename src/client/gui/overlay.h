@@ -1,5 +1,6 @@
 #pragma once
 
+#include "component.h"
 #include "widget.h"
 #include <memory>
 #include <sol/sol.hpp>
@@ -8,14 +9,14 @@
 
 namespace gui {
 
-struct OverlayDefinition {
+struct OverlayDefinition final {
     std::string id;
     std::string title;
 
     sol::function create;
 };
 
-struct Overlay {
+struct Overlay final {
     Overlay(const OverlayDefinition& overlayDefinition);
 
     void handleClick(sf::Mouse::Button);
@@ -31,10 +32,9 @@ struct Overlay {
     // Stored as pointers to allow them to be stored by the Lua code
     std::vector<std::unique_ptr<RectangleComponent>> rectangleComponent;
     std::vector<std::unique_ptr<RectangleComponent>> textComponents;
-
 };
 
-struct OverlayStack {
+struct OverlayStack final {
     void pushLayer(std::unique_ptr<Overlay>);
     void popLayer();
     void removeLayerByName(const std::string& overlayId);

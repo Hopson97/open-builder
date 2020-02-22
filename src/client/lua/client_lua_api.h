@@ -13,3 +13,5 @@ class GuiRenderer;
 
 void luaInitGuiApi(ScriptEngine& scriptEngine, gui::OverlayFactory& overlayFactory,
                    gui::OverlayStack& overlayStack, GuiRenderer* guiRenderer = nullptr);
+
+void luaInitGuiWidgetApi(ScriptEngine& scriptEngine);

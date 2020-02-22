@@ -71,7 +71,7 @@ void addGuiContainerApi(ScriptEngine& scriptEngine)
 {
     auto containerApi = scriptEngine.lua.new_usertype<GuiContainer>("GuiContainer");
 
-    containerApi["show"] = &GuiContainer::show;
+    containerApi["show"] = &GuiContainer::show; 
     containerApi["hide"] = &GuiContainer::hide;
     containerApi["addRect"] = &GuiContainer::addRectangle;
     containerApi["addText"] = &GuiContainer::addText;
@@ -89,8 +89,6 @@ void addGuiRectangleApi(ScriptEngine& scriptEngine)
 
     rectangleApi["show"] = &GuiRectangle::show;
     rectangleApi["hide"] = &GuiRectangle::hide;
-    rectangleApi["position"] = sol::property(&GuiRectangle::setPosition);
-    rectangleApi["size"] = sol::property(&GuiRectangle::setSize);
     rectangleApi["texture"] = sol::property(&GuiRectangle::setTexture);
     rectangleApi["colour"] = sol::property(&GuiRectangle::setColour);
 }
