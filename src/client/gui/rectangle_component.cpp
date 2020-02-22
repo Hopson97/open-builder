@@ -20,13 +20,13 @@ glm::mat4 RectangleComponent::getRenderTransform(const glm::vec2& viewport) cons
 void RectangleComponent::setPosition(const GuiDimension& position)
 {
     m_position = position;
-    //updateBounds();
+    // updateBounds();
 }
 
 void RectangleComponent::setSize(const GuiDimension& size)
 {
     m_size = size;
-    //updateBounds();
+    // updateBounds();
 }
 
 void RectangleComponent::setTexture(int texture)

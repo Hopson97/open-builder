@@ -16,7 +16,8 @@ struct OverlayDefinition final {
     sol::function create;
 };
 
-struct Overlay final {
+class Overlay final {
+  public:
     Overlay(const OverlayDefinition& overlayDefinition);
 
     void handleClick(sf::Mouse::Button);
@@ -26,12 +27,12 @@ struct Overlay final {
     ImageWidget* addImage();
 
     const OverlayDefinition& definition;
-
-    std::vector<std::unique_ptr<Widget>> widgets;
-
     // Stored as pointers to allow them to be stored by the Lua code
     std::vector<std::unique_ptr<RectangleComponent>> rectangleComponents;
     std::vector<std::unique_ptr<TextComponent>> textComponents;
+
+  private:
+    std::vector<std::unique_ptr<Widget>> m_widgets;
 };
 
 struct OverlayStack final {

@@ -1,5 +1,6 @@
 
---local texCrosshair = game.gui.getTexture("res/crosshair.png")
+local texCrosshair = game.gui.getTexture("res/crosshair.png")
+
 --local hud = game.gui.makeGui()
 --
 --local crosshair = hud:addRect()
@@ -7,15 +8,21 @@
 --crosshair.size = GuiDim.new(0, 32, 0, 32)
 --crosshair.texture = texCrosshair
 --
-game.onClientStartup(function() print("Hello from the other side") end)
 
-local function create()
-    print ("hello world!")
+
+function createHud(overlay)
+    local crosshair = overlay:addImage()
+    crosshair.image = texCrosshair
+    crosshair.position = GuiDim.new(0.5, -16, 0.5, -16)
+    crosshair.size = GuiDim.new(0, 32, 0, 32)
 end 
 
 game.gui.addGui{
-    id = "main_menu",
-    title = "Main Menu",
-    create = create
+    id = "hud",
+    title = "Player HUD",
+    create = createHud
 }
 
+game.onClientStartup(function() 
+    game.gui.push("hud")
+end)
