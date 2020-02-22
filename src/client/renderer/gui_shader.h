@@ -2,10 +2,10 @@
 
 #include "../gl/shader.h"
 
-class GuiShader2 final {
+class GuiShader final {
 
   public:
-    GuiShader2()
+    GuiShader()
     {
         m_program.create("gui", "gui");
 

@@ -20,7 +20,7 @@ class GuiRenderer final {
     void render(const gui::Overlay& overlay);
 
   private:
-    GuiShader2 m_shader;
+    GuiShader m_shader;
     glm::vec2 m_viewport;
 
     std::unordered_map<std::string, int> m_textureIds;

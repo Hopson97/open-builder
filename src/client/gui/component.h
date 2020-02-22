@@ -8,7 +8,7 @@
 namespace gl {
 class Font;
 }
-class GuiShader2;
+class GuiShader;
 
 namespace gui {
 
@@ -69,7 +69,7 @@ class TextComponent {
     void setFontSize(float size);
     void setText(const std::string& text);
 
-    void render(const gl::Font& font, GuiShader2& shader, const glm::vec2& viewport);
+    void render(const gl::Font& font, GuiShader& shader, const glm::vec2& viewport);
 
     void hide();
     void show();

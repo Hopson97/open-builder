@@ -19,11 +19,8 @@ add_library(ob-client
     lua/gui_api.cpp
     lua/gui_widget_api.cpp
 
-    gui/gui_container.cpp
     gui/overlay_stack.cpp
-    gui/gui_shader.cpp
     gui/overlay.cpp
-    gui/gui_master.cpp
     gui/overlay_factory.cpp
     gui/rectangle_component.cpp
     gui/text_component.cpp
