@@ -1,5 +1,5 @@
 #include "gui_container.h"
-
+/*
 #include "../gl/vertex_array.h"
 #include "gui_rectangle.h"
 #include "gui_shader.h"
@@ -72,3 +72,4 @@ bool GuiContainer::isHidden() const
 {
     return m_isHidden;
 }
+*/

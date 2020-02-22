@@ -1,8 +1,7 @@
-#include "gui_text.h"
-
 #include "../gl/font.h"
 #include "../maths.h"
-#include "gui_shader.h"
+#include "../renderer/gui_shader.h"
+#include "overlay_component.h"
 
 namespace {
 struct Mesh {
@@ -77,36 +76,38 @@ void addCharacter(Mesh& mesh, const sf::Glyph& glyph, float size,
 
 } // namespace
 
-GuiText::GuiText(const gl::Font& font)
+namespace gui {
+
+TextComponent::TextComponent(const gl::Font& font)
     : mp_font(&font)
 {
 }
 
-void GuiText::setFont(const gl::Font& font)
+void TextComponent::setFont(const gl::Font& font)
 {
     mp_font = &font;
 }
 
-void GuiText::setPosition(const GuiDimension& position)
+void TextComponent::setPosition(const GuiDimension& position)
 {
     m_position = position;
     m_isGeometryUpdateNeeded = true;
 }
 
-void GuiText::setFontSize(float size)
+void TextComponent::setFontSize(float size)
 {
     m_fontSize = size;
     m_isGeometryUpdateNeeded = true;
 }
 
-void GuiText::setText(const std::string& text)
+void TextComponent::setText(const std::string& text)
 {
     // todo maybe std::move, need to check if possible
     m_text = text;
     m_isGeometryUpdateNeeded = true;
 }
 
-void GuiText::render(GuiShader& shader, const glm::vec2& viewport)
+void TextComponent::render(GuiShader2& shader, const glm::vec2& viewport)
 {
     if (!mp_font || m_isHidden) {
         return;
@@ -128,17 +129,17 @@ void GuiText::render(GuiShader& shader, const glm::vec2& viewport)
     m_textQuads.getDrawable().bindAndDraw();
 }
 
-void GuiText::hide()
+void TextComponent::hide()
 {
     m_isHidden = true;
 }
 
-void GuiText::show()
+void TextComponent::show()
 {
     m_isHidden = false;
 }
 
-void GuiText::updateGeometry()
+void TextComponent::updateGeometry()
 {
     m_textQuads.destroy();
     Mesh mesh;
@@ -170,3 +171,5 @@ void GuiText::updateGeometry()
     m_textQuads.addVertexBuffer(2, mesh.textureCoords);
     m_textQuads.addIndexBuffer(mesh.indices);
 }
+
+} // namespace gui

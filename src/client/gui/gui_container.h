@@ -1,5 +1,6 @@
 #pragma once
 
+/*
 #include "../gl/textures.h"
 #include "gui_rectangle.h"
 #include "gui_text.h"
@@ -45,3 +46,4 @@ class GuiContainer final {
 
     bool m_isHidden = false;
 };
+*/
