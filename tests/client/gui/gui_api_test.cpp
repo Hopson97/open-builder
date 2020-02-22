@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include <client/gui/overlay_factory.h>
+#include <client/gui/overlay.h>
 #include <client/lua/client_lua_api.h>
 #include <common/scripting/script_engine.h>
 
