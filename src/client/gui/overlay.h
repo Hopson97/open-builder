@@ -45,7 +45,7 @@ struct OverlayStack {
     void handleMouseMove(sf::Event::MouseMoveEvent);
     void handleKeyRelease(sf::Keyboard::Key);
 
-    std::vector<std::unique_ptr<Overlay>> m_overlayStack;
+    std::vector<std::unique_ptr<Overlay>> overlays;
 };
 
 class OverlayFactory {

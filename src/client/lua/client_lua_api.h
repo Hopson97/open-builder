@@ -6,9 +6,10 @@ class ScriptEngine;
 
 namespace gui {
 class OverlayFactory;
-}
+struct OverlayStack;
+} // namespace gui
 
 class GuiRenderer;
 
 void luaInitGuiApi(ScriptEngine& scriptEngine, gui::OverlayFactory& overlayFactory,
-                   GuiRenderer* guiRenderer);
+                   gui::OverlayStack& overlayStack, GuiRenderer* guiRenderer = nullptr);

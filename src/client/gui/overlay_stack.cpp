@@ -4,19 +4,19 @@ namespace gui {
 
 void OverlayStack::pushLayer(std::unique_ptr<Overlay> overlay)
 {
-    m_overlayStack.push_back(std::move(overlay));
+    overlays.push_back(std::move(overlay));
 }
 
 void OverlayStack::popLayer()
 {
-    m_overlayStack.pop_back();
+    overlays.pop_back();
 }
 
 void OverlayStack::removeLayerByName(const std::string& overlayId)
 {
-    for (auto itr = m_overlayStack.begin(); itr != m_overlayStack.end();) {
+    for (auto itr = overlays.begin(); itr != overlays.end();) {
         if ((*itr)->definition.id == overlayId) {
-            itr = m_overlayStack.erase(itr);
+            itr = overlays.erase(itr);
         }
         else {
             itr++;
@@ -26,21 +26,21 @@ void OverlayStack::removeLayerByName(const std::string& overlayId)
 
 void OverlayStack::handleClick(sf::Mouse::Button button)
 {
-    for (auto& layer : m_overlayStack) {
+    for (auto& layer : overlays) {
         layer->handleClick(button);
     }
 }
 
 void OverlayStack::handleMouseMove(sf::Event::MouseMoveEvent mouseMoveEvent)
 {
-    for (auto& layer : m_overlayStack) {
+    for (auto& layer : overlays) {
         layer->handleMouseMove(mouseMoveEvent);
     }
 }
 
 void OverlayStack::handleKeyRelease(sf::Keyboard::Key key)
 {
-    for (auto& layer : m_overlayStack) {
+    for (auto& layer : overlays) {
         layer->handleKeyRelease(key);
     }
 }

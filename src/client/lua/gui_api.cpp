@@ -9,7 +9,7 @@ namespace {
 void initOverlayDefinitionCreateApi(sol::table& guiTable,
                                     gui::OverlayFactory& overlayFactory)
 {
-    guiTable["defineGui"] = [&](const sol::table& guiDefintion) {
+    guiTable["addGui"] = [&](const sol::table& guiDefintion) {
         gui::OverlayDefinition overlay;
 
         overlay.id = guiDefintion["id"];
@@ -27,13 +27,22 @@ void initGuiRenderApi(sol::table& guiTable, GuiRenderer& guiRenderer)
     };
 }
 
+void initGuiStackApi(sol::table& guiTable, gui::OverlayFactory& overlayFactory,
+                     gui::OverlayStack& overlayStack)
+{
+    guiTable["push"] = [&](const std::string guiId) {
+        overlayStack.pushLayer(overlayFactory.createOverlay(guiId));
+    };
+}
+
 } // namespace
 
 void luaInitGuiApi(ScriptEngine& scriptEngine, gui::OverlayFactory& overlayFactory,
-                   GuiRenderer* guiRenderer)
+                   gui::OverlayStack& overlayStack, GuiRenderer* guiRenderer)
 {
     auto guiTable = scriptEngine.addTable("gui");
     initOverlayDefinitionCreateApi(guiTable, overlayFactory);
+    initGuiStackApi(guiTable, overlayFactory, overlayStack);
 
     if (guiRenderer) {
         initGuiRenderApi(guiTable, *guiRenderer);
