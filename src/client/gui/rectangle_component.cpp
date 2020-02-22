@@ -4,23 +4,11 @@
 
 namespace gui {
 
-RectangleComponent::RectangleComponent(const glm::vec2& viewport)
-    : m_viewport(viewport)
+glm::mat4 RectangleComponent::getRenderTransform(const glm::vec2& viewport) const
 {
-    updateBounds();
-}
-
-void RectangleComponent::updateViewport(const glm::vec2& viewport)
-{
-    m_viewport = viewport;
-    updateBounds();
-}
-
-glm::mat4 RectangleComponent::getRenderTransform() const
-{
-    auto viewport = m_viewport / 100.0f;
-    glm::vec2 positionTransform = m_position.apply(viewport);
-    glm::vec2 scaleTransform = m_size.apply(viewport);
+    auto scaledViewport = viewport / 100.0f;
+    glm::vec2 positionTransform = m_position.apply(scaledViewport);
+    glm::vec2 scaleTransform = m_size.apply(scaledViewport);
 
     glm::mat4 modelMatrix{1.0f};
     modelMatrix =
@@ -32,13 +20,13 @@ glm::mat4 RectangleComponent::getRenderTransform() const
 void RectangleComponent::setPosition(const GuiDimension& position)
 {
     m_position = position;
-    updateBounds();
+    //updateBounds();
 }
 
 void RectangleComponent::setSize(const GuiDimension& size)
 {
     m_size = size;
-    updateBounds();
+    //updateBounds();
 }
 
 void RectangleComponent::setTexture(int texture)
@@ -75,7 +63,7 @@ bool RectangleComponent::isHidden() const
 {
     return m_isHidden;
 }
-
+/*
 void RectangleComponent::updateBounds()
 {
     auto viewport = m_viewport / 100.0f;
@@ -83,6 +71,6 @@ void RectangleComponent::updateBounds()
     auto size = m_size.apply(viewport);
 
     m_bounds = {topLeft.x, topLeft.y, size.x, size.y};
-}
+}*/
 
 } // namespace gui
