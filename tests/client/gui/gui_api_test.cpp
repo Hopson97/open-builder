@@ -21,7 +21,7 @@ TEST_CASE("GUI API Tests")
 {
     ScriptEngine scriptEngine;
     gui::OverlayFactory overlayFactory;
-    luaInitGuiApi(scriptEngine, overlayFactory);
+    luaInitGuiApi(scriptEngine, overlayFactory, nullptr);
 
     SECTION("GUIs can be registered to a GUI factory")
     {

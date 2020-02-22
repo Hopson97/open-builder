@@ -21,18 +21,24 @@ void initOverlayDefinitionCreateApi(sol::table& guiTable,
     };
 }
 
+void initGuiRenderApi(sol::table& guiTable, GuiRenderer& guiRenderer)
+{
+    guiTable["getTexture"] = [&guiRenderer](const std::string& path) {
+        return guiRenderer.getTexture(path);
+    };
+}
+
 } // namespace
 
-void luaInitGuiApi(ScriptEngine& scriptEngine, gui::OverlayFactory& overlayFactory)
+void luaInitGuiApi(ScriptEngine& scriptEngine, gui::OverlayFactory& overlayFactory,
+                   GuiRenderer* guiRenderer)
 {
     auto guiTable = scriptEngine.addTable("gui");
     initOverlayDefinitionCreateApi(guiTable, overlayFactory);
-}
 
-void luaIntGuiRenderApi(ScriptEngine& scriptEngine, GuiRenderer& guiRenderer)
-{
-    scriptEngine.lua["game"]["gui"]["getTexture"] =
-        [&guiRenderer](const std::string& path) { return guiRenderer.getTexture(path); };
+    if (guiRenderer) {
+        initGuiRenderApi(guiTable, *guiRenderer);
+    }
 }
 
 /*

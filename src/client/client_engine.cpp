@@ -8,6 +8,7 @@
 #include "lua/client_lua_api.h"
 #include "lua/client_lua_callback.h"
 #include "renderer/chunk_renderer.h"
+#include "renderer/gui_renderer.h"
 #include "window.h"
 #include <SFML/System/Clock.hpp>
 #include <common/scripting/script_engine.h>
@@ -78,7 +79,10 @@ EngineStatus runClientEngine(const ClientConfig& config)
     // Gui
     gui::OverlayFactory overlayFactory;
     gui::OverlayStack overlayStack;
-    luaInitGuiApi(scriptEngine, overlayFactory);
+    GuiRenderer guiRenderer(window.getSize().x, window.getSize().y);
+
+    // Lua API set up
+    luaInitGuiApi(scriptEngine, overlayFactory, &guiRenderer);
 
     // overlayStack.pushLayer(overlayFactory.createOverlay("main_menu"));
 
