@@ -1,5 +1,5 @@
 
-local texCrosshair = game.gui.getTexture("res/crosshair.png")
+local crosshairTexture = game.gui.getTexture("res/crosshair.png")
 
 --local hud = game.gui.makeGui()
 --
@@ -10,9 +10,9 @@ local texCrosshair = game.gui.getTexture("res/crosshair.png")
 --
 
 
-function createHud(overlay)
+local function createHud(overlay)
     local crosshair = overlay:addImage()
-    crosshair.image = texCrosshair
+    crosshair.image = crosshairTexture
     crosshair.position = GuiDim.new(0.5, -16, 0.5, -16)
     crosshair.size = GuiDim.new(0, 32, 0, 32)
 end 
