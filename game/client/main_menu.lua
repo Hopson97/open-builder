@@ -21,20 +21,26 @@ local function addButton(overlay, label)
 end
 
 local function singleplayerClicked()
-   -- game.gui.pop("main_menu")
+    print("Singleplayer clicked")
+    game.gui.pop()
    -- controller:startGame()
    -- game.gui.push("loading")
 end
 
-local function multiplayerClicked()
+    print("Singleplayer clicked")
+    local function multiplayerClicked()
     --  controller:exit() --This should disconnect client too duh
 end
 
 local function settingClicked()
+    print("Singleplayer clicked")
+
     --  controller:exit() --This should disconnect client too duh
 end
 
 local function exitClicked()
+    print("Singleplayer clicked")
+
     --  controller:exit() --This should disconnect client too duh
 end
 

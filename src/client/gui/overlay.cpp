@@ -60,4 +60,5 @@ int Overlay::widgetCount() const
 {
     return m_widgets.size();
 }
+
 } // namespace gui

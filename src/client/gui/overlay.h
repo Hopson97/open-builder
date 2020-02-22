@@ -62,7 +62,12 @@ struct OverlayStack final {
     void handleMouseMove(sf::Event::MouseMoveEvent);
     void handleKeyRelease(sf::Keyboard::Key);
 
+    void update();
+
     std::vector<std::unique_ptr<Overlay>> overlays;
+
+  private:
+    bool m_shouldPop = false;
 };
 
 /**

@@ -141,6 +141,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
         client.handleInput(window, keys);
 
         // Update
+        overlayStack.update();
         client.update(gameTimer.restart().asSeconds(), fps.frameTime);
 
         // Render
