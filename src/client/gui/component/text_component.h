@@ -1,6 +1,7 @@
 #pragma once
 
 #include "component.h"
+#include <SFML/System/Vector2.hpp>
 
 namespace gl {
 class Font;
@@ -19,6 +20,9 @@ class TextComponent final : public Component {
 
     void render(gl::Font& font, GuiShader& shader, const glm::vec2& viewport);
 
+    const sf::Vector2f& getSize() const;
+    const GuiDimension& getPosition() const;
+
   private:
     void updateGeometry(gl::Font& font);
 
@@ -26,6 +30,8 @@ class TextComponent final : public Component {
     std::string m_text;
     GuiDimension m_position;
     unsigned m_fontSize = 0;
+
+    sf::Vector2f m_size;
 
     bool m_isGeometryUpdateNeeded = true;
 };

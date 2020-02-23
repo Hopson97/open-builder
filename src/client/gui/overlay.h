@@ -47,6 +47,8 @@ class Overlay final {
     std::vector<std::unique_ptr<RectangleComponent>> rectangleComponents;
     std::vector<std::unique_ptr<TextComponent>> textComponents;
 
+    void prepareWidgetsForRender();
+
     int widgetCount() const;
 
   private:

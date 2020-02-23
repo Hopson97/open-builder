@@ -69,4 +69,15 @@ void ButtonWidget::setOnMouseOver(sol::function function)
     m_onMoveOver = function;
 }
 
+void ButtonWidget::prepareRender()
+{
+    const auto& rect = mp_rectangle->getBounds();
+    const auto& size = mp_text->getSize();
+
+    float left = rect.left + rect.width / 2 - size.x / 2;
+    float top = rect.top + rect.height / 2 - size.y / 2;
+
+    mp_text->setPosition({0, left, mp_text->getPosition().scale.y, rect.height / 4});
+}
+
 } // namespace gui

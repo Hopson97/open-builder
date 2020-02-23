@@ -35,6 +35,13 @@ ButtonWidget* Overlay::addButton()
     return dynamic_cast<ButtonWidget*>(widget);
 }
 
+void Overlay::prepareWidgetsForRender()
+{
+    for (auto& widget : m_widgets) {
+        widget->prepareRender();
+    }
+}
+
 void Overlay::handleClick(sf::Mouse::Button button, float mx, float my)
 {
     for (auto& widget : m_widgets) {
