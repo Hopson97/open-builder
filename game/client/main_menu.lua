@@ -1,21 +1,22 @@
 
 local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
 local logoTexture = game.gui.getTexture("res/logo.png")
+local buttonTexture = game.gui.getTexture("res/button.png")
 
-local BUTTON_SIZE = GuiDim.new(0.2, 0, 0.1, 0)
-local BUTTON_GAP = 0.21
+local BUTTON_SIZE = GuiDim.new(0.4, 0, 0.12, 0)
+local BUTTON_GAP = 0.15
 
-local x = 0
 local y = 0
 
 local function addButton(overlay, label)
     local button = overlay:addButton()
     button.size = BUTTON_SIZE
-    button.position = GuiDim.new(x, 0, y, 0)
+    button.position = GuiDim.new(0.3, 0, y, 0)
     button.text = label
-    button.textSize = 40
+    button.textSize =70
+    button.image = buttonTexture
 
-    x = x + BUTTON_GAP
+    y = y - BUTTON_GAP
     return button
 end
 
@@ -48,17 +49,16 @@ end
 
 
 local function onCreate(overlay)
-    x = 0.085
-    y = 0.05
+    y = 0.6
 
-    local background = overlay:addImage()
-    background.size = GuiDim.new(1.0, 0, 1.0, 0)
-    background.image = backgroundTexture
+   -- local background = overlay:addImage()
+  --  background.size = GuiDim.new(1.0, 0, 1.0, 0)
+   --- background.image = backgroundTexture
 
     local logo = overlay:addImage()
-    logo.size = GuiDim.new(0.4, 0, 0.2, 0)
+    logo.size = GuiDim.new(0.5, 0, 0.25, 0)
+    logo.position = GuiDim.new(0.25, 0, 0.75, 0)
     logo.image = logoTexture
-    logo.position = GuiDim.new(0.025, 0, 0.8, 0)
 
     local startGame = addButton(overlay, "Singleplayer")
     startGame.onClick = singleplayerClicked

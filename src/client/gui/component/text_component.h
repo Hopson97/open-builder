@@ -14,18 +14,18 @@ class TextComponent final : public Component {
     void setPosition(const GuiDimension& position) final override;
     void setSize(const GuiDimension& size) final override;
 
-    void setFontSize(float size);
+    void setFontSize(unsigned size);
     void setText(const std::string& text);
 
-    void render(const gl::Font& font, GuiShader& shader, const glm::vec2& viewport);
+    void render(gl::Font& font, GuiShader& shader, const glm::vec2& viewport);
 
   private:
-    void updateGeometry(const gl::Font& font);
+    void updateGeometry(gl::Font& font);
 
     gl::VertexArray m_textQuads;
     std::string m_text;
     GuiDimension m_position;
-    float m_fontSize = 0;
+    unsigned m_fontSize = 0;
 
     bool m_isGeometryUpdateNeeded = true;
 };

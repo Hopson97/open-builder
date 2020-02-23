@@ -1,53 +1,62 @@
 #include "font.h"
 
 #include <cassert>
+#include <iostream>
 
 namespace gl {
 
 void Font::init(const std::string& fontFile, unsigned bitmapScale)
 {
-    m_bitmapScale = bitmapScale;
     if (!m_font.loadFromFile(fontFile)) {
         throw std::runtime_error("Unable to load font from file...");
     }
-    for (auto character : m_charSet) {
-        m_font.getGlyph(character, bitmapScale, false);
+}
+
+const sf::Glyph& Font::getGlyph(char character, unsigned textSize) const
+{
+    return m_font.getGlyph(character, textSize, false);
+}
+
+float Font::getKerning(char before, char next, unsigned textSize) const
+{
+    return m_font.getKerning(before, next, textSize);
+}
+
+float Font::getLineHeight(unsigned textSize) const
+{
+    return m_font.getLineSpacing(textSize);
+}
+
+void Font::bindTexture(unsigned textSize) const
+{
+    auto itr = m_textures.find(textSize);
+    if (itr != m_textures.end()) {
+        m_textures.at(textSize).texture.bind();
     }
-    const sf::Texture& temp = m_font.getTexture(bitmapScale);
+}
+
+const FontTexture& Font::getFontTexture(int textSize)
+{
+    auto itr = m_textures.find(textSize);
+    if (itr != m_textures.end()) {
+        return m_textures.at(textSize);
+    }
+
+    // TODO See if this is really needed lol
+    for (auto character : m_charSet) {
+        m_font.getGlyph(character, textSize, false);
+    }
+
+    const sf::Texture& temp = m_font.getTexture(textSize);
     sf::Image bitmap = temp.copyToImage();
     assert(bitmap.getSize().x == bitmap.getSize().y);
-    m_imageSize = bitmap.getSize().x;
-    m_texture.create(bitmap);
-}
 
-const sf::Glyph& Font::getGlyph(char character) const
-{
-    return m_font.getGlyph(character, m_bitmapScale, false);
-}
+    FontTexture ft;
+    ft.texture.create(bitmap);
+    ft.size = bitmap.getSize().x;
 
-float Font::getKerning(char before, char next) const
-{
-    return m_font.getKerning(before, next, m_bitmapScale);
-}
-
-float Font::getLineHeight() const
-{
-    return m_font.getLineSpacing(m_bitmapScale);
-}
-
-void Font::bindTexture() const
-{
-    m_texture.bind();
-}
-
-unsigned Font::getTextureAtlasSize() const
-{
-    return m_imageSize;
-}
-
-unsigned Font::getBitmapSize() const
-{
-    return m_bitmapScale;
+    const auto& texture = m_textures.emplace(textSize, std::move(ft));
+    return texture.first->second;
 }
 
 } // namespace gl
