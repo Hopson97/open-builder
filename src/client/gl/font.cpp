@@ -5,10 +5,10 @@
 
 namespace gl {
 
-void Font::init(const std::string& fontFile, unsigned bitmapScale)
+void Font::init(const std::string& fontFile)
 {
     if (!m_font.loadFromFile(fontFile)) {
-        throw std::runtime_error("Unable to load font from file...");
+        throw std::runtime_error("Unable to load font from file: " + fontFile);
     }
 }
 
@@ -42,7 +42,7 @@ const FontTexture& Font::getFontTexture(int textSize)
         return m_textures.at(textSize);
     }
 
-    // TODO See if this is really needed lol
+    // @TODO See if this can be done with having to get the glyph of every char
     for (auto character : m_charSet) {
         m_font.getGlyph(character, textSize, false);
     }

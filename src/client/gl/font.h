@@ -2,6 +2,8 @@
 
 #include "../gl/textures.h"
 #include <SFML/Graphics/Font.hpp>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace gl {
 
@@ -15,7 +17,7 @@ struct FontTexture {
  */
 class Font final {
   public:
-    void init(const std::string& fontFile, unsigned bitmapScale);
+    void init(const std::string& fontFile);
     const sf::Glyph& getGlyph(char character, unsigned textSize) const;
 
     float getKerning(char before, char next, unsigned textSize) const;
