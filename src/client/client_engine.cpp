@@ -150,6 +150,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
         client.render();
 
         for (auto& overlay : overlayStack.overlays) {
+            overlay->prepareWidgetsForRender();
             guiRenderer.render(*overlay);
         }
         window.display();

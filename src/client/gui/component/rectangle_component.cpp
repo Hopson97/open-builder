@@ -61,4 +61,9 @@ void RectangleComponent::updateBounds(const glm::vec2& viewport)
     m_bounds = {topLeft.x, viewport.y - topLeft.y - size.y, size.x, size.y};
 }
 
+const sf::FloatRect& RectangleComponent::getBounds() const
+{
+    return m_bounds;
+}
+
 } // namespace gui

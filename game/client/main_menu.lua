@@ -51,9 +51,9 @@ end
 local function onCreate(overlay)
     y = 0.6
 
-   -- local background = overlay:addImage()
-  --  background.size = GuiDim.new(1.0, 0, 1.0, 0)
-   --- background.image = backgroundTexture
+    local background = overlay:addImage()
+    background.size = GuiDim.new(1.0, 0, 1.0, 0)
+    background.image = backgroundTexture
 
     local logo = overlay:addImage()
     logo.size = GuiDim.new(0.5, 0, 0.25, 0)

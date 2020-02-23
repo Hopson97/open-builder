@@ -23,6 +23,8 @@ struct RectangleComponent final : public Component {
 
     void updateBounds(const glm::vec2& viewport);
 
+    const sf::FloatRect& getBounds() const;
+
   private:
     sf::FloatRect m_bounds;
     GuiDimension m_position;

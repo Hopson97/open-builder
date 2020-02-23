@@ -25,6 +25,10 @@ struct Widget {
     void hide();
     void show();
 
+    virtual void prepareRender()
+    {
+    }
+
     std::vector<Component*> componentList;
 };
 
@@ -76,6 +80,8 @@ class ButtonWidget final : public Widget {
 
     void setOnClick(sol::function function);
     void setOnMouseOver(sol::function function);
+
+    void prepareRender() final override;
 
   private:
     TextComponent* mp_text;
