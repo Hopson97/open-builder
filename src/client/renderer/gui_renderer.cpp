@@ -14,7 +14,7 @@ GuiRenderer::GuiRenderer(float viewportWidth, float viewportHeight)
     m_shader.bind();
     m_shader.updateProjection(projectionMatrix);
 
-    m_font.init("res/VeraMono-Bold.ttf", 512);
+    m_font.init("res/VeraMono-Bold.ttf");
 }
 
 int GuiRenderer::getTexture(const std::string& textureName)
@@ -68,7 +68,6 @@ void GuiRenderer::render(const gui::Overlay& overlay)
     // Render the text of the GUI
     // TODO Maybe sort text by font size?
     // m_font.bindTexture();
-    glDisable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
     glEnable(GL_BLEND);
     auto vp = m_viewport / 100.0f;
