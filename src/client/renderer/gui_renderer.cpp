@@ -42,6 +42,7 @@ void GuiRenderer::render(const gui::Overlay& overlay)
 
     // Reverse itr to allow lua to define components in a "First in, First Drawn" basis
     // Without revising, it seems to render the elements added first on-top of everything
+    glBindTexture(GL_TEXTURE_2D, 0);
     for (auto itr = overlay.rectangleComponents.rbegin();
          itr != overlay.rectangleComponents.rend(); itr++) {
         auto& rect = *itr;
@@ -65,7 +66,9 @@ void GuiRenderer::render(const gui::Overlay& overlay)
     }
 
     // Render the text of the GUI
-    m_font.bindTexture();
+    // TODO Maybe sort text by font size?
+    // m_font.bindTexture();
+    glDisable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
     glEnable(GL_BLEND);
     auto vp = m_viewport / 100.0f;
