@@ -1,4 +1,4 @@
-#include "widget.h"
+#include "label_widget.h"
 
 #include "../component/text_component.h"
 

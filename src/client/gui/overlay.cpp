@@ -1,5 +1,9 @@
 #include "overlay.h"
 
+#include "widget/button_widget.h"
+#include "widget/image_widget.h"
+#include "widget/label_widget.h"
+
 namespace gui {
 Overlay::Overlay(const OverlayDefinition& overlayDefinition)
     : definition(overlayDefinition)
