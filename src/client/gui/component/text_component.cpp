@@ -3,7 +3,7 @@
 #include "../../gl/font.h"
 #include "../../maths.h"
 #include "../../renderer/gui_shader.h"
-#include <iostream>
+#include "../gui_constants.h"
 
 namespace {
 struct Mesh {
@@ -112,7 +112,7 @@ void TextComponent::setText(const std::string& text)
     m_isGeometryUpdateNeeded = true;
 }
 
-void TextComponent::render(gl::Font& font, GuiShader& shader, const glm::vec2& viewport)
+void TextComponent::render(gl::Font& font, GuiShader& shader)
 {
     if (isHidden()) {
         return;
@@ -126,7 +126,7 @@ void TextComponent::render(gl::Font& font, GuiShader& shader, const glm::vec2& v
     glm::mat4 modelMatrix{1.0f};
     float scale = m_fontSize / 1 / m_fontSize;
 
-    auto transform = m_position.apply(viewport);
+    auto transform = m_position.apply();
 
     translateMatrix(modelMatrix, {transform.x, transform.y, 0.1f});
     rotateMatrix(modelMatrix, {180.0f, 0.0f, 0.0f});
@@ -171,7 +171,6 @@ void TextComponent::updateGeometry(gl::Font& font)
         pos.x += glyph.advance;
         m_size.x = pos.x;
     }
-    std::cout << m_size.x << " " << m_size.y << std::endl;
     auto& texture = font.getFontTexture(m_fontSize);
 
     Mesh mesh;

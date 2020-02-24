@@ -5,6 +5,8 @@
 #include <glm/vec3.hpp>
 #include <string>
 
+#include "../gui_constants.h"
+
 /**
  * Components are the rendererable primitives of a ui overlay
  *
@@ -29,11 +31,11 @@ struct GuiDimension final {
     {
     }
 
-    glm::vec2 apply(const glm::vec2& viewport) const
+    glm::vec2 apply() const
     {
         glm::vec2 vector;
-        vector.x = scale.x * viewport.x * 100.0f;
-        vector.y = scale.y * viewport.y * 100.0f;
+        vector.x = scale.x * GUI_WIDTH;
+        vector.y = scale.y * GUI_HEIGHT;
         return vector + offset;
     }
 };

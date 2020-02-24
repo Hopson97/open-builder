@@ -7,10 +7,8 @@ namespace gui {
 
 struct RectangleComponent final : public Component {
   public:
-    glm::mat4 getRenderTransform(const glm::vec2& viewport) const;
+    glm::mat4 getRenderTransform() const;
 
-    // Setters rather than public properties as it makes it a lot easier for a clean lua
-    // api
     void setPosition(const GuiDimension& position) final override;
     void setSize(const GuiDimension& size) final override;
     void setTexture(int texture);
@@ -21,11 +19,11 @@ struct RectangleComponent final : public Component {
 
     bool isInBounds(float x, float y) const;
 
-    void updateBounds(const glm::vec2& viewport);
-
     const sf::FloatRect& getBounds() const;
 
   private:
+    void updateBounds();
+
     sf::FloatRect m_bounds;
     GuiDimension m_position;
     GuiDimension m_size;

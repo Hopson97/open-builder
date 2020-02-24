@@ -18,7 +18,7 @@ class TextComponent final : public Component {
     void setFontSize(unsigned size);
     void setText(const std::string& text);
 
-    void render(gl::Font& font, GuiShader& shader, const glm::vec2& viewport);
+    void render(gl::Font& font, GuiShader& shader);
 
     const sf::Vector2f& getSize() const;
     const GuiDimension& getPosition() const;

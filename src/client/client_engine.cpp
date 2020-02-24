@@ -6,6 +6,7 @@
 #include "gl/gl_errors.h"
 #include "gl/primitive.h"
 #include "gl/vertex_array.h"
+#include "gui/gui_constants.h"
 #include "gui/overlay.h"
 #include "lua/client_lua_api.h"
 #include "lua/client_lua_callback.h"
@@ -15,7 +16,6 @@
 #include <SFML/System/Clock.hpp>
 #include <common/scripting/script_engine.h>
 #include <glad/glad.h>
-
 namespace {
 struct FPSCounter final {
     sf::Clock timer;
@@ -82,7 +82,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     // Gui
     gui::OverlayFactory overlayFactory;
     gui::OverlayStack overlayStack;
-    GuiRenderer guiRenderer(window.getSize().x, window.getSize().y);
+    GuiRenderer guiRenderer;
 
     // Lua API set up
     luaInitGuiApi(scriptEngine, overlayFactory, overlayStack, &guiRenderer);
@@ -107,7 +107,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
     int width = config.windowWidth;
     int height = config.windowHeight;
-    guiRenderTarget.create(width, height);
+    guiRenderTarget.create(GUI_WIDTH, GUI_HEIGHT);
     worldRenderTarget.create(width, height);
     screenShader.create("minimal", "minimal");
 
