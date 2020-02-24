@@ -1,6 +1,4 @@
-#include "widget.h"
-
-#include <iostream>
+#include "button_widget.h"
 
 #include "../component/rectangle_component.h"
 #include "../component/text_component.h"

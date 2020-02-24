@@ -11,6 +11,9 @@
 
 namespace gui {
 
+class ImageWidget;
+class LabelWidget;
+class ButtonWidget;
 /**
  * @brief Defines how a GUI should be created.
  * This is created in the Client Lua code

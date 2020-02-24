@@ -1,7 +1,9 @@
 #include "client_lua_api.h"
 
 #include "../gui/overlay.h"
-#include "../gui/widget/widget.h"
+#include "../gui/widget/button_widget.h"
+#include "../gui/widget/image_widget.h"
+#include "../gui/widget/label_widget.h"
 #include <common/scripting/script_engine.h>
 
 namespace {
