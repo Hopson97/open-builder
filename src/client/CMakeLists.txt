@@ -8,6 +8,7 @@ add_library(ob-client
     gl/textures.cpp
     gl/shader.cpp
     gl/font.cpp
+    gl/framebuffer.cpp
     gl/vertex_array.cpp
     gl/gl_errors.cpp
     gl/primitive.cpp

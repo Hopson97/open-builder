@@ -36,6 +36,7 @@ class Texture2d final {
     Texture2d(const Texture2d&) = delete;
     Texture2d& operator=(const Texture2d&) = delete;
 
+    GLuint createFramebufferTexture(unsigned width, unsigned height);
     void create(const sf::Image& image);
     void create(const std::string& file, bool flipImage);
     void create(unsigned int width, unsigned int height, const sf::Uint8* pixels);
