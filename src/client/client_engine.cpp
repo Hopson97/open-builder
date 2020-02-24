@@ -1,7 +1,11 @@
 #include "client_engine.h"
 
 #include "client.h"
+#include "client_config.h"
+#include "gl/framebuffer.h"
 #include "gl/gl_errors.h"
+#include "gl/primitive.h"
+#include "gl/vertex_array.h"
 #include "gui/overlay.h"
 #include "lua/client_lua_api.h"
 #include "lua/client_lua_callback.h"
@@ -11,8 +15,6 @@
 #include <SFML/System/Clock.hpp>
 #include <common/scripting/script_engine.h>
 #include <glad/glad.h>
-
-#include "gl/framebuffer.h"
 
 namespace {
 struct FPSCounter final {
@@ -40,7 +42,7 @@ bool initOpenGL(const sf::Window& window)
 #ifndef __APPLE__
     initGLDebug();
 #endif
-    glCheck(glClearColor(0.25f, 0.75f, 1.0f, 1.0f));
+    glCheck(glClearColor(0.25f, 0.75f, 1.0f, 0.0f));
     glCheck(glViewport(0, 0, window.getSize().x, window.getSize().y));
     glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     glCheck(glEnable(GL_DEPTH_TEST));
@@ -97,6 +99,18 @@ EngineStatus runClientEngine(const ClientConfig& config)
         return EngineStatus::CouldNotConnect;
     }
 
+    // Temp render stuff for testing
+    gl::Framebuffer guiRenderTarget;
+    gl::Framebuffer worldRenderTarget;
+    gl::Shader screenShader;
+    gl::VertexArray screenVAO = makeScreenQuadVertexArray();
+
+    int width = config.windowWidth;
+    int height = config.windowHeight;
+    guiRenderTarget.create(width, height);
+    worldRenderTarget.create(width, height);
+    screenShader.create("minimal", "minimal");
+
     // Main loop of the client code
     while (status == EngineStatus::Ok) {
         sf::Event event;
@@ -147,15 +161,40 @@ EngineStatus runClientEngine(const ClientConfig& config)
         client.update(gameTimer.restart().asSeconds(), fps.frameTime);
 
         // Render
-        gl::unbindFramebuffers(window.getSize().x, window.getSize().y);
+        glEnable(GL_DEPTH_TEST);
+
+        // World
+        worldRenderTarget.bind();
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
         client.render();
+
+        // GUI
+        guiRenderTarget.bind();
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         for (auto& overlay : overlayStack.overlays) {
             overlay->prepareWidgetsForRender();
             guiRenderer.render(*overlay);
         }
+
+        // Buffer to window
+        gl::unbindFramebuffers(width, height);
+        glDisable(GL_DEPTH_TEST);
+        glClear(GL_COLOR_BUFFER_BIT);
+        auto drawable = screenVAO.getDrawable();
+        drawable.bind();
+        screenShader.bind();
+
+        worldRenderTarget.bindTexture();
+        drawable.draw();
+
+        glEnable(GL_BLEND);
+
+        guiRenderTarget.bindTexture();
+        drawable.draw();
+
         window.display();
+        glDisable(GL_BLEND);
 
         // Stats
         fps.update();

@@ -29,8 +29,4 @@ class GuiRenderer final {
 
     std::unordered_map<std::string, int> m_textureIds;
     std::vector<gl::Texture2d> m_textures;
-
-    gl::Framebuffer m_renderTarget;
-    gl::Shader m_renderTargetShader;
-    gl::VertexArray m_screenQuadVao;
 };
