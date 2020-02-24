@@ -8,6 +8,7 @@
 #include "gl/vertex_array.h"
 #include "gui/gui_constants.h"
 #include "gui/overlay.h"
+#include "gui/widget/label_widget.h"
 #include "lua/client_lua_api.h"
 #include "lua/client_lua_callback.h"
 #include "renderer/chunk_renderer.h"
@@ -16,6 +17,7 @@
 #include <SFML/System/Clock.hpp>
 #include <common/scripting/script_engine.h>
 #include <glad/glad.h>
+
 namespace {
 struct FPSCounter final {
     sf::Clock timer;
@@ -31,6 +33,26 @@ struct FPSCounter final {
             timer.restart();
             frameCount = 0;
         }
+    }
+};
+
+/**
+ * @brief The 'F3' prompt showing info like # of chunks
+ * drawn, frame time, etc
+ */
+struct DebugGui {
+    gui::OverlayDefinition def;
+    gui::Overlay overlay;
+
+    gui::LabelWidget& label;
+
+    DebugGui()
+        : overlay(def)
+        , label(*overlay.addLabel())
+    {
+        label.setPosition({0, 5, 0, GUI_HEIGHT - 25});
+        label.setTextSize(32);
+        label.setText("TESTING");
     }
 };
 
@@ -68,12 +90,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     int tickCount = 0;
 
     // Init the "debug prompt" F3 GUI
-    /*
-    auto container = guiMaster.addGui();
-    auto debugStatsText = container->addText();
-    debugStatsText->setFontSize(16);
-    debugStatsText->setPosition({0.0f, 4.0f, 1.0f, -16.0f});
-    */
+    DebugGui debugGui;
 
     // Init Lua scripting
     ScriptEngine scriptEngine;
@@ -166,7 +183,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
         // World
         worldRenderTarget.bind();
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-        client.render();
+        client.render(debugGui.label);
 
         // GUI
         guiRenderTarget.bind();
@@ -176,6 +193,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
             overlay->prepareWidgetsForRender();
             guiRenderer.render(*overlay);
         }
+        guiRenderer.render(debugGui.overlay);
 
         // Buffer to window
         gl::unbindFramebuffers(width, height);

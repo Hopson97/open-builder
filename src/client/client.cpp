@@ -3,6 +3,7 @@
 #include "client_config.h"
 #include "gl/gl_errors.h"
 #include "gl/primitive.h"
+#include "gui/widget/label_widget.h"
 #include "input/keyboard.h"
 #include "world/chunk_mesh_generation.h"
 #include <SFML/Window/Window.hpp>
@@ -325,7 +326,7 @@ void Client::update(float dt, float frameTime)
     }
 }
 
-void Client::render()
+void Client::render(gui::LabelWidget& debugLabel)
 {
     // TODO [Hopson] Clean this up
     if (!m_hasReceivedGameData) {
@@ -391,44 +392,42 @@ void Client::render()
         glCheck(glDisable(GL_BLEND));
     }
 
-    /*
-        // Debug stats
-        if (m_shouldRenderDebugInfo) {
-            debugTextDisplay.show();
-            if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
-                m_debugTextUpdateTimer.restart();
+    // Debug stats
+    if (m_shouldRenderDebugInfo) {
+        debugLabel.show();
+        if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
+            m_debugTextUpdateTimer.restart();
 
-                // Get vertices total size in view and convert to MB
-                size_t buffSize = m_chunkRenderer.getTotalBufferSize();
-                buffSize /= 0x100000;
-                m_debugStats.bytesRendered /= 0x100000;
+            // Get vertices total size in view and convert to MB
+            size_t buffSize = m_chunkRenderer.getTotalBufferSize();
+            buffSize /= 0x100000;
+            m_debugStats.bytesRendered /= 0x100000;
 
-                DebugStats& d = m_debugStats;
-                glm::vec3& p = mp_player->position;
-                glm::vec3& r = mp_player->rotation;
-                auto bp = toLocalVoxelPosition(p.x, p.y, p.z);
-                auto cp = toChunkPosition(p.x, p.y, p.z);
+            DebugStats& d = m_debugStats;
+            glm::vec3& p = mp_player->position;
+            glm::vec3& r = mp_player->rotation;
+            auto bp = toLocalVoxelPosition(p.x, p.y, p.z);
+            auto cp = toChunkPosition(p.x, p.y, p.z);
 
-                std::ostringstream debugText;
-                debugText << "Frame time: " << std::setprecision(3) << d.frameTime <<
-       "ms\n"; debugText << "Chunks: " << d.renderedChunks << " of "
-                          << m_chunkRenderer.getTotalChunks() << " drawn\n";
-                debugText << "Chunk VRAM: " << m_debugStats.bytesRendered << "Mb of "
-                          << buffSize << "Mb drawn\n";
-                debugText << "Position: " << p << '\n';
-                debugText << "Chunk Position: " << cp << '\n';
-                debugText << "Local Position: " << bp << '\n';
-                debugText << "Rotation: " << r << '\n';
-                debugText << "In Chunk? " << (m_chunks.manager.hasChunk(cp) ? "Yes" :
-       "No")
-                          << '\n';
+            std::ostringstream debugText;
+            debugText << "Frame time: " << std::setprecision(3) << d.frameTime << "ms\n";
+            debugText << "Chunks: " << d.renderedChunks << " of "
+                      << m_chunkRenderer.getTotalChunks() << " drawn\n";
+            debugText << "Chunk VRAM: " << m_debugStats.bytesRendered << "Mb of "
+                      << buffSize << "Mb drawn\n";
+            debugText << "Position: " << p << '\n';
+            debugText << "Chunk Position: " << cp << '\n';
+            debugText << "Local Position: " << bp << '\n';
+            debugText << "Rotation: " << r << '\n';
+            debugText << "In Chunk? " << (m_chunks.manager.hasChunk(cp) ? "Yes" : "No")
+                      << '\n';
 
-                debugTextDisplay.setText(debugText.str());
-            }
+            debugLabel.setText(debugText.str());
         }
-        else {
-            debugTextDisplay.hide();
-        }*/
+    }
+    else {
+        debugLabel.hide();
+    }
 }
 
 void Client::endGame()

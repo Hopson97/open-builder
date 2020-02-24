@@ -19,7 +19,7 @@ class Keyboard;
 class ClientConfig;
 
 namespace gui {
-class TextComponent;
+class LabelWidget;
 }
 
 struct VoxelUpdate {
@@ -52,7 +52,7 @@ class Client final : public NetworkHost {
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
     void update(float dt, float frameTime);
-    void render();
+    void render(gui::LabelWidget& debugLabel);
     void endGame();
 
     EngineStatus currentStatus() const;

@@ -14,7 +14,7 @@ void Font::init(const std::string& fontFile)
 
 const sf::Glyph& Font::getGlyph(char character, unsigned textSize) const
 {
-    return m_font.getGlyph(character, textSize, false);
+    return m_font.getGlyph(character, textSize, true);
 }
 
 float Font::getKerning(char before, char next, unsigned textSize) const
@@ -44,7 +44,7 @@ const FontTexture& Font::getFontTexture(int textSize)
 
     // @TODO See if this can be done with having to get the glyph of every char
     for (auto character : m_charSet) {
-        m_font.getGlyph(character, textSize, false);
+        getGlyph(character, textSize);
     }
 
     const sf::Texture& temp = m_font.getTexture(textSize);
