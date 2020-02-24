@@ -25,6 +25,8 @@ class Framebuffer final {
 
     void bind() const;
 
+    void bindTexture() const;
+
   private:
     void reset();
 

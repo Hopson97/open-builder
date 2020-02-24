@@ -38,9 +38,9 @@ void Framebuffer::create(unsigned int width, unsigned int height)
     m_height = height;
 
     bind();
-    auto texture = m_texture.createFramebufferTexture(m_width, m_height);
+    GLuint textureHandle = m_texture.createFramebufferTexture(m_width, m_height);
     glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                                   texture, 0));
+                                   textureHandle, 0));
 
     // clang-format off
     glCheck(glGenRenderbuffers(1, &m_renderbufferHandle));
@@ -66,6 +66,11 @@ void Framebuffer::bind() const
 {
     glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_handle));
     glCheck(glViewport(0, 0, m_width, m_height));
+}
+
+void Framebuffer::bindTexture() const
+{
+    m_texture.bind();
 }
 
 void Framebuffer::reset()
