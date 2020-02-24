@@ -58,7 +58,7 @@ class Overlay final {
 /**
  * @brief Stores the current overlays of the game
  */
-struct OverlayStack final {
+class OverlayStack final {
     enum class ActionType { PushLayer, PopLayer };
 
     struct Action {
@@ -66,6 +66,9 @@ struct OverlayStack final {
         std::string id;
         std::unique_ptr<Overlay> overlay;
     };
+
+  public:
+    OverlayStack(float winWidth, float winHeight);
 
     void pushLayer(std::unique_ptr<Overlay>);
     void popLayer();
@@ -80,6 +83,10 @@ struct OverlayStack final {
     std::vector<std::unique_ptr<Overlay>> overlays;
 
   private:
+    glm::vec2 windowToGuiCoords(float winX, float winY) const;
+
+    const float m_windowWidth;
+    const float m_windowHeight;
     std::queue<Action> m_pendingActions;
 };
 

@@ -35,13 +35,13 @@ local function multiplayerClicked()
 end
 
 local function settingClicked()
-    print("Singleplayer clicked")
+    print("Settings clicked")
 
     --  controller:exit() --This should disconnect client too duh
 end
 
 local function exitClicked()
-    print("Singleplayer clicked")
+    print("Exit clicked")
 
     --  controller:exit() --This should disconnect client too duh
 end

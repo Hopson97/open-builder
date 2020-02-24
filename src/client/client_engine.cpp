@@ -81,7 +81,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
     // Gui
     gui::OverlayFactory overlayFactory;
-    gui::OverlayStack overlayStack;
+    gui::OverlayStack overlayStack(config.windowWidth, config.windowHeight);
     GuiRenderer guiRenderer;
 
     // Lua API set up

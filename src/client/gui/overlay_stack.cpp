@@ -2,6 +2,12 @@
 
 namespace gui {
 
+OverlayStack::OverlayStack(float winWidth, float winHeight)
+    : m_windowWidth(winWidth)
+    , m_windowHeight(winHeight)
+{
+}
+
 void OverlayStack::pushLayer(std::unique_ptr<Overlay> overlay)
 {
     Action action;
@@ -31,13 +37,18 @@ void OverlayStack::removeLayerByName(const std::string& overlayId)
 
 void OverlayStack::handleClick(sf::Mouse::Button button, float mx, float my)
 {
+    auto mousePosition = windowToGuiCoords(mx, my);
     for (auto& layer : overlays) {
-        layer->handleClick(button, mx, my);
+        layer->handleClick(button, mousePosition.x, mousePosition.y);
     }
 }
 
 void OverlayStack::handleMouseMove(sf::Event::MouseMoveEvent mouseMoveEvent)
 {
+    auto mousePosition = windowToGuiCoords(static_cast<float>(mouseMoveEvent.x),
+                                           static_cast<float>(mouseMoveEvent.y));
+    mouseMoveEvent.x = mousePosition.x;
+    mouseMoveEvent.y = mousePosition.y;
     for (auto& layer : overlays) {
         layer->handleMouseMove(mouseMoveEvent);
     }
@@ -72,4 +83,10 @@ void OverlayStack::update()
         }
     }
 }
+
+glm::vec2 OverlayStack::windowToGuiCoords(float winX, float winY) const
+{
+    return {winX / m_windowWidth * GUI_WIDTH, winY / m_windowHeight * GUI_HEIGHT};
+}
+
 } // namespace gui
