@@ -6,7 +6,7 @@ class ScriptEngine;
 
 namespace gui {
 class OverlayFactory;
-struct OverlayStack;
+class OverlayStack;
 } // namespace gui
 
 class GuiRenderer;
