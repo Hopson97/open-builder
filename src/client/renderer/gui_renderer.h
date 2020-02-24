@@ -14,15 +14,13 @@ class Overlay;
 
 class GuiRenderer final {
   public:
-    GuiRenderer(float viewportWidth, float viewportHeight);
+    GuiRenderer();
 
     int getTexture(const std::string& textureName);
 
     void render(const gui::Overlay& overlay);
 
   private:
-    glm::vec2 m_viewport;
-
     GuiShader m_shader;
     gl::VertexArray m_quadVao;
     gl::Font m_font;

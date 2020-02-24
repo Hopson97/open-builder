@@ -1,15 +1,14 @@
 #include "rectangle_component.h"
 
+#include "../gui_constants.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
 
 namespace gui {
 
-glm::mat4 RectangleComponent::getRenderTransform(const glm::vec2& viewport) const
+glm::mat4 RectangleComponent::getRenderTransform() const
 {
-    auto scaledViewport = viewport / 100.0f;
-    glm::vec2 positionTransform = m_position.apply(scaledViewport);
-    glm::vec2 scaleTransform = m_size.apply(scaledViewport);
+    glm::vec2 positionTransform = m_position.apply();
+    glm::vec2 scaleTransform = m_size.apply();
 
     glm::mat4 modelMatrix{1.0f};
     modelMatrix =
@@ -21,11 +20,13 @@ glm::mat4 RectangleComponent::getRenderTransform(const glm::vec2& viewport) cons
 void RectangleComponent::setPosition(const GuiDimension& position)
 {
     m_position = position;
+    updateBounds();
 }
 
 void RectangleComponent::setSize(const GuiDimension& size)
 {
     m_size = size;
+    updateBounds();
 }
 
 void RectangleComponent::setTexture(int texture)
@@ -53,12 +54,11 @@ bool RectangleComponent::isInBounds(float x, float y) const
     return m_bounds.contains({x, y});
 }
 
-void RectangleComponent::updateBounds(const glm::vec2& viewport)
+void RectangleComponent::updateBounds()
 {
-    auto scaledViewport = viewport / 100.0f;
-    auto topLeft = m_position.apply(scaledViewport);
-    auto size = m_size.apply(scaledViewport);
-    m_bounds = {topLeft.x, viewport.y - topLeft.y - size.y, size.x, size.y};
+    auto topLeft = m_position.apply();
+    auto size = m_size.apply();
+    m_bounds = {topLeft.x, GUI_VIEWPORT.y - topLeft.y - size.y, size.x, size.y};
 }
 
 const sf::FloatRect& RectangleComponent::getBounds() const
