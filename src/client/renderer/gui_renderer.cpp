@@ -7,9 +7,14 @@
 GuiRenderer::GuiRenderer(float viewportWidth, float viewportHeight)
     : m_viewport(viewportWidth, viewportHeight)
     , m_quadVao(makeQuadVertexArray(1.f, 1.f))
+    , m_screenQuadVao(makeScreenQuadVertexArray())
 {
     glm::mat4 projectionMatrix{1.0f};
     projectionMatrix = glm::ortho(0.0f, viewportWidth, 0.0f, viewportHeight, -1.0f, 1.0f);
+
+    m_renderTarget.create(viewportWidth, viewportHeight);
+    gl::unbindFramebuffers(m_viewport.x, m_viewport.y);
+    m_renderTargetShader.create("minimal", "minimal");
 
     m_shader.bind();
     m_shader.updateProjection(projectionMatrix);
@@ -35,6 +40,10 @@ int GuiRenderer::getTexture(const std::string& textureName)
 
 void GuiRenderer::render(const gui::Overlay& overlay)
 {
+    m_renderTarget.bind();
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     // Render the rectangles of the GUI
     m_shader.bind();
     auto quad = m_quadVao.getDrawable();
@@ -77,4 +86,9 @@ void GuiRenderer::render(const gui::Overlay& overlay)
     glCullFace(GL_BACK);
     glDisable(GL_BLEND);
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    gl::unbindFramebuffers(m_viewport.x, m_viewport.y);
+    m_renderTarget.bindTexture();
+    m_renderTargetShader.bind();
+    m_screenQuadVao.getDrawable().bindAndDraw();
 }

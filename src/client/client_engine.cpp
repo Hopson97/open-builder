@@ -12,6 +12,8 @@
 #include <common/scripting/script_engine.h>
 #include <glad/glad.h>
 
+#include "gl/framebuffer.h"
+
 namespace {
 struct FPSCounter final {
     sf::Clock timer;
@@ -145,8 +147,8 @@ EngineStatus runClientEngine(const ClientConfig& config)
         client.update(gameTimer.restart().asSeconds(), fps.frameTime);
 
         // Render
+        gl::unbindFramebuffers(window.getSize().x, window.getSize().y);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
         client.render();
 
         for (auto& overlay : overlayStack.overlays) {

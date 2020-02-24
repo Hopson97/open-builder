@@ -88,3 +88,21 @@ gl::VertexArray makeQuadVertexArray(GLfloat relativeWidth, GLfloat relativeHeigh
     vao.addIndexBuffer(indices);
     return vao;
 }
+
+gl::VertexArray makeScreenQuadVertexArray()
+{
+    std::vector<GLfloat> vertices = {
+        -1.0f, -1.f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f,
+    };
+
+    std::vector<GLuint> indices = {0, 1, 2, 2, 3, 0};
+
+    std::vector<GLfloat> textureCoords = {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f};
+
+    gl::VertexArray vao;
+    vao.bind();
+    vao.addVertexBuffer(2, vertices);
+    vao.addVertexBuffer(2, textureCoords);
+    vao.addIndexBuffer(indices);
+    return vao;
+}
