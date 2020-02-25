@@ -74,4 +74,19 @@ int Overlay::widgetCount() const
     return m_widgets.size();
 }
 
+void Overlay::hide()
+{
+    m_isHidden = true;
+}
+
+void Overlay::show()
+{
+    m_isHidden = false;
+}
+
+bool Overlay::isHidden() const
+{
+    return m_isHidden;
+}
+
 } // namespace gui

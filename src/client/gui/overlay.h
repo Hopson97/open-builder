@@ -54,8 +54,13 @@ class Overlay final {
 
     int widgetCount() const;
 
+    void hide();
+    void show();
+    bool isHidden() const;
+
   private:
     std::vector<std::unique_ptr<Widget>> m_widgets;
+    bool m_isHidden;
 };
 
 /**

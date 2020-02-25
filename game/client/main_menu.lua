@@ -71,6 +71,9 @@ local function onCreate(overlay)
 
     local exitGame = addButton(overlay, "Exit Game")
     exitGame.onClick = exitClicked
+
+    overlay:hide()
+    overlay:show()
 end
 
 game.gui.addGui{
