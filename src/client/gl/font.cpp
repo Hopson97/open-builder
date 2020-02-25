@@ -14,7 +14,7 @@ void Font::init(const std::string& fontFile)
 
 const sf::Glyph& Font::getGlyph(char character, unsigned textSize) const
 {
-    return m_font.getGlyph(character, textSize, true);
+    return m_font.getGlyph(character, textSize, false);
 }
 
 float Font::getKerning(char before, char next, unsigned textSize) const
