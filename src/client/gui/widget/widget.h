@@ -18,6 +18,7 @@ struct Widget {
     virtual void handleMouseMove(float, float){};
     virtual void handleKeyRelease(sf::Keyboard::Key){};
     virtual void prepareRender(){};
+    virtual void setColour(float r, float g, float b);
 
     virtual void setPosition(const GuiDimension& position) = 0;
     virtual void setSize(const GuiDimension& size) = 0;

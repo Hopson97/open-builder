@@ -62,6 +62,8 @@ class Component {
     virtual void setPosition(const GuiDimension& position) = 0;
     virtual void setSize(const GuiDimension& position) = 0;
 
+    glm::vec3 colour{1.0f};
+
   private:
     bool m_isHidden = false;
 };

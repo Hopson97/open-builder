@@ -13,7 +13,7 @@ local function addButton(overlay, label)
     button.size = BUTTON_SIZE
     button.position = GuiDim.new(0.3, 0, y, 0)
     button.text = label
-    button.textSize =70
+    button.textSize = 70
     button.image = buttonTexture
 
     y = y - BUTTON_GAP

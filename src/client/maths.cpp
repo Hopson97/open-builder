@@ -102,11 +102,11 @@ std::vector<VoxelPosition> getIntersectedVoxels(const glm::vec3& startPoint,
         (stepZ != 0) ? fmin(stepZ / (endPoint.z - startPoint.z), FLT_MAX) : FLT_MAX;
 
     float tMaxX = (stepX > 0.0f) ? tDeltaX * (1.0f - startPoint.x + startVoxel.x)
-                              : tDeltaX * (startPoint.x - startVoxel.x);
+                                 : tDeltaX * (startPoint.x - startVoxel.x);
     float tMaxY = (stepY > 0.0f) ? tDeltaY * (1.0f - startPoint.y + startVoxel.y)
-                              : tDeltaY * (startPoint.y - startVoxel.y);
+                                 : tDeltaY * (startPoint.y - startVoxel.y);
     float tMaxZ = (stepZ > 0.0f) ? tDeltaZ * (1.0f - startPoint.z + startVoxel.z)
-                              : tDeltaZ * (startPoint.z - startVoxel.z);
+                                 : tDeltaZ * (startPoint.z - startVoxel.z);
 
     auto currentVoxel = startVoxel;
     std::vector<VoxelPosition> intersected;

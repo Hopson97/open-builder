@@ -56,8 +56,8 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum se
             break;
     }
 
-    fprintf(stderr, "debug: type: %s, source: %s, message: \"%.*s\"\e[0m\n",
-            type_str, src, length, message);
+    fprintf(stderr, "debug: type: %s, source: %s, message: \"%.*s\"\e[0m\n", type_str,
+            src, length, message);
 }
 
 void initGLDebug()
