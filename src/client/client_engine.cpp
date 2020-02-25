@@ -14,6 +14,7 @@
 #include "renderer/chunk_renderer.h"
 #include "renderer/gui_renderer.h"
 #include "window.h"
+#include "input/input_state.h"
 #include <SFML/System/Clock.hpp>
 #include <common/scripting/script_engine.h>
 #include <glad/glad.h>
@@ -76,7 +77,6 @@ EngineStatus runClientEngine(const ClientConfig& config)
 {
     // Window/ OpenGL context setup
     sf::Window window;
-    window.setFramerateLimit(60);
     createWindow(window, config);
     if (!initOpenGL(window)) {
         return EngineStatus::GLInitError;
@@ -84,10 +84,13 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
     // Client engine stuff
     EngineStatus status = EngineStatus::Ok;
-    Keyboard keys;
     FPSCounter fps;
     sf::Clock gameTimer;
     int tickCount = 0;
+
+    // Input
+    Keyboard keys;
+    InputState inputState;
 
     // Init the "debug prompt" F3 GUI
     DebugGui debugGui;
@@ -104,6 +107,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     // Lua API set up
     luaInitGuiApi(scriptEngine, overlayFactory, overlayStack, &guiRenderer);
     luaInitGuiWidgetApi(scriptEngine);
+    luaInitInputApi(scriptEngine, window, inputState);
 
     // overlayStack.pushLayer(overlayFactory.createOverlay("main_menu"));
 
