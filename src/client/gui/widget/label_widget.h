@@ -13,10 +13,9 @@ class LabelWidget final : public Widget {
     void setSize(const GuiDimension& size) final override;
 
     void setText(const std::string& text);
-    void setTextSize(float size);
+    void setTextSize(unsigned size);
 
   private:
-    TextComponent* mp_text;
-    RectangleComponent* mp_rectangle;
+    TextComponent* mp_text = nullptr;
 };
 } // namespace gui

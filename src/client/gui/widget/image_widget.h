@@ -15,6 +15,6 @@ class ImageWidget final : public Widget {
     void setImage(int image);
 
   private:
-    RectangleComponent* mp_rectangle;
+    RectangleComponent* mp_rectangle = nullptr;
 };
 } // namespace gui

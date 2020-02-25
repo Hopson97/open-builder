@@ -2,9 +2,9 @@
 
 namespace gui {
 
-OverlayStack::OverlayStack(float winWidth, float winHeight)
-    : m_windowWidth(winWidth)
-    , m_windowHeight(winHeight)
+OverlayStack::OverlayStack(unsigned winWidth, unsigned winHeight)
+    : m_windowWidth(static_cast<float>(winWidth))
+    , m_windowHeight(static_cast<float>(winHeight))
 {
 }
 
@@ -47,8 +47,8 @@ void OverlayStack::handleMouseMove(sf::Event::MouseMoveEvent mouseMoveEvent)
 {
     auto mousePosition = windowToGuiCoords(static_cast<float>(mouseMoveEvent.x),
                                            static_cast<float>(mouseMoveEvent.y));
-    mouseMoveEvent.x = mousePosition.x;
-    mouseMoveEvent.y = mousePosition.y;
+    mouseMoveEvent.x = static_cast<int>(mousePosition.x);
+    mouseMoveEvent.y = static_cast<int>(mousePosition.y);
     for (auto& layer : overlays) {
         layer->handleMouseMove(mouseMoveEvent);
     }

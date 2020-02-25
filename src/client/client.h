@@ -16,7 +16,7 @@
 #include <unordered_set>
 
 class Keyboard;
-class ClientConfig;
+struct ClientConfig;
 
 namespace gui {
 class LabelWidget;
@@ -123,8 +123,8 @@ class Client final : public NetworkHost {
     bool m_voxelSelected = false;
 
     struct {
-        float vertical;
-        float horizontal;
+        float vertical = 0;
+        float horizontal = 0;
     } m_mouseSensitivity;
 
     Entity* mp_player = nullptr;

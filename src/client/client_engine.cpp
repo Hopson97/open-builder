@@ -124,7 +124,8 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
     int width = config.windowWidth;
     int height = config.windowHeight;
-    guiRenderTarget.create(GUI_WIDTH, GUI_HEIGHT);
+    guiRenderTarget.create(static_cast<unsigned>(GUI_WIDTH),
+                           static_cast<unsigned>(GUI_HEIGHT));
     worldRenderTarget.create(width, height);
     screenShader.create("minimal", "minimal");
 
@@ -159,7 +160,8 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
                 case sf::Event::MouseButtonReleased:
                     overlayStack.handleClick(event.mouseButton.button,
-                                             event.mouseButton.x, event.mouseButton.y);
+                                             static_cast<float>(event.mouseButton.x),
+                                             static_cast<float>(event.mouseButton.y));
                     client.onMouseRelease(event.mouseButton.button, event.mouseButton.x,
                                           event.mouseButton.y);
                     break;

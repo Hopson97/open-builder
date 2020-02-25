@@ -12,6 +12,7 @@
 #include <common/network/net_constants.h>
 #include <iomanip>
 #include <sstream>
+#include "gui/widget/label_widget.h"
 
 namespace {
 bool isVoxelSelectable(VoxelType voxelType)

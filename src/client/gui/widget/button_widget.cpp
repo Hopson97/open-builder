@@ -35,7 +35,7 @@ void ButtonWidget::setText(const std::string& text)
     mp_text->setText(text);
 }
 
-void ButtonWidget::setTextSize(float size)
+void ButtonWidget::setTextSize(unsigned size)
 {
     mp_text->setFontSize(size);
 }
@@ -49,9 +49,9 @@ void ButtonWidget::handleClick(sf::Mouse::Button button, float mx, float my)
     }
 }
 
-void ButtonWidget::handleMouseMove(sf::Event::MouseMoveEvent event)
+void ButtonWidget::handleMouseMove(float mx, float my)
 {
-    if (mp_rectangle->isInBounds(event.x, event.y)) {
+    if (mp_rectangle->isInBounds(mx, my)) {
         if (m_onMoveOver.valid()) {
             m_onMoveOver();
         }

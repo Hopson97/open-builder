@@ -44,9 +44,9 @@ struct Character {
         // clang-format on
     }
 
-    void createCharacter(float textureAtlasSize, Mesh& mesh)
+    void createCharacter(unsigned textureAtlasSize, Mesh& mesh)
     {
-        float s = textureAtlasSize;
+        float s = static_cast<float>(textureAtlasSize);
         // clang-format off
         
         // Get vertex bounds

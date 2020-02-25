@@ -5,7 +5,7 @@
 
 namespace gui {
 
-struct RectangleComponent final : public Component {
+class RectangleComponent final : public Component {
   public:
     glm::mat4 getRenderTransform() const;
 

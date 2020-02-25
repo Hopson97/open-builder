@@ -55,8 +55,10 @@ void Overlay::handleClick(sf::Mouse::Button button, float mx, float my)
 
 void Overlay::handleMouseMove(sf::Event::MouseMoveEvent mouseMoveEvent)
 {
+    float mouseX = static_cast<float>(mouseMoveEvent.x);
+    float mouseY = static_cast<float>(mouseMoveEvent.y);
     for (auto& widget : m_widgets) {
-        widget->handleMouseMove(mouseMoveEvent);
+        widget->handleMouseMove(mouseX, mouseY);
     }
 }
 

@@ -25,7 +25,7 @@ void LabelWidget::setText(const std::string& text)
     mp_text->setText(text);
 }
 
-void LabelWidget::setTextSize(float size)
+void LabelWidget::setTextSize(unsigned size)
 {
     mp_text->setFontSize(size);
 }
