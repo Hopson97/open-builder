@@ -51,7 +51,7 @@ void GuiRenderer::render(const gui::Overlay& overlay)
             auto transform = rect->getRenderTransform();
             m_shader.updateTransform(transform);
 
-            auto& colour = rect->getColour();
+            auto& colour = rect->colour;
             m_shader.updateColour(colour);
 
             int texture = rect->getTexture();

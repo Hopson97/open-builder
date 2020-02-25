@@ -34,19 +34,9 @@ void RectangleComponent::setTexture(int texture)
     m_texture = texture;
 }
 
-void RectangleComponent::setColour(float r, float g, float b)
-{
-    m_colour = {r, g, b};
-}
-
 int RectangleComponent::getTexture() const
 {
     return m_texture;
-}
-
-const glm::vec3& RectangleComponent::getColour() const
-{
-    return m_colour;
 }
 
 bool RectangleComponent::isInBounds(float x, float y) const

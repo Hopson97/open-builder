@@ -131,8 +131,9 @@ void TextComponent::render(gl::Font& font, GuiShader& shader)
     translateMatrix(modelMatrix, {transform.x, transform.y, 0.1f});
     rotateMatrix(modelMatrix, {180.0f, 0.0f, 0.0f});
     scaleMatrix(modelMatrix, scale);
-
     shader.updateTransform(modelMatrix);
+
+    shader.updateColour(colour);
 
     m_textQuads.getDrawable().bindAndDraw();
 }

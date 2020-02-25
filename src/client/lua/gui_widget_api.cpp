@@ -15,6 +15,8 @@ void addCommonAPI(sol::usertype<T>& api)
     api["size"] = sol::property(&T::setSize);
     api["hide"] = &T::hide;
     api["show"] = &T::show;
+
+    api["setColour"] = &T::setColour;
 }
 
 void addGuiDimensionApi(ScriptEngine& scriptEngine)
