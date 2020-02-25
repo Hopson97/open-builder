@@ -25,6 +25,13 @@ function StackMenu:nextButtonPosition()
     return position
 end
 
+function StackMenu:setBackground(image)
+    local background = self.overlay:addImage()
+    background.size = GuiDim.new(1.0, 0, 1.0, 0)
+    background.image = image
+    return background
+end
+
 function StackMenu:addImage(texture, width, height)
     local image = self.overlay:addImage()
     image.size = GuiDim.new(0, width, 0, height)

@@ -1,6 +1,7 @@
 --
 --  Menus
 --
+dofile("game/client/stack_menu.lua")   
 dofile("game/client/main_menu.lua")
 dofile("game/client/hud.lua")
 

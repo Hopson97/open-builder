@@ -67,7 +67,12 @@ class Overlay final {
  * @brief Stores the current overlays of the game
  */
 class OverlayStack final {
-    enum class ActionType { None, PushLayer, PopLayer };
+    enum class ActionType {
+        None,
+        PushLayer,
+        PopLayer,
+        ResetLayers,
+    };
 
     struct Action {
         ActionType type = ActionType::None;
@@ -78,6 +83,7 @@ class OverlayStack final {
   public:
     OverlayStack(unsigned winWidth, unsigned winHeight);
 
+    void resetToLayer(std::unique_ptr<Overlay>);
     void pushLayer(std::unique_ptr<Overlay>);
     void popLayer();
     void removeLayerByName(const std::string& overlayId);
