@@ -39,6 +39,11 @@ void ButtonWidget::setTextSize(unsigned size)
     mp_text->setFontSize(size);
 }
 
+void ButtonWidget::setColour(float r, float g, float b)
+{
+    mp_rectangle->colour = {r, g, b};
+}
+
 void ButtonWidget::handleClick(sf::Mouse::Button button, float mx, float my)
 {
     if (mp_rectangle->isInBounds(mx, my) && button == sf::Mouse::Left) {
@@ -55,6 +60,11 @@ void ButtonWidget::handleMouseMove(float mx, float my)
             m_onMoveOver();
         }
     }
+    else {
+        if (m_onMoveOver.valid()) {
+            m_onMouseOff();
+        }
+    }
 }
 void ButtonWidget::setOnClick(sol::function function)
 {
@@ -64,6 +74,11 @@ void ButtonWidget::setOnClick(sol::function function)
 void ButtonWidget::setOnMouseOver(sol::function function)
 {
     m_onMoveOver = function;
+}
+
+void ButtonWidget::setOnMouseOff(sol::function function)
+{
+    m_onMouseOff = function;
 }
 
 void ButtonWidget::prepareRender()

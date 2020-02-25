@@ -17,11 +17,14 @@ class ButtonWidget final : public Widget {
     void setText(const std::string& text);
     void setTextSize(unsigned size);
 
+    void setColour(float r, float g, float b) final override;
+
     void handleClick(sf::Mouse::Button button, float mx, float my) final override;
     void handleMouseMove(float mx, float my) final override;
 
     void setOnClick(sol::function function);
     void setOnMouseOver(sol::function function);
+    void setOnMouseOff(sol::function function);
 
     void prepareRender() final override;
 
@@ -31,5 +34,6 @@ class ButtonWidget final : public Widget {
 
     sol::function m_onClick;
     sol::function m_onMoveOver;
+    sol::function m_onMouseOff;
 };
 } // namespace gui

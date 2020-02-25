@@ -49,6 +49,14 @@ function StackMenu:addButton(text)
     button.textSize = 50
     button.image = buttonTexture
 
+    button.onMouseOver = function()
+        button:setColour(1.25, 1.25, 1.25)
+    end
+
+    button.onMouseOff = function()
+        button:setColour(1, 1, 1)
+    end
+
     return button
 end
 
