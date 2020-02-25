@@ -52,6 +52,7 @@ void addGuiButtonApi(ScriptEngine& engine)
 
     buttonApi["onClick"] = sol::property(&gui::ButtonWidget::setOnClick);
     buttonApi["onMouseOver"] = sol::property(&gui::ButtonWidget::setOnMouseOver);
+    buttonApi["onMouseOff"] = sol::property(&gui::ButtonWidget::setOnMouseOff);
 
     addCommonAPI(buttonApi);
 }
