@@ -15,10 +15,10 @@ class ButtonWidget final : public Widget {
     void setImage(int image);
 
     void setText(const std::string& text);
-    void setTextSize(float size);
+    void setTextSize(unsigned size);
 
     void handleClick(sf::Mouse::Button button, float mx, float my) final override;
-    void handleMouseMove(sf::Event::MouseMoveEvent) final override;
+    void handleMouseMove(float mx, float my) final override;
 
     void setOnClick(sol::function function);
     void setOnMouseOver(sol::function function);
@@ -26,8 +26,8 @@ class ButtonWidget final : public Widget {
     void prepareRender() final override;
 
   private:
-    TextComponent* mp_text;
-    RectangleComponent* mp_rectangle;
+    TextComponent* mp_text = nullptr;
+    RectangleComponent* mp_rectangle = nullptr;
 
     sol::function m_onClick;
     sol::function m_onMoveOver;

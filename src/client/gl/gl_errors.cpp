@@ -6,23 +6,6 @@
 void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
                                 GLsizei length, const char* message, const void*)
 {
-
-    const char* sev = "";
-    switch (severity) {
-        case GL_DEBUG_SEVERITY_HIGH:
-            sev = "\e[91m";
-            break;
-        case GL_DEBUG_SEVERITY_MEDIUM:
-            sev = "\e[93m";
-            break;
-        case GL_DEBUG_SEVERITY_LOW:
-            sev = "\e[92m";
-            break;
-        case GL_DEBUG_SEVERITY_NOTIFICATION:
-            sev = "\e[34m";
-            break;
-    }
-
     const char* src = "?";
     switch (source) {
         case GL_DEBUG_SOURCE_API:
@@ -73,7 +56,7 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum se
             break;
     }
 
-    fprintf(stderr, "debug:%s type: %s, source: %s, message: \"%.*s\"\e[0m\n", sev,
+    fprintf(stderr, "debug: type: %s, source: %s, message: \"%.*s\"\e[0m\n",
             type_str, src, length, message);
 }
 

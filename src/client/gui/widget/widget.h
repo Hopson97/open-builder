@@ -15,7 +15,7 @@ class Component;
 struct Widget {
     virtual ~Widget() = default;
     virtual void handleClick(sf::Mouse::Button, float, float){};
-    virtual void handleMouseMove(sf::Event::MouseMoveEvent){};
+    virtual void handleMouseMove(float, float){};
     virtual void handleKeyRelease(sf::Keyboard::Key){};
     virtual void prepareRender(){};
 

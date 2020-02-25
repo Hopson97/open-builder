@@ -3,7 +3,7 @@
 #include <sol/sol.hpp>
 #include <vector>
 
-class ScriptEngine;
+struct ScriptEngine;
 
 class ServerLuaCallbacks {
   public:
