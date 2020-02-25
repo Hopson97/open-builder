@@ -17,7 +17,6 @@ ButtonWidget::ButtonWidget(TextComponent* textComponent,
 void ButtonWidget::setPosition(const GuiDimension& position)
 {
     mp_rectangle->setPosition(position);
-    mp_text->setPosition(position);
 }
 
 void ButtonWidget::setSize(const GuiDimension& size)
@@ -73,9 +72,14 @@ void ButtonWidget::prepareRender()
     const auto& size = mp_text->getSize();
 
     float left = rect.left + rect.width / 2 - size.x / 2;
-    float top = rect.top + rect.height / 2 - size.y / 2;
+    float top = (GUI_HEIGHT - rect.top - rect.height + rect.height / 3);
 
-    mp_text->setPosition({0, left, mp_text->getPosition().scale.y, rect.height / 4});
+    mp_text->setPosition({
+        0,
+        left,
+        0,
+        top,
+    });
 }
 
 } // namespace gui
