@@ -8,6 +8,14 @@ OverlayStack::OverlayStack(unsigned winWidth, unsigned winHeight)
 {
 }
 
+void OverlayStack::resetToLayer(std::unique_ptr<Overlay> layer)
+{
+    Action action;
+    action.type = ActionType::ResetLayers;
+    action.overlay = std::move(layer);
+    m_pendingActions.push(std::move(action));
+}
+
 void OverlayStack::pushLayer(std::unique_ptr<Overlay> overlay)
 {
     Action action;
@@ -81,6 +89,13 @@ void OverlayStack::update()
                 break;
 
             case ActionType::PushLayer:
+                overlays.push_back(std::move(action.overlay));
+                break;
+
+            case ActionType::ResetLayers:
+                while (!overlays.empty()) {
+                    overlays.pop_back();
+                }
                 overlays.push_back(std::move(action.overlay));
                 break;
 
