@@ -192,8 +192,10 @@ EngineStatus runClientEngine(const ClientConfig& config)
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         for (auto& overlay : overlayStack.overlays) {
-            overlay->prepareWidgetsForRender();
-            guiRenderer.render(*overlay);
+            if (!overlay->isHidden()) {
+                overlay->prepareWidgetsForRender();
+                guiRenderer.render(*overlay);
+            }
         }
         guiRenderer.render(debugGui.overlay);
 

@@ -39,7 +39,9 @@ void OverlayStack::handleClick(sf::Mouse::Button button, float mx, float my)
 {
     auto mousePosition = windowToGuiCoords(mx, my);
     for (auto& layer : overlays) {
-        layer->handleClick(button, mousePosition.x, mousePosition.y);
+        if (!layer->isHidden()) {
+            layer->handleClick(button, mousePosition.x, mousePosition.y);
+        }
     }
 }
 
@@ -50,14 +52,18 @@ void OverlayStack::handleMouseMove(sf::Event::MouseMoveEvent mouseMoveEvent)
     mouseMoveEvent.x = static_cast<int>(mousePosition.x);
     mouseMoveEvent.y = static_cast<int>(mousePosition.y);
     for (auto& layer : overlays) {
-        layer->handleMouseMove(mouseMoveEvent);
+        if (!layer->isHidden()) {
+            layer->handleMouseMove(mouseMoveEvent);
+        }
     }
 }
 
 void OverlayStack::handleKeyRelease(sf::Keyboard::Key key)
 {
     for (auto& layer : overlays) {
-        layer->handleKeyRelease(key);
+        if (!layer->isHidden()) {
+            layer->handleKeyRelease(key);
+        }
     }
 }
 

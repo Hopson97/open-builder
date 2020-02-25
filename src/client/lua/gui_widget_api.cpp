@@ -62,6 +62,8 @@ void initGuiOverlayApi(ScriptEngine& engine)
     overlayApi["addImage"] = &gui::Overlay::addImage;
     overlayApi["addLabel"] = &gui::Overlay::addLabel;
     overlayApi["addButton"] = &gui::Overlay::addButton;
+    overlayApi["hide"] = &gui::Overlay::hide;
+    overlayApi["show"] = &gui::Overlay::show;
 }
 
 } // namespace
