@@ -48,8 +48,6 @@ local function exitClicked()
     --  controller:exit() --This should disconnect client too duh
 end
 
-
-
 local function onCreate(overlay)
     y = 0.6
 
@@ -83,8 +81,3 @@ game.gui.addGui{
     title = "Main Menu",
     create = onCreate,
 }
-
-
-game.onClientStartup(function()
-    game.gui.push("main_menu")
-end)

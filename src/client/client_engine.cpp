@@ -146,6 +146,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
                     break;
 
                 case sf::Event::KeyReleased:
+                    callbacks.onKeyboardKeyReleased(event.key.code);
                     client.onKeyRelease(event.key.code);
                     overlayStack.handleKeyRelease(event.key.code);
                     switch (event.key.code) {
