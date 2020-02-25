@@ -43,7 +43,7 @@ local function onCreate(overlay)
     --logo.image = logoTexture
 
 
-    local menu = GuiStack:create(900, overlay, 15)
+    local menu = StackMenu:create(900, overlay, 15)
     menu:addImage(logoTexture, 1064, 138)
     menu:pad(150)
     local startGame = menu:addButton("Singleplayer")
