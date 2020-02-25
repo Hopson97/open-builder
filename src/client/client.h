@@ -16,6 +16,7 @@
 #include <unordered_set>
 
 class Keyboard;
+struct InputState;
 struct ClientConfig;
 
 namespace gui {
@@ -47,7 +48,8 @@ class Client final : public NetworkHost {
     Client();
 
     bool init(const ClientConfig& config, float aspect);
-    void handleInput(const sf::Window& window, const Keyboard& keyboard);
+    void handleInput(const sf::Window& window, const Keyboard& keyboard,
+                     const InputState& inputState);
     void onKeyRelease(sf::Keyboard::Key key);
     void onMouseRelease(sf::Mouse::Button button, int x, int y);
 
@@ -144,7 +146,6 @@ class Client final : public NetworkHost {
 
     // Engine-y stuff
     EngineStatus m_status = EngineStatus::Ok;
-    bool m_isMouseLocked = false;
 
     unsigned m_noMeshingCount = 0;
     bool m_voxelMeshing = false;

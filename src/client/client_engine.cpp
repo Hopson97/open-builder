@@ -9,12 +9,12 @@
 #include "gui/gui_constants.h"
 #include "gui/overlay.h"
 #include "gui/widget/label_widget.h"
+#include "input/input_state.h"
 #include "lua/client_lua_api.h"
 #include "lua/client_lua_callback.h"
 #include "renderer/chunk_renderer.h"
 #include "renderer/gui_renderer.h"
 #include "window.h"
-#include "input/input_state.h"
 #include <SFML/System/Clock.hpp>
 #include <common/scripting/script_engine.h>
 #include <glad/glad.h>
@@ -177,7 +177,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
         tickCount++;
 
         // Input
-        client.handleInput(window, keys);
+        client.handleInput(window, keys, inputState);
 
         // Update
         overlayStack.update();

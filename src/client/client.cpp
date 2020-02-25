@@ -4,6 +4,7 @@
 #include "gl/gl_errors.h"
 #include "gl/primitive.h"
 #include "gui/widget/label_widget.h"
+#include "input/input_state.h"
 #include "input/keyboard.h"
 #include "world/chunk_mesh_generation.h"
 #include <SFML/Window/Window.hpp>
@@ -85,14 +86,16 @@ bool Client::init(const ClientConfig& config, float aspect)
     return true;
 }
 
-void Client::handleInput(const sf::Window& window, const Keyboard& keyboard)
+void Client::handleInput(const sf::Window& window, const Keyboard& keyboard,
+                         const InputState& inputState)
 {
     if (!m_hasReceivedGameData) {
         return;
     }
     static auto lastMousePosition = sf::Mouse::getPosition(window);
 
-    if (!m_isMouseLocked && window.hasFocus() && sf::Mouse::getPosition(window).y >= 0) {
+    if (inputState.isMouseLocked && window.hasFocus() &&
+        sf::Mouse::getPosition(window).y >= 0) {
         auto change = sf::Mouse::getPosition(window) - lastMousePosition;
         mp_player->rotation.x +=
             static_cast<float>(change.y / 8.0f * m_mouseSensitivity.vertical);
@@ -100,6 +103,7 @@ void Client::handleInput(const sf::Window& window, const Keyboard& keyboard)
             static_cast<float>(change.x / 8.0f * m_mouseSensitivity.horizontal);
         sf::Mouse::setPosition({(int)window.getSize().x / 2, (int)window.getSize().y / 2},
                                window);
+
 // This fixes mouse jittering on mac
 #ifndef __APPLE__
         lastMousePosition = sf::Mouse::getPosition(window);
@@ -181,10 +185,6 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
 void Client::onKeyRelease(sf::Keyboard::Key key)
 {
     switch (key) {
-        case sf::Keyboard::L:
-            m_isMouseLocked = !m_isMouseLocked;
-            break;
-
         case sf::Keyboard::P:
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             break;
