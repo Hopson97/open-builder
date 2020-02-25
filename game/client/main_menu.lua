@@ -24,6 +24,8 @@ local function singleplayerClicked()
     print("Singleplayer clicked")
     game.gui.pop()
     game.gui.push("hud")
+    game.input.lockMouse()
+    game.input.hideMouse()
    -- controller:startGame()
    -- game.gui.push("loading")
 end
