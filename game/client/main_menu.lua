@@ -8,24 +8,18 @@ local function onCreate(overlay)
     menu:addImage(logoTexture, 1064, 138)
     menu:pad(150)
 
-    local startGame   = menu:addButton("Singleplayer")
-    local multiplayer = menu:addButton("Multiplayer")
+    local startGame   = menu:addButton("Play Game")
     local settings    = menu:addButton("Settings")
     local exitGame    = menu:addButton("Exit Game")
 
     startGame.onClick = function()
-        print("Singleplayer clicked")
         game.gui.change("hud")
         game.input.lockMouse()
         game.input.hideMouse()
     end
 
-    multiplayer.onClick = function()
-        print("Multiplayer clicked")
-    end
-
     settings.onClick = function()
-        print("Settings clicked")
+        game.gui.change("settings_menu")
     end
 
     exitGame.onClick = function()
