@@ -8,6 +8,7 @@ local function onCreate(overlay)
     resume.onClick = function()
         game.gui.pop()
         game.input.hideMouse()
+        game.control.resume()
     end
 
     exit.onClick = function()
@@ -21,3 +22,11 @@ game.gui.addGui{
     title = "Pause Menu",
     create = onCreate,
 }
+
+game.onKeyReleased(game.Keyboard.Escape, function() 
+    if game.control.currentState() == game.State.InGame then
+        game.control.pause()
+        game.gui.push("pause")
+        game.input.showMouse()
+    end
+end)
