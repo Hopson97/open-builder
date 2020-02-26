@@ -16,9 +16,6 @@ game.onClientStartup(onStartup)
 
 
 game.onKeyReleased(game.Keyboard.Escape, function() 
-    print ("ESCAPE")
-    print (game.control.currentState())
-    print (game.control.InGame)
     if game.control.currentState() == game.State.InGame then
         game.control.pause()
         game.gui.push("pause")

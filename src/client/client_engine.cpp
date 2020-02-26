@@ -107,10 +107,10 @@ EngineStatus runClientEngine(const ClientConfig& config)
     // Lua API set up
     luaInitGuiApi(scriptEngine, overlayFactory, overlayStack, &guiRenderer);
     luaInitGuiWidgetApi(scriptEngine);
-    luaInitInputApi(scriptEngine, window, inputState, state.stage);
+    luaInitInputApi(scriptEngine, window, inputState);
+    luaInitClientControlApi(scriptEngine, state.stage);
 
-    // overlayStack.pushLayer(overlayFactory.createOverlay("main_menu"));
-
+    // Run the lua file to init the client engine
     scriptEngine.runLuaFile("game/client/main.lua");
     callbacks.onClientStartup();
 
