@@ -4,9 +4,7 @@
 #include "component/text_component.h"
 #include "widget/widget.h"
 #include <memory>
-#include <queue>
 #include <sol/sol.hpp>
-#include <unordered_map>
 #include <vector>
 
 namespace gui {
@@ -28,7 +26,6 @@ struct OverlayDefinition final {
 
 /**
  * @brief Holds the components that make up some GUI overlay, eg HUD, menus etc
- *
  */
 class Overlay final {
   public:
@@ -45,92 +42,23 @@ class Overlay final {
     CenteredLabelWidget* addCenteredLabel();
     ButtonWidget* addButton();
 
-    // The overlay defintion that created this overlay
-    const OverlayDefinition& definition;
-
-    // Stored as pointers to allow them to be stored by the Lua code
-    std::vector<std::unique_ptr<RectangleComponent>> rectangleComponents;
-    std::vector<std::unique_ptr<TextComponent>> textComponents;
-
     void prepareWidgetsForRender();
 
     int widgetCount() const;
-
     void hide();
     void show();
     bool isHidden() const;
 
+    // The overlay defintion that created this overlay
+    const OverlayDefinition& definition;
+
+    // Stored as pointers to allow them to be stored/used by the Lua code
+    std::vector<std::unique_ptr<RectangleComponent>> rectangleComponents;
+    std::vector<std::unique_ptr<TextComponent>> textComponents;
+
   private:
     std::vector<std::unique_ptr<Widget>> m_widgets;
     bool m_isHidden = false;
-};
-
-/**
- * @brief Stores the current overlays of the game
- */
-class OverlayStack final {
-    enum class ActionType {
-        None,
-        PushLayer,
-        PopLayer,
-        ResetLayers,
-    };
-
-    struct Action {
-        ActionType type = ActionType::None;
-        std::string id;
-        std::unique_ptr<Overlay> overlay;
-    };
-
-  public:
-    OverlayStack(unsigned winWidth, unsigned winHeight);
-
-    void resetToLayer(std::unique_ptr<Overlay>);
-    void pushLayer(std::unique_ptr<Overlay>);
-    void popLayer();
-    void removeLayerByName(const std::string& overlayId);
-
-    void handleClick(sf::Mouse::Button button, float mx, float my);
-    void handleMouseMove(sf::Event::MouseMoveEvent);
-    void handleKeyRelease(sf::Keyboard::Key);
-
-    void update();
-
-    std::vector<std::unique_ptr<Overlay>> overlays;
-
-  private:
-    glm::vec2 windowToGuiCoords(float winX, float winY) const;
-
-    const float m_windowWidth;
-    const float m_windowHeight;
-    std::queue<Action> m_pendingActions;
-};
-
-/**
- * @brief Stores overlay defintions, and creates overlays using them
- *
- */
-class OverlayFactory {
-  public:
-    /**
-     * @brief Add a new overlay definition to the game
-     * @param overlay The new overlay
-     */
-    void addOverlay(const OverlayDefinition& overlay);
-
-    /**
-     * @brief Create a Overlay object from a given overlay definition
-     *
-     * @param name The "overlay definition id", as defined in the Lua code
-     * @return std::unique_ptr<Overlay> A newly created overlay, as a pointer such that
-     * the Lua is able to store it without risk
-     */
-    std::unique_ptr<Overlay> createOverlay(const std::string& name,
-                                           const std::string& data);
-
-  private:
-    std::vector<OverlayDefinition> m_overlays;
-    std::unordered_map<std::string, int> m_overlayMap;
 };
 
 } // namespace gui

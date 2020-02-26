@@ -3,6 +3,8 @@
 #include <common/scripting/script_engine.h>
 
 #include "../gui/overlay.h"
+#include "../gui/overlay_factory.h"
+#include "../gui/overlay_stack.h"
 #include "../renderer/gui_renderer.h"
 
 namespace {
