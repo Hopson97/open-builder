@@ -86,9 +86,15 @@ void OverlayStack::update()
                 if (overlays.size() > 0) {
                     overlays.pop_back();
                 }
+                if (overlays.size() > 0) {
+                    overlays.back()->show();
+                }
                 break;
 
             case ActionType::PushLayer:
+                if (overlays.size() > 0) {
+                    overlays.back()->hide();
+                }
                 overlays.push_back(std::move(action.overlay));
                 break;
 

@@ -14,11 +14,3 @@ end
 
 game.onClientStartup(onStartup)
 
-
-game.onKeyReleased(game.Keyboard.Escape, function() 
-    if game.control.currentState() == game.State.InGame then
-        game.control.pause()
-        game.gui.push("pause")
-        game.input.showMouse()
-    end
-end)
