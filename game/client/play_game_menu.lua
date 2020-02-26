@@ -15,21 +15,18 @@ local function onCreate(overlay, data)
 
     newWorld.onClick = function()
         game.gui.change("hud")
-        game.input.lockMouse()
         game.input.hideMouse()
         game.control.startGame()
     end    
     
     loadWorld.onClick = function()
         game.gui.change("hud")
-        game.input.lockMouse()
         game.input.hideMouse()
         game.control.startGame()
     end
 
     joinWorld.onClick = function()
         game.gui.change("hud")
-        game.input.lockMouse()
         game.input.hideMouse()
         game.control.startGame()
     end
