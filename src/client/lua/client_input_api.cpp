@@ -26,12 +26,15 @@ void initGameControlApi(ScriptEngine& scriptEngine, ClientState& clientState)
     stateEnum["InMenu"] = ClientState::InMenu;
     stateEnum["InGame"] = ClientState::InGame;
     stateEnum["Paused"] = ClientState::Paused;
+
     stateEnum["ExitGame"] = ClientState::ExitGame;
+    stateEnum["StartGame"] = ClientState::StartGame;
     stateEnum["Shutdown"] = ClientState::Shutdown;
 
     auto controlApi = scriptEngine.addTable("control");
-    controlApi["currentState"] = [clientState] { return clientState; };
+    controlApi["currentState"] = [&clientState] { return clientState; };
     controlApi["shutdown"] = [&clientState] { clientState = ClientState::Shutdown; };
+
     controlApi["pause"] = [&clientState] {
         if (clientState == ClientState::InGame) {
             clientState = ClientState::Paused;
@@ -45,6 +48,13 @@ void initGameControlApi(ScriptEngine& scriptEngine, ClientState& clientState)
     controlApi["exitGame"] = [&clientState] {
         if (clientState == ClientState::InGame || clientState == ClientState::Paused) {
             clientState = ClientState::ExitGame;
+        }
+    };
+
+    controlApi["startGame"] = [&clientState] {
+        if (clientState == ClientState::InMenu) {
+            std::cout << "START GAME\n";
+            clientState = ClientState::StartGame;
         }
     };
 }

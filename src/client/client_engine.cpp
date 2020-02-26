@@ -217,8 +217,21 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
         // Stats
         fps.update();
-        if (state.stage == ClientState::Shutdown) {
-            state.status = EngineStatus::Exit;
+        switch (state.stage) {
+            case ClientState::StartGame:
+                state.stage = ClientState::InGame;
+                break;
+
+            case ClientState::ExitGame:
+                state.stage = ClientState::InMenu;
+                break;
+
+            case ClientState::Shutdown:
+                state.status = EngineStatus::Exit;
+                break;
+
+            default:
+                break;
         }
     }
     client.endGame();

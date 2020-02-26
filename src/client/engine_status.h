@@ -14,9 +14,13 @@ enum class EngineStatus {
 };
 
 enum class ClientState {
+    // Absolute States
     InMenu,
     InGame,
     Paused,
+
+    // Transition States
+    StartGame,
     ExitGame,
     Shutdown,
 };
