@@ -8,7 +8,8 @@ local function onCreate(overlay)
     menu:addImage(logoTexture, 1064, 138)
     menu:pad(150)
 
-    local startGame   = menu:addButton("Play Game")
+    local startGame   = menu:addButton("Play Vanilla")
+    local startGame   = menu:addButton("Play Modded")
     local settings    = menu:addButton("Settings")
     local exitGame    = menu:addButton("Exit Game")
 
@@ -19,7 +20,7 @@ local function onCreate(overlay)
     end
 
     settings.onClick = function()
-        game.gui.change("settings_menu")
+        game.gui.change("settings_menu", "test")
     end
 
     exitGame.onClick = function()

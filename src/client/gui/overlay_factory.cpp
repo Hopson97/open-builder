@@ -8,13 +8,14 @@ void OverlayFactory::addOverlay(const OverlayDefinition& overlay)
     m_overlays.push_back(overlay);
 }
 
-std::unique_ptr<Overlay> OverlayFactory::createOverlay(const std::string& name)
+std::unique_ptr<Overlay> OverlayFactory::createOverlay(const std::string& name,
+                                                       const std::string& data)
 {
     auto itr = m_overlayMap.find(name);
     if (itr != m_overlayMap.end()) {
         auto& overlayDefintion = m_overlays.at(itr->second);
         auto overlay = std::make_unique<Overlay>(overlayDefintion);
-        overlayDefintion.create(overlay.get());
+        overlayDefintion.create(overlay.get(), data);
         return overlay;
     }
     throw std::runtime_error("Unable to find gui with name" + name);
