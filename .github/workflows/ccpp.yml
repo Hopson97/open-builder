@@ -7,7 +7,7 @@ jobs:
       runs-on: ${{ matrix.os }}
       strategy:
         matrix:
-          os: [ ubuntu-18.04, ubuntu-latest ]
+          os: [ ubuntu-18.04 ]
           compiler: [ g++, clang++ ]
       name: ${{ matrix.compiler }} on ${{ matrix.os }}
       steps:
