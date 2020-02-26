@@ -6,7 +6,7 @@
 
 const std::string guiCreateScript = R"(
 
-    function create(overlay)
+    function create(overlay, data)
 
     end
 
@@ -31,7 +31,7 @@ TEST_CASE("GUI API Tests")
     SECTION("GUIs can be registered to a GUI factory")
     {
         scriptEngine.runLuaString(guiCreateScript);
-        auto overlay = overlayFactory.createOverlay("test_gui");
+        auto overlay = overlayFactory.createOverlay("test_gui", "test");
         REQUIRE(overlay->definition.id == "test_gui");
         REQUIRE(overlay->definition.title == "Test GUI");
     }

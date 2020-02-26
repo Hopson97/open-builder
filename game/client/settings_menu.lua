@@ -2,11 +2,11 @@
 local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
 local logoTexture = game.gui.getTexture("res/logo.png")
 
-local function onCreate(overlay)
+local function onCreate(overlay, data)
     local menu = StackMenu:create(900, overlay, 15)
     menu:setBackground(backgroundTexture)
-    menu:addImage(logoTexture, 1064, 138)
-    menu:pad(150)
+
+    print(data)
 
     local backButton = menu:addButton("Back")
 
