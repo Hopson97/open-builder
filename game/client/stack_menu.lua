@@ -10,12 +10,19 @@ local function getWidgetCentre(widgetWidth, y)
     return GuiDim.new(0, 1920 / 2 - widgetWidth / 2, 0, y)
 end
 
-function StackMenu:create(yStart, overlay, gap)
+function StackMenu:create(yStart, overlay, gap, title)
     local vals = {}
     setmetatable(vals, StackMenu)
     vals.y = yStart
     vals.overlay = overlay
     vals.buttonGap = BUTTON_HEIGHT + gap
+    if title ~= nil then
+        local label = overlay:addCenteredLabel()
+        label.position = GuiDim.new(0, 0, 0, vals.y)
+        label.text = title
+        label.textSize = 100
+        vals.y = vals.y - 140
+    end
     return vals
 end
 
