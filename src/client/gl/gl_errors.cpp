@@ -3,9 +3,28 @@
 #include <glad/glad.h>
 #include <iostream>
 
-void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
-                                GLsizei length, const char* message, const void*)
+void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint, GLenum severity,
+                                GLsizei, const char* message, const void*)
 {
+    const char* severity_str = "?";
+    switch (severity) {
+        case GL_DEBUG_SEVERITY_HIGH:
+            severity_str = "high";
+            break;
+
+        case GL_DEBUG_SEVERITY_MEDIUM:
+            severity_str = "medium";
+            break;
+
+        case GL_DEBUG_SEVERITY_LOW:
+            severity_str = "low";
+            break;
+
+        case GL_DEBUG_SEVERITY_NOTIFICATION:
+            severity_str = "notification";
+            break;
+    }
+
     const char* src = "?";
     switch (source) {
         case GL_DEBUG_SOURCE_API:
@@ -56,8 +75,8 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum se
             break;
     }
 
-    fprintf(stderr, "debug: type: %s, source: %s, message: \"%.*s\"\e[0m\n", type_str,
-            src, length, message);
+    std::cerr << "OpenGL Message\nType: " << type_str << "\nSeverity: " << severity_str
+              << "\nSource: " << src << "\nMessage: " << message << "\n\n";
 }
 
 void initGLDebug()
