@@ -1,4 +1,4 @@
-#include "overlay.h"
+#include "overlay_factory.h"
 
 namespace gui {
 
