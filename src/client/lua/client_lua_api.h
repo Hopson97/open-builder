@@ -32,11 +32,20 @@ void luaInitGuiApi(ScriptEngine& scriptEngine, gui::OverlayFactory& overlayFacto
 void luaInitGuiWidgetApi(ScriptEngine& scriptEngine);
 
 /**
- * @brief
+ * @brief Init the input api, eg key bindings and mouse locking
  *
  * @param scriptEngine The Lua script engine/ lua state to append the API to
  * @param window The window used for certain control (eg locking or showing mouse)
  * @param inputState The input state for furthur input control
  */
 void luaInitInputApi(ScriptEngine& scriptEngine, sf::Window& window,
-                     InputState& inputState, ClientState& clientState);
+                     InputState& inputState);
+
+/**
+ * @brief Init control api, allowing guis and such to exit the game, start the game, load
+ * a world etc
+ *
+ * @param scriptEngine The Lua script engine/ lua state to append the API to
+ * @param clientState The state controller
+ */
+void luaInitClientControlApi(ScriptEngine& scriptEngine, ClientState& clientState);
