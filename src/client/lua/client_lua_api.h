@@ -11,6 +11,7 @@ class OverlayStack;
 
 class GuiRenderer;
 struct InputState;
+enum class ClientState;
 
 /**
  * @brief Init the overlay APIs
@@ -38,4 +39,4 @@ void luaInitGuiWidgetApi(ScriptEngine& scriptEngine);
  * @param inputState The input state for furthur input control
  */
 void luaInitInputApi(ScriptEngine& scriptEngine, sf::Window& window,
-                     InputState& inputState);
+                     InputState& inputState, ClientState& clientState);

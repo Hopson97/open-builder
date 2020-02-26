@@ -26,7 +26,7 @@ local function onCreate(overlay)
     end
 
     exitGame.onClick = function()
-        print("Exit clicked")
+        game.control.shutdown()
     end
 end
 

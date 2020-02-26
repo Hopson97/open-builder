@@ -12,3 +12,11 @@ enum class EngineStatus {
     GLInitError = 20,
     CouldNotConnect = 21,
 };
+
+enum class ClientState {
+    InMenu,
+    InGame,
+    Paused,
+    ExitGame,
+    Shutdown,
+};
