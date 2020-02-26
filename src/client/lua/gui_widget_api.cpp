@@ -19,6 +19,13 @@ void addCommonAPI(sol::usertype<T>& api)
     api["setColour"] = &T::setColour;
 }
 
+template <typename T>
+void addCommonLabelApi(sol::usertype<T>& api)
+{
+    api["text"] = sol::property(&T::setText);
+    api["textSize"] = sol::property(&T::setTextSize);
+}
+
 void addGuiDimensionApi(ScriptEngine& scriptEngine)
 {
     auto gdimApi = scriptEngine.lua.new_usertype<gui::GuiDimension>(
@@ -36,24 +43,28 @@ void addGuiImageApi(ScriptEngine& engine)
 void addGuiLabelApi(ScriptEngine& engine)
 {
     auto labelApi = engine.lua.new_usertype<gui::LabelWidget>("LabelWidget");
-    labelApi["text"] = sol::property(&gui::LabelWidget::setText);
-    labelApi["textSize"] = sol::property(&gui::LabelWidget::setTextSize);
-
+    addCommonLabelApi(labelApi);
     addCommonAPI(labelApi);
+}
+
+void addGuiCenteredLabelApi(ScriptEngine& engine)
+{
+    auto centerLabelApi =
+        engine.lua.new_usertype<gui::CenteredLabelWidget>("CenteredLabelWidget");
+    addCommonLabelApi(centerLabelApi);
+    addCommonAPI(centerLabelApi);
 }
 
 void addGuiButtonApi(ScriptEngine& engine)
 {
     auto buttonApi = engine.lua.new_usertype<gui::ButtonWidget>("ButtonWidget");
-    buttonApi["text"] = sol::property(&gui::ButtonWidget::setText);
-    buttonApi["textSize"] = sol::property(&gui::ButtonWidget::setTextSize);
-
     buttonApi["image"] = sol::property(&gui::ButtonWidget::setImage);
 
     buttonApi["onClick"] = sol::property(&gui::ButtonWidget::setOnClick);
     buttonApi["onMouseOver"] = sol::property(&gui::ButtonWidget::setOnMouseOver);
     buttonApi["onMouseOff"] = sol::property(&gui::ButtonWidget::setOnMouseOff);
 
+    addCommonLabelApi(buttonApi);
     addCommonAPI(buttonApi);
 }
 
@@ -63,6 +74,7 @@ void initGuiOverlayApi(ScriptEngine& engine)
     overlayApi["addImage"] = &gui::Overlay::addImage;
     overlayApi["addLabel"] = &gui::Overlay::addLabel;
     overlayApi["addButton"] = &gui::Overlay::addButton;
+    overlayApi["addCenteredLabel"] = &gui::Overlay::addCenteredLabel;
     overlayApi["hide"] = &gui::Overlay::hide;
     overlayApi["show"] = &gui::Overlay::show;
 }
@@ -77,4 +89,5 @@ void luaInitGuiWidgetApi(ScriptEngine& scriptEngine)
     addGuiImageApi(scriptEngine);
     addGuiLabelApi(scriptEngine);
     addGuiButtonApi(scriptEngine);
+    addGuiCenteredLabelApi(scriptEngine);
 }

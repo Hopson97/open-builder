@@ -14,6 +14,7 @@ namespace gui {
 class ImageWidget;
 class LabelWidget;
 class ButtonWidget;
+class CenteredLabelWidget;
 /**
  * @brief Defines how a GUI should be created.
  * This is created in the Client Lua code
@@ -41,6 +42,7 @@ class Overlay final {
     // They are mostly called via Lua code, which is why it is pointers
     ImageWidget* addImage();
     LabelWidget* addLabel();
+    CenteredLabelWidget* addCenteredLabel();
     ButtonWidget* addButton();
 
     // The overlay defintion that created this overlay

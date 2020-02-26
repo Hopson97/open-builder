@@ -30,4 +30,23 @@ void LabelWidget::setTextSize(unsigned size)
     mp_text->setFontSize(size);
 }
 
+const TextComponent* LabelWidget::getText() const
+{
+    return mp_text;
+}
+
+CenteredLabelWidget::CenteredLabelWidget(TextComponent* textComponent)
+    : LabelWidget(textComponent)
+{
+}
+
+void CenteredLabelWidget::prepareRender()
+{
+    float y = getText()->getPosition().offset.y;
+    float textWidth = getText()->getSize().x;
+    float x = GUI_WIDTH / 2 - textWidth / 2;
+
+    LabelWidget::setPosition({0, x, 0, y});
+}
+
 } // namespace gui
