@@ -9,15 +9,14 @@ namespace {
 void initMouseControlApi(sol::table& inputTable, sf::Window& window,
                          InputState& inputState)
 {
-    inputTable["hideMouse"] = [&window]() { window.setMouseCursorVisible(false); };
-    inputTable["showMouse"] = [&window]() { window.setMouseCursorVisible(true); };
-
-    inputTable["toggleMouseLock"] = [&inputState]() {
-        inputState.isMouseLocked = !inputState.isMouseLocked;
+    inputTable["hideMouse"] = [&window, &inputState]() {
+        window.setMouseCursorVisible(false);
+        inputState.isMouseLocked = true;
     };
-    inputTable["isMouseLocked"] = [&inputState]() { return inputState.isMouseLocked; };
-    inputTable["lockMouse"] = [&inputState]() { inputState.isMouseLocked = true; };
-    inputTable["unlockMouse"] = [&inputState]() { inputState.isMouseLocked = false; };
+    inputTable["showMouse"] = [&window, &inputState]() {
+        window.setMouseCursorVisible(true);
+        inputState.isMouseLocked = false;
+    };
 }
 
 void initGameControlApi(ScriptEngine& scriptEngine, ClientState& clientState)

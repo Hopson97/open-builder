@@ -7,7 +7,6 @@ local function onCreate(overlay)
 
     resume.onClick = function()
         game.gui.pop()
-        game.input.lockMouse()
         game.input.hideMouse()
     end
 
