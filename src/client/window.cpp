@@ -23,6 +23,7 @@ void createWindow(sf::Window& window, const sf::VideoMode& mode, u32 style)
 #endif
 
     window.create(mode, "Open Builder", style, settings);
+    window.setFramerateLimit(60);
 }
 
 } // namespace

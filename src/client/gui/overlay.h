@@ -60,7 +60,7 @@ class Overlay final {
 
   private:
     std::vector<std::unique_ptr<Widget>> m_widgets;
-    bool m_isHidden;
+    bool m_isHidden = false;
 };
 
 /**
