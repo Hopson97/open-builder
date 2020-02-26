@@ -27,6 +27,14 @@ LabelWidget* Overlay::addLabel()
     return dynamic_cast<LabelWidget*>(widget);
 }
 
+CenteredLabelWidget* Overlay::addCenteredLabel()
+{
+    auto text = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
+    auto label = std::make_unique<CenteredLabelWidget>(text);
+    auto widget = m_widgets.emplace_back(std::move(label)).get();
+    return dynamic_cast<CenteredLabelWidget*>(widget);
+}
+
 ButtonWidget* Overlay::addButton()
 {
     auto rectangle =
