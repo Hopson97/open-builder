@@ -83,7 +83,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     }
 
     // Client engine stuff
-    EngineStatus status = EngineStatus::Ok;
+    ClientEngineState state;
     FPSCounter fps;
     sf::Clock gameTimer;
     int tickCount = 0;
@@ -107,7 +107,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     // Lua API set up
     luaInitGuiApi(scriptEngine, overlayFactory, overlayStack, &guiRenderer);
     luaInitGuiWidgetApi(scriptEngine);
-    luaInitInputApi(scriptEngine, window, inputState);
+    luaInitInputApi(scriptEngine, window, inputState, state.stage);
 
     // overlayStack.pushLayer(overlayFactory.createOverlay("main_menu"));
 
@@ -134,7 +134,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     screenShader.create("minimal", "minimal");
 
     // Main loop of the client code
-    while (status == EngineStatus::Ok) {
+    while (state.status == EngineStatus::Ok) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (window.hasFocus()) {
@@ -142,21 +142,13 @@ EngineStatus runClientEngine(const ClientConfig& config)
             }
             switch (event.type) {
                 case sf::Event::Closed:
-                    status = EngineStatus::Exit;
+                    state.status = EngineStatus::Exit;
                     break;
 
                 case sf::Event::KeyReleased:
                     callbacks.onKeyboardKeyReleased(event.key.code);
                     client.onKeyRelease(event.key.code);
                     overlayStack.handleKeyRelease(event.key.code);
-                    switch (event.key.code) {
-                        case sf::Keyboard::Escape:
-                            status = EngineStatus::Exit;
-                            break;
-
-                        default:
-                            break;
-                    }
                     break;
 
                 case sf::Event::MouseMoved:
@@ -225,7 +217,10 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
         // Stats
         fps.update();
+        if (state.stage == ClientState::Shutdown) {
+            state.status = EngineStatus::Exit;
+        }
     }
     client.endGame();
-    return status;
+    return state.status;
 }

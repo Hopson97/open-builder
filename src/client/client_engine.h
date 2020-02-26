@@ -4,6 +4,11 @@ struct ClientConfig;
 
 #include "engine_status.h"
 
+struct ClientEngineState {
+    EngineStatus status = EngineStatus::Ok;
+    ClientState stage = ClientState::InMenu;
+};
+
 /**
  * @brief Run the client
  * @param config

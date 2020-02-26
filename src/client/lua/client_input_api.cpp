@@ -1,5 +1,6 @@
 #include "client_lua_api.h"
 
+#include "../engine_status.h"
 #include "../input/input_state.h"
 #include <SFML/Window/Keyboard.hpp>
 #include <common/scripting/script_engine.h>
@@ -19,15 +20,45 @@ void initMouseControlApi(sol::table& inputTable, sf::Window& window,
     inputTable["unlockMouse"] = [&inputState]() { inputState.isMouseLocked = false; };
 }
 
+void initGameControlApi(ScriptEngine& scriptEngine, ClientState& clientState)
+{
+    auto stateEnum = scriptEngine.addTable("State");
+    stateEnum["InMenu"] = ClientState::InMenu;
+    stateEnum["InGame"] = ClientState::InGame;
+    stateEnum["Paused"] = ClientState::Paused;
+    stateEnum["ExitGame"] = ClientState::ExitGame;
+    stateEnum["Shutdown"] = ClientState::Shutdown;
+
+    auto controlApi = scriptEngine.addTable("control");
+    controlApi["currentState"] = [clientState] { return clientState; };
+    controlApi["shutdown"] = [&clientState] { clientState = ClientState::Shutdown; };
+    controlApi["pause"] = [&clientState] {
+        if (clientState == ClientState::InGame) {
+            clientState = ClientState::Paused;
+        }
+    };
+    controlApi["resume"] = [&clientState] {
+        if (clientState == ClientState::Paused) {
+            clientState = ClientState::InGame;
+        }
+    };
+    controlApi["exitGame"] = [&clientState] {
+        if (clientState == ClientState::InGame || clientState == ClientState::Paused) {
+            clientState = ClientState::ExitGame;
+        }
+    };
+}
+
 void initKeysApi(ScriptEngine& scriptEngine);
 } // namespace
 
 void luaInitInputApi(ScriptEngine& scriptEngine, sf::Window& window,
-                     InputState& inputState)
+                     InputState& inputState, ClientState& state)
 {
     auto inputTable = scriptEngine.addTable("input");
     initMouseControlApi(inputTable, window, inputState);
     initKeysApi(scriptEngine);
+    initGameControlApi(scriptEngine, state);
 }
 
 namespace {
