@@ -19,7 +19,3 @@ jobs:
         run: sh scripts/build.sh
       - name: Normal build unit tests
         run: sh scripts/tests.sh
-      - name: Release build
-        run: sh scripts/build.sh release
-      - name: Release build unit tests
-        run: sh scripts/tests.sh
