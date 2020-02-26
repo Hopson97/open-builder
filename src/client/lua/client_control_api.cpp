@@ -29,7 +29,7 @@ void luaInitClientControlApi(ScriptEngine& scriptEngine, ClientState& clientStat
         }
     };
     controlApi["exitGame"] = [&clientState] {
-        if (clientState == ClientState::InGame || clientState == ClientState::Paused) {
+        if (clientState == ClientState::Paused) {
             clientState = ClientState::ExitGame;
         }
     };
