@@ -30,16 +30,25 @@ void initGuiRenderApi(sol::table& guiTable, GuiRenderer& guiRenderer)
 void initGuiStackApi(sol::table& guiTable, gui::OverlayFactory& overlayFactory,
                      gui::OverlayStack& overlayStack)
 {
-    guiTable["push"] = [&](const std::string guiId, const std::string& data) {
-        overlayStack.pushLayer(overlayFactory.createOverlay(guiId, data));
-    };
+    guiTable["push"] = sol::overload(
+        [&](const std::string guiId, const std::string& data) {
+            overlayStack.pushLayer(overlayFactory.createOverlay(guiId, data));
+        },
+        [&](const std::string guiId) {
+            overlayStack.pushLayer(overlayFactory.createOverlay(guiId, ""));
+        });
+
+    guiTable["change"] = sol::overload(
+        [&](const std::string guiId, const std::string& data) {
+            overlayStack.resetToLayer(overlayFactory.createOverlay(guiId, data));
+        },
+        [&](const std::string guiId) {
+            overlayStack.resetToLayer(overlayFactory.createOverlay(guiId, ""));
+        });
 
     guiTable["pop"] = [&]() { overlayStack.popLayer(); };
 
-    guiTable["change"] = [&](const std::string guiId, const std::string& data) {
-        overlayStack.resetToLayer(overlayFactory.createOverlay(guiId, data));
-    };
-}
+} // namespace
 
 } // namespace
 
