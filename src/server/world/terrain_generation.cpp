@@ -45,7 +45,7 @@ float rounded(const glm::vec2& coord)
 }
 
 float getNoiseAt(const glm::vec2& voxelPosition, const glm::vec2& chunkPosition,
-                 const NoiseOptions& options, float seed)
+                 const NoiseOptions& options, int seed)
 {
     // Get voxel X/Z positions
     float voxelX = voxelPosition.x + chunkPosition.x * CHUNK_SIZE;
@@ -104,14 +104,16 @@ std::array<int, CHUNK_AREA> createChunkHeightMap(const ChunkPosition& position,
             float result = noise * noise2;
 
             heightMap[z * CHUNK_SIZE + x] =
-                (result * firstNoise.amplitude + firstNoise.offset) * island - 5;
+                static_cast<int>((result * firstNoise.amplitude + firstNoise.offset) *
+                                 island) -
+                5;
         }
     }
 
     return heightMap;
 }
 
-std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, float seed)
+std::array<int, CHUNK_AREA> createBiomeMap(const ChunkPosition& position, int seed)
 {
     NoiseOptions biomeMapNoise;
     biomeMapNoise.amplitude = 120;

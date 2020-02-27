@@ -17,7 +17,7 @@ void LabelWidget::setPosition(const GuiDimension& position)
 
 void LabelWidget::setSize(const GuiDimension& size)
 {
-    mp_text->setFontSize(size.offset.x);
+    mp_text->setFontSize(static_cast<unsigned>(size.offset.x));
 }
 
 void LabelWidget::setText(const std::string& text)

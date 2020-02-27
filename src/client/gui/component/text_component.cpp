@@ -124,7 +124,7 @@ void TextComponent::render(gl::Font& font, GuiShader& shader)
     texture.texture.bind();
 
     glm::mat4 modelMatrix{1.0f};
-    float scale = m_fontSize / 1 / m_fontSize;
+    float scale = m_fontSize / 1.0f / m_fontSize;
 
     auto transform = m_position.apply();
 
