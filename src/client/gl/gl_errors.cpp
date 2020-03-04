@@ -134,10 +134,10 @@ void glCheckError(const char* file, unsigned int line, const char* expression)
 
         // Log the error
         std::cerr << "An internal OpenGL call failed in "
-                  << fileString.substr(fileString.find_last_of("\\/") + 1) << "(" << line
+                  << fileString.substr(fileString.find_last_of("\\/") + 1).c_str() << "(" << line
                   << ")."
                   << "\nExpression:\n   " << expression << "\nError description:\n   "
-                  << error << "\n   " << description << "\n"
+                  << error.c_str() << "\n   " << description.c_str() << "\n"
                   << std::endl;
         glCheckError(file, line, expression);
         exit(-1);
