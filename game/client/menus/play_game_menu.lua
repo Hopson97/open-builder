@@ -18,15 +18,11 @@ local function onCreate(overlay, data)
     end    
     
     loadWorld.onClick = function()
-        game.gui.change("hud")
-        game.input.hideMouse()
-        game.control.startGame()
+        game.gui.change("load_world", data)
     end
 
     joinWorld.onClick = function()
-        game.gui.change("hud")
-        game.input.hideMouse()
-        game.control.startGame()
+        game.gui.change("join_world", data)
     end
 
 
