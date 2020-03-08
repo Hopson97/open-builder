@@ -4,6 +4,7 @@
 #include "../gui/widget/button_widget.h"
 #include "../gui/widget/image_widget.h"
 #include "../gui/widget/label_widget.h"
+#include "../gui/widget/text_box_widget.h"
 #include <common/scripting/script_engine.h>
 
 namespace {
@@ -68,6 +69,20 @@ void addGuiButtonApi(ScriptEngine& engine)
     addCommonAPI(buttonApi);
 }
 
+void addGuiTextboxApi(ScriptEngine& engine)
+{
+    auto textboxApi = engine.lua.new_usertype<gui::TextboxWidget>("TextBoxWidget");
+    textboxApi["image"] = sol::property(&gui::TextboxWidget::setImage);
+
+    textboxApi["onMouseOver"] = sol::property(&gui::TextboxWidget::setOnMouseOver);
+    textboxApi["onMouseOff"] = sol::property(&gui::TextboxWidget::setOnMouseOff);
+
+    textboxApi["getText"] = &gui::TextboxWidget::getText;
+
+    addCommonLabelApi(textboxApi);
+    addCommonAPI(textboxApi);
+}
+
 void initGuiOverlayApi(ScriptEngine& engine)
 {
     auto overlayApi = engine.lua.new_usertype<gui::Overlay>("GuiOverlay");
@@ -89,5 +104,6 @@ void luaInitGuiWidgetApi(ScriptEngine& scriptEngine)
     addGuiImageApi(scriptEngine);
     addGuiLabelApi(scriptEngine);
     addGuiButtonApi(scriptEngine);
+    addGuiTextboxApi(scriptEngine);
     addGuiCenteredLabelApi(scriptEngine);
 }
