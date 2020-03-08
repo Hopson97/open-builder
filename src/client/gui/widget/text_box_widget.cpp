@@ -22,16 +22,25 @@ bool isBackspace(unsigned char keycode)
 namespace gui {
 
 TextBoxWidget::TextBoxWidget(TextComponent* textComponent,
-                             RectangleComponent* rectangleComponent)
+                             RectangleComponent* rectangleComponent, TextComponent* label)
     : mp_text(textComponent)
     , mp_rectangle(rectangleComponent)
+    , mp_label(label)
 {
     componentList.push_back(mp_text);
     componentList.push_back(mp_rectangle);
+    componentList.push_back(mp_label);
+
+    mp_label->setFontSize(30);
+    mp_label->setText("Test");
 }
 
 void TextBoxWidget::setPosition(const GuiDimension& position)
 {
+    GuiDimension textPosition = position;
+    textPosition.offset.y += mp_rectangle->getBounds().height;
+
+    mp_label->setPosition(textPosition);
     mp_rectangle->setPosition(position);
 }
 
