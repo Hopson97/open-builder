@@ -80,6 +80,7 @@ void addGuiTextboxApi(ScriptEngine& engine)
     textboxApi["getText"] = &gui::TextBoxWidget::getText;
     textboxApi["placeholder"] = sol::property(&gui::TextBoxWidget::setPlaceholder);
     textboxApi["maxLength"] = sol::property(&gui::TextBoxWidget::setMaxLength);
+    textboxApi["label"] = sol::property(&gui::TextBoxWidget::setLabelText);
 
     addCommonLabelApi(textboxApi);
     addCommonAPI(textboxApi);
