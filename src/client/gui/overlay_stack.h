@@ -35,6 +35,7 @@ class OverlayStack final {
     void handleClick(sf::Mouse::Button button, float mx, float my);
     void handleMouseMove(sf::Event::MouseMoveEvent);
     void handleKeyRelease(sf::Keyboard::Key);
+    void handleTextEntered(unsigned char keycode);
 
     void update();
 
