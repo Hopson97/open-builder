@@ -92,7 +92,6 @@ void initGuiOverlayApi(ScriptEngine& engine)
     overlayApi["addCenteredLabel"] = &gui::Overlay::addCenteredLabel;
     overlayApi["addTextBox"] = &gui::Overlay::addTextBox;
 
-
     overlayApi["hide"] = &gui::Overlay::hide;
     overlayApi["show"] = &gui::Overlay::show;
 }
