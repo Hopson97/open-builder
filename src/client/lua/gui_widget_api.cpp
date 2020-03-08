@@ -78,6 +78,8 @@ void addGuiTextboxApi(ScriptEngine& engine)
     textboxApi["onMouseOff"] = sol::property(&gui::TextBoxWidget::setOnMouseOff);
 
     textboxApi["getText"] = &gui::TextBoxWidget::getText;
+    textboxApi["placeholder"] = sol::property(&gui::TextBoxWidget::setPlaceholder);
+    textboxApi["maxLength"] = sol::property(&gui::TextBoxWidget::setMaxLength);
 
     addCommonLabelApi(textboxApi);
     addCommonAPI(textboxApi);

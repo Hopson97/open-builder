@@ -20,6 +20,9 @@ class TextBoxWidget final : public Widget {
 
     void setColour(float r, float g, float b) final override;
 
+    void setPlaceholder(const std::string& text);
+    void setMaxLength(int length);
+
     void handleClick(sf::Mouse::Button button, float mx, float my) final override;
     void handleMouseMove(float mx, float my) final override;
     void handleTextEntered(unsigned char code) final override;
@@ -35,6 +38,10 @@ class TextBoxWidget final : public Widget {
     RectangleComponent* mp_rectangle = nullptr;
     bool m_isActive = false;
     std::string m_textInput;
+    std::string m_placeholder = "Enter something...";
+    unsigned m_maxLength = 100;
+
+    bool m_isUsingPlaceholder = false;
 
     sol::function m_onMoveOver;
     sol::function m_onMouseOff;
