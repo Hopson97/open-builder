@@ -48,21 +48,30 @@ function StackMenu:addImage(texture, width, height)
     return image
 end
 
+function StackMenu:initBasicWidget(widget)
+    widget.size = BUTTON_SIZE
+    widget.position = self:nextButtonPosition()
+    widget.textSize = 50
+    widget.image = buttonTexture
+
+    widget.onMouseOver = function()
+        widget:setColour(1.25, 1.25, 1.25)
+    end
+
+    widget.onMouseOff = function()
+        widget:setColour(1, 1, 1)
+    end
+end
+
+function StackMenu:addTextBox(label)
+    local box = self.overlay:addTextBox()
+    self:initBasicWidget(box)
+end
+
 function StackMenu:addButton(text)
     local button = self.overlay:addButton()
-    button.size = BUTTON_SIZE
-    button.position = self:nextButtonPosition()
+    self:initBasicWidget(button)
     button.text = text
-    button.textSize = 50
-    button.image = buttonTexture
-
-    button.onMouseOver = function()
-        button:setColour(1.25, 1.25, 1.25)
-    end
-
-    button.onMouseOff = function()
-        button:setColour(1, 1, 1)
-    end
 
     return button
 end
