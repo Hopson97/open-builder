@@ -14,9 +14,7 @@ local function onCreate(overlay, data)
     local backButton = menu:addButton("Back")
 
     newWorld.onClick = function()
-        game.gui.change("hud")
-        game.input.hideMouse()
-        game.control.startGame()
+        game.gui.change("new_world", data)
     end    
     
     loadWorld.onClick = function()
