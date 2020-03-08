@@ -13,6 +13,7 @@ class ImageWidget;
 class LabelWidget;
 class ButtonWidget;
 class CenteredLabelWidget;
+class TextBoxWidget;
 /**
  * @brief Defines how a GUI should be created.
  * This is created in the Client Lua code
@@ -41,6 +42,7 @@ class Overlay final {
     LabelWidget* addLabel();
     CenteredLabelWidget* addCenteredLabel();
     ButtonWidget* addButton();
+    TextBoxWidget* addTextBox();
 
     void prepareWidgetsForRender();
 
