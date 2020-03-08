@@ -8,7 +8,8 @@ namespace gui {
 
 class TextBoxWidget final : public Widget {
   public:
-    TextBoxWidget(TextComponent* textComponent, RectangleComponent* mp_rectangle);
+    TextBoxWidget(TextComponent* textComponent, RectangleComponent* mp_rectangle,
+                  TextComponent* label);
     void setPosition(const GuiDimension& position) final override;
     void setSize(const GuiDimension& size) final override;
 
@@ -35,7 +36,9 @@ class TextBoxWidget final : public Widget {
 
   private:
     TextComponent* mp_text = nullptr;
+    TextComponent* mp_label = nullptr;
     RectangleComponent* mp_rectangle = nullptr;
+
     bool m_isActive = false;
     std::string m_textInput;
     std::string m_placeholder = "Enter something...";

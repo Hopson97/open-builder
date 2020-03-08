@@ -54,8 +54,9 @@ TextBoxWidget* Overlay::addTextBox()
     auto rectangle =
         rectangleComponents.emplace_back(std::make_unique<RectangleComponent>()).get();
     auto text = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
+    auto label = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
 
-    auto textbox = std::make_unique<TextBoxWidget>(text, rectangle);
+    auto textbox = std::make_unique<TextBoxWidget>(text, rectangle, label);
     auto widget = m_widgets.emplace_back(std::move(textbox)).get();
     std::cout << "Added a fuckung trext box\n\n";
     return dynamic_cast<TextBoxWidget*>(widget);
