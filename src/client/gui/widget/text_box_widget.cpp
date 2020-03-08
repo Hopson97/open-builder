@@ -66,6 +66,18 @@ void TextBoxWidget::setColour(float r, float g, float b)
     mp_rectangle->colour = {r, g, b};
 }
 
+void TextBoxWidget::setPlaceholder(const std::string& text)
+{
+    m_placeholder = text;
+    mp_text->setText(text);
+    m_isUsingPlaceholder = true;
+}
+
+void TextBoxWidget::setMaxLength(int length)
+{
+    m_maxLength = length;
+}
+
 void TextBoxWidget::handleClick(sf::Mouse::Button button, float mx, float my)
 {
     m_isActive = mp_rectangle->isInBounds(mx, my) && button == sf::Mouse::Left;
@@ -88,13 +100,15 @@ void TextBoxWidget::handleMouseMove(float mx, float my)
 void TextBoxWidget::handleTextEntered(unsigned char code)
 {
     if (m_isActive) {
-        if (isCharacterValid(code)) {
+        if (isCharacterValid(code) && m_textInput.length() < m_maxLength) {
             m_textInput.push_back(code);
             mp_text->setText(m_textInput);
+            m_isUsingPlaceholder = false;
         }
         else if (isBackspace(code) && !m_textInput.empty()) {
             m_textInput.pop_back();
-            mp_text->setText(m_textInput);
+            m_isUsingPlaceholder = m_textInput.empty();
+            mp_text->setText(m_isUsingPlaceholder ? m_placeholder : m_textInput);
         }
     }
 }
@@ -112,6 +126,8 @@ void TextBoxWidget::setOnMouseOff(sol::function function)
 void TextBoxWidget::prepareRender()
 {
     mp_text->setPosition(centerText(mp_rectangle->getBounds(), *mp_text));
+    mp_text->colour =
+        m_isUsingPlaceholder ? glm::vec3{0.65, 0.65, 0.65} : glm::vec3{1.0, 1.0, 1.0f};
 }
 
 } // namespace gui

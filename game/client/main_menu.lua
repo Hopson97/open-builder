@@ -13,6 +13,8 @@ local function onCreate(overlay)
     local settings    = menu:addButton("Settings")
     local exitGame    = menu:addButton("Exit Game")
 
+    local textBox = menu:addTextBox("Enter world name...")
+
     vanilla.onClick = function()
         game.gui.change("play_game", "Vanilla")
     end
