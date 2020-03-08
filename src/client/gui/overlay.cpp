@@ -58,7 +58,6 @@ TextBoxWidget* Overlay::addTextBox()
 
     auto textbox = std::make_unique<TextBoxWidget>(text, rectangle, label);
     auto widget = m_widgets.emplace_back(std::move(textbox)).get();
-    std::cout << "Added a fuckung trext box\n\n";
     return dynamic_cast<TextBoxWidget*>(widget);
 }
 

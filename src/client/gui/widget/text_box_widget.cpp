@@ -135,8 +135,11 @@ void TextBoxWidget::setOnMouseOff(sol::function function)
 void TextBoxWidget::prepareRender()
 {
     mp_text->setPosition(centerText(mp_rectangle->getBounds(), *mp_text));
-    mp_text->colour =
-        m_isUsingPlaceholder ? glm::vec3{0.65, 0.65, 0.65} : glm::vec3{1.0, 1.0, 1.0f};
+    mp_text->colour = m_isUsingPlaceholder ? glm::vec3{0.65f, 0.65f, 0.65f}
+                                           : glm::vec3{1.0f, 1.0f, 1.0f};
+
+    mp_rectangle->colour =
+        m_isActive ? glm::vec3{1.25f, 1.25f, 1.25f} : glm::vec3{1.0f, 1.0f, 1.0f};
 }
 
 } // namespace gui

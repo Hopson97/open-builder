@@ -16,9 +16,12 @@ local function onCreate(overlay, data)
     local backButton = menu:addButton("Back")
 
     create.onClick = function()
-        game.gui.change("hud")
-        game.input.hideMouse()
-        game.control.startGame()
+        local name = worldNameBox:getText()
+        if string.len(name) > 0 then
+            game.gui.change("hud")
+            game.input.hideMouse()
+            game.control.startGame()
+        end
     end    
 
     backButton.onClick = function()
