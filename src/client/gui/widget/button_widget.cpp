@@ -2,6 +2,7 @@
 
 #include "../component/rectangle_component.h"
 #include "../component/text_component.h"
+#include "widget_helper.h"
 
 namespace gui {
 
@@ -83,18 +84,7 @@ void ButtonWidget::setOnMouseOff(sol::function function)
 
 void ButtonWidget::prepareRender()
 {
-    const auto& rect = mp_rectangle->getBounds();
-    const auto& size = mp_text->getSize();
-
-    float left = rect.left + rect.width / 2 - size.x / 2;
-    float top = (GUI_HEIGHT - rect.top - rect.height + rect.height / 3);
-
-    mp_text->setPosition({
-        0,
-        left,
-        0,
-        top,
-    });
+    mp_text->setPosition(centerText(mp_rectangle->getBounds(), *mp_text));
 }
 
 } // namespace gui
