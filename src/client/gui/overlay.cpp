@@ -4,6 +4,7 @@
 #include "widget/image_widget.h"
 #include "widget/label_widget.h"
 #include "widget/text_box_widget.h"
+#include <iostream>
 
 namespace gui {
 Overlay::Overlay(const OverlayDefinition& overlayDefinition)
@@ -56,7 +57,7 @@ TextBoxWidget* Overlay::addTextBox()
 
     auto textbox = std::make_unique<TextBoxWidget>(text, rectangle);
     auto widget = m_widgets.emplace_back(std::move(textbox)).get();
-
+    std::cout << "Added a fuckung trext box\n\n";
     return dynamic_cast<TextBoxWidget*>(widget);
 }
 
@@ -87,6 +88,13 @@ void Overlay::handleKeyRelease(sf::Keyboard::Key key)
 {
     for (auto& widget : m_widgets) {
         widget->handleKeyRelease(key);
+    }
+}
+
+void Overlay::handleTextEntered(unsigned char keycode)
+{
+    for (auto& widget : m_widgets) {
+        widget->handleTextEntered(keycode);
     }
 }
 

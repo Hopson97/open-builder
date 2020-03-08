@@ -75,6 +75,15 @@ void OverlayStack::handleKeyRelease(sf::Keyboard::Key key)
     }
 }
 
+void OverlayStack::handleTextEntered(unsigned char keycode)
+{
+    for (auto& layer : overlays) {
+        if (!layer->isHidden()) {
+            layer->handleTextEntered(keycode);
+        }
+    }
+}
+
 void OverlayStack::update()
 {
     while (!m_pendingActions.empty()) {
