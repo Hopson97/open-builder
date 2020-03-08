@@ -4,6 +4,21 @@
 #include "../component/text_component.h"
 #include "widget_helper.h"
 
+namespace {
+bool isCharacterValid(unsigned char keyCode)
+{
+    return ((keyCode >= 48) && (keyCode <= 57)) ||  // Numbers
+           ((keyCode >= 65) && (keyCode <= 90)) ||  // Uppercase
+           ((keyCode >= 97) && (keyCode <= 122)) || // Lowercase
+           keyCode == 32;                           // Space
+}
+
+bool isBackspace(unsigned char keycode)
+{
+    return keycode == 8;
+}
+} // namespace
+
 namespace gui {
 
 TextBoxWidget::TextBoxWidget(TextComponent* textComponent,
@@ -66,6 +81,20 @@ void TextBoxWidget::handleMouseMove(float mx, float my)
     else {
         if (m_onMoveOver.valid()) {
             m_onMouseOff();
+        }
+    }
+}
+
+void TextBoxWidget::handleTextEntered(unsigned char code)
+{
+    if (m_isActive) {
+        if (isCharacterValid(code)) {
+            m_textInput.push_back(code);
+            mp_text->setText(m_textInput);
+        }
+        else if (isBackspace(code) && !m_textInput.empty()) {
+            m_textInput.pop_back();
+            mp_text->setText(m_textInput);
         }
     }
 }

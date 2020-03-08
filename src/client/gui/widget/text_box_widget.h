@@ -22,6 +22,7 @@ class TextBoxWidget final : public Widget {
 
     void handleClick(sf::Mouse::Button button, float mx, float my) final override;
     void handleMouseMove(float mx, float my) final override;
+    void handleTextEntered(unsigned char code) final override;
 
     void setOnClick(sol::function function);
     void setOnMouseOver(sol::function function);
