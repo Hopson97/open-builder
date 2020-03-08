@@ -10,6 +10,8 @@ dofile("game/client/menus/main_menu.lua")
 dofile("game/client/menus/play_game_menu.lua")
 dofile("game/client/menus/settings_menu.lua")
 dofile("game/client/menus/new_world_menu.lua")
+dofile("game/client/menus/join_world_menu.lua")
+dofile("game/client/menus/load_world_menu.lua")
 dofile("game/client/menus/pause_menu.lua")
 
 -- 
@@ -22,4 +24,3 @@ local function onStartup()
 end
 
 game.onClientStartup(onStartup)
-
