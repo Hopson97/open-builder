@@ -19,7 +19,7 @@ bool scriptRunWasValid(const sol::protected_function_result& result)
 ScriptEngine::ScriptEngine()
     : gameTable(lua["game"].get_or_create<sol::table>())
 {
-    lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::math);
+    lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::math, sol::lib::string);
 }
 
 bool ScriptEngine::runLuaString(const std::string& script)
