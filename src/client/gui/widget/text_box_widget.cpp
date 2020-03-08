@@ -7,10 +7,10 @@
 namespace {
 bool isCharacterValid(unsigned char keyCode)
 {
-    return ((keyCode >= 48) && (keyCode <= 57)) ||  // Numbers
-           ((keyCode >= 65) && (keyCode <= 90)) ||  // Uppercase
-           ((keyCode >= 97) && (keyCode <= 122)) || // Lowercase
-           keyCode == 32;                           // Space
+    return ((keyCode >= 48) && (keyCode <= 57)) ||          // Numbers
+           ((keyCode >= 65) && (keyCode <= 90)) ||          // Uppercase
+           ((keyCode >= 97) && (keyCode <= 122)) ||         // Lowercase
+           keyCode == 32 || keyCode == 46 || keyCode == 95; // Space, dot, underscore
 }
 
 bool isBackspace(unsigned char keycode)
@@ -31,8 +31,7 @@ TextBoxWidget::TextBoxWidget(TextComponent* textComponent,
     componentList.push_back(mp_rectangle);
     componentList.push_back(mp_label);
 
-    mp_label->setFontSize(30);
-    mp_label->setText("Test");
+    mp_label->setFontSize(40);
 }
 
 void TextBoxWidget::setPosition(const GuiDimension& position)
@@ -73,6 +72,11 @@ const std::string& TextBoxWidget::getText() const
 void TextBoxWidget::setColour(float r, float g, float b)
 {
     mp_rectangle->colour = {r, g, b};
+}
+
+void TextBoxWidget::setLabelText(const std::string& text)
+{
+    mp_label->setText(text);
 }
 
 void TextBoxWidget::setPlaceholder(const std::string& text)

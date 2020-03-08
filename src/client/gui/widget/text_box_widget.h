@@ -21,6 +21,7 @@ class TextBoxWidget final : public Widget {
 
     void setColour(float r, float g, float b) final override;
 
+    void setLabelText(const std::string& text);
     void setPlaceholder(const std::string& text);
     void setMaxLength(int length);
 
@@ -36,8 +37,8 @@ class TextBoxWidget final : public Widget {
 
   private:
     TextComponent* mp_text = nullptr;
-    TextComponent* mp_label = nullptr;
     RectangleComponent* mp_rectangle = nullptr;
+    TextComponent* mp_label = nullptr;
 
     bool m_isActive = false;
     std::string m_textInput;

@@ -8,16 +8,19 @@ local function onCreate(overlay, data)
     menu:pad(100)
     menu:setBackground(backgroundTexture)
 
-    local serverIpBox = menu:addTextBox("Enter server IP...")
+    local serverIpBox = menu:addTextBox("Server IP", "Enter server IP...")
     menu:pad(10)
     local joinButton = menu:addButton("Join World")
     menu:pad(200)
     local backButton = menu:addButton("Back")
 
     joinButton.onClick = function()
-        game.gui.change("hud")
-        game.input.hideMouse()
-        game.control.startGame()
+        local serverIp = serverIpBox:getText()
+        if string.len(serverIp) > 0 then
+            game.gui.change("hud")
+            game.input.hideMouse()
+            game.control.startGame()
+        end
     end    
 
     backButton.onClick = function()

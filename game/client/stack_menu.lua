@@ -63,10 +63,12 @@ function StackMenu:initBasicWidget(widget)
     end
 end
 
-function StackMenu:addTextBox(label)
+function StackMenu:addTextBox(label, placeholder)
+    self:pad(25)
     local textBox = self.overlay:addTextBox()
     self:initBasicWidget(textBox)
-    textBox.placeholder = label
+    textBox.placeholder = placeholder
+    textBox.label = label
     textBox.maxLength = 25
 
     return textBox
