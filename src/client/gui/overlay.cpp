@@ -3,6 +3,7 @@
 #include "widget/button_widget.h"
 #include "widget/image_widget.h"
 #include "widget/label_widget.h"
+#include "widget/text_box_widget.h"
 
 namespace gui {
 Overlay::Overlay(const OverlayDefinition& overlayDefinition)
@@ -45,6 +46,18 @@ ButtonWidget* Overlay::addButton()
     auto widget = m_widgets.emplace_back(std::move(button)).get();
 
     return dynamic_cast<ButtonWidget*>(widget);
+}
+
+TextBoxWidget* Overlay::addTextBox()
+{
+    auto rectangle =
+        rectangleComponents.emplace_back(std::make_unique<RectangleComponent>()).get();
+    auto text = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
+
+    auto textbox = std::make_unique<TextBoxWidget>(text, rectangle);
+    auto widget = m_widgets.emplace_back(std::move(textbox)).get();
+
+    return dynamic_cast<TextBoxWidget*>(widget);
 }
 
 void Overlay::prepareWidgetsForRender()

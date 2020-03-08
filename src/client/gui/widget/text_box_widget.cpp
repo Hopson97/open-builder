@@ -6,7 +6,7 @@
 
 namespace gui {
 
-TextboxWidget::TextboxWidget(TextComponent* textComponent,
+TextBoxWidget::TextBoxWidget(TextComponent* textComponent,
                              RectangleComponent* rectangleComponent)
     : mp_text(textComponent)
     , mp_rectangle(rectangleComponent)
@@ -15,48 +15,48 @@ TextboxWidget::TextboxWidget(TextComponent* textComponent,
     componentList.push_back(mp_rectangle);
 }
 
-void TextboxWidget::setPosition(const GuiDimension& position)
+void TextBoxWidget::setPosition(const GuiDimension& position)
 {
     mp_rectangle->setPosition(position);
 }
 
-void TextboxWidget::setSize(const GuiDimension& size)
+void TextBoxWidget::setSize(const GuiDimension& size)
 {
     mp_rectangle->setSize(size);
 }
 
-void TextboxWidget::setImage(int image)
+void TextBoxWidget::setImage(int image)
 {
     mp_rectangle->setTexture(image);
 }
 
-void TextboxWidget::setText(const std::string& text)
+void TextBoxWidget::setText(const std::string& text)
 {
     m_textInput = text;
     mp_text->setText(text);
 }
 
-void TextboxWidget::setTextSize(unsigned size)
+void TextBoxWidget::setTextSize(unsigned size)
 {
     mp_text->setFontSize(size);
 }
 
-const std::string& TextboxWidget::getText() const
+const std::string& TextBoxWidget::getText() const
 {
     return m_textInput;
 }
 
-void TextboxWidget::setColour(float r, float g, float b)
+void TextBoxWidget::setColour(float r, float g, float b)
 {
     mp_rectangle->colour = {r, g, b};
 }
 
-void TextboxWidget::handleClick(sf::Mouse::Button button, float mx, float my)
+void TextBoxWidget::handleClick(sf::Mouse::Button button, float mx, float my)
 {
     m_isActive = mp_rectangle->isInBounds(mx, my) && button == sf::Mouse::Left;
 }
 
-void TextboxWidget::handleMouseMove(float mx, float my)
+void TextBoxWidget::handleMouseMove(float mx, float my)
 {
     if (mp_rectangle->isInBounds(mx, my)) {
         if (m_onMoveOver.valid()) {
@@ -70,17 +70,17 @@ void TextboxWidget::handleMouseMove(float mx, float my)
     }
 }
 
-void TextboxWidget::setOnMouseOver(sol::function function)
+void TextBoxWidget::setOnMouseOver(sol::function function)
 {
     m_onMoveOver = function;
 }
 
-void TextboxWidget::setOnMouseOff(sol::function function)
+void TextBoxWidget::setOnMouseOff(sol::function function)
 {
     m_onMouseOff = function;
 }
 
-void TextboxWidget::prepareRender()
+void TextBoxWidget::prepareRender()
 {
     mp_text->setPosition(centerText(mp_rectangle->getBounds(), *mp_text));
 }

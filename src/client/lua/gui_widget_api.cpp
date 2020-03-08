@@ -71,13 +71,13 @@ void addGuiButtonApi(ScriptEngine& engine)
 
 void addGuiTextboxApi(ScriptEngine& engine)
 {
-    auto textboxApi = engine.lua.new_usertype<gui::TextboxWidget>("TextBoxWidget");
-    textboxApi["image"] = sol::property(&gui::TextboxWidget::setImage);
+    auto textboxApi = engine.lua.new_usertype<gui::TextBoxWidget>("TextBoxWidget");
+    textboxApi["image"] = sol::property(&gui::TextBoxWidget::setImage);
 
-    textboxApi["onMouseOver"] = sol::property(&gui::TextboxWidget::setOnMouseOver);
-    textboxApi["onMouseOff"] = sol::property(&gui::TextboxWidget::setOnMouseOff);
+    textboxApi["onMouseOver"] = sol::property(&gui::TextBoxWidget::setOnMouseOver);
+    textboxApi["onMouseOff"] = sol::property(&gui::TextBoxWidget::setOnMouseOff);
 
-    textboxApi["getText"] = &gui::TextboxWidget::getText;
+    textboxApi["getText"] = &gui::TextBoxWidget::getText;
 
     addCommonLabelApi(textboxApi);
     addCommonAPI(textboxApi);
@@ -90,6 +90,9 @@ void initGuiOverlayApi(ScriptEngine& engine)
     overlayApi["addLabel"] = &gui::Overlay::addLabel;
     overlayApi["addButton"] = &gui::Overlay::addButton;
     overlayApi["addCenteredLabel"] = &gui::Overlay::addCenteredLabel;
+    overlayApi["addTextBox"] = &gui::Overlay::addTextBox;
+
+
     overlayApi["hide"] = &gui::Overlay::hide;
     overlayApi["show"] = &gui::Overlay::show;
 }

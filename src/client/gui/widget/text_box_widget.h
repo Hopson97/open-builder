@@ -6,9 +6,9 @@
 
 namespace gui {
 
-class TextboxWidget final : public Widget {
+class TextBoxWidget final : public Widget {
   public:
-    TextboxWidget(TextComponent* textComponent, RectangleComponent* mp_rectangle);
+    TextBoxWidget(TextComponent* textComponent, RectangleComponent* mp_rectangle);
     void setPosition(const GuiDimension& position) final override;
     void setSize(const GuiDimension& size) final override;
 
