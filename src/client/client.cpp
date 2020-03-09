@@ -15,10 +15,10 @@
 #include <sstream>
 
 namespace {
-bool isVoxelSelectable(VoxelType voxelType)
-{
-    return voxelType == VoxelType::Solid || voxelType == VoxelType::Flora;
-}
+    bool isVoxelSelectable(VoxelType voxelType)
+    {
+        return voxelType == VoxelType::Solid || voxelType == VoxelType::Flora;
+    }
 } // namespace
 
 Client::Client()

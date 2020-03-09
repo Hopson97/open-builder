@@ -21,57 +21,57 @@
 #include <glad/glad.h>
 
 namespace {
-struct FPSCounter final {
-    sf::Clock timer;
-    float frameTime = 0;
-    float frameCount = 0;
+    struct FPSCounter final {
+        sf::Clock timer;
+        float frameTime = 0;
+        float frameCount = 0;
 
-    void update()
-    {
-        frameCount++;
-        if (timer.getElapsedTime() > sf::seconds(0.25)) {
-            auto time = timer.getElapsedTime();
-            frameTime = time.asMilliseconds() / frameCount;
-            timer.restart();
-            frameCount = 0;
+        void update()
+        {
+            frameCount++;
+            if (timer.getElapsedTime() > sf::seconds(0.25)) {
+                auto time = timer.getElapsedTime();
+                frameTime = time.asMilliseconds() / frameCount;
+                timer.restart();
+                frameCount = 0;
+            }
         }
-    }
-};
+    };
 
-/**
- * @brief The 'F3' prompt showing info like # of chunks
- * drawn, frame time, etc
- */
-struct DebugGui {
-    gui::OverlayDefinition def;
-    gui::Overlay overlay;
+    /**
+     * @brief The 'F3' prompt showing info like # of chunks
+     * drawn, frame time, etc
+     */
+    struct DebugGui {
+        gui::OverlayDefinition def;
+        gui::Overlay overlay;
 
-    gui::LabelWidget& label;
+        gui::LabelWidget& label;
 
-    DebugGui()
-        : overlay(def)
-        , label(*overlay.addLabel())
+        DebugGui()
+            : overlay(def)
+            , label(*overlay.addLabel())
+        {
+            label.setPosition({0, 5, 0, GUI_HEIGHT - 25});
+            label.setTextSize(32);
+            label.setText("TESTING");
+        }
+    };
+
+    bool initOpenGL(const sf::Window& window)
     {
-        label.setPosition({0, 5, 0, GUI_HEIGHT - 25});
-        label.setTextSize(32);
-        label.setText("TESTING");
-    }
-};
-
-bool initOpenGL(const sf::Window& window)
-{
-    if (!gladLoadGL()) {
-        return false;
-    }
+        if (!gladLoadGL()) {
+            return false;
+        }
 #ifndef __APPLE__
-    initGLDebug();
+        initGLDebug();
 #endif
-    glCheck(glClearColor(0.25f, 0.75f, 1.0f, 0.0f));
-    glCheck(glViewport(0, 0, window.getSize().x, window.getSize().y));
-    glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-    glCheck(glEnable(GL_DEPTH_TEST));
-    return true;
-}
+        glCheck(glClearColor(0.25f, 0.75f, 1.0f, 0.0f));
+        glCheck(glViewport(0, 0, window.getSize().x, window.getSize().y));
+        glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+        glCheck(glEnable(GL_DEPTH_TEST));
+        return true;
+    }
 } // namespace
 
 EngineStatus runClientEngine(const ClientConfig& config)

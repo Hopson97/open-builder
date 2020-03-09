@@ -7,44 +7,44 @@
 #include <glm/gtc/type_ptr.hpp>
 
 namespace gl {
-/**
- * @brief A uniform location in a shader
- */
-struct UniformLocation final {
-    GLuint ptr = 0;
-};
+    /**
+     * @brief A uniform location in a shader
+     */
+    struct UniformLocation final {
+        GLuint ptr = 0;
+    };
 
-/**
- * @brief Wrapper for a OpenGL shder object
- */
-class Shader final {
-  public:
-    Shader() = default;
-    ~Shader();
+    /**
+     * @brief Wrapper for a OpenGL shder object
+     */
+    class Shader final {
+      public:
+        Shader() = default;
+        ~Shader();
 
-    Shader(Shader&& other);
-    Shader& operator=(Shader&& other);
+        Shader(Shader&& other);
+        Shader& operator=(Shader&& other);
 
-    Shader(const Shader&) = delete;
-    Shader& operator=(const Shader&) = delete;
+        Shader(const Shader&) = delete;
+        Shader& operator=(const Shader&) = delete;
 
-    void create(const std::string& vertexFile, const std::string& fragmentFile);
-    void destroy();
-    void bind() const;
+        void create(const std::string& vertexFile, const std::string& fragmentFile);
+        void destroy();
+        void bind() const;
 
-    UniformLocation getUniformLocation(const char* name);
+        UniformLocation getUniformLocation(const char* name);
 
-  private:
-    GLuint m_handle = 0;
-};
+      private:
+        GLuint m_handle = 0;
+    };
 
-// Functons for shaders
-void loadUniform(UniformLocation location, const glm::ivec3& vector);
-void loadUniform(UniformLocation location, const glm::vec3& vector);
-void loadUniform(UniformLocation location, const glm::mat4& matrix);
+    // Functons for shaders
+    void loadUniform(UniformLocation location, const glm::ivec3& vector);
+    void loadUniform(UniformLocation location, const glm::vec3& vector);
+    void loadUniform(UniformLocation location, const glm::mat4& matrix);
 
-void loadUniform(UniformLocation location, GLint value);
-void loadUniform(UniformLocation location, GLuint value);
-void loadUniform(UniformLocation location, GLfloat value);
+    void loadUniform(UniformLocation location, GLint value);
+    void loadUniform(UniformLocation location, GLuint value);
+    void loadUniform(UniformLocation location, GLfloat value);
 
 } // namespace gl

@@ -9,95 +9,95 @@
 
 namespace {
 
-template <typename T>
-void addCommonAPI(sol::usertype<T>& api)
-{
-    api["position"] = sol::property(&T::setPosition);
-    api["size"] = sol::property(&T::setSize);
-    api["hide"] = &T::hide;
-    api["show"] = &T::show;
+    template <typename T>
+    void addCommonAPI(sol::usertype<T>& api)
+    {
+        api["position"] = sol::property(&T::setPosition);
+        api["size"] = sol::property(&T::setSize);
+        api["hide"] = &T::hide;
+        api["show"] = &T::show;
 
-    api["setColour"] = &T::setColour;
-}
+        api["setColour"] = &T::setColour;
+    }
 
-template <typename T>
-void addCommonLabelApi(sol::usertype<T>& api)
-{
-    api["text"] = sol::property(&T::setText);
-    api["textSize"] = sol::property(&T::setTextSize);
-}
+    template <typename T>
+    void addCommonLabelApi(sol::usertype<T>& api)
+    {
+        api["text"] = sol::property(&T::setText);
+        api["textSize"] = sol::property(&T::setTextSize);
+    }
 
-void addGuiDimensionApi(ScriptEngine& scriptEngine)
-{
-    auto gdimApi = scriptEngine.lua.new_usertype<gui::GuiDimension>(
-        "GuiDim", sol::constructors<gui::GuiDimension(float, float, float, float)>());
-}
+    void addGuiDimensionApi(ScriptEngine& scriptEngine)
+    {
+        auto gdimApi = scriptEngine.lua.new_usertype<gui::GuiDimension>(
+            "GuiDim", sol::constructors<gui::GuiDimension(float, float, float, float)>());
+    }
 
-void addGuiImageApi(ScriptEngine& engine)
-{
-    auto imageWidgetApi = engine.lua.new_usertype<gui::ImageWidget>("ImageWidget");
-    imageWidgetApi["image"] = sol::property(&gui::ImageWidget::setImage);
+    void addGuiImageApi(ScriptEngine& engine)
+    {
+        auto imageWidgetApi = engine.lua.new_usertype<gui::ImageWidget>("ImageWidget");
+        imageWidgetApi["image"] = sol::property(&gui::ImageWidget::setImage);
 
-    addCommonAPI(imageWidgetApi);
-}
+        addCommonAPI(imageWidgetApi);
+    }
 
-void addGuiLabelApi(ScriptEngine& engine)
-{
-    auto labelApi = engine.lua.new_usertype<gui::LabelWidget>("LabelWidget");
-    addCommonLabelApi(labelApi);
-    addCommonAPI(labelApi);
-}
+    void addGuiLabelApi(ScriptEngine& engine)
+    {
+        auto labelApi = engine.lua.new_usertype<gui::LabelWidget>("LabelWidget");
+        addCommonLabelApi(labelApi);
+        addCommonAPI(labelApi);
+    }
 
-void addGuiCenteredLabelApi(ScriptEngine& engine)
-{
-    auto centerLabelApi =
-        engine.lua.new_usertype<gui::CenteredLabelWidget>("CenteredLabelWidget");
-    addCommonLabelApi(centerLabelApi);
-    addCommonAPI(centerLabelApi);
-}
+    void addGuiCenteredLabelApi(ScriptEngine& engine)
+    {
+        auto centerLabelApi =
+            engine.lua.new_usertype<gui::CenteredLabelWidget>("CenteredLabelWidget");
+        addCommonLabelApi(centerLabelApi);
+        addCommonAPI(centerLabelApi);
+    }
 
-void addGuiButtonApi(ScriptEngine& engine)
-{
-    auto buttonApi = engine.lua.new_usertype<gui::ButtonWidget>("ButtonWidget");
-    buttonApi["image"] = sol::property(&gui::ButtonWidget::setImage);
+    void addGuiButtonApi(ScriptEngine& engine)
+    {
+        auto buttonApi = engine.lua.new_usertype<gui::ButtonWidget>("ButtonWidget");
+        buttonApi["image"] = sol::property(&gui::ButtonWidget::setImage);
 
-    buttonApi["onClick"] = sol::property(&gui::ButtonWidget::setOnClick);
-    buttonApi["onMouseOver"] = sol::property(&gui::ButtonWidget::setOnMouseOver);
-    buttonApi["onMouseOff"] = sol::property(&gui::ButtonWidget::setOnMouseOff);
+        buttonApi["onClick"] = sol::property(&gui::ButtonWidget::setOnClick);
+        buttonApi["onMouseOver"] = sol::property(&gui::ButtonWidget::setOnMouseOver);
+        buttonApi["onMouseOff"] = sol::property(&gui::ButtonWidget::setOnMouseOff);
 
-    addCommonLabelApi(buttonApi);
-    addCommonAPI(buttonApi);
-}
+        addCommonLabelApi(buttonApi);
+        addCommonAPI(buttonApi);
+    }
 
-void addGuiTextboxApi(ScriptEngine& engine)
-{
-    auto textboxApi = engine.lua.new_usertype<gui::TextBoxWidget>("TextBoxWidget");
-    textboxApi["image"] = sol::property(&gui::TextBoxWidget::setImage);
+    void addGuiTextboxApi(ScriptEngine& engine)
+    {
+        auto textboxApi = engine.lua.new_usertype<gui::TextBoxWidget>("TextBoxWidget");
+        textboxApi["image"] = sol::property(&gui::TextBoxWidget::setImage);
 
-    textboxApi["onMouseOver"] = sol::property(&gui::TextBoxWidget::setOnMouseOver);
-    textboxApi["onMouseOff"] = sol::property(&gui::TextBoxWidget::setOnMouseOff);
+        textboxApi["onMouseOver"] = sol::property(&gui::TextBoxWidget::setOnMouseOver);
+        textboxApi["onMouseOff"] = sol::property(&gui::TextBoxWidget::setOnMouseOff);
 
-    textboxApi["getText"] = &gui::TextBoxWidget::getText;
-    textboxApi["placeholder"] = sol::property(&gui::TextBoxWidget::setPlaceholder);
-    textboxApi["maxLength"] = sol::property(&gui::TextBoxWidget::setMaxLength);
-    textboxApi["label"] = sol::property(&gui::TextBoxWidget::setLabelText);
+        textboxApi["getText"] = &gui::TextBoxWidget::getText;
+        textboxApi["placeholder"] = sol::property(&gui::TextBoxWidget::setPlaceholder);
+        textboxApi["maxLength"] = sol::property(&gui::TextBoxWidget::setMaxLength);
+        textboxApi["label"] = sol::property(&gui::TextBoxWidget::setLabelText);
 
-    addCommonLabelApi(textboxApi);
-    addCommonAPI(textboxApi);
-}
+        addCommonLabelApi(textboxApi);
+        addCommonAPI(textboxApi);
+    }
 
-void initGuiOverlayApi(ScriptEngine& engine)
-{
-    auto overlayApi = engine.lua.new_usertype<gui::Overlay>("GuiOverlay");
-    overlayApi["addImage"] = &gui::Overlay::addImage;
-    overlayApi["addLabel"] = &gui::Overlay::addLabel;
-    overlayApi["addButton"] = &gui::Overlay::addButton;
-    overlayApi["addCenteredLabel"] = &gui::Overlay::addCenteredLabel;
-    overlayApi["addTextBox"] = &gui::Overlay::addTextBox;
+    void initGuiOverlayApi(ScriptEngine& engine)
+    {
+        auto overlayApi = engine.lua.new_usertype<gui::Overlay>("GuiOverlay");
+        overlayApi["addImage"] = &gui::Overlay::addImage;
+        overlayApi["addLabel"] = &gui::Overlay::addLabel;
+        overlayApi["addButton"] = &gui::Overlay::addButton;
+        overlayApi["addCenteredLabel"] = &gui::Overlay::addCenteredLabel;
+        overlayApi["addTextBox"] = &gui::Overlay::addTextBox;
 
-    overlayApi["hide"] = &gui::Overlay::hide;
-    overlayApi["show"] = &gui::Overlay::show;
-}
+        overlayApi["hide"] = &gui::Overlay::hide;
+        overlayApi["show"] = &gui::Overlay::show;
+    }
 
 } // namespace
 

@@ -20,7 +20,7 @@ struct InputState;
 struct ClientConfig;
 
 namespace gui {
-class LabelWidget;
+    class LabelWidget;
 }
 
 struct VoxelUpdate {

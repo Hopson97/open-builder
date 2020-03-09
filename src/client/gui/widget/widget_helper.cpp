@@ -5,14 +5,14 @@
 
 namespace gui {
 
-GuiDimension centerText(const sf::FloatRect& bounds, const TextComponent& text)
-{
-    const auto& size = text.getSize();
+    GuiDimension centerText(const sf::FloatRect& bounds, const TextComponent& text)
+    {
+        const auto& size = text.getSize();
 
-    float left = bounds.left + bounds.width / 2 - size.x / 2;
-    float top = (GUI_HEIGHT - bounds.top - bounds.height + bounds.height / 3);
+        float left = bounds.left + bounds.width / 2 - size.x / 2;
+        float top = (GUI_HEIGHT - bounds.top - bounds.height + bounds.height / 3);
 
-    return {0, left, 0, top};
-}
+        return {0, left, 0, top};
+    }
 
 } // namespace gui

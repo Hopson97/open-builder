@@ -6,25 +6,25 @@
 
 namespace {
 
-void createWindow(sf::Window& window, const sf::VideoMode& mode, u32 style)
-{
-    sf::ContextSettings settings;
-    settings.depthBits = 24;
-    settings.stencilBits = 8;
-    settings.antialiasingLevel = 4;
-    settings.majorVersion = 3;
-    settings.minorVersion = 3;
-    settings.attributeFlags = sf::ContextSettings::Core;
+    void createWindow(sf::Window& window, const sf::VideoMode& mode, u32 style)
+    {
+        sf::ContextSettings settings;
+        settings.depthBits = 24;
+        settings.stencilBits = 8;
+        settings.antialiasingLevel = 4;
+        settings.majorVersion = 3;
+        settings.minorVersion = 3;
+        settings.attributeFlags = sf::ContextSettings::Core;
 #ifndef NDEBUG
-    settings.attributeFlags |= sf::ContextSettings::Debug;
+        settings.attributeFlags |= sf::ContextSettings::Debug;
 #else
-    if (GLAD_GL_KHR_no_error)
-        settings.attributeFlags |= GL_CONTEXT_FLAG_NO_ERROR_BIT_KHR;
+        if (GLAD_GL_KHR_no_error)
+            settings.attributeFlags |= GL_CONTEXT_FLAG_NO_ERROR_BIT_KHR;
 #endif
 
-    window.create(mode, "Open Builder", style, settings);
-    window.setFramerateLimit(60);
-}
+        window.create(mode, "Open Builder", style, settings);
+        window.setFramerateLimit(60);
+    }
 
 } // namespace
 

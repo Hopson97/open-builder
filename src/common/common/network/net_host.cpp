@@ -7,65 +7,65 @@
 #include <thread>
 
 namespace {
-ENetHost* createHost(const ENetAddress* address, int connections)
-{
-    return enet_host_create(address, connections, 2, 0, 0);
-}
-
-ENetPeer* connectHostTo(ENetHost* host, const std::string& ip)
-{
-    ENetAddress address{};
-    address.port = DEFAULT_PORT;
-    if (enet_address_set_host(&address, ip.c_str()) != 0) {
-        LOG("Connection", "Failed to create address.");
-        return nullptr;
+    ENetHost* createHost(const ENetAddress* address, int connections)
+    {
+        return enet_host_create(address, connections, 2, 0, 0);
     }
 
-    ENetPeer* peer = enet_host_connect(host, &address, 2, 0);
-    if (!peer) {
-        LOG("Connection", "Failed to connect to server (Game Full).");
-        return nullptr;
-    }
+    ENetPeer* connectHostTo(ENetHost* host, const std::string& ip)
+    {
+        ENetAddress address{};
+        address.port = DEFAULT_PORT;
+        if (enet_address_set_host(&address, ip.c_str()) != 0) {
+            LOG("Connection", "Failed to create address.");
+            return nullptr;
+        }
 
-    ENetEvent event;
-    if (enet_host_service(host, &event, 5000) > 0 &&
-        event.type == ENET_EVENT_TYPE_CONNECT) {
-        return peer;
-    }
-    else {
-        LOG("Connection", "Failed to connect to the server");
-        enet_peer_reset(peer);
-        return nullptr;
-    }
-}
+        ENetPeer* peer = enet_host_connect(host, &address, 2, 0);
+        if (!peer) {
+            LOG("Connection", "Failed to connect to server (Game Full).");
+            return nullptr;
+        }
 
-int getPeerIdFromServer(ENetHost* host)
-{
-    int id = -1;
-    sf::Clock test;
-    ENetEvent event;
-    while (test.getElapsedTime().asSeconds() < 2.0f) {
-        enet_host_service(host, &event, 0);
-        if (event.type == ENET_EVENT_TYPE_RECEIVE) {
-            ClientCommand command;
-            sf::Packet packet;
-            packet.append(event.packet->data, event.packet->dataLength);
-            packet >> command;
-            if (command == ClientCommand::PeerId) {
-                peer_id_t peerId;
-                packet >> peerId;
-                id = peerId;
-                break;
-            }
+        ENetEvent event;
+        if (enet_host_service(host, &event, 5000) > 0 &&
+            event.type == ENET_EVENT_TYPE_CONNECT) {
+            return peer;
+        }
+        else {
+            LOG("Connection", "Failed to connect to the server");
+            enet_peer_reset(peer);
+            return nullptr;
         }
     }
-    return id;
-}
 
-ENetPacket* createPacket(sf::Packet& packet, u32 flags)
-{
-    return enet_packet_create(packet.getData(), packet.getDataSize(), flags);
-}
+    int getPeerIdFromServer(ENetHost* host)
+    {
+        int id = -1;
+        sf::Clock test;
+        ENetEvent event;
+        while (test.getElapsedTime().asSeconds() < 2.0f) {
+            enet_host_service(host, &event, 0);
+            if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+                ClientCommand command;
+                sf::Packet packet;
+                packet.append(event.packet->data, event.packet->dataLength);
+                packet >> command;
+                if (command == ClientCommand::PeerId) {
+                    peer_id_t peerId;
+                    packet >> peerId;
+                    id = peerId;
+                    break;
+                }
+            }
+        }
+        return id;
+    }
+
+    ENetPacket* createPacket(sf::Packet& packet, u32 flags)
+    {
+        return enet_packet_create(packet.getData(), packet.getDataSize(), flags);
+    }
 } // namespace
 
 NetworkHost::NetworkHost(std::string&& name)

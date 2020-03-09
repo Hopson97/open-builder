@@ -8,39 +8,39 @@
 
 namespace {
 
-const MeshFace FRONT_FACE = {{1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1}, 4};
-const MeshFace LEFT_FACE = {{0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1}, 3};
-const MeshFace BACK_FACE = {{0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0}, 4};
-const MeshFace RIGHT_FACE = {{1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0}, 3};
-const MeshFace TOP_FACE = {{1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1}, 5};
-const MeshFace BOTTOM_FACE = {{0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1}, 2};
+    const MeshFace FRONT_FACE = {{1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1}, 4};
+    const MeshFace LEFT_FACE = {{0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1}, 3};
+    const MeshFace BACK_FACE = {{0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0}, 4};
+    const MeshFace RIGHT_FACE = {{1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0}, 3};
+    const MeshFace TOP_FACE = {{1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1}, 5};
+    const MeshFace BOTTOM_FACE = {{0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1}, 2};
 
-const MeshFace CROSS_FACE_A = {{1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1}, 3};
-const MeshFace CROSS_FACE_B = {{1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0}, 4};
+    const MeshFace CROSS_FACE_A = {{1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1}, 3};
+    const MeshFace CROSS_FACE_B = {{1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0}, 4};
 
-bool makeFace(const VoxelDataManager& voxelData, voxel_t thisId, voxel_t compareId)
-{
-    voxel_t air = voxelData.getVoxelId(CommonVoxel::Air);
+    bool makeFace(const VoxelDataManager& voxelData, voxel_t thisId, voxel_t compareId)
+    {
+        voxel_t air = voxelData.getVoxelId(CommonVoxel::Air);
 
-    auto& thisVoxel = voxelData.getVoxelData(thisId);
-    auto& compareVoxel = voxelData.getVoxelData(compareId);
-    if (compareId == air) {
-        return true;
+        auto& thisVoxel = voxelData.getVoxelData(thisId);
+        auto& compareVoxel = voxelData.getVoxelData(compareId);
+        if (compareId == air) {
+            return true;
+        }
+        else if ((compareVoxel.type != VoxelType::Solid) && (compareId != thisId)) {
+            return true;
+        }
+        return false;
     }
-    else if ((compareVoxel.type != VoxelType::Solid) && (compareId != thisId)) {
-        return true;
-    }
-    return false;
-}
 
-// TODO: Generalize this check to any block and any face.
-bool shouldRenderTop(const VoxelDataManager& voxelData, const VoxelData& actualVoxData,
-                     voxel_t topVoxel)
-{
-    return (actualVoxData.type == VoxelType::Fluid)
-               ? (voxelData.getVoxelData(topVoxel).type != VoxelType::Fluid)
-               : false; // Skips topVoxData check if actualVoxData is not a fluid
-}
+    // TODO: Generalize this check to any block and any face.
+    bool shouldRenderTop(const VoxelDataManager& voxelData,
+                         const VoxelData& actualVoxData, voxel_t topVoxel)
+    {
+        return (actualVoxData.type == VoxelType::Fluid)
+                   ? (voxelData.getVoxelData(topVoxel).type != VoxelType::Fluid)
+                   : false; // Skips topVoxData check if actualVoxData is not a fluid
+    }
 
 } // namespace
 

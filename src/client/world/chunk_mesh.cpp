@@ -2,11 +2,11 @@
 
 #include <common/world/world_constants.h>
 namespace {
-template <typename T>
-size_t vecSize(const std::vector<T> vect)
-{
-    return vect.size() * sizeof(vect[0]);
-}
+    template <typename T>
+    size_t vecSize(const std::vector<T> vect)
+    {
+        return vect.size() * sizeof(vect[0]);
+    }
 } // namespace
 
 ChunkMesh::ChunkMesh(const ChunkPosition& chunkPosition)

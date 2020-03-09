@@ -5,79 +5,80 @@
 #include <numeric>
 
 namespace {
-/**
- * @brief Find the index of a chunk in a chunk renderable list given its position
- *
- * @param position The position of the chunk to find
- * @param drawables List of chunk renderable objects to search
- * @return int The index of the chunk, -1 if not found
- */
-int findChunkDrawableIndex(const ChunkPosition& position,
-                           const ChunkRenderList& drawables)
-{
-    for (unsigned i = 0; i < drawables.size(); i++) {
-        if (drawables[i].position == position) {
-            return i;
+    /**
+     * @brief Find the index of a chunk in a chunk renderable list given its position
+     *
+     * @param position The position of the chunk to find
+     * @param drawables List of chunk renderable objects to search
+     * @return int The index of the chunk, -1 if not found
+     */
+    int findChunkDrawableIndex(const ChunkPosition& position,
+                               const ChunkRenderList& drawables)
+    {
+        for (unsigned i = 0; i < drawables.size(); i++) {
+            if (drawables[i].position == position) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * @brief Deletes a chunk renderable
+     *
+     * @param position The position of the chunk renderable to delete
+     * @param drawables List of chunk renderable objects to search
+     */
+    void deleteChunkRenderable(const ChunkPosition& position, ChunkRenderList& drawables)
+    {
+        auto index = findChunkDrawableIndex(position, drawables);
+        if (index > -1) {
+            drawables[index].vao.destroy();
+            std::iter_swap(drawables.begin() + index, drawables.end() - 1);
+            drawables.pop_back();
         }
     }
-    return -1;
-}
 
-/**
- * @brief Deletes a chunk renderable
- *
- * @param position The position of the chunk renderable to delete
- * @param drawables List of chunk renderable objects to search
- */
-void deleteChunkRenderable(const ChunkPosition& position, ChunkRenderList& drawables)
-{
-    auto index = findChunkDrawableIndex(position, drawables);
-    if (index > -1) {
-        drawables[index].vao.destroy();
-        std::iter_swap(drawables.begin() + index, drawables.end() - 1);
-        drawables.pop_back();
-    }
-}
+    /**
+     * @brief Render a group of chunks
+     *
+     * @param chunks List of chunks to render
+     * @param frustum The camera viewing frustum, used for culling chunks out of view
+     * @param chunkPositionLocation Shader location to give chunk position
+     * @param outResult Count of chunks rendered this frame
+     */
+    void renderChunks(const ChunkRenderList& chunks, const ViewFrustum& frustum,
+                      gl::UniformLocation chunkPositionLocation,
+                      ChunkRenderResult& outResult)
+    {
+        for (const auto& chunk : chunks) {
+            if (frustum.chunkIsInFrustum(chunk.position)) {
 
-/**
- * @brief Render a group of chunks
- *
- * @param chunks List of chunks to render
- * @param frustum The camera viewing frustum, used for culling chunks out of view
- * @param chunkPositionLocation Shader location to give chunk position
- * @param outResult Count of chunks rendered this frame
- */
-void renderChunks(const ChunkRenderList& chunks, const ViewFrustum& frustum,
-                  gl::UniformLocation chunkPositionLocation, ChunkRenderResult& outResult)
-{
-    for (const auto& chunk : chunks) {
-        if (frustum.chunkIsInFrustum(chunk.position)) {
+                glm::vec3 cp{chunk.position.x, chunk.position.y, chunk.position.z};
+                cp *= CHUNK_SIZE;
+                gl::loadUniform(chunkPositionLocation, cp);
 
-            glm::vec3 cp{chunk.position.x, chunk.position.y, chunk.position.z};
-            cp *= CHUNK_SIZE;
-            gl::loadUniform(chunkPositionLocation, cp);
+                chunk.vao.getDrawable().bindAndDraw();
 
-            chunk.vao.getDrawable().bindAndDraw();
-
-            outResult.chunksRendered++;
-            outResult.bytesInView += chunk.bufferSize;
+                outResult.chunksRendered++;
+                outResult.bytesInView += chunk.bufferSize;
+            }
         }
     }
-}
 
-/**
- * @brief Buffers a list of chunk meshes
- *
- * @param mesh The vertex data to buffer
- * @param renderList The list of renderable chunks to add the buffered mesh to
- */
-void bufferChunks(ChunkMesh& mesh, ChunkRenderList& renderList)
-{
-    if (mesh.indicesCount > 0) {
-        renderList.push_back(
-            {mesh.position, mesh.createBuffer(), mesh.calculateBufferSize()});
+    /**
+     * @brief Buffers a list of chunk meshes
+     *
+     * @param mesh The vertex data to buffer
+     * @param renderList The list of renderable chunks to add the buffered mesh to
+     */
+    void bufferChunks(ChunkMesh& mesh, ChunkRenderList& renderList)
+    {
+        if (mesh.indicesCount > 0) {
+            renderList.push_back(
+                {mesh.position, mesh.createBuffer(), mesh.calculateBufferSize()});
+        }
     }
-}
 
 } // namespace
 

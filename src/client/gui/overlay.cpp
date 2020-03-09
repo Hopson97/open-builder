@@ -7,115 +7,118 @@
 #include <iostream>
 
 namespace gui {
-Overlay::Overlay(const OverlayDefinition& overlayDefinition)
-    : definition(overlayDefinition)
-{
-}
-
-ImageWidget* Overlay::addImage()
-{
-    auto rectangle =
-        rectangleComponents.emplace_back(std::make_unique<RectangleComponent>()).get();
-    auto image = std::make_unique<ImageWidget>(rectangle);
-    auto widget = m_widgets.emplace_back(std::move(image)).get();
-    return dynamic_cast<ImageWidget*>(widget);
-}
-
-LabelWidget* Overlay::addLabel()
-{
-    auto text = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
-    auto label = std::make_unique<LabelWidget>(text);
-    auto widget = m_widgets.emplace_back(std::move(label)).get();
-    return dynamic_cast<LabelWidget*>(widget);
-}
-
-CenteredLabelWidget* Overlay::addCenteredLabel()
-{
-    auto text = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
-    auto label = std::make_unique<CenteredLabelWidget>(text);
-    auto widget = m_widgets.emplace_back(std::move(label)).get();
-    return dynamic_cast<CenteredLabelWidget*>(widget);
-}
-
-ButtonWidget* Overlay::addButton()
-{
-    auto rectangle =
-        rectangleComponents.emplace_back(std::make_unique<RectangleComponent>()).get();
-    auto text = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
-
-    auto button = std::make_unique<ButtonWidget>(text, rectangle);
-    auto widget = m_widgets.emplace_back(std::move(button)).get();
-
-    return dynamic_cast<ButtonWidget*>(widget);
-}
-
-TextBoxWidget* Overlay::addTextBox()
-{
-    auto rectangle =
-        rectangleComponents.emplace_back(std::make_unique<RectangleComponent>()).get();
-    auto text = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
-    auto label = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
-
-    auto textbox = std::make_unique<TextBoxWidget>(text, rectangle, label);
-    auto widget = m_widgets.emplace_back(std::move(textbox)).get();
-    return dynamic_cast<TextBoxWidget*>(widget);
-}
-
-void Overlay::prepareWidgetsForRender()
-{
-    for (auto& widget : m_widgets) {
-        widget->prepareRender();
+    Overlay::Overlay(const OverlayDefinition& overlayDefinition)
+        : definition(overlayDefinition)
+    {
     }
-}
 
-void Overlay::handleClick(sf::Mouse::Button button, float mx, float my)
-{
-    for (auto& widget : m_widgets) {
-        widget->handleClick(button, mx, my);
+    ImageWidget* Overlay::addImage()
+    {
+        auto rectangle =
+            rectangleComponents.emplace_back(std::make_unique<RectangleComponent>())
+                .get();
+        auto image = std::make_unique<ImageWidget>(rectangle);
+        auto widget = m_widgets.emplace_back(std::move(image)).get();
+        return dynamic_cast<ImageWidget*>(widget);
     }
-}
 
-void Overlay::handleMouseMove(sf::Event::MouseMoveEvent mouseMoveEvent)
-{
-    float mouseX = static_cast<float>(mouseMoveEvent.x);
-    float mouseY = static_cast<float>(mouseMoveEvent.y);
-    for (auto& widget : m_widgets) {
-        widget->handleMouseMove(mouseX, mouseY);
+    LabelWidget* Overlay::addLabel()
+    {
+        auto text = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
+        auto label = std::make_unique<LabelWidget>(text);
+        auto widget = m_widgets.emplace_back(std::move(label)).get();
+        return dynamic_cast<LabelWidget*>(widget);
     }
-}
 
-void Overlay::handleKeyRelease(sf::Keyboard::Key key)
-{
-    for (auto& widget : m_widgets) {
-        widget->handleKeyRelease(key);
+    CenteredLabelWidget* Overlay::addCenteredLabel()
+    {
+        auto text = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
+        auto label = std::make_unique<CenteredLabelWidget>(text);
+        auto widget = m_widgets.emplace_back(std::move(label)).get();
+        return dynamic_cast<CenteredLabelWidget*>(widget);
     }
-}
 
-void Overlay::handleTextEntered(unsigned char keycode)
-{
-    for (auto& widget : m_widgets) {
-        widget->handleTextEntered(keycode);
+    ButtonWidget* Overlay::addButton()
+    {
+        auto rectangle =
+            rectangleComponents.emplace_back(std::make_unique<RectangleComponent>())
+                .get();
+        auto text = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
+
+        auto button = std::make_unique<ButtonWidget>(text, rectangle);
+        auto widget = m_widgets.emplace_back(std::move(button)).get();
+
+        return dynamic_cast<ButtonWidget*>(widget);
     }
-}
 
-int Overlay::widgetCount() const
-{
-    return m_widgets.size();
-}
+    TextBoxWidget* Overlay::addTextBox()
+    {
+        auto rectangle =
+            rectangleComponents.emplace_back(std::make_unique<RectangleComponent>())
+                .get();
+        auto text = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
+        auto label = textComponents.emplace_back(std::make_unique<TextComponent>()).get();
 
-void Overlay::hide()
-{
-    m_isHidden = true;
-}
+        auto textbox = std::make_unique<TextBoxWidget>(text, rectangle, label);
+        auto widget = m_widgets.emplace_back(std::move(textbox)).get();
+        return dynamic_cast<TextBoxWidget*>(widget);
+    }
 
-void Overlay::show()
-{
-    m_isHidden = false;
-}
+    void Overlay::prepareWidgetsForRender()
+    {
+        for (auto& widget : m_widgets) {
+            widget->prepareRender();
+        }
+    }
 
-bool Overlay::isHidden() const
-{
-    return m_isHidden;
-}
+    void Overlay::handleClick(sf::Mouse::Button button, float mx, float my)
+    {
+        for (auto& widget : m_widgets) {
+            widget->handleClick(button, mx, my);
+        }
+    }
+
+    void Overlay::handleMouseMove(sf::Event::MouseMoveEvent mouseMoveEvent)
+    {
+        float mouseX = static_cast<float>(mouseMoveEvent.x);
+        float mouseY = static_cast<float>(mouseMoveEvent.y);
+        for (auto& widget : m_widgets) {
+            widget->handleMouseMove(mouseX, mouseY);
+        }
+    }
+
+    void Overlay::handleKeyRelease(sf::Keyboard::Key key)
+    {
+        for (auto& widget : m_widgets) {
+            widget->handleKeyRelease(key);
+        }
+    }
+
+    void Overlay::handleTextEntered(unsigned char keycode)
+    {
+        for (auto& widget : m_widgets) {
+            widget->handleTextEntered(keycode);
+        }
+    }
+
+    int Overlay::widgetCount() const
+    {
+        return m_widgets.size();
+    }
+
+    void Overlay::hide()
+    {
+        m_isHidden = true;
+    }
+
+    void Overlay::show()
+    {
+        m_isHidden = false;
+    }
+
+    bool Overlay::isHidden() const
+    {
+        return m_isHidden;
+    }
 
 } // namespace gui

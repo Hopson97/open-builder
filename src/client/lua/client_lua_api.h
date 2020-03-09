@@ -5,8 +5,8 @@ struct ScriptEngine;
 #include <SFML/Window/Window.hpp>
 
 namespace gui {
-class OverlayFactory;
-class OverlayStack;
+    class OverlayFactory;
+    class OverlayStack;
 } // namespace gui
 
 class GuiRenderer;
