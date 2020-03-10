@@ -94,7 +94,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     InputState inputState;
 
     // Init the "debug prompt" F3 GUI
-    DebugGui debugGui;
+    // DebugGui debugGui;
 
     // Init Lua scripting
     ScriptEngine scriptEngine;
@@ -116,10 +116,10 @@ EngineStatus runClientEngine(const ClientConfig& config)
     callbacks.onClientStartup();
 
     // Init screens here
-    Client client;
-    if (!client.init(config, getWindowAspect(window))) {
-        return EngineStatus::CouldNotConnect;
-    }
+    // Client client;
+    // if (!client.init(config, getWindowAspect(window))) {
+    //    return EngineStatus::CouldNotConnect;
+    //}
 
     // Temp render stuff for testing
     gl::Framebuffer guiRenderTarget;
@@ -140,32 +140,22 @@ EngineStatus runClientEngine(const ClientConfig& config)
         while (window.pollEvent(event)) {
             if (window.hasFocus()) {
                 keys.update(event);
+                overlayStack.handleEvent(event);
             }
             switch (event.type) {
                 case sf::Event::Closed:
                     state.status = EngineStatus::Exit;
                     break;
 
-                case sf::Event::TextEntered:
-                    overlayStack.handleTextEntered(event.text.unicode);
-                    break;
-
                 case sf::Event::KeyReleased:
                     callbacks.onKeyboardKeyReleased(event.key.code);
-                    client.onKeyRelease(event.key.code);
-                    overlayStack.handleKeyRelease(event.key.code);
-                    break;
-
-                case sf::Event::MouseMoved:
-                    overlayStack.handleMouseMove(event.mouseMove);
+                    // client.onKeyRelease(event.key.code);
                     break;
 
                 case sf::Event::MouseButtonReleased:
-                    overlayStack.handleClick(event.mouseButton.button,
-                                             static_cast<float>(event.mouseButton.x),
-                                             static_cast<float>(event.mouseButton.y));
-                    client.onMouseRelease(event.mouseButton.button, event.mouseButton.x,
-                                          event.mouseButton.y);
+                    // client.onMouseRelease(event.mouseButton.button,
+                    // event.mouseButton.x,
+                    //                      event.mouseButton.y);
                     break;
 
                 default:
@@ -175,11 +165,11 @@ EngineStatus runClientEngine(const ClientConfig& config)
         tickCount++;
 
         // Input
-        client.handleInput(window, keys, inputState);
+        // client.handleInput(window, keys, inputState);
 
         // Update
         overlayStack.update();
-        client.update(gameTimer.restart().asSeconds(), fps.frameTime);
+        // client.update(gameTimer.restart().asSeconds(), fps.frameTime);
 
         // Render
         glEnable(GL_DEPTH_TEST);
@@ -187,7 +177,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
         // World
         worldRenderTarget.bind();
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-        client.render(debugGui.label);
+        // client.render(debugGui.label);
 
         // GUI
         guiRenderTarget.bind();
@@ -199,7 +189,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
                 guiRenderer.render(*overlay);
             }
         }
-        guiRenderer.render(debugGui.overlay);
+        // guiRenderer.render(debugGui.overlay);
 
         // Buffer to window
         gl::unbindFramebuffers(width, height);
@@ -239,6 +229,6 @@ EngineStatus runClientEngine(const ClientConfig& config)
                 break;
         }
     }
-    client.endGame();
+    // client.endGame();
     return state.status;
 }

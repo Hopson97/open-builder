@@ -32,20 +32,32 @@ namespace gui {
         void popLayer();
         void removeLayerByName(const std::string& overlayId);
 
-        void handleClick(sf::Mouse::Button button, float mx, float my);
-        void handleMouseMove(sf::Event::MouseMoveEvent);
-        void handleKeyRelease(sf::Keyboard::Key);
-        void handleTextEntered(unsigned char keycode);
-
+        void handleEvent(const sf::Event& event);
         void update();
 
         std::vector<std::unique_ptr<Overlay>> overlays;
 
       private:
+        template <typename F>
+        void forEachOverlay(F f);
+
+        void handleClick(sf::Mouse::Button button, float mx, float my);
+        void handleMouseMove(sf::Event::MouseMoveEvent);
+
         glm::vec2 windowToGuiCoords(float winX, float winY) const;
 
         const float m_windowWidth;
         const float m_windowHeight;
         std::queue<Action> m_pendingActions;
     };
+
+    template <typename F>
+    void OverlayStack::forEachOverlay(F f)
+    {
+        for (auto& layer : overlays) {
+            if (!layer->isHidden()) {
+                f(layer);
+            }
+        }
+    }
 } // namespace gui
