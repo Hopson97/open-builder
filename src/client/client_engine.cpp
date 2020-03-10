@@ -6,10 +6,7 @@
 #include "gl/gl_errors.h"
 #include "gl/primitive.h"
 #include "gl/vertex_array.h"
-#include "gui/gui_constants.h"
-#include "gui/overlay_factory.h"
-#include "gui/overlay_stack.h"
-#include "gui/widget/label_widget.h"
+#include "gui/gui_system.h"
 #include "input/input_state.h"
 #include "lua/client_lua_api.h"
 #include "lua/client_lua_callback.h"
@@ -35,26 +32,6 @@ namespace {
                 timer.restart();
                 frameCount = 0;
             }
-        }
-    };
-
-    /**
-     * @brief The 'F3' prompt showing info like # of chunks
-     * drawn, frame time, etc
-     */
-    struct DebugGui {
-        gui::OverlayDefinition def;
-        gui::Overlay overlay;
-
-        gui::LabelWidget& label;
-
-        DebugGui()
-            : overlay(def)
-            , label(*overlay.addLabel())
-        {
-            label.setPosition({0, 5, 0, GUI_HEIGHT - 25});
-            label.setTextSize(32);
-            label.setText("TESTING");
         }
     };
 
@@ -87,7 +64,6 @@ EngineStatus runClientEngine(const ClientConfig& config)
     ClientEngineState state;
     FPSCounter fps;
     sf::Clock gameTimer;
-    int tickCount = 0;
 
     // Input
     Keyboard keys;
@@ -99,23 +75,17 @@ EngineStatus runClientEngine(const ClientConfig& config)
     // Init Lua scripting
     ScriptEngine scriptEngine;
     ClientLuaCallbacks callbacks(scriptEngine);
-
-    // Gui
-    gui::OverlayFactory overlayFactory;
-    gui::OverlayStack overlayStack(config.windowWidth, config.windowHeight);
-    GuiRenderer guiRenderer;
-
-    // Lua API set up
-    luaInitGuiApi(scriptEngine, overlayFactory, overlayStack, &guiRenderer);
     luaInitGuiWidgetApi(scriptEngine);
     luaInitInputApi(scriptEngine, window, inputState);
     luaInitClientControlApi(scriptEngine, state.stage);
+
+    // Gui
+    gui::GuiSystem gui(config.windowWidth, config.windowHeight, scriptEngine);
 
     // Run the lua file to init the client engine
     scriptEngine.runLuaFile("game/client/main.lua");
     callbacks.onClientStartup();
 
-    // Init screens here
     // Client client;
     // if (!client.init(config, getWindowAspect(window))) {
     //    return EngineStatus::CouldNotConnect;
@@ -140,7 +110,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
         while (window.pollEvent(event)) {
             if (window.hasFocus()) {
                 keys.update(event);
-                overlayStack.handleEvent(event);
+                gui.handleEvent(event);
             }
             switch (event.type) {
                 case sf::Event::Closed:
@@ -162,16 +132,17 @@ EngineStatus runClientEngine(const ClientConfig& config)
                     break;
             }
         }
-        tickCount++;
 
         // Input
         // client.handleInput(window, keys, inputState);
 
         // Update
-        overlayStack.update();
+        gui.update();
         // client.update(gameTimer.restart().asSeconds(), fps.frameTime);
 
+        //
         // Render
+        //
         glEnable(GL_DEPTH_TEST);
 
         // World
@@ -182,13 +153,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
         // GUI
         guiRenderTarget.bind();
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-        for (auto& overlay : overlayStack.overlays) {
-            if (!overlay->isHidden()) {
-                overlay->prepareWidgetsForRender();
-                guiRenderer.render(*overlay);
-            }
-        }
+        gui.render();
         // guiRenderer.render(debugGui.overlay);
 
         // Buffer to window
