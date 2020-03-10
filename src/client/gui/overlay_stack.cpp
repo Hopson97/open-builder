@@ -43,6 +43,35 @@ namespace gui {
         }
     }
 
+    void OverlayStack::handleEvent(const sf::Event& event)
+    {
+        switch (event.type) {
+            case sf::Event::TextEntered:
+                forEachOverlay([&](auto& overlay) {
+                    overlay->handleTextEntered(event.text.unicode);
+                });
+                break;
+
+            case sf::Event::KeyReleased:
+                forEachOverlay(
+                    [&](auto& overlay) { overlay->handleKeyRelease(event.key.code); });
+                break;
+
+            case sf::Event::MouseMoved:
+                handleMouseMove(event.mouseMove);
+                break;
+
+            case sf::Event::MouseButtonReleased:
+                handleClick(event.mouseButton.button,
+                            static_cast<float>(event.mouseButton.x),
+                            static_cast<float>(event.mouseButton.y));
+                break;
+
+            default:
+                break;
+        }
+    }
+
     void OverlayStack::handleClick(sf::Mouse::Button button, float mx, float my)
     {
         auto mousePosition = windowToGuiCoords(mx, my);
@@ -62,24 +91,6 @@ namespace gui {
         for (auto& layer : overlays) {
             if (!layer->isHidden()) {
                 layer->handleMouseMove(mouseMoveEvent);
-            }
-        }
-    }
-
-    void OverlayStack::handleKeyRelease(sf::Keyboard::Key key)
-    {
-        for (auto& layer : overlays) {
-            if (!layer->isHidden()) {
-                layer->handleKeyRelease(key);
-            }
-        }
-    }
-
-    void OverlayStack::handleTextEntered(unsigned char keycode)
-    {
-        for (auto& layer : overlays) {
-            if (!layer->isHidden()) {
-                layer->handleTextEntered(keycode);
             }
         }
     }
