@@ -60,6 +60,46 @@ namespace {
         }
     };
 
+    struct LocalGame {
+        std::unique_ptr<Client> client;
+        std::unique_ptr<std::thread> serverThread;
+        ServerLauncher serverLauncher;
+
+        LocalGame()
+            : serverLauncher{{3, 3}, sf::milliseconds(5000)}
+        {
+        }
+
+        ~LocalGame()
+        {
+            endGame();
+        }
+
+        EngineStatus startGame(ClientConfig config, float windowAspect)
+        {
+            serverThread = std::make_unique<std::thread>(
+                [this] { serverLauncher.runServerEngine(); });
+
+            client = std::make_unique<Client>();
+            if (!client->init(config, windowAspect)) {
+                return EngineStatus::CouldNotConnect;
+            }
+            return EngineStatus::Ok;
+        }
+
+        void endGame()
+        {
+            if (client) {
+
+                client->endGame();
+            }
+            if (serverThread) {
+                serverThread->join();
+                serverThread.release();
+            }
+        }
+    };
+
     bool initOpenGL(const sf::Window& window)
     {
         if (!gladLoadGL()) {
@@ -115,20 +155,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     //============================================================
     //              Tempory approach!
 
-    ServerConfig serverConfig;
-    serverConfig.maxConnections = 8;
-    serverConfig.worldSize = 5;
-    ServerLauncher server(serverConfig, sf::milliseconds(5000));
-    std::thread serverThread([&server]() { server.runServerEngine(); });
-
-    std::unique_ptr<Client> client;
-    client = std::make_unique<Client>();
-    if (!client->init(config, getWindowAspect(window))) {
-        return EngineStatus::CouldNotConnect;
-    }
-    // if (!client.init(config, getWindowAspect(window))) {
-    //    return EngineStatus::CouldNotConnect;
-    //}
+    LocalGame game;
 
     //=============================================================
 
@@ -164,9 +191,10 @@ EngineStatus runClientEngine(const ClientConfig& config)
                     break;
 
                 case sf::Event::MouseButtonReleased:
-                    if (client) {
-                        client->onMouseRelease(event.mouseButton.button,
-                                               event.mouseButton.x, event.mouseButton.y);
+                    if (game.client) {
+                        game.client->onMouseRelease(event.mouseButton.button,
+                                                    event.mouseButton.x,
+                                                    event.mouseButton.y);
                     }
 
                 default:
@@ -175,15 +203,15 @@ EngineStatus runClientEngine(const ClientConfig& config)
         }
 
         // Input
-        if (client) {
-            client->handleInput(window, keyboard, inputState);
+        if (game.client) {
+            game.client->handleInput(window, keyboard, inputState);
         }
 
         // Update
         gui.update();
-        if (client) {
+        if (game.client) {
 
-            client->update(gameTimer.restart().asSeconds(), fps.frameTime);
+            game.client->update(gameTimer.restart().asSeconds(), fps.frameTime);
         }
 
         //=============================================================
@@ -192,10 +220,10 @@ EngineStatus runClientEngine(const ClientConfig& config)
         glEnable(GL_DEPTH_TEST);
 
         // World
-        if (client) {
+        if (game.client) {
             worldRenderTarget.bind();
             glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-            client->render(debugGui.label);
+            game.client->render(debugGui.label);
         }
 
         // GUI
@@ -226,11 +254,16 @@ EngineStatus runClientEngine(const ClientConfig& config)
         // Stats
         fps.update();
         switch (state.stage) {
-            case ClientState::StartGame:
+            case ClientState::StartGame: {
+                auto result = game.startGame(config, getWindowAspect(window));
+                if (result != EngineStatus::Ok) {
+                    return result;
+                }
                 state.stage = ClientState::InGame;
-                break;
+            } break;
 
             case ClientState::ExitGame:
+                game.endGame();
                 state.stage = ClientState::InMenu;
                 break;
 
@@ -243,10 +276,5 @@ EngineStatus runClientEngine(const ClientConfig& config)
         }
     }
     window.close();
-    if (client) {
-
-        client->endGame();
-        serverThread.join();
-    }
     return state.status;
 }
