@@ -30,23 +30,3 @@ namespace gui {
         }
     }
 } // namespace gui
-
-/**
- * @brief The 'F3' prompt showing info like # of chunks
- * drawn, frame time, etc
- *
-struct DebugGui {
-    gui::OverlayDefinition def;
-    gui::Overlay overlay;
-
-    gui::LabelWidget& label;
-
-    DebugGui()
-        : overlay(def)
-        , label(*overlay.addLabel())
-    {
-        label.setPosition({0, 5, 0, GUI_HEIGHT - 25});
-        label.setTextSize(32);
-        label.setText("TESTING");
-    }
-};*/

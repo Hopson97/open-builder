@@ -277,6 +277,8 @@ int main(int argc, char** argv)
     loadFromConfigFile(config);
     parseArgs(config, args);
 
+    return launchClient(config.client, true);
+
     switch (config.launchType) {
         case LaunchType::Both:
             return launchBoth(config);
