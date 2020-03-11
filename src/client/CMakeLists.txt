@@ -51,6 +51,7 @@ set_flags(ob-client)
 target_link_libraries(ob-client 
     glad
     ob-common
+    ob-server
     Threads::Threads 
     ${SFML_LIBRARIES} 
     ${SFML_DEPENDENCIES}

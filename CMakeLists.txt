@@ -81,6 +81,8 @@ add_subdirectory(src/common/common)
 add_subdirectory(src/client)
 add_subdirectory(src/server)
 
+
+
 add_executable(${PROJECT_NAME}
     src/main.cpp
 )
@@ -95,6 +97,11 @@ include_dirs(${PROJECT_NAME})
 include_dirs(ob-client)
 include_dirs(ob-server)
 link_exe(${PROJECT_NAME})
+
+target_include_directories(ob-client
+    PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/server/
+)
 
 
 #Create the unit test executable

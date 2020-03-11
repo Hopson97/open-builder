@@ -7,6 +7,7 @@
 #include "gl/primitive.h"
 #include "gl/vertex_array.h"
 #include "gui/gui_system.h"
+#include "gui/widget/label_widget.h"
 #include "input/input_state.h"
 #include "lua/client_lua_api.h"
 #include "lua/client_lua_callback.h"
@@ -16,6 +17,10 @@
 #include <SFML/System/Clock.hpp>
 #include <common/scripting/script_engine.h>
 #include <glad/glad.h>
+#include <memory>
+#include <thread>
+
+#include <server_engine.h>
 
 namespace {
     struct FPSCounter final {
@@ -32,6 +37,26 @@ namespace {
                 timer.restart();
                 frameCount = 0;
             }
+        }
+    };
+
+    /**
+     * @brief The 'F3' prompt showing info like # of chunks
+     * drawn, frame time, etc
+     */
+    struct DebugGui {
+        gui::OverlayDefinition def;
+        gui::Overlay overlay;
+
+        gui::LabelWidget& label;
+
+        DebugGui()
+            : overlay(def)
+            , label(*overlay.addLabel())
+        {
+            label.setPosition({0, 5, 0, GUI_HEIGHT - 25});
+            label.setTextSize(32);
+            label.setText("TESTING");
         }
     };
 
@@ -66,11 +91,11 @@ EngineStatus runClientEngine(const ClientConfig& config)
     sf::Clock gameTimer;
 
     // Input
-    Keyboard keys;
+    Keyboard keyboard;
     InputState inputState;
 
     // Init the "debug prompt" F3 GUI
-    // DebugGui debugGui;
+    DebugGui debugGui;
 
     // Init Lua scripting
     ScriptEngine scriptEngine;
@@ -87,9 +112,25 @@ EngineStatus runClientEngine(const ClientConfig& config)
     callbacks.onClientStartup();
 
     // Client client;
+    //============================================================
+    //              Tempory approach!
+
+    ServerConfig serverConfig;
+    serverConfig.maxConnections = 8;
+    serverConfig.worldSize = 5;
+    ServerLauncher server(serverConfig, sf::milliseconds(5000));
+    std::thread serverThread([&server]() { server.runServerEngine(); });
+
+    std::unique_ptr<Client> client;
+    client = std::make_unique<Client>();
+    if (!client->init(config, getWindowAspect(window))) {
+        return EngineStatus::CouldNotConnect;
+    }
     // if (!client.init(config, getWindowAspect(window))) {
     //    return EngineStatus::CouldNotConnect;
     //}
+
+    //=============================================================
 
     // Temp render stuff for testing
     gl::Framebuffer guiRenderTarget;
@@ -109,7 +150,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
         sf::Event event;
         while (window.pollEvent(event)) {
             if (window.hasFocus()) {
-                keys.update(event);
+                keyboard.update(event);
                 gui.handleEvent(event);
             }
             switch (event.type) {
@@ -123,10 +164,10 @@ EngineStatus runClientEngine(const ClientConfig& config)
                     break;
 
                 case sf::Event::MouseButtonReleased:
-                    // client.onMouseRelease(event.mouseButton.button,
-                    // event.mouseButton.x,
-                    //                      event.mouseButton.y);
-                    break;
+                    if (client) {
+                        client->onMouseRelease(event.mouseButton.button,
+                                               event.mouseButton.x, event.mouseButton.y);
+                    }
 
                 default:
                     break;
@@ -134,27 +175,33 @@ EngineStatus runClientEngine(const ClientConfig& config)
         }
 
         // Input
-        // client.handleInput(window, keys, inputState);
+        if (client) {
+            client->handleInput(window, keyboard, inputState);
+        }
 
         // Update
         gui.update();
-        // client.update(gameTimer.restart().asSeconds(), fps.frameTime);
+        if (client) {
 
-        //
+            client->update(gameTimer.restart().asSeconds(), fps.frameTime);
+        }
+
+        //=============================================================
         // Render
         //
         glEnable(GL_DEPTH_TEST);
 
         // World
-        worldRenderTarget.bind();
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-        // client.render(debugGui.label);
+        if (client) {
+            worldRenderTarget.bind();
+            glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+            client->render(debugGui.label);
+        }
 
         // GUI
         guiRenderTarget.bind();
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
         gui.render();
-        // guiRenderer.render(debugGui.overlay);
 
         // Buffer to window
         gl::unbindFramebuffers(width, height);
@@ -174,6 +221,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
         window.display();
         glDisable(GL_BLEND);
+        //=======================================================================
 
         // Stats
         fps.update();
@@ -194,6 +242,11 @@ EngineStatus runClientEngine(const ClientConfig& config)
                 break;
         }
     }
-    // client.endGame();
+    window.close();
+    if (client) {
+
+        client->endGame();
+        serverThread.join();
+    }
     return state.status;
 }
