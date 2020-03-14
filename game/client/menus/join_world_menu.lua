@@ -17,8 +17,7 @@ local function onCreate(overlay, data)
     joinButton.onClick = function()
         local serverIp = serverIpBox:getText()
         if string.len(serverIp) > 0 then
-            game.gui.change("hud")
-            game.input.hideMouse()
+            game.gui.change("transition", "Joining World")
             game.control.startGame()
         end
     end    

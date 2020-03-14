@@ -18,8 +18,7 @@ local function onCreate(overlay, data)
     create.onClick = function()
         local name = worldNameBox:getText()
         if string.len(name) > 0 then
-            game.gui.change("hud")
-            game.input.hideMouse()
+            game.gui.change("transition", "Creating World")
             game.control.startGame()
         end
     end    
