@@ -80,7 +80,6 @@ NetworkHost::~NetworkHost()
 
 void NetworkHost::destroy()
 {
-    std::cout << "Cya hosty\n";
     if (mp_host) {
         enet_host_destroy(mp_host);
         mp_host = nullptr;

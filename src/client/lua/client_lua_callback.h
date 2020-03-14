@@ -12,10 +12,15 @@ class ClientLuaCallbacks {
     ClientLuaCallbacks(ScriptEngine& scriptEngine);
 
     void onClientStartup();
+    void onEnterGame();
+    void onExitGame();
     void onKeyboardKeyReleased(sf::Keyboard::Key key);
 
   private:
     std::vector<sol::function> m_onClientStartupCallbacks;
+    std::vector<sol::function> m_onEnterGameCallbacks;
+    std::vector<sol::function> m_onExitGameCallbacks;
+
     std::array<std::vector<sol::function>, sf::Keyboard::KeyCount>
         m_onKeyReleaseCallbacks;
 };

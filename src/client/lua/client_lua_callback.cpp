@@ -5,6 +5,8 @@
 ClientLuaCallbacks::ClientLuaCallbacks(ScriptEngine& scriptEngine)
 {
     scriptEngine.addCallbackApi("onClientStartup", m_onClientStartupCallbacks);
+    scriptEngine.addCallbackApi("onEnterGame", m_onEnterGameCallbacks);
+    scriptEngine.addCallbackApi("onExitGame", m_onExitGameCallbacks);
 
     scriptEngine.addFunction("onKeyReleased",
                              [this](sf::Keyboard::Key key, sol::function f) {
@@ -15,6 +17,16 @@ ClientLuaCallbacks::ClientLuaCallbacks(ScriptEngine& scriptEngine)
 void ClientLuaCallbacks::onClientStartup()
 {
     runLuaCallbacks(m_onClientStartupCallbacks);
+}
+
+void ClientLuaCallbacks::onEnterGame()
+{
+    runLuaCallbacks(m_onEnterGameCallbacks);
+}
+
+void ClientLuaCallbacks::onExitGame()
+{
+    runLuaCallbacks(m_onExitGameCallbacks);
 }
 
 void ClientLuaCallbacks::onKeyboardKeyReleased(sf::Keyboard::Key key)
