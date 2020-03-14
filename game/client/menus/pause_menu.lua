@@ -12,7 +12,7 @@ local function onCreate(overlay)
     end
 
     exit.onClick = function()
-        game.gui.change("main_menu")
+        game.gui.change("transition", "Exiting")
         game.control.exitGame()
     end
 end

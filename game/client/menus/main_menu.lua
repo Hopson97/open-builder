@@ -8,11 +8,17 @@ local function onCreate(overlay)
     menu:addImage(logoTexture, 1064, 138)
     menu:pad(150)
 
+    local continue = menu:addButton("Continue Game")
+
     local vanilla   = menu:addButton("Play Vanilla")
     local modded    = menu:addButton("Play Modded")
     local settings  = menu:addButton("Settings")
     local exitGame  = menu:addButton("Exit Game")
-    local quickPlay = menu:addButton("Quick Game")
+
+    continue.onClick = function()
+        game.gui.change("transition", "Starting Game")
+        game.control.startGame()
+    end    
 
     vanilla.onClick = function()
         game.gui.change("play_game", "Vanilla")
@@ -31,11 +37,7 @@ local function onCreate(overlay)
     end
 
 
-    quickPlay.onClick = function()
-        game.gui.change("hud")
-        game.input.hideMouse()
-        game.control.startGame()
-    end    
+
 end
 
 game.gui.addGui{

@@ -13,14 +13,13 @@ dofile("game/client/menus/new_world_menu.lua")
 dofile("game/client/menus/join_world_menu.lua")
 dofile("game/client/menus/load_world_menu.lua")
 dofile("game/client/menus/pause_menu.lua")
+dofile("game/client/menus/transition_screen.lua")
 
 -- 
 -- In Game GUIs
 --
 dofile("game/client/hud.lua")
 
-local function onStartup()
+game.onClientStartup(function()
     game.gui.push("main_menu")
-end
-
-game.onClientStartup(onStartup)
+end)

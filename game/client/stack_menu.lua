@@ -82,6 +82,14 @@ function StackMenu:addButton(text)
     return button
 end
 
+function StackMenu:addLabel(text)
+    local label = self.overlay:addLabel()
+    label.textSize = 100
+    label.position = self:nextButtonPosition()
+    label.text = text
+    return label
+end
+
 function StackMenu:pad(amount)
     self.y = self.y - amount
 end
