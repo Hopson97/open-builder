@@ -141,8 +141,6 @@ void Client::onPlayerSkinReceive(sf::Packet& packet)
     peer_id_t id = 0;
     packet >> id;
 
-    LOGVAR("Client", "Received skin for peer", (int)id);
-
     sf::Uint8* skinPixels =
         (sf::Uint8*)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
     m_entities[id].playerSkin.create(32, 64, skinPixels);

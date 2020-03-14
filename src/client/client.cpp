@@ -432,7 +432,9 @@ void Client::render(gui::LabelWidget& debugLabel)
 
 void Client::endGame()
 {
-    NetworkHost::disconnectFromPeer(mp_serverPeer);
+    if (mp_serverPeer) {
+        NetworkHost::disconnectFromPeer(mp_serverPeer);
+    }
 }
 
 EngineStatus Client::currentStatus() const

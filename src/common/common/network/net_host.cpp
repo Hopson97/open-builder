@@ -75,7 +75,16 @@ NetworkHost::NetworkHost(std::string&& name)
 
 NetworkHost::~NetworkHost()
 {
-    enet_host_destroy(mp_host);
+    destroy();
+}
+
+void NetworkHost::destroy()
+{
+    std::cout << "Cya hosty\n";
+    if (mp_host) {
+        enet_host_destroy(mp_host);
+        mp_host = nullptr;
+    }
 }
 
 std::optional<ENetPeer*> NetworkHost::createAsClient(const std::string& ip)

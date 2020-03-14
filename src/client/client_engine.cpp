@@ -66,7 +66,7 @@ namespace {
         ServerLauncher serverLauncher;
 
         LocalGame()
-            : serverLauncher{{3, 3}, sf::milliseconds(5000)}
+            : serverLauncher{{3, 3}, sf::milliseconds(50)}
         {
         }
 
@@ -77,8 +77,10 @@ namespace {
 
         EngineStatus startGame(ClientConfig config, float windowAspect)
         {
-            serverThread = std::make_unique<std::thread>(
-                [this] { serverLauncher.runServerEngine(); });
+            serverThread = std::make_unique<std::thread>([this] {
+                serverLauncher.runServerEngine();
+                std::cout << "cool beans\n";
+            });
 
             client = std::make_unique<Client>();
             if (!client->init(config, windowAspect)) {
@@ -89,14 +91,19 @@ namespace {
 
         void endGame()
         {
+            std::cout << "ENDING GAME\n";
             if (client) {
-
                 client->endGame();
+                client->destroy();
+                client.release();
             }
+            std::cout << "ENDING GAME\n";
+
             if (serverThread) {
                 serverThread->join();
                 serverThread.release();
             }
+            std::cout << "ENDING GAME\n";
         }
     };
 
@@ -264,6 +271,8 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
             case ClientState::ExitGame:
                 game.endGame();
+                worldRenderTarget.bind();
+                glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
                 state.stage = ClientState::InMenu;
                 break;
 

@@ -79,7 +79,6 @@ void Server::sendChunk(peer_id_t peerId, const ChunkPosition& position)
 
 void Server::sendPlayerSkin(peer_id_t peerId, std::optional<peer_id_t> toPeer)
 {
-    LOGVAR("Server", "Sending skin of peer:", (int)peerId);
     sf::Packet skinPacket;
     skinPacket << ClientCommand::NewPlayerSkin;
     skinPacket << peerId;
@@ -90,7 +89,6 @@ void Server::sendPlayerSkin(peer_id_t peerId, std::optional<peer_id_t> toPeer)
         broadcastToPeers(skinPacket, 0, ENET_PACKET_FLAG_RELIABLE);
     }
     else {
-        LOGVAR("Server", "Sending skin to :", (int)toPeer.value());
         sendToPeer(m_connectedClients[toPeer.value()].peer, skinPacket, 0,
                    ENET_PACKET_FLAG_RELIABLE);
     }
@@ -213,8 +211,6 @@ void Server::onVoxelEdit(sf::Packet& packet)
 
 void Server::onPlayerSkin(sf::Packet& packet)
 {
-    LOGVAR("Server", "Received player skin, packet size: ", (int)packet.getDataSize());
-
     if (packet.getDataSize() != (sizeof(command_t) + sizeof(peer_id_t) + 8192)) {
         LOG("Server", "Player Skin Packet is of an invalid size");
         return;
@@ -223,8 +219,6 @@ void Server::onPlayerSkin(sf::Packet& packet)
     peer_id_t id = 0;
     packet >> id;
 
-    // Copy contents into a buffer vector which then gets copied into the
-    // player skin data
     sf::Uint8* skinPixels =
         (sf::Uint8*)packet.getData() + sizeof(command_t) + sizeof(peer_id_t);
     std::vector<sf::Uint8> newPixels(skinPixels, skinPixels + 8192);
