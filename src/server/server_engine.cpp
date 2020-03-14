@@ -20,25 +20,7 @@ void ServerLauncher::runServerEngine()
         std::cout << "Failed to create server.\n";
         return;
     }
-    std::atomic<bool> serverRunning = true;
-    std::atomic<bool> serverConsoleRunning = true;
-
-    std::thread console([&serverRunning, &serverConsoleRunning]() {
-        std::string line;
-        std::cout << "This is the server console. You can enter commands here.";
-        std::cout << "Server console: Enter exit to shut down server.";
-        while (serverRunning) {
-            std::cout << "> ";
-            std::getline(std::cin, line);
-
-            if (std::cin.eof() || line == "exit") {
-                serverRunning = false;
-                serverConsoleRunning = false;
-                return;
-            }
-        }
-    });
-
+    bool serverRunning = true;
     sf::Clock clock;
     while (serverRunning) {
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -56,9 +38,7 @@ void ServerLauncher::runServerEngine()
         }
     }
     m_server.disconnectAllPeers();
-    if (serverConsoleRunning) {
-        std::cout << "Server console is still active.\nPlease type anything to exit."
-                  << std::endl;
-    }
-    console.join();
+    m_server.destroy();
+
+    std::cout << "Server has now exited\n";
 }

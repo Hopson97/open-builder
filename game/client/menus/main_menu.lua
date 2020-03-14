@@ -9,9 +9,10 @@ local function onCreate(overlay)
     menu:pad(150)
 
     local vanilla   = menu:addButton("Play Vanilla")
-    local modded   = menu:addButton("Play Modded")
-    local settings    = menu:addButton("Settings")
-    local exitGame    = menu:addButton("Exit Game")
+    local modded    = menu:addButton("Play Modded")
+    local settings  = menu:addButton("Settings")
+    local exitGame  = menu:addButton("Exit Game")
+    local quickPlay = menu:addButton("Quick Game")
 
     vanilla.onClick = function()
         game.gui.change("play_game", "Vanilla")
@@ -28,6 +29,13 @@ local function onCreate(overlay)
     exitGame.onClick = function()
         game.control.shutdown()
     end
+
+
+    quickPlay.onClick = function()
+        game.gui.change("hud")
+        game.input.hideMouse()
+        game.control.startGame()
+    end    
 end
 
 game.gui.addGui{
