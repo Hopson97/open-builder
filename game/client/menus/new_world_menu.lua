@@ -17,9 +17,10 @@ local function onCreate(overlay, data)
 
     create.onClick = function()
         local name = worldNameBox:getText()
+        local seed = worldSeedBox:getText()
         if string.len(name) > 0 then
             game.gui.change("transition", "Creating World")
-            game.control.startGame()
+            game.control.createWorld(name, seed)
         end
     end    
 
