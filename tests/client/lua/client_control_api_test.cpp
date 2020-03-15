@@ -17,15 +17,17 @@ const std::string guiCreateScript = R"(
     }
 )";
 
-void updateState(ClientState& state)
+using State = ClientStateControl::StateId;
+
+void updateState(ClientStateControl& state)
 {
-    switch (state) {
-        case ClientState::StartGame:
-            state = ClientState::InGame;
+    switch (state.currentState) {
+        case State::CreateGame:
+            state.currentState = State::InGame;
             break;
 
-        case ClientState::ExitGame:
-            state = ClientState::InMenu;
+        case State::ExitGame:
+            state.currentState = State::InMenu;
             break;
 
         default:
@@ -36,42 +38,42 @@ void updateState(ClientState& state)
 TEST_CASE("The 'state' of the game can be safely controlled by the Lua")
 {
     ScriptEngine engine;
-    ClientState state = ClientState::InMenu;
+    ClientStateControl state;
 
     luaInitClientControlApi(engine, state);
 
     SECTION("The engine blocks invalid state switching")
     {
-        state = ClientState::InMenu;
+        state.currentState = State::InMenu;
         engine.runLuaString("game.control.pause()");
-        REQUIRE(state == ClientState::InMenu);
+        REQUIRE(state.currentState == State::InMenu);
 
         engine.runLuaString("game.control.exitGame()");
         updateState(state);
-        REQUIRE(state == ClientState::InMenu);
+        REQUIRE(state.currentState == State::InMenu);
 
-        state = ClientState::InGame;
+        state.currentState = State::InGame;
         engine.runLuaString("game.control.resume()");
-        REQUIRE(state == ClientState::InGame);
+        REQUIRE(state.currentState == State::InGame);
 
         engine.runLuaString("game.control.startGame()");
         updateState(state);
-        REQUIRE(state == ClientState::InGame);
+        REQUIRE(state.currentState == State::InGame);
     }
 
     SECTION("Script is able to exit game from pause")
     {
-        state = ClientState::Paused;
+        state.currentState = State::Paused;
         engine.runLuaString("game.control.exitGame()");
         updateState(state);
-        REQUIRE(state == ClientState::InMenu);
+        REQUIRE(state.currentState == State::InMenu);
     }
 
     SECTION("Script is able to start game from menu")
     {
-        state = ClientState::InMenu;
-        engine.runLuaString("game.control.startGame()");
+        state.currentState = State::InMenu;
+        engine.runLuaString("game.control.createWorld(\"A\", \"B\")");
         updateState(state);
-        REQUIRE(state == ClientState::InGame);
+        REQUIRE(state.currentState == State::InGame);
     }
 }

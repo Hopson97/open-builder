@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 /**
  * @brief Status information about the engine
  */
@@ -13,15 +15,31 @@ enum class EngineStatus {
     CouldNotConnect = 21,
 };
 
-enum class ClientState {
-    // Absolute States
-    InMenu,
-    InGame,
-    Paused,
+struct ClientStateControl {
+    enum class StateId {
+        // Absolute States
+        InMenu,
+        InGame,
+        Paused,
 
-    // Transition States
-    StartGame,
-    ConnectToGame,
-    ExitGame,
-    Shutdown,
+        // Transition States
+        CreateGame,
+        LoadGame,
+        JoinGame,
+        ExitGame,
+        Shutdown,
+    };
+
+    StateId currentState = StateId::InMenu;
+    std::string paramA;
+    std::string paramB;
+
+    void createWorld(const std::string& name, const std::string& seed);
+    void loadWorld(const std::string& name);
+    void joinWorld(const std::string& ipAddress);
+
+    void pauseGame();
+    void resumeGame();
+    void exitGame();
+    void shutdown();
 };
