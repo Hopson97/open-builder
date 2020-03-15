@@ -24,7 +24,7 @@ game.gui.addGui{
 }
 
 game.onKeyReleased(game.Keyboard.Escape, function() 
-    if game.control.currentState() == game.State.InGame then
+    if game.control.isInGame() then
         game.control.pause()
         game.gui.push("pause")
         game.input.showMouse()

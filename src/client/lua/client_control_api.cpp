@@ -5,17 +5,10 @@
 
 void luaInitClientControlApi(ScriptEngine& scriptEngine, ClientState& clientState)
 {
-    auto stateEnum = scriptEngine.addTable("State");
-    stateEnum["InMenu"] = ClientState::InMenu;
-    stateEnum["InGame"] = ClientState::InGame;
-    stateEnum["Paused"] = ClientState::Paused;
-
-    stateEnum["ExitGame"] = ClientState::ExitGame;
-    stateEnum["StartGame"] = ClientState::StartGame;
-    stateEnum["Shutdown"] = ClientState::Shutdown;
-
     auto controlApi = scriptEngine.addTable("control");
-    controlApi["currentState"] = [&clientState] { return clientState; };
+    controlApi["isInGame"] = [&clientState] {
+        return clientState == ClientState::InGame;
+    };
     controlApi["shutdown"] = [&clientState] { clientState = ClientState::Shutdown; };
 
     controlApi["pause"] = [&clientState] {
@@ -23,11 +16,13 @@ void luaInitClientControlApi(ScriptEngine& scriptEngine, ClientState& clientStat
             clientState = ClientState::Paused;
         }
     };
+
     controlApi["resume"] = [&clientState] {
         if (clientState == ClientState::Paused) {
             clientState = ClientState::InGame;
         }
     };
+
     controlApi["exitGame"] = [&clientState] {
         if (clientState == ClientState::Paused) {
             clientState = ClientState::ExitGame;
