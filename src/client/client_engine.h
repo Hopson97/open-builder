@@ -6,7 +6,7 @@ struct ClientConfig;
 
 struct ClientEngineState {
     EngineStatus status = EngineStatus::Ok;
-    ClientState stage = ClientState::InMenu;
+    ClientStateControl stateControl;
 };
 
 /**

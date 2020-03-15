@@ -72,7 +72,7 @@ namespace {
 
         EngineStatus startGame(ClientConfig config, float windowAspect)
         {
-            serverLauncher = std::make_unique<ServerLauncher>(ServerConfig{4, 35},
+            serverLauncher = std::make_unique<ServerLauncher>(ServerConfig{4, 5},
                                                               sf::milliseconds(50));
             serverThread = std::make_unique<std::thread>(
                 [this] { serverLauncher->runServerEngine(); });
@@ -144,7 +144,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     ClientLuaCallbacks callbacks(scriptEngine);
     luaInitGuiWidgetApi(scriptEngine);
     luaInitInputApi(scriptEngine, window, inputState);
-    luaInitClientControlApi(scriptEngine, state.stage);
+    luaInitClientControlApi(scriptEngine, state.stateControl);
 
     // Gui
     gui::GuiSystem gui(config.windowWidth, config.windowHeight, scriptEngine);
@@ -254,25 +254,45 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
         // Stats
         fps.update();
-        switch (state.stage) {
-            case ClientState::StartGame: {
+
+        // Switch to a different state if needed
+        switch (state.stateControl.currentState) {
+            case ClientStateControl::StateId::CreateGame: {
                 auto result = game.startGame(config, getWindowAspect(window));
                 if (result != EngineStatus::Ok) {
                     return result;
                 }
                 callbacks.onEnterGame();
-                state.stage = ClientState::InGame;
+                state.stateControl.currentState = ClientStateControl::StateId::InGame;
             } break;
 
-            case ClientState::ExitGame:
+            case ClientStateControl::StateId::JoinGame: {
+                auto result = game.startGame(config, getWindowAspect(window));
+                if (result != EngineStatus::Ok) {
+                    return result;
+                }
+                callbacks.onEnterGame();
+                state.stateControl.currentState = ClientStateControl::StateId::InGame;
+            } break;
+
+            case ClientStateControl::StateId::LoadGame: {
+                auto result = game.startGame(config, getWindowAspect(window));
+                if (result != EngineStatus::Ok) {
+                    return result;
+                }
+                callbacks.onEnterGame();
+                state.stateControl.currentState = ClientStateControl::StateId::InGame;
+            } break;
+
+            case ClientStateControl::StateId::ExitGame:
                 game.endGame();
                 worldRenderTarget.bind();
                 glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
                 callbacks.onExitGame();
-                state.stage = ClientState::InMenu;
+                state.stateControl.currentState = ClientStateControl::StateId::InMenu;
                 break;
 
-            case ClientState::Shutdown:
+            case ClientStateControl::StateId::Shutdown:
                 state.status = EngineStatus::Exit;
                 break;
 
