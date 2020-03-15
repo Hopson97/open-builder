@@ -60,8 +60,21 @@ namespace {
         }
     };
 
-    struct LocalGame {
+    //  ===================================================
+    //
+    //            T E M P O R A R Y   S T A R T
+    //
+    // ====================================================
+
+    struct Game {
+        virtual ~Game() = default;
+        virtual EngineStatus startGame(ClientConfig config, float windowAspect) = 0;
+        virtual void endGame() = 0;
+
         std::unique_ptr<Client> client;
+    };
+
+    struct LocalGame : public Game {
         std::unique_ptr<ServerLauncher> serverLauncher;
 
         ~LocalGame()
@@ -69,8 +82,9 @@ namespace {
             endGame();
         }
 
-        EngineStatus startGame(ClientConfig config, float windowAspect)
+        EngineStatus startGame(ClientConfig config, float windowAspect) final override
         {
+            config.serverIp = LOCAL_HOST;
             serverLauncher = std::make_unique<ServerLauncher>(ServerConfig{4, 5},
                                                               sf::milliseconds(500));
             serverLauncher->run();
@@ -82,7 +96,7 @@ namespace {
             return EngineStatus::Ok;
         }
 
-        void endGame()
+        void endGame() final override
         {
             if (serverLauncher) {
                 serverLauncher->stop();
@@ -95,6 +109,45 @@ namespace {
             }
         }
     };
+
+    struct RemoteGame : public Game {
+        RemoteGame(const std::string& serverIp)
+            : serverIpAddress(serverIp)
+        {
+        }
+
+        ~RemoteGame()
+        {
+            endGame();
+        }
+
+        EngineStatus startGame(ClientConfig config, float windowAspect) final override
+        {
+            config.serverIp = serverIpAddress;
+            client = std::make_unique<Client>();
+            if (!client->init(config, windowAspect)) {
+                return EngineStatus::CouldNotConnect;
+            }
+            return EngineStatus::Ok;
+        }
+
+        void endGame() final override
+        {
+            if (client) {
+                client->endGame();
+                client->destroy();
+                client.release();
+            }
+        }
+
+        const std::string serverIpAddress;
+    };
+
+    //  ===================================================
+    //
+    //              T E M P O R A R Y    E N D
+    //
+    // ====================================================
 
     bool initOpenGL(const sf::Window& window)
     {
@@ -150,7 +203,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     // Client client;
     //============================================================
     //              Tempory approach!
-    LocalGame game;
+    std::unique_ptr<Game> game;
 
     //=============================================================
 
@@ -186,10 +239,11 @@ EngineStatus runClientEngine(const ClientConfig& config)
                     break;
 
                 case sf::Event::MouseButtonReleased:
-                    if (game.client) {
-                        game.client->onMouseRelease(event.mouseButton.button,
-                                                    event.mouseButton.x,
-                                                    event.mouseButton.y);
+                    if (game && game->client) {
+
+                        game->client->onMouseRelease(event.mouseButton.button,
+                                                     event.mouseButton.x,
+                                                     event.mouseButton.y);
                     }
 
                 default:
@@ -198,15 +252,15 @@ EngineStatus runClientEngine(const ClientConfig& config)
         }
 
         // Input
-        if (game.client) {
-            game.client->handleInput(window, keyboard, inputState);
+        if (game && game->client) {
+            game->client->handleInput(window, keyboard, inputState);
         }
 
         // Update
         gui.update();
-        if (game.client) {
+        if (game && game->client) {
 
-            game.client->update(gameTimer.restart().asSeconds(), fps.frameTime);
+            game->client->update(gameTimer.restart().asSeconds(), fps.frameTime);
         }
 
         //=============================================================
@@ -215,10 +269,11 @@ EngineStatus runClientEngine(const ClientConfig& config)
         glEnable(GL_DEPTH_TEST);
 
         // World
-        if (game.client) {
+        if (game && game->client) {
+
             worldRenderTarget.bind();
             glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-            game.client->render(debugGui.label);
+            game->client->render(debugGui.label);
         }
 
         // GUI
@@ -249,38 +304,35 @@ EngineStatus runClientEngine(const ClientConfig& config)
         // Stats
         fps.update();
 
+        auto startGame = [&]() {
+            auto result = game->startGame(config, getWindowAspect(window));
+            if (result != EngineStatus::Ok) {
+                return result;
+            }
+            callbacks.onEnterGame();
+            state.stateControl.currentState = ClientStateControl::StateId::InGame;
+        };
+
         // TO DO Find some way to do this a lot more cleanly...
         // Switch to a different state if needed
         switch (state.stateControl.currentState) {
             case ClientStateControl::StateId::CreateGame: {
-                auto result = game.startGame(config, getWindowAspect(window));
-                if (result != EngineStatus::Ok) {
-                    return result;
-                }
-                callbacks.onEnterGame();
-                state.stateControl.currentState = ClientStateControl::StateId::InGame;
+                game = std::make_unique<LocalGame>();
+                startGame();
             } break;
 
             case ClientStateControl::StateId::JoinGame: {
-                auto result = game.startGame(config, getWindowAspect(window));
-                if (result != EngineStatus::Ok) {
-                    return result;
-                }
-                callbacks.onEnterGame();
-                state.stateControl.currentState = ClientStateControl::StateId::InGame;
+                game = std::make_unique<RemoteGame>(state.stateControl.paramA);
+                startGame();
             } break;
 
             case ClientStateControl::StateId::LoadGame: {
-                auto result = game.startGame(config, getWindowAspect(window));
-                if (result != EngineStatus::Ok) {
-                    return result;
-                }
-                callbacks.onEnterGame();
-                state.stateControl.currentState = ClientStateControl::StateId::InGame;
+                game = std::make_unique<LocalGame>();
+                startGame();
             } break;
 
             case ClientStateControl::StateId::ExitGame:
-                game.endGame();
+                game->endGame();
                 worldRenderTarget.bind();
                 glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
                 callbacks.onExitGame();
