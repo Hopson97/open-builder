@@ -18,7 +18,7 @@ local function onCreate(overlay, data)
         local serverIp = serverIpBox:getText()
         if string.len(serverIp) > 0 then
             game.gui.change("transition", "Joining World")
-            game.control.startGame()
+            game.control.joinGame(serverIp)
         end
     end    
 

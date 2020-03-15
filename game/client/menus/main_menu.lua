@@ -17,7 +17,7 @@ local function onCreate(overlay)
 
     continue.onClick = function()
         game.gui.change("transition", "Starting Game")
-        game.control.startGame()
+        game.control.loadWorld("Test")
     end    
 
     vanilla.onClick = function()
