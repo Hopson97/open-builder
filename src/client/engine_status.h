@@ -21,6 +21,7 @@ enum class ClientState {
 
     // Transition States
     StartGame,
+    ConnectToGame,
     ExitGame,
     Shutdown,
 };
