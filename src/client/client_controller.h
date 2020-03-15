@@ -6,7 +6,7 @@
 #include <optional>
 #include <string>
 #include <thread>
-
+/*
 struct CreateWorldParams {
     std::string name;
     std::string seed;
@@ -67,15 +67,7 @@ struct ClientController final {
         ClientGame m_game;
         EngineStatus m_result;
     };
-    /*
-        struct LoadWorldAction final : public Action {
-            void apply() final override;
-        };
 
-        struct ConnectToRemoteServerAction final : public Action {
-            void apply() final override;
-        };
-    */
   public:
     ClientController();
     ClientController(ClientController&) = delete;
@@ -101,3 +93,4 @@ struct ClientController final {
     ClientState m_clientState = ClientState::Menu;
     std::atomic<ActionState> m_actionState = ActionState::Idle;
 };
+*/

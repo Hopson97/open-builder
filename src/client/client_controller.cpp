@@ -1,6 +1,7 @@
 #include "client_controller.h"
 
 #include "client_config.h"
+/*
 //
 //  Actions
 //
@@ -108,6 +109,7 @@ void ClientController::resetAction()
 {
     m_currentAction = std::make_unique<NoAction>();
 }
+*/
 
 #include "engine_status.h"
 

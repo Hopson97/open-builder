@@ -5,10 +5,7 @@
 namespace {
     bool scriptRunWasValid(const sol::protected_function_result& result)
     {
-        if (result.valid()) {
-            std::cout << "Script string ran sucessfully." << '\n';
-        }
-        else {
+        if (!result.valid()) {
             sol::error err = result;
             std::cerr << "Lua script string invalid. Error: " << err.what() << '\n';
         }
