@@ -145,10 +145,8 @@ namespace {
      */
     int launchServer(const ServerConfig& config, sf::Time timeout = sf::seconds(8))
     {
-        LOG("Launcher", "Launching server");
         ServerLauncher launcher(config, timeout);
-        launcher.runServerEngine();
-        LOG("Launcher", "Server has exited.");
+        launcher.run();
         return EXIT_SUCCESS;
     }
 
@@ -224,13 +222,10 @@ namespace {
     int launchBoth(const Config& config)
     {
         ServerLauncher server(config.server, sf::milliseconds(5000));
-        std::thread serverThread([&server]() {
-            LOG("Launcher", "Launching server");
-            server.runServerEngine();
-        });
+        server.run();
+
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         int exit = launchClient(config.client, false);
-        serverThread.join();
         return exit;
     }
 
@@ -242,18 +237,13 @@ namespace {
     int launchServerAnd2Players(const Config& config)
     {
         ServerLauncher server(config.server, sf::milliseconds(5000));
-        std::thread serverThread([&server]() {
-            LOG("Launcher", "Launching server");
-            server.runServerEngine();
-        });
+        server.run();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         std::thread client2(launchClient, config.client, false);
-
         int exit = launchClient(config.client, false);
 
         client2.join();
-        serverThread.join();
         return exit;
     }
 } // namespace

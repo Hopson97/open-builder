@@ -62,7 +62,6 @@ namespace {
 
     struct LocalGame {
         std::unique_ptr<Client> client;
-        std::unique_ptr<std::thread> serverThread;
         std::unique_ptr<ServerLauncher> serverLauncher;
 
         ~LocalGame()
@@ -73,9 +72,8 @@ namespace {
         EngineStatus startGame(ClientConfig config, float windowAspect)
         {
             serverLauncher = std::make_unique<ServerLauncher>(ServerConfig{4, 5},
-                                                              sf::milliseconds(50));
-            serverThread = std::make_unique<std::thread>(
-                [this] { serverLauncher->runServerEngine(); });
+                                                              sf::milliseconds(500));
+            serverLauncher->run();
 
             client = std::make_unique<Client>();
             if (!client->init(config, windowAspect)) {
@@ -87,17 +85,13 @@ namespace {
         void endGame()
         {
             if (serverLauncher) {
+                serverLauncher->stop();
                 serverLauncher.release();
             }
             if (client) {
                 client->endGame();
                 client->destroy();
                 client.release();
-            }
-
-            if (serverThread) {
-                serverThread->join();
-                serverThread.release();
             }
         }
     };
@@ -255,6 +249,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
         // Stats
         fps.update();
 
+        // TO DO Find some way to do this a lot more cleanly...
         // Switch to a different state if needed
         switch (state.stateControl.currentState) {
             case ClientStateControl::StateId::CreateGame: {
