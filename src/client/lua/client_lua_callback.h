@@ -9,7 +9,7 @@ struct ScriptEngine;
 
 class ClientLuaCallbacks {
   public:
-    ClientLuaCallbacks(ScriptEngine& scriptEngine);
+    void initCallbacks(ScriptEngine& scriptEngine);
 
     void onClientStartup();
     void onEnterGame();

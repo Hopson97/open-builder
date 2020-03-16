@@ -148,8 +148,7 @@ void Client::handleInput(const sf::Window& window, const Keyboard& keyboard,
     }
 }
 
-void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
-                            [[maybe_unused]] int y)
+void Client::onMouseRelease(sf::Mouse::Button button)
 {
     // Handle voxel removal/ voxel placing events
 
@@ -182,30 +181,8 @@ void Client::onMouseRelease(sf::Mouse::Button button, [[maybe_unused]] int x,
     }
 }
 
-void Client::onKeyRelease(sf::Keyboard::Key key)
+void Client::update(float dt)
 {
-    switch (key) {
-        case sf::Keyboard::P:
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            break;
-
-        case sf::Keyboard::F:
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            break;
-
-        case sf::Keyboard::F3:
-            m_shouldRenderDebugInfo = !m_shouldRenderDebugInfo;
-            break;
-
-        default:
-            break;
-    }
-}
-
-void Client::update(float dt, float frameTime)
-{
-    m_debugStats.frameTime = frameTime;
-
     NetworkHost::tick();
     if (!m_hasReceivedGameData) {
         return;
@@ -326,7 +303,7 @@ void Client::update(float dt, float frameTime)
     }
 }
 
-void Client::render(gui::LabelWidget& debugLabel)
+void Client::render()
 {
     // TODO [Hopson] Clean this up
     if (!m_hasReceivedGameData) {
@@ -371,8 +348,6 @@ void Client::render(gui::LabelWidget& debugLabel)
         m_voxelData.getVoxelId(CommonVoxel::Water);
     auto result = m_chunkRenderer.renderChunks(mp_player->position, m_frustum,
                                                playerProjectionView, isPlayerInWater);
-    m_debugStats.bytesRendered = result.bytesInView;
-    m_debugStats.renderedChunks = result.chunksRendered;
 
     // Render selection box
     if (m_voxelSelected) {
@@ -390,43 +365,6 @@ void Client::render(gui::LabelWidget& debugLabel)
         gl::loadUniform(m_selectionShader.projectionViewLocation, playerProjectionView);
         m_selectionBox.getDrawable().bindAndDraw(GL_LINES);
         glCheck(glDisable(GL_BLEND));
-    }
-
-    // Debug stats
-    if (m_shouldRenderDebugInfo) {
-        debugLabel.show();
-        if (m_debugTextUpdateTimer.getElapsedTime() > sf::milliseconds(100)) {
-            m_debugTextUpdateTimer.restart();
-
-            // Get vertices total size in view and convert to MB
-            size_t buffSize = m_chunkRenderer.getTotalBufferSize();
-            buffSize /= 0x100000;
-            m_debugStats.bytesRendered /= 0x100000;
-
-            DebugStats& d = m_debugStats;
-            glm::vec3& p = mp_player->position;
-            glm::vec3& r = mp_player->rotation;
-            auto bp = toLocalVoxelPosition(p.x, p.y, p.z);
-            auto cp = toChunkPosition(p.x, p.y, p.z);
-
-            std::ostringstream debugText;
-            debugText << "Frame time: " << std::setprecision(3) << d.frameTime << "ms\n";
-            debugText << "Chunks: " << d.renderedChunks << " of "
-                      << m_chunkRenderer.getTotalChunks() << " drawn\n";
-            debugText << "Chunk VRAM: " << m_debugStats.bytesRendered << "Mb of "
-                      << buffSize << "Mb drawn\n";
-            debugText << "Position: " << p << '\n';
-            debugText << "Chunk Position: " << cp << '\n';
-            debugText << "Local Position: " << bp << '\n';
-            debugText << "Rotation: " << r << '\n';
-            debugText << "In Chunk? " << (m_chunks.manager.hasChunk(cp) ? "Yes" : "No")
-                      << '\n';
-
-            debugLabel.setText(debugText.str());
-        }
-    }
-    else {
-        debugLabel.hide();
     }
 }
 

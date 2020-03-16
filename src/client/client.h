@@ -36,12 +36,6 @@ struct Entity final {
     gl::Texture2d playerSkin; // May need to be relocated to its own Player Entity
 };
 
-struct DebugStats {
-    float frameTime = 0;
-    int renderedChunks = 0;
-    size_t bytesRendered = 0;
-};
-
 class Client final : public NetworkHost {
   public:
     Client();
@@ -49,11 +43,10 @@ class Client final : public NetworkHost {
     bool init(const ClientConfig& config, float aspect);
     void handleInput(const sf::Window& window, const Keyboard& keyboard,
                      const InputState& inputState);
-    void onKeyRelease(sf::Keyboard::Key key);
-    void onMouseRelease(sf::Mouse::Button button, int x, int y);
+    void onMouseRelease(sf::Mouse::Button button);
 
-    void update(float dt, float frameTime);
-    void render(gui::LabelWidget& debugLabel);
+    void update(float dt);
+    void render();
     void endGame();
 
   private:
@@ -135,11 +128,6 @@ class Client final : public NetworkHost {
     } m_chunks;
 
     VoxelDataManager m_voxelData;
-
-    // Debug stats stuff
-    DebugStats m_debugStats{};
-    sf::Clock m_debugTextUpdateTimer;
-    bool m_shouldRenderDebugInfo = false;
 
     unsigned m_noMeshingCount = 0;
     bool m_voxelMeshing = false;

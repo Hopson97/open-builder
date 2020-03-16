@@ -2,7 +2,7 @@
 
 #include <common/scripting/script_engine.h>
 
-ClientLuaCallbacks::ClientLuaCallbacks(ScriptEngine& scriptEngine)
+void ClientLuaCallbacks::initCallbacks(ScriptEngine& scriptEngine)
 {
     scriptEngine.addCallbackApi("onClientStartup", m_onClientStartupCallbacks);
     scriptEngine.addCallbackApi("onEnterGame", m_onEnterGameCallbacks);
