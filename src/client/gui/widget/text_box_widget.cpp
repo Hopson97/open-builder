@@ -58,6 +58,7 @@ namespace gui {
     {
         m_textInput = text;
         mp_text->setText(text);
+        m_isUsingPlaceholder = false;
     }
 
     void TextBoxWidget::setTextSize(unsigned size)
