@@ -68,7 +68,7 @@ namespace {
 
     struct Game {
         virtual ~Game() = default;
-        virtual EngineStatus startGame(ClientConfig config, float windowAspect) = 0;
+        virtual int startGame(ClientConfig config, float windowAspect) = 0;
         virtual void endGame() = 0;
 
         std::unique_ptr<Client> client;
@@ -82,7 +82,7 @@ namespace {
             endGame();
         }
 
-        EngineStatus startGame(ClientConfig config, float windowAspect) final override
+        int startGame(ClientConfig config, float windowAspect) final override
         {
             config.serverIp = LOCAL_HOST;
             serverLauncher = std::make_unique<ServerLauncher>(ServerConfig{4, 5},
@@ -92,9 +92,9 @@ namespace {
             client = std::make_unique<Client>();
             if (!client->init(config, windowAspect)) {
                 endGame();
-                return EngineStatus::CouldNotConnect;
+                return -1;
             }
-            return EngineStatus::Ok;
+            return 0;
         }
 
         void endGame() final override
@@ -122,15 +122,15 @@ namespace {
             endGame();
         }
 
-        EngineStatus startGame(ClientConfig config, float windowAspect) final override
+        int startGame(ClientConfig config, float windowAspect) final override
         {
             config.serverIp = serverIpAddress;
             client = std::make_unique<Client>();
             if (!client->init(config, windowAspect)) {
                 endGame();
-                return EngineStatus::CouldNotConnect;
+                return -1;
             }
-            return EngineStatus::Ok;
+            return 0;
         }
 
         void endGame() final override
@@ -152,16 +152,37 @@ namespace {
     // ====================================================
 } // namespace
 
-EngineStatus runClientEngine(const ClientConfig& config)
+class ClientEngine {
+  public:
+    ClientEngine();
+    void run();
+
+  private:
+    sf::Window m_window;
+};
+
+ClientEngine::ClientEngine()
 {
+}
+
+void ClientEngine::run()
+{
+}
+
+void runClientEngine(const ClientConfig& config)
+{
+    // ClientEngine engine;
+    // engine.run();
+    // return;
+
     // Window/ OpenGL context setup
     sf::Window window;
     if (!createWindowInitOpengl(window, config)) {
-        return EngineStatus::GLInitError;
+        return; // EngineStatus::GLInitError;
     }
 
     // Client engine stuff
-    ClientEngineState state;
+    ClientStateControl control;
     FPSCounter fps;
     sf::Clock gameTimer;
 
@@ -177,7 +198,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
     ClientLuaCallbacks callbacks(scriptEngine);
     luaInitGuiWidgetApi(scriptEngine);
     luaInitInputApi(scriptEngine, window, inputState);
-    luaInitClientControlApi(scriptEngine, state.stateControl);
+    luaInitClientControlApi(scriptEngine, control);
 
     // Gui
     gui::GuiSystem gui(config.windowWidth, config.windowHeight, scriptEngine);
@@ -206,8 +227,10 @@ EngineStatus runClientEngine(const ClientConfig& config)
     worldRenderTarget.create(width, height);
     screenShader.create("minimal", "minimal");
 
+    bool isRunning = true;
+
     // Main loop of the client code
-    while (state.status == EngineStatus::Ok) {
+    while (isRunning) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (window.hasFocus()) {
@@ -216,7 +239,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
             }
             switch (event.type) {
                 case sf::Event::Closed:
-                    state.status = EngineStatus::Exit;
+                    isRunning = false;
                     break;
 
                 case sf::Event::KeyReleased:
@@ -291,27 +314,27 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
         auto startGame = [&]() {
             auto result = game->startGame(config, getWindowAspect(window));
-            if (result != EngineStatus::Ok) {
+            if (result == -1) {
                 callbacks.onError("Unable to connect to server.");
-                state.stateControl.currentState = ClientStateControl::StateId::InMenu;
+                control.currentState = ClientStateControl::StateId::InMenu;
                 game.release();
             }
             else {
                 callbacks.onEnterGame();
-                state.stateControl.currentState = ClientStateControl::StateId::InGame;
+                control.currentState = ClientStateControl::StateId::InGame;
             }
         };
 
         // TO DO Find some way to do this a lot more cleanly...
-        // Switch to a different state if needed
-        switch (state.stateControl.currentState) {
+        // Switch to a different control if needed
+        switch (control.currentState) {
             case ClientStateControl::StateId::CreateGame: {
                 game = std::make_unique<LocalGame>();
                 startGame();
             } break;
 
             case ClientStateControl::StateId::JoinGame: {
-                game = std::make_unique<RemoteGame>(state.stateControl.paramA);
+                game = std::make_unique<RemoteGame>(control.paramA);
                 startGame();
             } break;
 
@@ -325,11 +348,11 @@ EngineStatus runClientEngine(const ClientConfig& config)
                 worldRenderTarget.bind();
                 glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
                 callbacks.onExitGame();
-                state.stateControl.currentState = ClientStateControl::StateId::InMenu;
+                control.currentState = ClientStateControl::StateId::InMenu;
                 break;
 
             case ClientStateControl::StateId::Shutdown:
-                state.status = EngineStatus::Exit;
+                isRunning = false;
                 break;
 
             default:
@@ -337,5 +360,5 @@ EngineStatus runClientEngine(const ClientConfig& config)
         }
     }
     window.close();
-    return state.status;
+    return;
 }

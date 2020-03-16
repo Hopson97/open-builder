@@ -1,6 +1,5 @@
 #pragma once
 
-#include "engine_status.h"
 #include "gl/shader.h"
 #include "gl/textures.h"
 #include "gl/vertex_array.h"
@@ -56,8 +55,6 @@ class Client final : public NetworkHost {
     void update(float dt, float frameTime);
     void render(gui::LabelWidget& debugLabel);
     void endGame();
-
-    EngineStatus currentStatus() const;
 
   private:
     // Network functions; defined in the src/client/network/client_command.cpp
@@ -143,9 +140,6 @@ class Client final : public NetworkHost {
     DebugStats m_debugStats{};
     sf::Clock m_debugTextUpdateTimer;
     bool m_shouldRenderDebugInfo = false;
-
-    // Engine-y stuff
-    EngineStatus m_status = EngineStatus::Ok;
 
     unsigned m_noMeshingCount = 0;
     bool m_voxelMeshing = false;
