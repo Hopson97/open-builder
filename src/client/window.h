@@ -7,5 +7,5 @@
 
 struct ClientConfig;
 
-void createWindow(sf::Window& window, const ClientConfig& config);
+bool createWindowInitOpengl(sf::Window& window, const ClientConfig& config);
 float getWindowAspect(const sf::Window& window);

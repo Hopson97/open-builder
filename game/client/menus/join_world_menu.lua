@@ -9,6 +9,7 @@ local function onCreate(overlay, data)
     menu:setBackground(backgroundTexture)
 
     local serverIpBox = menu:addTextBox("Server IP", "Enter server IP...")
+    serverIpBox.text = "178.62.64.146"
     menu:pad(10)
     local joinButton = menu:addButton("Join World")
     menu:pad(200)

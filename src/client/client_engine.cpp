@@ -148,29 +148,13 @@ namespace {
     //              T E M P O R A R Y    E N D
     //
     // ====================================================
-
-    bool initOpenGL(const sf::Window& window)
-    {
-        if (!gladLoadGL()) {
-            return false;
-        }
-#ifndef __APPLE__
-        initGLDebug();
-#endif
-        glCheck(glClearColor(0.25f, 0.75f, 1.0f, 0.0f));
-        glCheck(glViewport(0, 0, window.getSize().x, window.getSize().y));
-        glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-        glCheck(glEnable(GL_DEPTH_TEST));
-        return true;
-    }
 } // namespace
 
 EngineStatus runClientEngine(const ClientConfig& config)
 {
     // Window/ OpenGL context setup
     sf::Window window;
-    createWindow(window, config);
-    if (!initOpenGL(window)) {
+    if (!createWindowInitOpengl(window, config)) {
         return EngineStatus::GLInitError;
     }
 
@@ -235,7 +219,6 @@ EngineStatus runClientEngine(const ClientConfig& config)
 
                 case sf::Event::KeyReleased:
                     callbacks.onKeyboardKeyReleased(event.key.code);
-                    // client.onKeyRelease(event.key.code);
                     break;
 
                 case sf::Event::MouseButtonReleased:
@@ -311,6 +294,7 @@ EngineStatus runClientEngine(const ClientConfig& config)
             }
             callbacks.onEnterGame();
             state.stateControl.currentState = ClientStateControl::StateId::InGame;
+            return result;
         };
 
         // TO DO Find some way to do this a lot more cleanly...
