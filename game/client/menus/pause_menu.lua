@@ -30,3 +30,15 @@ game.onKeyReleased(game.Keyboard.Escape, function()
         game.input.showMouse()
     end
 end)
+
+game.onKeyReleased(game.Keyboard.L, function() 
+    if game.control.isInGame() then
+        game.control.pause()
+        game.input.showMouse()
+    end
+end)
+
+game.onKeyReleased(game.Keyboard.U, function() 
+    game.input.hideMouse()
+    game.control.resume()
+end)

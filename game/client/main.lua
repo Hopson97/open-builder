@@ -13,6 +13,7 @@ dofile("game/client/menus/new_world_menu.lua")
 dofile("game/client/menus/join_world_menu.lua")
 dofile("game/client/menus/load_world_menu.lua")
 dofile("game/client/menus/pause_menu.lua")
+dofile("game/client/menus/error_screen.lua")
 dofile("game/client/menus/transition_screen.lua")
 
 -- 

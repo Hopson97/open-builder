@@ -14,12 +14,14 @@ class ClientLuaCallbacks {
     void onClientStartup();
     void onEnterGame();
     void onExitGame();
+    void onError(const std::string& error);
     void onKeyboardKeyReleased(sf::Keyboard::Key key);
 
   private:
     std::vector<sol::function> m_onClientStartupCallbacks;
     std::vector<sol::function> m_onEnterGameCallbacks;
     std::vector<sol::function> m_onExitGameCallbacks;
+    std::vector<sol::function> m_onErrorCallbacks;
 
     std::array<std::vector<sol::function>, sf::Keyboard::KeyCount>
         m_onKeyReleaseCallbacks;
