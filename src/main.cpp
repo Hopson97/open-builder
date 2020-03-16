@@ -258,7 +258,7 @@ int main(int argc, char** argv)
             return launchServer(config.server);
 
         case LaunchType::Client:
-            return launchClient(config.client, true);
+            return launchClient(config.client, false);
 
         case LaunchType::TwoPlayer:
             return launchServerAnd2Players(config);

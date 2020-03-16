@@ -81,6 +81,7 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint, GLenum sever
 
 void initGLDebug()
 {
+#ifndef __APPLE__
 #ifndef NDEBUG
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // disable if in release
@@ -90,6 +91,7 @@ void initGLDebug()
     // this disables messages printed for successfully compiled shaders
     glDebugMessageControl(GL_DEBUG_SOURCE_SHADER_COMPILER, GL_DEBUG_TYPE_OTHER,
                           GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+#endif
 }
 
 void glCheckError(const char* file, unsigned int line, const char* expression)

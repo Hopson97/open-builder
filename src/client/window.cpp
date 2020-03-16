@@ -1,10 +1,24 @@
 #include "window.h"
 
 #include "client_config.h"
+#include "gl/gl_errors.h"
 #include <SFML/Window/Event.hpp>
 #include <glad/glad.h>
 
 namespace {
+
+    bool initOpenGL(const sf::Window& window)
+    {
+        if (!gladLoadGL()) {
+            return false;
+        }
+        initGLDebug();
+        glCheck(glClearColor(0.25f, 0.75f, 1.0f, 0.0f));
+        glCheck(glViewport(0, 0, window.getSize().x, window.getSize().y));
+        glCheck(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+        glCheck(glEnable(GL_DEPTH_TEST));
+        return true;
+    }
 
     void createWindow(sf::Window& window, const sf::VideoMode& mode, u32 style)
     {
@@ -28,7 +42,7 @@ namespace {
 
 } // namespace
 
-void createWindow(sf::Window& window, const ClientConfig& config)
+bool createWindowInitOpengl(sf::Window& window, const ClientConfig& config)
 {
     window.setKeyRepeatEnabled(false);
     if (config.fullScreen) {
@@ -42,6 +56,8 @@ void createWindow(sf::Window& window, const ClientConfig& config)
     if (config.isFpsCapped) {
         window.setFramerateLimit(config.fpsLimit);
     }
+
+    return initOpenGL(window);
 }
 
 float getWindowAspect(const sf::Window& window)
