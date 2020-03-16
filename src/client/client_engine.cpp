@@ -91,6 +91,7 @@ namespace {
 
             client = std::make_unique<Client>();
             if (!client->init(config, windowAspect)) {
+                endGame();
                 return EngineStatus::CouldNotConnect;
             }
             return EngineStatus::Ok;
@@ -126,6 +127,7 @@ namespace {
             config.serverIp = serverIpAddress;
             client = std::make_unique<Client>();
             if (!client->init(config, windowAspect)) {
+                endGame();
                 return EngineStatus::CouldNotConnect;
             }
             return EngineStatus::Ok;
@@ -290,11 +292,14 @@ EngineStatus runClientEngine(const ClientConfig& config)
         auto startGame = [&]() {
             auto result = game->startGame(config, getWindowAspect(window));
             if (result != EngineStatus::Ok) {
-                return result;
+                callbacks.onError("Unable to connect to server.");
+                state.stateControl.currentState = ClientStateControl::StateId::InMenu;
+                game.release();
             }
-            callbacks.onEnterGame();
-            state.stateControl.currentState = ClientStateControl::StateId::InGame;
-            return result;
+            else {
+                callbacks.onEnterGame();
+                state.stateControl.currentState = ClientStateControl::StateId::InGame;
+            }
         };
 
         // TO DO Find some way to do this a lot more cleanly...
