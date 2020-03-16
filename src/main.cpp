@@ -142,9 +142,9 @@ namespace {
      * @param timeout How long the server waits for a connection before closing
      * @return int Exit success flag
      */
-    int launchServer(const ServerConfig& config, sf::Time timeout = sf::seconds(8))
+    int launchServer(const ServerConfig& config)
     {
-        ServerLauncher launcher(config, timeout);
+        ServerLauncher launcher(config, sf::seconds(0));
         launcher.run();
         return EXIT_SUCCESS;
     }

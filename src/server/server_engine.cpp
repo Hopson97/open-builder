@@ -62,13 +62,16 @@ void ServerLauncher::launch()
         m_server.update();
 
         // Exit the server if there is no connections
-        if (m_server.getConnectedPeerCount() == 0) {
-            m_isServerRunning = clock.getElapsedTime() < m_timeout;
-        }
-        else {
-            clock.restart();
+        if (m_timeout > sf::seconds(0)) {
+            if (m_server.getConnectedPeerCount() == 0) {
+                m_isServerRunning = clock.getElapsedTime() < m_timeout;
+            }
+            else {
+                clock.restart();
+            }
         }
     }
+    LOG("Server", "Server stopped.");
 }
 
 void ServerLauncher::stop()
