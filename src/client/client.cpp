@@ -436,8 +436,3 @@ void Client::endGame()
         NetworkHost::disconnectFromPeer(mp_serverPeer);
     }
 }
-
-EngineStatus Client::currentStatus() const
-{
-    return m_status;
-}

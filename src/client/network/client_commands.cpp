@@ -40,12 +40,10 @@ void Client::onPeerConnect([[maybe_unused]] ENetPeer* peer)
 
 void Client::onPeerDisconnect([[maybe_unused]] ENetPeer* peer)
 {
-    m_status = EngineStatus::ExitServerDisconnect;
 }
 
 void Client::onPeerTimeout([[maybe_unused]] ENetPeer* peer)
 {
-    m_status = EngineStatus::ExitServerTimeout;
 }
 
 void Client::onCommandRecieve([[maybe_unused]] ENetPeer* peer, sf::Packet& packet,

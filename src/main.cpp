@@ -117,16 +117,6 @@ namespace {
     }
 
     /**
-     * @brief Prints success message
-     * @return int Exit success flag
-     */
-    int exitSuccess(const char* message = "Normal exit")
-    {
-        std::cout << "Engine exited successfully.\"" << message << "\"." << '\n';
-        return EXIT_SUCCESS;
-    }
-
-    /**
      * @brief Prints failure message
      * @return int Exit failure flag
      */
@@ -192,25 +182,8 @@ namespace {
             printInstructions();
         }
         LOG("Launcher", "Launching client");
-        switch (runClientEngine(config)) {
-            case EngineStatus::Exit:
-            case EngineStatus::Ok:
-                return exitSuccess();
-
-            case EngineStatus::ExitServerDisconnect:
-                return exitSuccess("Client was disconnected from the server.");
-
-            case EngineStatus::ExitServerTimeout:
-                return exitSuccess("Server timeout, client forcefully was disconnected.");
-
-            case EngineStatus::GLInitError:
-                return exitFailure("OpenGL failed to initilise correctly");
-
-            case EngineStatus::CouldNotConnect:
-                return exitFailure("Connection to server could not be established");
-        }
-
-        return exitFailure("Unknown error");
+        runClientEngine(config);
+        return 0;
     }
 
     /**

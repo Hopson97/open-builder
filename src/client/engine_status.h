@@ -5,6 +5,7 @@
 /**
  * @brief Status information about the engine
  */
+/*
 enum class EngineStatus {
     Ok = 10,
     Exit = 11,
@@ -13,7 +14,7 @@ enum class EngineStatus {
 
     GLInitError = 20,
     CouldNotConnect = 21,
-};
+};*/
 
 struct ClientStateControl {
     enum class StateId {
