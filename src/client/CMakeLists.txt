@@ -16,6 +16,7 @@ add_library(ob-client
     client_controller.cpp
     client_engine.cpp
     client.cpp
+    game.cpp
 
     lua/client_lua_callback.cpp
     lua/gui_api.cpp
