@@ -4,6 +4,7 @@
 #include "gl/gl_errors.h"
 #include <SFML/Window/Event.hpp>
 #include <glad/glad.h>
+#include <iostream>
 
 namespace {
 
