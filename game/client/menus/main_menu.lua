@@ -35,9 +35,6 @@ local function onCreate(overlay)
     exitGame.onClick = function()
         game.control.shutdown()
     end
-
-
-
 end
 
 game.gui.addGui{

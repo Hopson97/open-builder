@@ -23,7 +23,3 @@ game.gui.addGui{
     title = "Error Screen",
     create = onCreate,
 }
-
-game.onError(function(errorMessage)
-    game.gui.change("error_screen", errorMessage)
-end)

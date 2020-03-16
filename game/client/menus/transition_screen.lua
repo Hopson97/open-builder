@@ -18,12 +18,3 @@ game.gui.addGui{
     create = onCreate,
 }
 
-game.onEnterGame(function() 
-    game.input.hideMouse()
-    game.gui.change("hud")
-end)
-
-game.onExitGame(function() 
-    game.input.showMouse()
-    game.gui.change("main_menu")
-end)
