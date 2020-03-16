@@ -152,25 +152,72 @@ namespace {
     // ====================================================
 } // namespace
 
-class ClientEngine {
+class OpenBuilderClientEngine {
   public:
-    ClientEngine();
-    void run();
+    bool start();
+
+    void handleEvent(sf::Event e);
+    void tick();
+    void render();
+
+    void shutdown();
 
   private:
-    sf::Window m_window;
 };
 
-ClientEngine::ClientEngine()
+bool OpenBuilderClientEngine::start()
+{
+    return true;
+}
+
+void OpenBuilderClientEngine::tick()
 {
 }
 
-void ClientEngine::run()
+void OpenBuilderClientEngine::render()
+{
+}
+
+void OpenBuilderClientEngine::shutdown()
 {
 }
 
 void runClientEngine(const ClientConfig& config)
 {
+    sf::Window window;
+    if (!createWindowInitOpengl(window, config)) {
+        return;
+    }
+
+    OpenBuilderClientEngine engine;
+    if (!engine.start()) {
+        return;
+    }
+
+    bool engineRunning = true;
+    while (engineRunning) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            engine.handleEvent(event);
+            if (event.type == sf::Event::Closed) {
+                engineRunning = false;
+            }
+        }
+
+        engine.tick();
+
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+        engine.render();
+        window.display();
+    }
+    engine.shutdown();
+    window.close();
+}
+
+/*
+void runClientEngine(const ClientConfig& config)
+{
+
     // ClientEngine engine;
     // engine.run();
     // return;
@@ -180,6 +227,25 @@ void runClientEngine(const ClientConfig& config)
     if (!createWindowInitOpengl(window, config)) {
         return; // EngineStatus::GLInitError;
     }
+    /*
+        ClientEngine engine;
+        FPSCounter fpsCounter;
+
+        while (window.isOpen()) {
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                switch (event.type) {
+                    case sf::Event::Closed:
+                        window.close();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            fpsCounter.update();
+        }
+    *
 
     // Client engine stuff
     ClientStateControl control;
@@ -362,3 +428,4 @@ void runClientEngine(const ClientConfig& config)
     window.close();
     return;
 }
+*/
