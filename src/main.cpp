@@ -29,7 +29,6 @@ namespace {
     enum class LaunchType {
         Server,
         Client,
-        Both,
         TwoPlayer,
     };
 
@@ -37,7 +36,7 @@ namespace {
      * @brief Holds config for both client and server
      */
     struct Config {
-        LaunchType launchType = LaunchType::Both;
+        LaunchType launchType = LaunchType::Client;
 
         ServerConfig server;
         ClientConfig client;
@@ -215,21 +214,6 @@ namespace {
     }
 
     /**
-     * @brief Launches both the client and the server
-     * @param config The config to be used by client/server engines
-     * @return int Exit flag (Success, or Failure)
-     */
-    int launchBoth(const Config& config)
-    {
-        ServerLauncher server(config.server, sf::milliseconds(5000));
-        server.run();
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        int exit = launchClient(config.client, false);
-        return exit;
-    }
-
-    /**
      * @brief Launches 2 clients and the server. Useful for testing multiplayer
      * @param config The config to be used by client/server engines
      * @return int Exit flag (Success, or Failure)
@@ -267,12 +251,9 @@ int main(int argc, char** argv)
     loadFromConfigFile(config);
     parseArgs(config, args);
 
-    return launchClient(config.client, false);
+    // return launchClient(config.client, false);
 
     switch (config.launchType) {
-        case LaunchType::Both:
-            return launchBoth(config);
-
         case LaunchType::Server:
             return launchServer(config.server);
 

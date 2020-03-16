@@ -87,7 +87,7 @@ namespace {
             config.serverIp = LOCAL_HOST;
             serverLauncher = std::make_unique<ServerLauncher>(ServerConfig{4, 5},
                                                               sf::milliseconds(500));
-            serverLauncher->run();
+            serverLauncher->runAsThread();
 
             client = std::make_unique<Client>();
             if (!client->init(config, windowAspect)) {
