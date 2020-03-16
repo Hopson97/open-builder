@@ -22,23 +22,3 @@ game.gui.addGui{
     title = "Pause Menu",
     create = onCreate,
 }
-
-game.onKeyReleased(game.Keyboard.Escape, function() 
-    if game.control.isInGame() then
-        game.control.pause()
-        game.gui.push("pause")
-        game.input.showMouse()
-    end
-end)
-
-game.onKeyReleased(game.Keyboard.L, function() 
-    if game.control.isInGame() then
-        game.control.pause()
-        game.input.showMouse()
-    end
-end)
-
-game.onKeyReleased(game.Keyboard.U, function() 
-    game.input.hideMouse()
-    game.control.resume()
-end)
