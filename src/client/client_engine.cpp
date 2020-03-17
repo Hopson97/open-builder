@@ -60,13 +60,17 @@ void runClientEngine(const ClientConfig& config)
     ScriptEngine scriptEngine;
     ClientLuaCallbacks callbacks;
 
+
+    // Gui
+    gui::GuiSystem gui(config.windowWidth, config.windowHeight);
+    GuiRenderer guiRenderer;
+
+    // Init all the lua api stuff
     callbacks.initCallbacks(scriptEngine);
     luaInitGuiWidgetApi(scriptEngine);
     luaInitInputApi(scriptEngine, window, inputState);
     luaInitClientControlApi(scriptEngine, control);
-
-    // Gui
-    gui::GuiSystem gui(config.windowWidth, config.windowHeight, scriptEngine);
+    luaInitGuiApi(scriptEngine, gui, &guiRenderer);
 
     // Run the lua file to init the client engine
     scriptEngine.runLuaFile("game/client/main.lua");
@@ -121,7 +125,6 @@ void runClientEngine(const ClientConfig& config)
         game.input(window, keyboard, inputState);
 
         // Update
-        gui.update();
         game.update(gameTimer.restart().asSeconds());
 
         //=============================================================
@@ -138,7 +141,7 @@ void runClientEngine(const ClientConfig& config)
         // GUI
         guiRenderTarget.bind();
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-        gui.render();
+        gui.render(guiRenderer);
 
         // Buffer to window
         gl::unbindFramebuffers(width, height);
