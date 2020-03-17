@@ -5,8 +5,7 @@ struct ScriptEngine;
 #include <SFML/Window/Window.hpp>
 
 namespace gui {
-    class OverlayFactory;
-    class OverlayStack;
+    class GuiSystem;
 } // namespace gui
 
 class GuiRenderer;
@@ -17,12 +16,11 @@ class ClientStateControl;
  * @brief Init the overlay APIs
  *
  * @param scriptEngine The Lua script engine/ lua state to append the API to
- * @param overlayFactory The client's GUI Overlay Factory
- * @param overlayStack The client's GUI overlay stack
+ * @param guiSystem The client's GUI
  * @param guiRenderer The client's GUI Renderer; optional
  */
-void luaInitGuiApi(ScriptEngine& scriptEngine, gui::OverlayFactory& overlayFactory,
-                   gui::OverlayStack& overlayStack, GuiRenderer* guiRenderer = nullptr);
+void luaInitGuiApi(ScriptEngine& scriptEngine, gui::GuiSystem& guiSystem,
+                   GuiRenderer* guiRenderer = nullptr);
 
 /**
  * @brief Init API for the various Open Builder widgets, (Buttons, etc)

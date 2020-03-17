@@ -3,30 +3,72 @@
 #include "../lua/client_lua_api.h"
 
 namespace gui {
-    GuiSystem::GuiSystem(unsigned windowWidth, unsigned windowHeight,
-                         ScriptEngine& scriptEngine)
-        : m_overlayStack(windowWidth, windowHeight)
+    GuiSystem::GuiSystem(unsigned windowWidth, unsigned windowHeight)
+        : m_windowWidth(static_cast<float>(windowWidth))
+        , m_windowHeight(static_cast<float>(windowHeight))
     {
-        luaInitGuiApi(scriptEngine, m_overlayFactory, m_overlayStack, &m_guiRenderer);
     }
 
     void GuiSystem::handleEvent(const sf::Event& event)
     {
-        m_overlayStack.handleEvent(event);
-    }
+        if (m_activeGui) {
+            switch (event.type) {
+                case sf::Event::TextEntered:
+                    m_activeGui->handleTextEntered(event.text.unicode);
+                    break;
 
-    void GuiSystem::update()
-    {
-        m_overlayStack.update();
-    }
+                case sf::Event::KeyReleased:
+                    m_activeGui->handleKeyRelease(event.key.code);
+                    break;
 
-    void GuiSystem::render()
-    {
-        for (auto& overlay : m_overlayStack.overlays) {
-            if (!overlay->isHidden()) {
-                overlay->prepareWidgetsForRender();
-                m_guiRenderer.render(*overlay);
+                case sf::Event::MouseMoved: {
+                    auto mouseMoveEvent = event.mouseMove;
+                    auto p = windowToGuiCoords(static_cast<float>(mouseMoveEvent.x),
+                                               static_cast<float>(mouseMoveEvent.y));
+                    mouseMoveEvent.x = p.x;
+                    mouseMoveEvent.y = p.y;
+                    m_activeGui->handleMouseMove(mouseMoveEvent);
+                } break;
+
+                case sf::Event::MouseButtonReleased: {
+                    auto p = windowToGuiCoords(static_cast<float>(event.mouseButton.x),
+                                               static_cast<float>(event.mouseButton.y));
+                    m_activeGui->handleClick(event.mouseButton.button, p.x, p.y);
+                } break;
+
+                default:
+                    break;
             }
         }
+
+        if (m_pendingGui) {
+            m_activeGui = std::move(m_pendingGui);
+            m_pendingGui = nullptr;
+        }
+    }
+
+    void GuiSystem::changeGui(const std::string& name, const std::string& data)
+    {
+        m_pendingGui = m_overlayFactory.createOverlay(name, data);
+    }
+
+    void GuiSystem::addGuiDefintion(const gui::OverlayDefinition& def)
+    {
+        m_overlayFactory.addOverlay(def);
+    }
+
+    void GuiSystem::render(GuiRenderer& guiRenderer)
+    {
+        if (m_activeGui) {
+            if (!m_activeGui->isHidden()) {
+                m_activeGui->prepareWidgetsForRender();
+                guiRenderer.render(*m_activeGui);
+            }
+        }
+    }
+
+    glm::vec2 GuiSystem::windowToGuiCoords(float winX, float winY) const
+    {
+        return {winX / m_windowWidth * GUI_WIDTH, winY / m_windowHeight * GUI_HEIGHT};
     }
 } // namespace gui

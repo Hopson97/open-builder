@@ -2,26 +2,10 @@
 
 #include <common/scripting/script_engine.h>
 
-#include "../gui/overlay.h"
-#include "../gui/overlay_factory.h"
-#include "../gui/overlay_stack.h"
+#include "../gui/gui_system.h"
 #include "../renderer/gui_renderer.h"
 
 namespace {
-    void initOverlayDefinitionCreateApi(sol::table& guiTable,
-                                        gui::OverlayFactory& overlayFactory)
-    {
-        guiTable["addGui"] = [&](const sol::table& guiDefintion) {
-            gui::OverlayDefinition overlay;
-
-            overlay.id = guiDefintion["id"];
-            overlay.title = guiDefintion["title"];
-            overlay.create = guiDefintion["create"];
-
-            overlayFactory.addOverlay(overlay);
-        };
-    }
-
     void initGuiRenderApi(sol::table& guiTable, GuiRenderer& guiRenderer)
     {
         guiTable["getTexture"] = [&guiRenderer](const std::string& path) {
@@ -29,37 +13,36 @@ namespace {
         };
     }
 
-    void initGuiStackApi(sol::table& guiTable, gui::OverlayFactory& overlayFactory,
-                         gui::OverlayStack& overlayStack)
+    void initGuiChangeApi(sol::table& guiTable, gui::GuiSystem& guiSystem)
     {
-        guiTable["push"] = sol::overload(
-            [&](const std::string guiId, const std::string& data) {
-                overlayStack.pushLayer(overlayFactory.createOverlay(guiId, data));
-            },
-            [&](const std::string guiId) {
-                overlayStack.pushLayer(overlayFactory.createOverlay(guiId, ""));
-            });
-
         guiTable["change"] = sol::overload(
-            [&](const std::string guiId, const std::string& data) {
-                overlayStack.resetToLayer(overlayFactory.createOverlay(guiId, data));
+            [&guiSystem](const std::string guiId, const std::string& data) {
+                guiSystem.changeGui(guiId, data);
             },
-            [&](const std::string guiId) {
-                overlayStack.resetToLayer(overlayFactory.createOverlay(guiId, ""));
-            });
+            [&guiSystem](const std::string guiId) { guiSystem.changeGui(guiId, ""); });
+    }
 
-        guiTable["pop"] = [&]() { overlayStack.popLayer(); };
+    void initGuiAddApi(sol::table& guiTable, gui::GuiSystem& guiSystem)
+    {
+        guiTable["addGui"] = [&guiSystem](const sol::table& guiDefintion) {
+            gui::OverlayDefinition overlay;
 
-    } // namespace
+            overlay.id = guiDefintion["id"];
+            overlay.title = guiDefintion["title"];
+            overlay.create = guiDefintion["create"];
 
+            guiSystem.addGuiDefintion(overlay);
+        };
+    }
 } // namespace
 
-void luaInitGuiApi(ScriptEngine& scriptEngine, gui::OverlayFactory& overlayFactory,
-                   gui::OverlayStack& overlayStack, GuiRenderer* guiRenderer)
+void luaInitGuiApi(ScriptEngine& scriptEngine, gui::GuiSystem& guiSystem,
+                   GuiRenderer* guiRenderer)
 {
     auto guiTable = scriptEngine.addTable("gui");
-    initOverlayDefinitionCreateApi(guiTable, overlayFactory);
-    initGuiStackApi(guiTable, overlayFactory, overlayStack);
+
+    initGuiChangeApi(guiTable, guiSystem);
+    initGuiAddApi(guiTable, guiSystem);
 
     if (guiRenderer) {
         initGuiRenderApi(guiTable, *guiRenderer);
