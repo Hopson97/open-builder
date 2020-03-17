@@ -24,7 +24,6 @@ add_library(ob-client
     lua/client_input_api.cpp
     lua/client_control_api.cpp
 
-    gui/overlay_stack.cpp
     gui/overlay.cpp
     gui/overlay_factory.cpp
     gui/gui_system.cpp
