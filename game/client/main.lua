@@ -22,7 +22,7 @@ dofile("game/client/menus/transition_screen.lua")
 dofile("game/client/hud.lua")
 
 game.onClientStartup(function()
-    game.gui.push("main_menu")
+    game.gui.change("main_menu")
 end)
 
 
@@ -43,7 +43,7 @@ end)
 game.onKeyReleased(game.Keyboard.Escape, function() 
     if game.control.isInGame() then
         game.control.pause()
-        game.gui.push("pause")
+        game.gui.change("pause")
         game.input.showMouse()
     end
 end)
