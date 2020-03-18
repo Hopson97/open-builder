@@ -40,11 +40,24 @@ namespace gui {
                     break;
             }
         }
+    }
 
-        if (m_pendingGui) {
+        void GuiSystem::update()
+        {
+                    if (m_pendingGui) {
             m_activeGui = std::move(m_pendingGui);
             m_pendingGui = nullptr;
         }
+        }
+
+    int GuiSystem::getActiveGuiRectCount() const
+    {
+        return m_activeGui->rectangleComponents.size();
+    }
+
+    int GuiSystem::getActiveGuiTextCount() const
+    {
+        return m_activeGui->textComponents.size();
     }
 
     void GuiSystem::changeGui(const std::string& name, const std::string& data)

@@ -60,7 +60,6 @@ void runClientEngine(const ClientConfig& config)
     ScriptEngine scriptEngine;
     ClientLuaCallbacks callbacks;
 
-
     // Gui
     gui::GuiSystem gui(config.windowWidth, config.windowHeight);
     GuiRenderer guiRenderer;
@@ -126,6 +125,7 @@ void runClientEngine(const ClientConfig& config)
 
         // Update
         game.update(gameTimer.restart().asSeconds());
+        gui.update();
 
         //=============================================================
         // Render
