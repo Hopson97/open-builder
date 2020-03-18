@@ -47,7 +47,6 @@ namespace gui {
 
         void prepareWidgetsForRender();
 
-        int widgetCount() const;
         void hide();
         void show();
         bool isHidden() const;
