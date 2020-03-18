@@ -17,7 +17,12 @@ namespace gui {
         GuiSystem(unsigned windowWidth, unsigned windowHeight);
 
         void handleEvent(const sf::Event& event);
+        void update();
         void render(GuiRenderer& guiRenderer);
+
+        // Debugging/ Testing purposes
+        int getActiveGuiRectCount() const;
+        int getActiveGuiTextCount() const;
 
         // Lua API
         void addGuiDefintion(const gui::OverlayDefinition& def);
