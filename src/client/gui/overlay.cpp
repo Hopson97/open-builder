@@ -101,11 +101,6 @@ namespace gui {
         }
     }
 
-    int Overlay::widgetCount() const
-    {
-        return m_widgets.size();
-    }
-
     void Overlay::hide()
     {
         m_isHidden = true;
