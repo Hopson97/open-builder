@@ -1,6 +1,7 @@
 #include "client_engine.h"
 
 #include "client_config.h"
+#include "client_controller.h"
 #include "game.h"
 #include "gl/framebuffer.h"
 #include "gl/gl_errors.h"

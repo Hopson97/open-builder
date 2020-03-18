@@ -42,13 +42,13 @@ namespace gui {
         }
     }
 
-        void GuiSystem::update()
-        {
-                    if (m_pendingGui) {
+    void GuiSystem::update()
+    {
+        if (m_pendingGui) {
             m_activeGui = std::move(m_pendingGui);
             m_pendingGui = nullptr;
         }
-        }
+    }
 
     int GuiSystem::getActiveGuiRectCount() const
     {
