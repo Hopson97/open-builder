@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include <client/engine_status.h>
+#include <client/client_controller.h>
 #include <client/lua/client_lua_api.h>
 #include <common/scripting/script_engine.h>
 

@@ -1,6 +1,5 @@
 #include "client_lua_api.h"
 
-#include "../engine_status.h"
 #include "../input/input_state.h"
 #include <SFML/Window/Keyboard.hpp>
 #include <common/scripting/script_engine.h>
