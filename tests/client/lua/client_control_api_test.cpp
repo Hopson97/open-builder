@@ -56,7 +56,7 @@ TEST_CASE("The 'state' of the game can be safely controlled by the Lua")
         engine.runLuaString("game.control.resume()");
         REQUIRE(state.currentState == State::InGame);
 
-        engine.runLuaString("game.control.loadGame()");
+        engine.runLuaString("game.control.loadWorld(\"Test\")");
         updateState(state);
         REQUIRE(state.currentState == State::InGame);
     }
