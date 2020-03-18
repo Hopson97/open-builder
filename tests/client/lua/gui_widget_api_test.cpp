@@ -17,7 +17,7 @@ const std::string guiCreateScript = R"(
         create = create
     }
 
-    game.gui.push("test_gui")
+    game.gui.change("test_gui")
 )";
 
 TEST_CASE("GUI Widget API Tests")
@@ -29,8 +29,8 @@ TEST_CASE("GUI Widget API Tests")
 
     SECTION("GUIs can have widgets added to them by Lua scripts")
     {
-
         scriptEngine.runLuaString(guiCreateScript);
+        gui.update();
         REQUIRE(gui.getActiveGuiRectCount() == 1);
     }
 }
