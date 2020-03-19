@@ -169,18 +169,8 @@ void runClientEngine(const ClientConfig& config)
 
         // TO DO Find some way to do this a lot more cleanly...
         // Switch to a different control if needed
+        isRunning = control.executeAction(config, game, callbacks);
         switch (control.currentState) {
-            case ClientStateController::StateId::CreateGame:
-                if (game.initGame(config)) {
-                    callbacks.onEnterGame();
-                    control.currentState = ClientStateController::StateId::InGame;
-                }
-                else {
-                    callbacks.onError("Unable to create game.");
-                    control.currentState = ClientStateController::StateId::InMenu;
-                }
-                break;
-
             case ClientStateController::StateId::JoinGame: {
                 if (game.initGame(config, control.paramA)) {
                     callbacks.onEnterGame();

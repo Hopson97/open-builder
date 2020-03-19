@@ -29,7 +29,7 @@ class ClientStateController {
 
     class ControlAction {
       public:
-        virtual bool executeAction(ClientConfig& config, Game& game,
+        virtual bool executeAction(const ClientConfig& config, Game& game,
                                    StateId& currentState,
                                    ClientLuaCallbacks& callbacks) = 0;
     };
@@ -46,4 +46,9 @@ class ClientStateController {
     void resumeGame();
     void exitGame();
     void shutdown();
+
+    bool executeAction(const ClientConfig& config, Game& game,
+                       ClientLuaCallbacks& callbacks);
+
+    std::unique_ptr<ControlAction> m_nextAction;
 };

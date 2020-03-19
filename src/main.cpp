@@ -29,7 +29,6 @@ namespace {
     enum class LaunchType {
         Server,
         Client,
-        TwoPlayer,
     };
 
     /**
