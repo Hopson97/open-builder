@@ -183,17 +183,6 @@ void runClientEngine(const ClientConfig& config)
                 break;
             } break;
 
-            case ClientStateController::StateId::LoadGame:
-                if (game.initGame(config)) {
-                    callbacks.onEnterGame();
-                    control.currentState = ClientStateController::StateId::InGame;
-                }
-                else {
-                    callbacks.onError("Unable to load game.");
-                    control.currentState = ClientStateController::StateId::InMenu;
-                }
-                break;
-
             case ClientStateController::StateId::ExitGame:
                 game.stopGame();
                 callbacks.onExitGame();
