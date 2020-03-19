@@ -17,6 +17,8 @@ local function onCreate(overlay, data)
     menu:pad(45)
     local usernameBox = menu:addTextBox("Username", "Enter username...")
     local passwordBox = menu:addTextBox("Password", "Enter password...")
+    passwordBox:hideInput()
+
     local joinButton = menu:addButton("Join World")
 
     menu:pad(40)
