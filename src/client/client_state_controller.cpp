@@ -16,6 +16,8 @@ namespace {
         bool executeAction(const ClientConfig& config, Game& game, State& m_currentState,
                            ClientLuaCallbacks& callbacks) final override
         {
+            ClientConfig c = config;
+            c.serverIp = LOCAL_HOST;
             if (game.initGame(config)) {
                 callbacks.onEnterGame();
                 m_currentState = State::InGame;

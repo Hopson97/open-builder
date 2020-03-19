@@ -2,21 +2,9 @@
 
 #include <client/client_state_controller.h>
 #include <client/lua/client_lua_api.h>
+#include <client/game.h>
 #include <client/lua/client_lua_callback.h>
 #include <common/scripting/script_engine.h>
-
-const std::string guiCreateScript = R"(
-
-    function create(overlay, data)
-
-    end
-
-    game.gui.addGui{
-        id = "test_gui",
-        title = "Test GUI",
-        create = create
-    }
-)";
 
 using State = ClientStateController::StateId;
 
@@ -26,8 +14,25 @@ TEST_CASE("The 'state' of the game can be safely controlled by the Lua")
     ClientStateController controller;
     ClientLuaCallbacks callbacks;
     callbacks.initCallbacks(engine);
+    Game game;
 
     luaInitClientControlApi(engine, controller);
+
+    SECTION("The game can be shutdown via the lua API")
+    {
+        engine.runLuaString("game.control.shutdown()");
+        REQUIRE(controller.executeAction({}, game, callbacks) == false);
+    }
+
+    // TODO After the refactor, the rest of these tests will be able to be written
+    // Right now they cannot, as they use opengl functions etc etc etc
+
+    //SECTION("A world can be created via the lua API")
+    //{
+    //    engine.runLuaString("game.control.createWorld(\"a\", \"b\")");
+    //    controller.executeAction({}, game, callbacks);
+    //    REQUIRE(controller.currentState() == State::InGame);
+    //}
     /*
     SECTION("The engine blocks invalid state switching")
     {
