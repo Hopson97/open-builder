@@ -126,19 +126,6 @@ namespace {
         return EXIT_FAILURE;
     }
 
-    /**
-     * @brief Launches the server
-     * @param config Config to be used by the server engine
-     * @param timeout How long the server waits for a connection before closing
-     * @return int Exit success flag
-     */
-    int launchServer(const ServerConfig& config)
-    {
-        ServerLauncher launcher(config, sf::seconds(0));
-        launcher.run();
-        return EXIT_SUCCESS;
-    }
-
     void printInstructions()
     {
         const int width = 20;
@@ -170,39 +157,6 @@ namespace {
         std::cout << "Press Enter to Continue...";
         std::cin.ignore();
     }
-    /**
-     * @brief Launches the client
-     * @param config Config to be used by the client engine
-     * @param launchingJustClient It defines if the instructions should be printed
-     * @return int Exit flag (Success, or Failure)
-     */
-    int launchClient(const ClientConfig& config, bool launchingJustClient)
-    {
-        if (launchingJustClient && config.shouldShowInstructions) {
-            printInstructions();
-        }
-        LOG("Launcher", "Launching client");
-        runClientEngine(config);
-        return 0;
-    }
-
-    /**
-     * @brief Launches 2 clients and the server. Useful for testing multiplayer
-     * @param config The config to be used by client/server engines
-     * @return int Exit flag (Success, or Failure)
-     */
-    int launchServerAnd2Players(const Config& config)
-    {
-        ServerLauncher server(config.server, sf::milliseconds(5000));
-        server.run();
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-        std::thread client2(launchClient, config.client, false);
-        int exit = launchClient(config.client, false);
-
-        client2.join();
-        return exit;
-    }
 } // namespace
 
 int main(int argc, char** argv)
@@ -227,14 +181,16 @@ int main(int argc, char** argv)
     // return launchClient(config.client, false);
 
     switch (config.launchType) {
-        case LaunchType::Server:
-            return launchServer(config.server);
+        case LaunchType::Server: {
+            ServerLauncher launcher(config.server, sf::seconds(0));
+            launcher.run();
+            break;
+        }
 
-        case LaunchType::Client:
-            return launchClient(config.client, false);
-
-        case LaunchType::TwoPlayer:
-            return launchServerAnd2Players(config);
+        case LaunchType::Client: {
+            runClientEngine(config.client);
+            break;
+        }
     }
 
     enet_deinitialize();

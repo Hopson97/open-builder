@@ -26,17 +26,7 @@ namespace {
             LOG("Connection", "Failed to connect to server (Game Full).");
             return nullptr;
         }
-
-        ENetEvent event;
-        if (enet_host_service(host, &event, 5000) > 0 &&
-            event.type == ENET_EVENT_TYPE_CONNECT) {
-            return peer;
-        }
-        else {
-            LOG("Connection", "Failed to connect to the server");
-            enet_peer_reset(peer);
-            return nullptr;
-        }
+        return peer;
     }
 
     int getPeerIdFromServer(ENetHost* host)

@@ -1,7 +1,7 @@
-local BUTTON_WIDTH = 800
-local BUTTON_HEIGHT = 90
-local BUTTON_SIZE = GuiDim.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-local buttonTexture = game.gui.getTexture("res/button.png")
+local WIDGET_WIDTH = 800
+local WIDGET_HEIGHT = 90
+local BUTTON_SIZE = GuiDim.new(0, WIDGET_WIDTH, 0, WIDGET_HEIGHT)
+local widgetTexture = game.gui.getTexture("res/button.png")
 
 StackMenu = {}
 StackMenu.__index = StackMenu
@@ -15,7 +15,7 @@ function StackMenu:create(yStart, overlay, gap, title)
     setmetatable(vals, StackMenu)
     vals.y = yStart
     vals.overlay = overlay
-    vals.buttonGap = BUTTON_HEIGHT + gap
+    vals.widgetGap = WIDGET_HEIGHT + gap
     if title ~= nil then
         local label = overlay:addCenteredLabel()
         label.position = GuiDim.new(0, 0, 0, vals.y)
@@ -26,9 +26,9 @@ function StackMenu:create(yStart, overlay, gap, title)
     return vals
 end
 
-function StackMenu:nextButtonPosition()
-    local position = getWidgetCentre(BUTTON_WIDTH, self.y)
-    self.y = self.y - self.buttonGap
+function StackMenu:nextWidgetPosition()
+    local position = getWidgetCentre(WIDGET_WIDTH, self.y)
+    self.y = self.y - self.widgetGap
     return position
 end
 
@@ -50,9 +50,9 @@ end
 
 function StackMenu:initBasicWidget(widget)
     widget.size = BUTTON_SIZE
-    widget.position = self:nextButtonPosition()
+    widget.position = self:nextWidgetPosition()
     widget.textSize = 50
-    widget.image = buttonTexture
+    widget.image = widgetTexture
 
     widget.onMouseOver = function()
         widget:setColour(1.25, 1.25, 1.25)
@@ -85,7 +85,7 @@ end
 function StackMenu:addLabel(text)
     local label = self.overlay:addLabel()
     label.textSize = 100
-    label.position = self:nextButtonPosition()
+    label.position = self:nextWidgetPosition()
     label.text = text
     return label
 end

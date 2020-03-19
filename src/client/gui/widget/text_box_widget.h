@@ -35,6 +35,8 @@ namespace gui {
 
         void prepareRender() final override;
 
+        void hideInputText();
+
       private:
         TextComponent* mp_text = nullptr;
         RectangleComponent* mp_rectangle = nullptr;
@@ -42,10 +44,13 @@ namespace gui {
 
         bool m_isActive = false;
         std::string m_textInput;
+        std::string m_displayText;
+
         std::string m_placeholder = "Enter something...";
         unsigned m_maxLength = 100;
 
         bool m_isUsingPlaceholder = false;
+        bool m_inputHidden = false;
 
         sol::function m_onMoveOver;
         sol::function m_onMouseOff;

@@ -78,6 +78,7 @@ namespace {
         textboxApi["onMouseOff"] = sol::property(&gui::TextBoxWidget::setOnMouseOff);
 
         textboxApi["getText"] = &gui::TextBoxWidget::getText;
+        textboxApi["hideInput"] = &gui::TextBoxWidget::hideInputText;
         textboxApi["placeholder"] = sol::property(&gui::TextBoxWidget::setPlaceholder);
         textboxApi["maxLength"] = sol::property(&gui::TextBoxWidget::setMaxLength);
         textboxApi["label"] = sol::property(&gui::TextBoxWidget::setLabelText);

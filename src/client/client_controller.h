@@ -2,6 +2,10 @@
 
 #include <string>
 
+/**
+ * @brief Provides a Lua API for controlling the state of the client
+ *
+ */
 struct ClientStateControl {
     enum class StateId {
         // Absolute States
