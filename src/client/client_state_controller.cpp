@@ -2,36 +2,41 @@
 #include "game.h"
 #include "lua/client_lua_callback.h"
 
-using State = ClientStateController::StateId;
+namespace {
+    using State = ClientStateController::StateId;
 
-class CreateWorldAction final : public ClientStateController::ControlAction {
-  public:
-    CreateWorldAction(const std::string& name, const std::string& seed)
-        : m_worldName(name)
-        , m_worldSeed(seed)
-    {
-    }
-
-    bool executeAction(ClientConfig& config, Game& game, State& currentState,
-                       ClientLuaCallbacks& callbacks) final override
-    {
-        if (game.initGame(config)) {
-            callbacks.onEnterGame();
-            currentState = State::InGame;
+    class CreateWorldAction final : public ClientStateController::ControlAction {
+      public:
+        CreateWorldAction(const std::string& name, const std::string& seed)
+            : m_worldName(name)
+            , m_worldSeed(seed)
+        {
         }
-    }
 
-  private:
-    const std::string m_worldName;
-    const std::string m_worldSeed;
-};
+        bool executeAction(const ClientConfig& config, Game& game, State& currentState,
+                           ClientLuaCallbacks& callbacks) final override
+        {
+            if (game.initGame(config)) {
+                callbacks.onEnterGame();
+                currentState = State::InGame;
+            }
+            else {
+                callbacks.onError("Failed to create world.");
+                currentState = State::InMenu;
+            }
+            return true;
+        }
+
+      private:
+        const std::string m_worldName;
+        const std::string m_worldSeed;
+    };
+} // namespace
 
 void ClientStateController::createWorld(const std::string& name, const std::string& seed)
 {
     if (currentState == StateId::InMenu) {
-        currentState = StateId::CreateGame;
-        paramA = name;
-        paramB = seed;
+        m_nextAction = std::make_unique<CreateWorldAction>(name, seed);
     }
 }
 
@@ -75,4 +80,15 @@ void ClientStateController::exitGame()
 void ClientStateController::shutdown()
 {
     currentState = StateId::Shutdown;
+}
+
+bool ClientStateController::executeAction(const ClientConfig& config, Game& game,
+                                          ClientLuaCallbacks& callbacks)
+{
+    if (m_nextAction) {
+        bool result = m_nextAction->executeAction(config, game, currentState, callbacks);
+        m_nextAction.release();
+        return result;
+    }
+    return true;
 }
