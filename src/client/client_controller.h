@@ -1,12 +1,18 @@
 #pragma once
 
+#include <memory>
 #include <string>
+
+class Game;
+class ClientLuaCallbacks;
+struct ClientConfig;
 
 /**
  * @brief Provides a Lua API for controlling the state of the client
  *
  */
-struct ClientStateControl {
+class ClientStateControl {
+  public:
     enum class StateId {
         // Absolute States
         InMenu,
@@ -20,6 +26,15 @@ struct ClientStateControl {
         ExitGame,
         Shutdown,
     };
+
+    class ControlAction {
+      public:
+        virtual bool executeAction(ClientConfig& config, Game& game,
+                                   StateId& currentState,
+                                   ClientLuaCallbacks& callbacks) = 0;
+    };
+
+  
 
     StateId currentState = StateId::InMenu;
     std::string paramA;

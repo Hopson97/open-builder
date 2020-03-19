@@ -14,21 +14,27 @@ local function onCreate(overlay, data)
     local label = menu:addLabel()
     label.text = "This will either automatically register \nyou to the server, or log you in."
     label.textSize = 35
+
     menu:pad(45)
+
     local usernameBox = menu:addTextBox("Username", "Enter username...")
     local passwordBox = menu:addTextBox("Password", "Enter password...")
+
     passwordBox:hideInput()
 
     local joinButton = menu:addButton("Join World")
 
     menu:pad(40)
+
     local backButton = menu:addButton("Back")
 
     joinButton.onClick = function()
         local serverIp = serverIpBox:getText()
+        local username = usernameBox:getText()
+        local password = passwordBox:getText()
         if string.len(serverIp) > 0 then
             game.gui.change("transition", "Joining World")
-            game.control.joinGame(serverIp)
+            game.control.joinGame(serverIp, username, password)
         end
     end    
 
