@@ -53,7 +53,7 @@ namespace {
                 currentState = State::InGame;
             }
             else {
-                callbacks.onError("Failed to create world.");
+                callbacks.onError("Failed to load world.");
                 currentState = State::InMenu;
             }
             return true;
@@ -61,6 +61,34 @@ namespace {
 
       private:
         const std::string m_worldName;
+    };
+
+    /// = = = = = = = = = = = = =
+    ///     JoinServerAction
+    /// = = = = = = = = = = = = =
+    class JoinServerAction final : public ClientStateController::ControlAction {
+      public:
+        JoinServerAction(const std::string& serverIp)
+            : m_serverIp(serverIp)
+        {
+        }
+
+        bool executeAction(const ClientConfig& config, Game& game, State& currentState,
+                           ClientLuaCallbacks& callbacks) final override
+        {
+            if (game.initGame(config, m_serverIp)) {
+                callbacks.onEnterGame();
+                currentState = State::InGame;
+            }
+            else {
+                callbacks.onError("Failed to join world.");
+                currentState = State::InMenu;
+            }
+            return true;
+        }
+
+      private:
+        const std::string m_serverIp;
     };
 } // namespace
 
