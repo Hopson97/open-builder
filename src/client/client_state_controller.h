@@ -18,13 +18,6 @@ class ClientStateController {
         InMenu,
         InGame,
         Paused,
-
-        // Transition States
-        CreateGame,
-        LoadGame,
-        JoinGame,
-        ExitGame,
-        Shutdown,
     };
 
     class ControlAction {
@@ -34,21 +27,22 @@ class ClientStateController {
                                    ClientLuaCallbacks& callbacks) = 0;
     };
 
-    StateId currentState = StateId::InMenu;
-    std::string paramA;
-    std::string paramB;
-
+    // Lua API functions
     void createWorld(const std::string& name, const std::string& seed);
     void loadWorld(const std::string& name);
     void joinWorld(const std::string& ipAddress);
-
     void pauseGame();
     void resumeGame();
     void exitGame();
     void shutdown();
 
+    // C++ API Functions
     bool executeAction(const ClientConfig& config, Game& game,
                        ClientLuaCallbacks& callbacks);
 
+    StateId currentState() const;
+
+  private:
+    StateId m_currentState = StateId::InMenu;
     std::unique_ptr<ControlAction> m_nextAction;
 };

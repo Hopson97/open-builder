@@ -30,6 +30,6 @@ void luaInitClientControlApi(ScriptEngine& scriptEngine,
     };
 
     controlApi["isInGame"] = [&clientState] {
-        return clientState.currentState == State::InGame;
+        return clientState.currentState() == State::InGame;
     };
 }

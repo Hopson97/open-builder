@@ -164,7 +164,6 @@ void runClientEngine(const ClientConfig& config)
         glDisable(GL_BLEND);
         //=======================================================================
 
-
         fps.update();
         isRunning = control.executeAction(config, game, callbacks);
     }
