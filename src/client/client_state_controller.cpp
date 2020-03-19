@@ -5,6 +5,9 @@
 namespace {
     using State = ClientStateController::StateId;
 
+    /// = = = = = = = = = = = = =
+    ///     CreateWorldAction
+    /// = = = = = = = = = = = = =
     class CreateWorldAction final : public ClientStateController::ControlAction {
       public:
         CreateWorldAction(const std::string& name, const std::string& seed)
@@ -31,6 +34,34 @@ namespace {
         const std::string m_worldName;
         const std::string m_worldSeed;
     };
+
+    /// = = = = = = = = = = = = =
+    ///     LoadWorldActon
+    /// = = = = = = = = = = = = =
+    class LoadWorldActon final : public ClientStateController::ControlAction {
+      public:
+        LoadWorldActon(const std::string& name)
+            : m_worldName(name)
+        {
+        }
+
+        bool executeAction(const ClientConfig& config, Game& game, State& currentState,
+                           ClientLuaCallbacks& callbacks) final override
+        {
+            if (game.initGame(config)) {
+                callbacks.onEnterGame();
+                currentState = State::InGame;
+            }
+            else {
+                callbacks.onError("Failed to create world.");
+                currentState = State::InMenu;
+            }
+            return true;
+        }
+
+      private:
+        const std::string m_worldName;
+    };
 } // namespace
 
 void ClientStateController::createWorld(const std::string& name, const std::string& seed)
@@ -43,8 +74,7 @@ void ClientStateController::createWorld(const std::string& name, const std::stri
 void ClientStateController::loadWorld(const std::string& name)
 {
     if (currentState == StateId::InMenu) {
-        currentState = StateId::LoadGame;
-        paramA = name;
+        m_nextAction = std::make_unique<LoadWorldActon>(name);
     }
 }
 
