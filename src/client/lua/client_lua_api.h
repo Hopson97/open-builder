@@ -10,7 +10,7 @@ namespace gui {
 
 class GuiRenderer;
 struct InputState;
-class ClientStateControl;
+class ClientStateController;
 
 /**
  * @brief Init the overlay APIs
@@ -46,4 +46,5 @@ void luaInitInputApi(ScriptEngine& scriptEngine, sf::Window& window,
  * @param scriptEngine The Lua script engine/ lua state to append the API to
  * @param clientState The state controller
  */
-void luaInitClientControlApi(ScriptEngine& scriptEngine, ClientStateControl& clientState);
+void luaInitClientControlApi(ScriptEngine& scriptEngine,
+                             ClientStateController& clientState);

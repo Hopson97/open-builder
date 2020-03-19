@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include <client/client_controller.h>
+#include <client/client_state_controller.h>
 #include <client/lua/client_lua_api.h>
 #include <common/scripting/script_engine.h>
 
@@ -17,9 +17,9 @@ const std::string guiCreateScript = R"(
     }
 )";
 
-using State = ClientStateControl::StateId;
+using State = ClientStateController::StateId;
 
-void updateState(ClientStateControl& state)
+void updateState(ClientStateController& state)
 {
     switch (state.currentState) {
         case State::CreateGame:
@@ -38,7 +38,7 @@ void updateState(ClientStateControl& state)
 TEST_CASE("The 'state' of the game can be safely controlled by the Lua")
 {
     ScriptEngine engine;
-    ClientStateControl state;
+    ClientStateController state;
 
     luaInitClientControlApi(engine, state);
 
