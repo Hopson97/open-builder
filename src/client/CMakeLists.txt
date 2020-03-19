@@ -13,7 +13,7 @@ add_library(ob-client
     gl/gl_errors.cpp
     gl/primitive.cpp
 
-    client_controller.cpp
+    client_state_controller.cpp
     client_engine.cpp
     client.cpp
     game.cpp

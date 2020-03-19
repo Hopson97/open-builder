@@ -1,7 +1,7 @@
 #include "client_engine.h"
 
 #include "client_config.h"
-#include "client_controller.h"
+#include "client_state_controller.h"
 #include "game.h"
 #include "gl/framebuffer.h"
 #include "gl/gl_errors.h"
@@ -49,7 +49,7 @@ void runClientEngine(const ClientConfig& config)
     }
 
     // Client engine stuff
-    ClientStateControl control;
+    ClientStateController control;
     FPSCounter fps;
     sf::Clock gameTimer;
 
@@ -170,47 +170,47 @@ void runClientEngine(const ClientConfig& config)
         // TO DO Find some way to do this a lot more cleanly...
         // Switch to a different control if needed
         switch (control.currentState) {
-            case ClientStateControl::StateId::CreateGame:
+            case ClientStateController::StateId::CreateGame:
                 if (game.initGame(config)) {
                     callbacks.onEnterGame();
-                    control.currentState = ClientStateControl::StateId::InGame;
+                    control.currentState = ClientStateController::StateId::InGame;
                 }
                 else {
                     callbacks.onError("Unable to create game.");
-                    control.currentState = ClientStateControl::StateId::InMenu;
+                    control.currentState = ClientStateController::StateId::InMenu;
                 }
                 break;
 
-            case ClientStateControl::StateId::JoinGame: {
+            case ClientStateController::StateId::JoinGame: {
                 if (game.initGame(config, control.paramA)) {
                     callbacks.onEnterGame();
-                    control.currentState = ClientStateControl::StateId::InGame;
+                    control.currentState = ClientStateController::StateId::InGame;
                 }
                 else {
                     callbacks.onError("Unable to join game.");
-                    control.currentState = ClientStateControl::StateId::InMenu;
+                    control.currentState = ClientStateController::StateId::InMenu;
                 }
                 break;
             } break;
 
-            case ClientStateControl::StateId::LoadGame:
+            case ClientStateController::StateId::LoadGame:
                 if (game.initGame(config)) {
                     callbacks.onEnterGame();
-                    control.currentState = ClientStateControl::StateId::InGame;
+                    control.currentState = ClientStateController::StateId::InGame;
                 }
                 else {
                     callbacks.onError("Unable to load game.");
-                    control.currentState = ClientStateControl::StateId::InMenu;
+                    control.currentState = ClientStateController::StateId::InMenu;
                 }
                 break;
 
-            case ClientStateControl::StateId::ExitGame:
+            case ClientStateController::StateId::ExitGame:
                 game.stopGame();
                 callbacks.onExitGame();
-                control.currentState = ClientStateControl::StateId::InMenu;
+                control.currentState = ClientStateController::StateId::InMenu;
                 break;
 
-            case ClientStateControl::StateId::Shutdown:
+            case ClientStateController::StateId::Shutdown:
                 isRunning = false;
                 break;
 

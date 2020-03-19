@@ -1,10 +1,10 @@
-#include "client_controller.h"
+#include "client_state_controller.h"
 #include "game.h"
 #include "lua/client_lua_callback.h"
 
-using State = ClientStateControl::StateId;
+using State = ClientStateController::StateId;
 
-class CreateWorldAction final : public ClientStateControl::ControlAction {
+class CreateWorldAction final : public ClientStateController::ControlAction {
   public:
     CreateWorldAction(const std::string& name, const std::string& seed)
         : m_worldName(name)
@@ -26,7 +26,7 @@ class CreateWorldAction final : public ClientStateControl::ControlAction {
     const std::string m_worldSeed;
 };
 
-void ClientStateControl::createWorld(const std::string& name, const std::string& seed)
+void ClientStateController::createWorld(const std::string& name, const std::string& seed)
 {
     if (currentState == StateId::InMenu) {
         currentState = StateId::CreateGame;
@@ -35,7 +35,7 @@ void ClientStateControl::createWorld(const std::string& name, const std::string&
     }
 }
 
-void ClientStateControl::loadWorld(const std::string& name)
+void ClientStateController::loadWorld(const std::string& name)
 {
     if (currentState == StateId::InMenu) {
         currentState = StateId::LoadGame;
@@ -43,7 +43,7 @@ void ClientStateControl::loadWorld(const std::string& name)
     }
 }
 
-void ClientStateControl::joinWorld(const std::string& ipAddress)
+void ClientStateController::joinWorld(const std::string& ipAddress)
 {
     if (currentState == StateId::InMenu) {
         currentState = StateId::JoinGame;
@@ -51,28 +51,28 @@ void ClientStateControl::joinWorld(const std::string& ipAddress)
     }
 }
 
-void ClientStateControl::pauseGame()
+void ClientStateController::pauseGame()
 {
     if (currentState == StateId::InGame) {
         currentState = StateId::Paused;
     }
 }
 
-void ClientStateControl::resumeGame()
+void ClientStateController::resumeGame()
 {
     if (currentState == StateId::Paused) {
         currentState = StateId::InGame;
     }
 }
 
-void ClientStateControl::exitGame()
+void ClientStateController::exitGame()
 {
     if (currentState == StateId::Paused || currentState == StateId::InGame) {
         currentState = StateId::ExitGame;
     }
 }
 
-void ClientStateControl::shutdown()
+void ClientStateController::shutdown()
 {
     currentState = StateId::Shutdown;
 }

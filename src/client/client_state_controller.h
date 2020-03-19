@@ -11,7 +11,7 @@ struct ClientConfig;
  * @brief Provides a Lua API for controlling the state of the client
  *
  */
-class ClientStateControl {
+class ClientStateController {
   public:
     enum class StateId {
         // Absolute States
@@ -33,8 +33,6 @@ class ClientStateControl {
                                    StateId& currentState,
                                    ClientLuaCallbacks& callbacks) = 0;
     };
-
-  
 
     StateId currentState = StateId::InMenu;
     std::string paramA;

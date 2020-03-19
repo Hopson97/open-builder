@@ -1,11 +1,12 @@
 #include "client_lua_api.h"
 
-#include "../client_controller.h"
+#include "../client_state_controller.h"
 #include <common/scripting/script_engine.h>
 
-using State = ClientStateControl::StateId;
+using State = ClientStateController::StateId;
 
-void luaInitClientControlApi(ScriptEngine& scriptEngine, ClientStateControl& clientState)
+void luaInitClientControlApi(ScriptEngine& scriptEngine,
+                             ClientStateController& clientState)
 {
     auto controlApi = scriptEngine.addTable("control");
 
