@@ -1,18 +1,25 @@
 
-local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
+local backgroundTexture = game.gui.getTexture("res/join_bg.png")
 local logoTexture = game.gui.getTexture("res/logo.png")
 
 local function onCreate(overlay, data)
 
     local menu = StackMenu:create(900, overlay, 15, "Join World")
-    menu:pad(100)
+    menu:pad(20)
     menu:setBackground(backgroundTexture)
 
     local serverIpBox = menu:addTextBox("Server IP", "Enter server IP...")
     serverIpBox.text = "178.62.64.146"
-    menu:pad(10)
+
+    local label = menu:addLabel()
+    label.text = "This will either automatically register \nyou to the server, or log you in."
+    label.textSize = 35
+    menu:pad(45)
+    local usernameBox = menu:addTextBox("Username", "Enter username...")
+    local passwordBox = menu:addTextBox("Password", "Enter password...")
     local joinButton = menu:addButton("Join World")
-    menu:pad(200)
+
+    menu:pad(40)
     local backButton = menu:addButton("Back")
 
     joinButton.onClick = function()
