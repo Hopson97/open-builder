@@ -184,10 +184,12 @@ int main(int argc, char** argv)
         case LaunchType::Server: {
             ServerLauncher launcher(config.server, sf::seconds(0));
             launcher.run();
+            break;
         }
 
         case LaunchType::Client: {
             runClientEngine(config.client);
+            break;
         }
     }
 
