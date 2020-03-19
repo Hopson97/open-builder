@@ -90,6 +90,33 @@ namespace {
       private:
         const std::string m_serverIp;
     };
+
+    /// = = = = = = = = = = = = =
+    ///     ExitGameAction
+    /// = = = = = = = = = = = = =
+    class ExitGameAction final : public ClientStateController::ControlAction {
+      public:
+        bool executeAction(const ClientConfig&, Game& game, State& currentState,
+                           ClientLuaCallbacks& callbacks) final override
+        {
+            game.stopGame();
+            callbacks.onExitGame();
+            currentState = State::InMenu;
+            return true;
+        }
+    };
+
+    /// = = = = = = = = = = = = =
+    ///     ShutdownGameAction
+    /// = = = = = = = = = = = = =
+    class ShutdownGameAction final : public ClientStateController::ControlAction {
+      public:
+        bool executeAction(const ClientConfig&, Game&, State&,
+                           ClientLuaCallbacks&) final override
+        {
+            return false;
+        }
+    };
 } // namespace
 
 void ClientStateController::createWorld(const std::string& name, const std::string& seed)
@@ -109,8 +136,7 @@ void ClientStateController::loadWorld(const std::string& name)
 void ClientStateController::joinWorld(const std::string& ipAddress)
 {
     if (currentState == StateId::InMenu) {
-        currentState = StateId::JoinGame;
-        paramA = ipAddress;
+        m_nextAction = std::make_unique<JoinServerAction>(ipAddress);
     }
 }
 
@@ -131,13 +157,13 @@ void ClientStateController::resumeGame()
 void ClientStateController::exitGame()
 {
     if (currentState == StateId::Paused || currentState == StateId::InGame) {
-        currentState = StateId::ExitGame;
+        m_nextAction = std::make_unique<ExitGameAction>();
     }
 }
 
 void ClientStateController::shutdown()
 {
-    currentState = StateId::Shutdown;
+    m_nextAction = std::make_unique<ShutdownGameAction>();
 }
 
 bool ClientStateController::executeAction(const ClientConfig& config, Game& game,
