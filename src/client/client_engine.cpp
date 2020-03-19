@@ -164,26 +164,9 @@ void runClientEngine(const ClientConfig& config)
         glDisable(GL_BLEND);
         //=======================================================================
 
-        // Stats
+
         fps.update();
-
-        // TO DO Find some way to do this a lot more cleanly...
-        // Switch to a different control if needed
         isRunning = control.executeAction(config, game, callbacks);
-        switch (control.currentState) {
-            case ClientStateController::StateId::ExitGame:
-                game.stopGame();
-                callbacks.onExitGame();
-                control.currentState = ClientStateController::StateId::InMenu;
-                break;
-
-            case ClientStateController::StateId::Shutdown:
-                isRunning = false;
-                break;
-
-            default:
-                break;
-        }
     }
     window.close();
 }
