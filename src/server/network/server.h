@@ -27,6 +27,9 @@ struct ConnectedClient {
     bool connected = false;
 };
 
+class Server {
+};
+
 class Server final : public NetworkHost {
     struct VoxelUpdate {
         VoxelPosition position;
