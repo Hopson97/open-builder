@@ -1,7 +1,8 @@
 --
 -- Helpers
 --
-dofile("game/client/stack_menu.lua")   
+dofile("game/client/gui_helpers/common.lua")   
+dofile("game/client/gui_helpers/stack_menu.lua")   
 
 --
 --  Menus
@@ -15,6 +16,7 @@ dofile("game/client/menus/load_world_menu.lua")
 dofile("game/client/menus/pause_menu.lua")
 dofile("game/client/menus/error_screen.lua")
 dofile("game/client/menus/transition_screen.lua")
+dofile("game/client/menus/character_select_menu.lua")
 
 -- 
 -- In Game GUIs
