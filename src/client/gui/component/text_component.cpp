@@ -162,13 +162,11 @@ namespace gui {
                 continue;
             }
 
-            m_size.y = font.getLineHeight(m_fontSize) / 1 / m_fontSize;
-            ;
+            m_size.y = pos.y + font.getLineHeight(m_fontSize);
 
             // Create a single quad for the char
             auto& glyph = font.getGlyph(character, m_fontSize);
             chars.emplace_back(pos, glyph);
-            // addCharacter(mesh, glyph, font.getTextureAtlasSize(), pos);
             pos.x += glyph.advance;
             m_size.x = pos.x;
         }
