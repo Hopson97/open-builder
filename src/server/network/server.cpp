@@ -246,7 +246,7 @@ void Server::update()
                 packet << voxelUpdate.position.x << voxelUpdate.position.y
                        << voxelUpdate.position.z << voxelUpdate.voxel;
             }
-            // TODO: Try find a way to not send voxel updates to players
+            // @TODO: Try find a way to not send voxel updates to players
             // that created them
             broadcastToPeers(packet, 0, ENET_PACKET_FLAG_RELIABLE);
             m_world.voxelUpdates.clear();

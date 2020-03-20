@@ -9,7 +9,7 @@ class ServerLuaCallbacks {
   public:
     ServerLuaCallbacks(ScriptEngine& engine);
 
-    // TODO The player entity would be passed into this
+    // @TODO The player entity would be passed into this
     void runPlayerJoinCallbacks();
     void runPlayerLeaveCallbacks();
 

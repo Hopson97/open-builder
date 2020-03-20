@@ -7,7 +7,7 @@ VoxelDataManager::VoxelDataManager()
 
 void VoxelDataManager::initCommonVoxelTypes()
 {
-    // TODO Eventually some of this won't be needed as "common voxels" as this
+    // @TODO Eventually some of this won't be needed as "common voxels" as this
     // stuff
     // would be delagated to the Lua instead
     // For now though, this can work as a placeholder
@@ -37,7 +37,7 @@ const VoxelData& VoxelDataManager::getVoxelData(const std::string& name) const
 
 voxel_t VoxelDataManager::getVoxelId(CommonVoxel commonVoxel) const
 {
-    // TODO Change to operator[] once can be sure it is working
+    // @TODO Change to operator[] once can be sure it is working
     return m_commonVoxels.at((u8)commonVoxel);
 }
 

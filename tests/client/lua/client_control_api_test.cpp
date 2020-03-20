@@ -1,8 +1,8 @@
 #include <catch2/catch.hpp>
 
 #include <client/client_state_controller.h>
-#include <client/lua/client_lua_api.h>
 #include <client/game.h>
+#include <client/lua/client_lua_api.h>
 #include <client/lua/client_lua_callback.h>
 #include <common/scripting/script_engine.h>
 
@@ -24,10 +24,10 @@ TEST_CASE("The 'state' of the game can be safely controlled by the Lua")
         REQUIRE(controller.executeAction({}, game, callbacks) == false);
     }
 
-    // TODO After the refactor, the rest of these tests will be able to be written
+    // @TODO After the refactor, the rest of these tests will be able to be written
     // Right now they cannot, as they use opengl functions etc etc etc
 
-    //SECTION("A world can be created via the lua API")
+    // SECTION("A world can be created via the lua API")
     //{
     //    engine.runLuaString("game.control.createWorld(\"a\", \"b\")");
     //    controller.executeAction({}, game, callbacks);

@@ -272,7 +272,7 @@ void Client::update(float dt)
 
                     // Break so that the game still runs while world is
                     // being built
-                    // TODO: Work out a way to make this concurrent (aka
+                    // @TODO: Work out a way to make this concurrent (aka
                     // run seperate from rest of application)
                     if (count++ > 3) {
                         break;
@@ -305,7 +305,7 @@ void Client::update(float dt)
 
 void Client::render()
 {
-    // TODO [Hopson] Clean this up
+    // @TODO [Hopson] Clean this up
     if (!m_hasReceivedGameData) {
         return;
     }
