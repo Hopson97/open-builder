@@ -164,7 +164,7 @@ void Client::onGameRegistryData(sf::Packet& packet)
 
     u16 numVoxels;
     packet >> numVoxels;
-    // todo
+    // @TODO
     // 1. Need to somehow work out the exact amount of textures needed
     // 2. Need to pass in the actual texture pack resolution
     m_voxelTextures.create(numVoxels * 3, 16);

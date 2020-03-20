@@ -33,7 +33,7 @@ namespace {
         return false;
     }
 
-    // TODO: Generalize this check to any block and any face.
+    // @TODO: Generalize this check to any block and any face.
     bool shouldRenderTop(const VoxelDataManager& voxelData,
                          const VoxelData& actualVoxData, voxel_t topVoxel)
     {

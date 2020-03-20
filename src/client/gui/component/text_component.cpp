@@ -107,7 +107,7 @@ namespace gui {
 
     void TextComponent::setText(const std::string& text)
     {
-        // todo maybe std::move, need to check if possible
+        // @TODO maybe std::move, need to check if possible
         m_text = text;
         m_isGeometryUpdateNeeded = true;
     }
