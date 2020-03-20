@@ -9,14 +9,22 @@ local CHAR_SLOT_SIZE = GuiDim.new(0, CHAR_SELECT_WIDTH, 0, CHAR_SELECT_HEIGHT)
 
 local function createCharacterSelectButton(overlay, slot)
     local backButton = overlay:addButton()
-    backButton.text = "+ New Character"
     backButton.textSize = 40
     backButton.position = GuiDim.new(0, 10, 0, 870 - slot * 9 - CHAR_SELECT_HEIGHT * slot)
     backButton.size = CHAR_SLOT_SIZE
     backButton.image = buttonTextureSmall
     setHighlightOnMouseOver(backButton)
 
+    backButton.text = "+ New Character"
 
+    if slot == 5 then
+        backButton.text = "Charles/ Lvl 10"
+    end
+
+
+    backButton.onClick = function()
+        game.gui.change("new_character", tostring(slot))
+    end
 end
 
 local function create(overlay) 
