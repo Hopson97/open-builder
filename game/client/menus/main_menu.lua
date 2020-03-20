@@ -21,7 +21,7 @@ local function onCreate(overlay)
     end    
 
     vanilla.onClick = function()
-        game.gui.change("play_game", "Vanilla")
+        game.gui.change("character_select", "Vanilla")
     end
 
     modded.onClick = function()
