@@ -27,7 +27,7 @@ local function onCreate(overlay, data)
     menu:pad(40)
     menu:addBackButton()
 
-    if data["mode"] == "multiverse" then
+    if data["mode"] == "vanilla" then
         addPlayerProfile(overlay, data)
     end
 

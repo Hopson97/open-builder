@@ -8,7 +8,7 @@ local function onCreate(overlay, data)
 
     local worldNameBox = menu:addTextBox("World Name", "Enter name...")
     local worldSeedBox = menu:addTextBox("World Seed", "Enter seed...")
-    
+
     menu:pad(10)
     local create = menu:addButton("Create World")
 
@@ -24,7 +24,7 @@ local function onCreate(overlay, data)
         end
     end    
 
-    if data["mode"] == "multiverse" then
+    if data["mode"] == "vanilla" then
         addPlayerProfile(overlay, data)
     end
 end
