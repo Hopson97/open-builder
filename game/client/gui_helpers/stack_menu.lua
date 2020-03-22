@@ -77,6 +77,14 @@ function StackMenu:addLabel(text)
     return label
 end
 
+function StackMenu:addBackButton()
+    local backButton = self:addButton("Back")
+    backButton.onClick = function()
+        game.gui.pop()
+    end
+    return backButton
+end
+
 function StackMenu:pad(amount)
     self.y = self.y - amount
 end

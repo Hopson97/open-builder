@@ -25,8 +25,7 @@ local function onCreate(overlay, data)
     local joinButton = menu:addButton("Join World")
 
     menu:pad(40)
-
-    local backButton = menu:addButton("Back")
+    menu:addBackButton()
 
     joinButton.onClick = function()
         local serverIp = serverIpBox:getText()
@@ -37,10 +36,6 @@ local function onCreate(overlay, data)
             game.control.joinGame(serverIp, username, password)
         end
     end    
-
-    backButton.onClick = function()
-        game.gui.pop()
-    end
 end
 
 game.gui.addGui{

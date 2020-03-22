@@ -21,7 +21,7 @@ local function onCreate(overlay, data)
     local newWorld = menu:addButton("New World")
     local loadWorld = menu:addButton("Load World")
     local joinWorld = menu:addButton("Join World")
-    local backButton = menu:addButton("Back")
+    menu:addBackButton()
 
     newWorld.onClick = function()
         game.gui.push("new_world", data)
@@ -33,11 +33,6 @@ local function onCreate(overlay, data)
 
     joinWorld.onClick = function()
         game.gui.push("join_world", data)
-    end
-
-
-    backButton.onClick = function()
-        game.gui.pop()
     end
 end
 

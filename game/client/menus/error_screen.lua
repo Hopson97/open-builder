@@ -12,7 +12,7 @@ local function onCreate(overlay, data)
     errorMessage.text = data["message"]
     menu:pad(200)
 
-    local backButton = menu:addButton("Back")
+    local backButton = menu:addButton("Main Menu")
     backButton.onClick = function()
         game.gui.change("main_menu")
     end

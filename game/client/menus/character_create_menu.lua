@@ -16,10 +16,8 @@ local function onCreate(overlay, slot)
 
 
     menu:pad(200)
-    local backButton = menu:addButton("Back")
-    backButton.onClick = function()
-        game.gui.pop()
-    end
+    menu:addBackButton()
+
 end
 
 game.gui.addGui{
