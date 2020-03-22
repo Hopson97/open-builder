@@ -14,11 +14,11 @@ local function createCharacterSelectButton(menu, slot)
     if slot == 0 then
         selector.text = "AAAAAAAAAAAAAA/ Lvl 10"
         selector.onClick = function()
-            game.gui.change("play_game", "Vanilla")
+            game.gui.change("play_game", { mode = "multiverse"} )
         end
     else
         selector.onClick = function()
-            game.gui.change("new_character", tostring(slot))
+            game.gui.change("new_character", {slot = tostring(slot) } )
         end
     end
 end

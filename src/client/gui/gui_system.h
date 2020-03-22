@@ -26,7 +26,7 @@ namespace gui {
 
         // Lua API
         void addGuiDefintion(const gui::OverlayDefinition& def);
-        void changeGui(const std::string& name, const std::string& data);
+        void changeGui(const std::string& name, const sol::table& data);
 
       private:
         glm::vec2 windowToGuiCoords(float winX, float winY) const;

@@ -2,9 +2,19 @@
 local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
 local logoTexture = game.gui.getTexture("res/logo.png")
 
-local function onCreate(overlay, data)
+local function getTitle(data)
+    local mode = data["mode"]
+    if mode == "multiverse" then
+        return "Multiverse Mode"
+    elseif mode == "universe" then
+        return "Universe Mode"
+    else
+        return "U N K N O W N"
+    end
+end
 
-    local menu = StackMenu:create(900, overlay, 15, data)
+local function onCreate(overlay, data)
+    local menu = StackMenu:create(900, overlay, 15, getTitle(data))
     menu:pad(100)
     menu:setBackground(backgroundTexture)
 

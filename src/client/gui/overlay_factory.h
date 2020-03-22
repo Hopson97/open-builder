@@ -25,7 +25,7 @@ namespace gui {
          * that the Lua is able to store it without risk
          */
         std::unique_ptr<Overlay> createOverlay(const std::string& name,
-                                               const std::string& data);
+                                               const sol::table& data);
 
       private:
         std::vector<OverlayDefinition> m_overlays;

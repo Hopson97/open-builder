@@ -60,7 +60,7 @@ namespace gui {
         return m_activeGui->textComponents.size();
     }
 
-    void GuiSystem::changeGui(const std::string& name, const std::string& data)
+    void GuiSystem::changeGui(const std::string& name, const sol::table& data)
     {
         m_pendingGui = m_overlayFactory.createOverlay(name, data);
     }

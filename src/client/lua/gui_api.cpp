@@ -16,10 +16,10 @@ namespace {
     void initGuiChangeApi(sol::table& guiTable, gui::GuiSystem& guiSystem)
     {
         guiTable["change"] = sol::overload(
-            [&guiSystem](const std::string guiId, const std::string& data) {
+            [&guiSystem](const std::string guiId, const sol::table& data) {
                 guiSystem.changeGui(guiId, data);
             },
-            [&guiSystem](const std::string guiId) { guiSystem.changeGui(guiId, ""); });
+            [&guiSystem](const std::string guiId) { guiSystem.changeGui(guiId, {}); });
     }
 
     void initGuiAddApi(sol::table& guiTable, gui::GuiSystem& guiSystem)
