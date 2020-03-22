@@ -4,6 +4,8 @@
 #include "overlay.h"
 #include "overlay_factory.h"
 
+#include <stack>
+
 struct ScriptEngine;
 
 namespace gui {
@@ -13,6 +15,13 @@ namespace gui {
      *
      */
     class GuiSystem {
+        enum class Action {
+            None,
+            Push,
+            Pop,
+            Change,
+        };
+
       public:
         GuiSystem(unsigned windowWidth, unsigned windowHeight);
 
@@ -29,11 +38,16 @@ namespace gui {
         void changeGui(const std::string& name, const sol::table& data);
 
       private:
+        void clearGuis();
+        Overlay& getTop();
+        const Overlay& getTop() const;
         glm::vec2 windowToGuiCoords(float winX, float winY) const;
 
         OverlayFactory m_overlayFactory;
-        std::unique_ptr<Overlay> m_activeGui = nullptr;
+        std::stack<std::unique_ptr<Overlay>> m_activeGuis;
         std::unique_ptr<Overlay> m_pendingGui = nullptr;
+
+        Action m_nextAction = Action::None;
 
         unsigned m_windowWidth;
         unsigned m_windowHeight;
