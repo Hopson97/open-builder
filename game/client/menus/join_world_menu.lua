@@ -39,7 +39,7 @@ local function onCreate(overlay, data)
     end    
 
     backButton.onClick = function()
-        game.gui.change("play_game", data)
+        game.gui.pop()
     end
 end
 

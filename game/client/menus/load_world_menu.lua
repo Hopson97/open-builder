@@ -10,7 +10,7 @@ local function onCreate(overlay, data)
     local backButton = menu:addButton("Back")
 
     backButton.onClick = function()
-        game.gui.change("play_game", data)
+        game.gui.pop()
     end
 end
 

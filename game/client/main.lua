@@ -46,7 +46,7 @@ end)
 game.onKeyReleased(game.Keyboard.Escape, function() 
     if game.control.isInGame() then
         game.control.pause()
-        game.gui.change("pause")
+        game.gui.push("pause")
         game.input.showMouse()
     end
 end)

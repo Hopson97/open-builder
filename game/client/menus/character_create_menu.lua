@@ -11,14 +11,14 @@ local function onCreate(overlay, slot)
     local create = menu:addButton("Create Character")
 
     create.onClick = function()
-        game.gui.change("character_select")
+        game.gui.pop()
     end    
 
 
     menu:pad(200)
     local backButton = menu:addButton("Back")
     backButton.onClick = function()
-        game.gui.change("character_select")
+        game.gui.pop()
     end
 end
 
