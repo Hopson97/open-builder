@@ -1,6 +1,7 @@
 #include "string_data_mapper.h"
 
 #include <sstream>
+#include <vector>
 
 namespace {
 
@@ -25,7 +26,19 @@ void StringDataMapper::parse(const std::string& data)
     }
 }
 
-std::string StringDataMapper::findValue(const std::string& key)
+std::string StringDataMapper::getString(const std::string& key) const
 {
-    return m_parsedData[key];
+    return m_parsedData.at(key);
+}
+
+int StringDataMapper::getInt(const std::string& key) const
+{
+    return std::stoi(m_parsedData.at(key));
+}
+
+
+float StringDataMapper::getFloat(const std::string& key) const
+{
+    return std::stof(m_parsedData.at(key));
+
 }
