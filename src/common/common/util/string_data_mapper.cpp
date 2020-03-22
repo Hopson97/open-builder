@@ -36,9 +36,7 @@ int StringDataMapper::getInt(const std::string& key) const
     return std::stoi(m_parsedData.at(key));
 }
 
-
 float StringDataMapper::getFloat(const std::string& key) const
 {
     return std::stof(m_parsedData.at(key));
-
 }
