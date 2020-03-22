@@ -4,8 +4,8 @@
 
 namespace gui {
     GuiSystem::GuiSystem(unsigned windowWidth, unsigned windowHeight)
-        : m_windowWidth(static_cast<float>(windowWidth))
-        , m_windowHeight(static_cast<float>(windowHeight))
+        : m_windowWidth(windowWidth)
+        , m_windowHeight(windowHeight)
     {
     }
 
@@ -25,8 +25,8 @@ namespace gui {
                     auto mouseMoveEvent = event.mouseMove;
                     auto p = windowToGuiCoords(static_cast<float>(mouseMoveEvent.x),
                                                static_cast<float>(mouseMoveEvent.y));
-                    mouseMoveEvent.x = p.x;
-                    mouseMoveEvent.y = p.y;
+                    mouseMoveEvent.x = static_cast<int>(p.x);
+                    mouseMoveEvent.y = static_cast<int>(p.y);
                     m_activeGui->handleMouseMove(mouseMoveEvent);
                 } break;
 
