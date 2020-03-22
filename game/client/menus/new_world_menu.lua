@@ -23,6 +23,10 @@ local function onCreate(overlay, data)
             game.control.createWorld(name, seed)
         end
     end    
+
+    if data["mode"] == "multiverse" then
+        addPlayerProfile(overlay, data)
+    end
 end
 
 game.gui.addGui{
