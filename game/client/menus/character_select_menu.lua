@@ -12,9 +12,16 @@ local function createCharacterSelectButton(menu, slot)
     selector.textSize = 40
 
     if slot == 0 then
-        selector.text = "AAAAAAAAAAAAAA/ Lvl 10"
+        local name = "Test Character Name"
+        local level = 10
+
+        selector.text = name .. "/" .. level
         selector.onClick = function()
-            game.gui.push("play_game", { mode = "multiverse"} )
+            game.gui.push("play_game", { 
+                mode = "multiverse", 
+                characterName = name,
+                characterLevel = level 
+            })
         end
     else
         selector.onClick = function()
