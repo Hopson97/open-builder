@@ -25,7 +25,7 @@ local function onCreate(overlay)
     end
 
     modded.onClick = function()
-        game.gui.push("play_game", { mode = "universe" })
+        game.gui.push("play_game", { mode = "modded" })
     end
 
     settings.onClick = function()

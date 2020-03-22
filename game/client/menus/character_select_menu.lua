@@ -18,7 +18,7 @@ local function createCharacterSelectButton(menu, slot)
         selector.text = name .. "/" .. level
         selector.onClick = function()
             game.gui.push("play_game", { 
-                mode = "multiverse", 
+                mode = "vanilla", 
                 characterName = name,
                 characterLevel = level 
             })

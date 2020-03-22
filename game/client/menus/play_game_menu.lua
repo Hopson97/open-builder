@@ -4,10 +4,10 @@ local logoTexture = game.gui.getTexture("res/logo.png")
 
 local function getTitle(data)
     local mode = data["mode"]
-    if mode == "multiverse" then
-        return "Multiverse Mode"
-    elseif mode == "universe" then
-        return "Universe Mode"
+    if mode == "vanilla" then
+        return "Vanilla Mode"
+    elseif mode == "modded" then
+        return "Modded Mode"
     else
         return "U N K N O W N"
     end
@@ -35,7 +35,7 @@ local function onCreate(overlay, data)
         game.gui.push("join_world", data)
     end
 
-    if data["mode"] == "multiverse" then
+    if data["mode"] == "vanilla" then
         addPlayerProfile(overlay, data)
     end
 end
