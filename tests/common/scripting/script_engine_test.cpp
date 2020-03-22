@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 
 const char* SCRIPT = R"(
 function game.square(a)

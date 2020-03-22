@@ -4,7 +4,7 @@
 #include <client/game.h>
 #include <client/lua/client_lua_api.h>
 #include <client/lua/client_lua_callback.h>
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 
 using State = ClientStateController::StateId;
 

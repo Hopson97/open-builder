@@ -2,7 +2,7 @@
 
 #include <client/gui/gui_system.h>
 #include <client/lua/client_lua_api.h>
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 
 const std::string guiCreateScript = R"(
 
