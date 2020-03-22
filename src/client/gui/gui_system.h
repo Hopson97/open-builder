@@ -4,7 +4,7 @@
 #include "overlay.h"
 #include "overlay_factory.h"
 
-class ScriptEngine;
+struct ScriptEngine;
 
 namespace gui {
 
