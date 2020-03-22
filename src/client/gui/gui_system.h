@@ -36,6 +36,8 @@ namespace gui {
         // Lua API
         void addGuiDefintion(const gui::OverlayDefinition& def);
         void changeGui(const std::string& name, const sol::table& data);
+        void pushGui(const std::string& name, const sol::table& data);
+        void popGui();
 
       private:
         void clearGuis();
