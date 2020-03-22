@@ -2,7 +2,7 @@
 
 #include <common/world/chunk.h>
 
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 
 namespace {
     void addApiChunk(ScriptEngine& scriptEngine)

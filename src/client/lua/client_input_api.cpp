@@ -2,7 +2,7 @@
 
 #include "../input/input_state.h"
 #include <SFML/Window/Keyboard.hpp>
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 
 namespace {
     void initMouseControlApi(sol::table& inputTable, sf::Window& window,

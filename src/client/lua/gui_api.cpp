@@ -1,6 +1,6 @@
 #include "client_lua_api.h"
 
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 
 #include "../gui/gui_system.h"
 #include "../renderer/gui_renderer.h"

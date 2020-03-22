@@ -1,7 +1,7 @@
 #include "client_lua_api.h"
 
 #include "../client_state_controller.h"
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 
 using State = ClientStateController::StateId;
 

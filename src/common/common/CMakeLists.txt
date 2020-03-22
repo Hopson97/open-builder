@@ -4,7 +4,7 @@ add_library(ob-common
     obd_parser.cpp
     debug.cpp
     network/net_host.cpp
-    scripting/script_engine.cpp
+    lua/script_engine.cpp
     util/random_number_generator.cpp
     world/chunk.cpp
     world/chunk_manager.cpp

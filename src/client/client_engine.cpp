@@ -16,7 +16,7 @@
 #include "renderer/gui_renderer.h"
 #include "window.h"
 #include <SFML/System/Clock.hpp>
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 #include <glad/glad.h>
 
 namespace {
@@ -57,7 +57,7 @@ void runClientEngine(const ClientConfig& config)
     Keyboard keyboard;
     InputState inputState;
 
-    // Init Lua scripting
+    // Init Lua lua
     ScriptEngine scriptEngine;
     ClientLuaCallbacks callbacks;
 
