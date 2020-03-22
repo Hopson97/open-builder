@@ -14,11 +14,11 @@ local function createCharacterSelectButton(menu, slot)
     if slot == 0 then
         selector.text = "AAAAAAAAAAAAAA/ Lvl 10"
         selector.onClick = function()
-            game.gui.change("play_game", { mode = "multiverse"} )
+            game.gui.push("play_game", { mode = "multiverse"} )
         end
     else
         selector.onClick = function()
-            game.gui.change("new_character", {slot = tostring(slot) } )
+            game.gui.push("new_character", {slot = tostring(slot) } )
         end
     end
 end
@@ -35,7 +35,7 @@ local function create(overlay)
     menu:pad(50)
     local backButton = menu:addButton("Back")
     backButton.onClick = function()
-        game.gui.change("main_menu")
+        game.gui.pop()
     end
 end
 

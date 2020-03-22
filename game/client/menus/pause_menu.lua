@@ -6,7 +6,7 @@ local function onCreate(overlay)
     local exit = menu:addButton("Exit")
 
     resume.onClick = function()
-        game.gui.change("hud")
+        game.gui.pop()
         game.input.hideMouse()
         game.control.resume()
     end

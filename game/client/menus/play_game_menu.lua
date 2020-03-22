@@ -24,20 +24,20 @@ local function onCreate(overlay, data)
     local backButton = menu:addButton("Back")
 
     newWorld.onClick = function()
-        game.gui.change("new_world", data)
+        game.gui.push("new_world", data)
     end    
     
     loadWorld.onClick = function()
-        game.gui.change("load_world", data)
+        game.gui.push("load_world", data)
     end
 
     joinWorld.onClick = function()
-        game.gui.change("join_world", data)
+        game.gui.push("join_world", data)
     end
 
 
     backButton.onClick = function()
-        game.gui.change("main_menu")
+        game.gui.pop()
     end
 end
 

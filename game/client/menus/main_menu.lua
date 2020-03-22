@@ -21,15 +21,15 @@ local function onCreate(overlay)
     end    
 
     vanilla.onClick = function()
-        game.gui.change("character_select")
+        game.gui.push("character_select")
     end
 
     modded.onClick = function()
-        game.gui.change("play_game", { mode = "universe" })
+        game.gui.push("play_game", { mode = "universe" })
     end
 
     settings.onClick = function()
-        game.gui.change("settings_menu")
+        game.gui.push("settings_menu")
     end
 
     exitGame.onClick = function()
