@@ -7,11 +7,7 @@ local function onCreate(overlay)
     menu:pad(100)
     menu:setBackground(backgroundTexture)
 
-    local backButton = menu:addButton("Back")
-
-    backButton.onClick = function()
-        game.gui.pop()
-    end
+    menu:addBackButton("Back")
 end
 
 game.gui.addGui{

@@ -30,7 +30,7 @@ end)
 
 
 game.onError(function(errorMessage)
-    game.gui.change("error_screen", errorMessage)
+    game.gui.change("error_screen", {message = errorMessage})
 end)
 
 game.onEnterGame(function() 

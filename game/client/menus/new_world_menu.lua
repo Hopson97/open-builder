@@ -8,10 +8,12 @@ local function onCreate(overlay, data)
 
     local worldNameBox = menu:addTextBox("World Name", "Enter name...")
     local worldSeedBox = menu:addTextBox("World Seed", "Enter seed...")
+    
     menu:pad(10)
     local create = menu:addButton("Create World")
+
     menu:pad(200)
-    local backButton = menu:addButton("Back")
+    local backButton = menu:addBackButton()
 
     create.onClick = function()
         local name = worldNameBox:getText()
@@ -21,10 +23,6 @@ local function onCreate(overlay, data)
             game.control.createWorld(name, seed)
         end
     end    
-
-    backButton.onClick = function()
-        game.gui.pop()
-    end
 end
 
 game.gui.addGui{
