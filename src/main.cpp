@@ -14,7 +14,7 @@
 #include "server/server_config.h"
 
 #include <common/network/enet.h>
-#include <common/obd_parser.h>
+#include <common/util/obd_parser.h>
 
 // Enable nvidia
 #ifdef _WIN32

@@ -1,6 +1,6 @@
 #include "shader.h"
 #include "gl_errors.h"
-#include <common/file_io.h>
+#include <common/util/file_io.h>
 #include <stdexcept>
 
 #include <iostream>
