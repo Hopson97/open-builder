@@ -1,7 +1,8 @@
 
 add_library(ob-common
-    file_io.cpp
-    obd_parser.cpp
+    util/file_io.cpp
+    util/obd_parser.cpp
+    util/string_data_mapper.cpp
     debug.cpp
     network/net_host.cpp
     lua/script_engine.cpp
