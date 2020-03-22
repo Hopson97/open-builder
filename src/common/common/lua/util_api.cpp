@@ -14,7 +14,8 @@ namespace {
 
     void addStringDataMapperApi(ScriptEngine& scriptEngine)
     {
-        auto dataMapperApi = scriptEngine.lua.new_usertype<StringDataMapper>("StringDataMapper");
+        auto dataMapperApi =
+            scriptEngine.lua.new_usertype<StringDataMapper>("StringDataMapper");
         dataMapperApi["getString"] = &StringDataMapper::getString;
         dataMapperApi["getInt"] = &StringDataMapper::getInt;
         dataMapperApi["getFloat"] = &StringDataMapper::getFloat;
@@ -24,4 +25,5 @@ namespace {
 void ScriptEngine::luaInitUtilApi()
 {
     addRandomNumberGeneratorApi(*this);
+    addStringDataMapperApi(*this);
 }
