@@ -6,6 +6,7 @@ add_library(ob-common
     debug.cpp
     network/net_host.cpp
     lua/script_engine.cpp
+    lua/util_api.cpp
     util/random_number_generator.cpp
     world/chunk.cpp
     world/chunk_manager.cpp

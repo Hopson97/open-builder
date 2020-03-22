@@ -25,7 +25,6 @@ Server::Server(const ServerConfig& config)
     // (Stuff that Lua calls that is defined on the C++ side)
     luaInitDataApi(m_script, m_biomeData, m_voxelData);
     luaInitWorldApi(m_script);
-    luaInitUtilApi(m_script);
 
     // Load game in this order
     // Voxels then Biomes
