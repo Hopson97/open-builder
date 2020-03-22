@@ -55,6 +55,8 @@ else
         fi
     elif [[ ${pkgman} == apt ]]; then
         if apt-get -y update && apt-get -y --fix-missing install cmake make pkg-config gcc-8 g++-8 libsfml-dev libegl1-mesa-dev; then
+            export CC=gcc-8
+            export CXX=g++-8
             echo "Successfully installed dependencies for your system."
         else
             echo "Failed to install dependencies!"
@@ -65,8 +67,6 @@ else
         exit 1
     fi
     if [[ "$build" = true ]]; then 
-       export CC=gcc-8
-       export CXX=g++-8
        echo "Building project..."
        if sh scripts/build.sh; then
            echo "Built the project. Execute it by running 'sh scripts/run.sh'. Enjoy!"
