@@ -16,20 +16,20 @@ local function onCreate(overlay)
     local exitGame  = menu:addButton("Exit Game")
 
     continue.onClick = function()
-        game.gui.change("transition", "Starting Game")
+        game.gui.change("transition", { message = "Starting Game" } )
         game.control.loadWorld("Test")
     end    
 
     vanilla.onClick = function()
-        game.gui.change("character_select", "Vanilla")
+        game.gui.change("character_select")
     end
 
     modded.onClick = function()
-        game.gui.change("play_game", "Modded")
+        game.gui.change("play_game", { mode = "universe" })
     end
 
     settings.onClick = function()
-        game.gui.change("settings_menu", "test")
+        game.gui.change("settings_menu")
     end
 
     exitGame.onClick = function()

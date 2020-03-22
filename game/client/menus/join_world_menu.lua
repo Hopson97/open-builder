@@ -33,7 +33,7 @@ local function onCreate(overlay, data)
         local username = usernameBox:getText()
         local password = passwordBox:getText()
         if string.len(serverIp) > 0 then
-            game.gui.change("transition", "Joining World")
+            game.gui.change("transition", { message = "Joining World" } )
             game.control.joinGame(serverIp, username, password)
         end
     end    

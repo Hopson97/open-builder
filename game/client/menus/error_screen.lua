@@ -9,7 +9,7 @@ local function onCreate(overlay, data)
     menu:setBackground(backgroundTexture)
 
     local errorMessage = menu:addLabel("Server IP", "Enter server IP...")
-    errorMessage.text = data
+    errorMessage.text = data["message"]
     menu:pad(200)
 
     local backButton = menu:addButton("Back")
