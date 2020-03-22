@@ -20,6 +20,14 @@ namespace {
                 guiSystem.changeGui(guiId, data);
             },
             [&guiSystem](const std::string guiId) { guiSystem.changeGui(guiId, {}); });
+
+        guiTable["push"] = sol::overload(
+            [&guiSystem](const std::string guiId, const sol::table& data) {
+                guiSystem.pushGui(guiId, data);
+            },
+            [&guiSystem](const std::string guiId) { guiSystem.pushGui(guiId, {}); });
+
+        guiTable["pop"] = [&guiSystem] { guiSystem.popGui(); };
     }
 
     void initGuiAddApi(sol::table& guiTable, gui::GuiSystem& guiSystem)

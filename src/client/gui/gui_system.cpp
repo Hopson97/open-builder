@@ -64,6 +64,7 @@ namespace gui {
                     break;
             }
             m_pendingGui = nullptr;
+            m_nextAction = Action::None;
         }
     }
 
@@ -81,6 +82,17 @@ namespace gui {
     {
         m_nextAction = Action::Change;
         m_pendingGui = m_overlayFactory.createOverlay(name, data);
+    }
+
+    void GuiSystem::pushGui(const std::string& name, const sol::table& data)
+    {
+        m_nextAction = Action::Push;
+        m_pendingGui = m_overlayFactory.createOverlay(name, data);
+    }
+
+    void GuiSystem::popGui()
+    {
+        m_nextAction = Action::Pop;
     }
 
     void GuiSystem::addGuiDefintion(const gui::OverlayDefinition& def)
