@@ -8,7 +8,12 @@ local function onCreate(overlay, data)
     menu:setBackground(backgroundTexture)
 
     menu:addBackButton()
+
+    if data["mode"] == "multiverse" then
+        addPlayerProfile(overlay, data)
+    end
 end
+
 
 game.gui.addGui{
     id = "load_world",

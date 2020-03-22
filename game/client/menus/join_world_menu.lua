@@ -27,6 +27,10 @@ local function onCreate(overlay, data)
     menu:pad(40)
     menu:addBackButton()
 
+    if data["mode"] == "multiverse" then
+        addPlayerProfile(overlay, data)
+    end
+
     joinButton.onClick = function()
         local serverIp = serverIpBox:getText()
         local username = usernameBox:getText()
