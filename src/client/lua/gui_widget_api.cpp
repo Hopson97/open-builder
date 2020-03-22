@@ -5,7 +5,7 @@
 #include "../gui/widget/image_widget.h"
 #include "../gui/widget/label_widget.h"
 #include "../gui/widget/text_box_widget.h"
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 
 namespace {
 
