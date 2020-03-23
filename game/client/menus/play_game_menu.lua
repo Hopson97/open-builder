@@ -18,18 +18,13 @@ local function onCreate(overlay, data)
     menu:pad(100)
     menu:setBackground(backgroundTexture)
 
-    local newWorld = menu:addButton("New World")
-    local loadWorld = menu:addButton("Load World")
+    local playWorld = menu:addButton("Play World")
     local joinWorld = menu:addButton("Join World")
     menu:addBackButton()
 
-    newWorld.onClick = function()
-        game.gui.push("new_world", data)
-    end    
-    
-    loadWorld.onClick = function()
+    playWorld.onClick = function()
         game.gui.push("load_world", data)
-    end
+    end    
 
     joinWorld.onClick = function()
         game.gui.push("join_world", data)
