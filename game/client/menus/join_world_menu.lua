@@ -44,6 +44,5 @@ end
 
 game.gui.addGui{
     id = "join_world",
-    title = "Join World Menu",
     create = onCreate,
 }

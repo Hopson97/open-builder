@@ -20,6 +20,5 @@ end
 
 game.gui.addGui{
     id = "error_screen",
-    title = "Error Screen",
     create = onCreate,
 }

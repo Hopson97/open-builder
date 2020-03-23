@@ -22,6 +22,5 @@ end
 
 game.gui.addGui{
     id = "new_character",
-    title = "New Character Menu",
     create = onCreate,
 }
