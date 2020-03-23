@@ -12,6 +12,5 @@ end
 
 game.gui.addGui{
     id = "settings_menu",
-    title = "Settings Menu",
     create = onCreate,
 }

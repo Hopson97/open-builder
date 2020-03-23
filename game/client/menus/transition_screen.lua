@@ -14,7 +14,6 @@ end
 
 game.gui.addGui{
     id = "transition",
-    title = "Transition Screen",
     create = onCreate,
 }
 

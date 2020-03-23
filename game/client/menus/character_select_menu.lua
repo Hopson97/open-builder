@@ -45,6 +45,5 @@ end
 
 game.gui.addGui{
     id = "character_select",
-    title = "Character Select Menu",
     create = create
 }

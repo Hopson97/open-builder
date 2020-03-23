@@ -31,6 +31,5 @@ end
 
 game.gui.addGui{
     id = "new_world",
-    title = "New World Menu",
     create = onCreate,
 }

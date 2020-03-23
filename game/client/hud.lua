@@ -9,6 +9,5 @@ end
 
 game.gui.addGui{
     id = "hud",
-    title = "Player HUD",
     create = createHUD,
 }

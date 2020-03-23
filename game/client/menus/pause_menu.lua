@@ -19,6 +19,5 @@ end
 
 game.gui.addGui{
     id = "pause",
-    title = "Pause Menu",
     create = onCreate,
 }

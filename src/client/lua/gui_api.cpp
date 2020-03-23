@@ -36,7 +36,6 @@ namespace {
             gui::OverlayDefinition overlay;
 
             overlay.id = guiDefintion["id"];
-            overlay.title = guiDefintion["title"];
             overlay.create = guiDefintion["create"];
 
             guiSystem.addGuiDefintion(overlay);

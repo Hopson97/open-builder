@@ -51,6 +51,5 @@ end
 
 game.gui.addGui{
     id = "world_select",
-    title = "Load World Menu",
     create = onCreate,
 }

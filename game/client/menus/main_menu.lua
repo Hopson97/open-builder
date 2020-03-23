@@ -39,6 +39,5 @@ end
 
 game.gui.addGui{
     id = "main_menu",
-    title = "Main Menu",
     create = onCreate,
 }
