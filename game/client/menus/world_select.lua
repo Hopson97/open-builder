@@ -42,10 +42,6 @@ local function onCreate(overlay, data)
 
     menu:pad(50)
     menu:addBackButton()
-
-    if data["mode"] == "vanilla" then
-        addPlayerProfile(overlay, data)
-    end
 end
 
 

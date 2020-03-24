@@ -8,24 +8,18 @@ local function onCreate(overlay)
     menu:addImage(logoTexture, 1064, 138)
     menu:pad(150)
 
-    local continue = menu:addButton("Continue Game")
-
-    local vanilla   = menu:addButton("Play Vanilla")
-    local modded    = menu:addButton("Play Modded")
+    local continue  = menu:addButton("Continue Game")
+    local playGame  = menu:addButton("Play Game")
     local settings  = menu:addButton("Settings")
     local exitGame  = menu:addButton("Exit Game")
 
     continue.onClick = function()
         game.gui.change("transition", { message = "Starting Game" } )
         game.control.loadWorld("Test")
-    end    
-
-    vanilla.onClick = function()
-        game.gui.push("character_select")
-    end
-
-    modded.onClick = function()
-        game.gui.push("world_select", { mode = "modded" })
+    end  
+    
+    playGame.onClick = function()
+        game.gui.push("world_select")
     end
 
     settings.onClick = function()
