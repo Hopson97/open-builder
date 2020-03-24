@@ -23,10 +23,6 @@ local function onCreate(overlay, data)
             game.control.createWorld(name, seed)
         end
     end    
-
-    if data["mode"] == "vanilla" then
-        addPlayerProfile(overlay, data)
-    end
 end
 
 game.gui.addGui{

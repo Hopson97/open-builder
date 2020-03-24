@@ -15,8 +15,6 @@ dofile("game/client/menus/world_select.lua")
 dofile("game/client/menus/pause_menu.lua")
 dofile("game/client/menus/error_screen.lua")
 dofile("game/client/menus/transition_screen.lua")
-dofile("game/client/menus/character_select_menu.lua")
-dofile("game/client/menus/character_create_menu.lua")
 
 -- 
 -- In Game GUIs
