@@ -27,6 +27,8 @@ namespace gui {
 
         void handleClick(sf::Mouse::Button button, float mx, float my) final override;
         void handleMouseMove(float mx, float my) final override;
+        void allowAllChars(void);
+        void limitChars(std::string allowedChars);
         void handleTextEntered(unsigned char code) final override;
 
         void setOnClick(sol::function function);
@@ -38,6 +40,8 @@ namespace gui {
         void hideInputText();
 
       private:
+        bool isCharacterAuthorised(unsigned char code);
+
         TextComponent* mp_text = nullptr;
         RectangleComponent* mp_rectangle = nullptr;
         TextComponent* mp_label = nullptr;
@@ -45,6 +49,7 @@ namespace gui {
         bool m_isActive = false;
         std::string m_textInput;
         std::string m_displayText;
+        std::string m_charsAuthorised;
 
         std::string m_placeholder = "Enter something...";
         unsigned m_maxLength = 100;
