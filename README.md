@@ -1,6 +1,7 @@
 # Open Builder
 
-[![C++ CI](https://github.com/Hopson97/open-builder/workflows/C++%20CI/badge.svg)](https://github.com/Hopson97/open-builder/actions?query=workflow%3A"C%2B%2B+CI")
+[![Linux C/C++ CI](https://github.com/Hopson97/open-builder/workflows/C++%20CI/badge.svg)](https://github.com/Hopson97/open-builder/actions?query=workflow%3A"C%2B%2B+CI")
+![macOS C/C++ CI](https://github.com/Hopson97/open-builder/workflows/macOS%20C/C++%20CI/badge.svg)
 
 Open source Minecraft-like voxel sandbox game with multiplayer support.
 
