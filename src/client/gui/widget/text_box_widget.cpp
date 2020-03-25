@@ -138,7 +138,6 @@ namespace gui {
     {
         if (m_isActive) {
             if (isCharacterValid(code) && isCharacterAuthorised(code) && m_textInput.length() < m_maxLength) {
-                std::cout << code << std::endl;
                 m_textInput.push_back(code);
                 m_displayText.push_back(m_inputHidden ? '*' : code);
                 mp_text->setText(m_displayText);
