@@ -234,6 +234,8 @@
 
 #endif // DEBUG: Turn on all debug safety features for VC++ / g++ / clang++ and similar
 
+#pragma warning(disable : 4996) // Remove deprecated errors
+
 #if !defined(SOL_PRINT_ERRORS)
 #define SOL_PRINT_ERRORS 0
 #endif
