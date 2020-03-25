@@ -5,7 +5,7 @@ bool Game::initGame(ClientConfig config)
     config.serverIp = LOCAL_HOST;
 
     m_serverLauncher =
-        std::make_unique<ServerLauncher>(ServerConfig{8, 8}, sf::milliseconds(100));
+        std::make_unique<ServerLauncher>(ServerConfig{8, 8}, sf::milliseconds(1000));
     m_serverLauncher->runAsThread();
 
     return init(config);
