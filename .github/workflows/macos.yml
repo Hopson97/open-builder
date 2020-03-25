@@ -13,10 +13,6 @@ jobs:
      - name: Checkout code
        uses: actions/checkout@master
      - name: Install dependencies
-       run: brew install SFML
+       run: bash scripts/install.sh --no-build
      - name: Build
-       run: |
-         mkdir build
-         cd build
-         cmake ..
-         make
+       run: bash scripts/install.sh
