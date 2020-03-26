@@ -6,7 +6,7 @@
 #include <SFML/System/Clock.hpp>
 #include <algorithm>
 #include <common/debug.h>
-#include <common/obd_parser.h>
+#include <common/util/obd_parser.h>
 #include <iostream>
 #include <thread>
 
@@ -25,7 +25,6 @@ Server::Server(const ServerConfig& config)
     // (Stuff that Lua calls that is defined on the C++ side)
     luaInitDataApi(m_script, m_biomeData, m_voxelData);
     luaInitWorldApi(m_script);
-    luaInitUtilApi(m_script);
 
     // Load game in this order
     // Voxels then Biomes
@@ -36,7 +35,7 @@ Server::Server(const ServerConfig& config)
 
     m_voxelData.initCommonVoxelTypes();
 
-    float seed = generateSeed("test");
+    int seed = generateSeed("test");
 
     for (int z = 0; z < m_worldSize; z++) {
         for (int x = 0; x < m_worldSize; x++) {

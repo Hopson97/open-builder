@@ -1,6 +1,6 @@
 #include "client_lua_callback.h"
 
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 
 void ClientLuaCallbacks::initCallbacks(ScriptEngine& scriptEngine)
 {

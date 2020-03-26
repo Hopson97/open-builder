@@ -7,15 +7,10 @@ local function onCreate(overlay)
     menu:pad(100)
     menu:setBackground(backgroundTexture)
 
-    local backButton = menu:addButton("Back")
-
-    backButton.onClick = function()
-        game.gui.change("main_menu")
-    end
+    menu:addBackButton("Back")
 end
 
 game.gui.addGui{
     id = "settings_menu",
-    title = "Settings Menu",
     create = onCreate,
 }

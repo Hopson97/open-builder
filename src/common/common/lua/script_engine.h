@@ -47,6 +47,14 @@ struct ScriptEngine {
 
     sol::state lua;
     sol::table gameTable;
+
+  private:
+    /**
+     * For example, random number generators etc
+     * @brief Gives Lua some utility functionality
+     * @param script The script engine with the Lua state
+     */
+    void luaInitUtilApi();
 };
 
 template <typename R, typename... Args>

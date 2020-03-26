@@ -3,9 +3,9 @@
 #include "../lua/server_lua_callback.h"
 #include <SFML/System/Time.hpp>
 #include <array>
+#include <common/lua/script_engine.h>
 #include <common/network/command_dispatcher.h>
 #include <common/network/net_host.h>
-#include <common/scripting/script_engine.h>
 #include <common/world/biome.h>
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_data.h>

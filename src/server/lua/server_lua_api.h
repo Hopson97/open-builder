@@ -20,9 +20,3 @@ void luaInitWorldApi(ScriptEngine& scriptEngine);
  */
 void luaInitDataApi(ScriptEngine& scriptEngine, BiomeDataManager& biomeManager,
                     VoxelDataManager& voxelManager);
-/**
- * For example, random number generators etc
- * @brief Gives Lua some utility functionality
- * @param script The script engine with the Lua state
- */
-void luaInitUtilApi(ScriptEngine& scriptEngine);

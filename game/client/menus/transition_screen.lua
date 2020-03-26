@@ -3,7 +3,7 @@ local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
 
 local function onCreate(overlay, data)
     local label = overlay:addLabel()
-    label.text = data
+    label.text = data["message"]
     label.textSize = 128
     label.position = GuiDim.new(0, 10, 0, 950)
 
@@ -14,7 +14,6 @@ end
 
 game.gui.addGui{
     id = "transition",
-    title = "Transition Screen",
     create = onCreate,
 }
 

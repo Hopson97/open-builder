@@ -25,26 +25,20 @@ local function onCreate(overlay, data)
     local joinButton = menu:addButton("Join World")
 
     menu:pad(40)
-
-    local backButton = menu:addButton("Back")
+    menu:addBackButton()
 
     joinButton.onClick = function()
         local serverIp = serverIpBox:getText()
         local username = usernameBox:getText()
         local password = passwordBox:getText()
         if string.len(serverIp) > 0 then
-            game.gui.change("transition", "Joining World")
+            game.gui.change("transition", { message = "Joining World" } )
             game.control.joinGame(serverIp, username, password)
         end
     end    
-
-    backButton.onClick = function()
-        game.gui.change("play_game", data)
-    end
 end
 
 game.gui.addGui{
     id = "join_world",
-    title = "Join World Menu",
     create = onCreate,
 }

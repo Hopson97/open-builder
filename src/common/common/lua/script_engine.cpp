@@ -18,6 +18,8 @@ ScriptEngine::ScriptEngine()
 {
     lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::math,
                        sol::lib::string);
+
+    luaInitUtilApi();
 }
 
 bool ScriptEngine::runLuaString(const std::string& script)

@@ -54,7 +54,7 @@ else
             exit 1
         fi
     elif [[ ${pkgman} == apt ]]; then
-        if apt-get -y update && apt-get -y --fix-missing install cmake make pkg-config gcc g++ libsfml-dev libegl1-mesa-dev; then
+        if apt-get -y update && apt-get -y --upgrade --fix-missing install cmake make pkg-config gcc-8 g++-8 libsfml-dev libegl1-mesa-dev; then
             echo "Successfully installed dependencies for your system."
         else
             echo "Failed to install dependencies!"

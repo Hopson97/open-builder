@@ -5,7 +5,6 @@ add_library(ob-server
     world/terrain_generation.cpp
     lua/data_api.cpp 
     lua/world_api.cpp
-    lua/util_api.cpp
     lua/server_lua_callback.cpp
 )
 

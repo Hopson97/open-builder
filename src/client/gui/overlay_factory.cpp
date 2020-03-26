@@ -9,7 +9,7 @@ namespace gui {
     }
 
     std::unique_ptr<Overlay> OverlayFactory::createOverlay(const std::string& name,
-                                                           const std::string& data)
+                                                           const sol::table& data)
     {
         auto itr = m_overlayMap.find(name);
         if (itr != m_overlayMap.end()) {

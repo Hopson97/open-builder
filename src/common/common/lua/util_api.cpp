@@ -1,6 +1,6 @@
-#include "server_lua_api.h"
-#include <common/scripting/script_engine.h>
-#include <common/util/random_number_generator.h>
+#include "script_engine.h"
+
+#include "../util/random_number_generator.h"
 
 namespace {
     void addRandomNumberGeneratorApi(ScriptEngine& scriptEngine)
@@ -12,7 +12,7 @@ namespace {
     }
 } // namespace
 
-void luaInitUtilApi(ScriptEngine& scriptEngine)
+void ScriptEngine::luaInitUtilApi()
 {
-    addRandomNumberGeneratorApi(scriptEngine);
+    addRandomNumberGeneratorApi(*this);
 }

@@ -9,10 +9,10 @@ local function onCreate(overlay, data)
     menu:setBackground(backgroundTexture)
 
     local errorMessage = menu:addLabel("Server IP", "Enter server IP...")
-    errorMessage.text = data
+    errorMessage.text = data["message"]
     menu:pad(200)
 
-    local backButton = menu:addButton("Back")
+    local backButton = menu:addButton("Main Menu")
     backButton.onClick = function()
         game.gui.change("main_menu")
     end
@@ -20,6 +20,5 @@ end
 
 game.gui.addGui{
     id = "error_screen",
-    title = "Error Screen",
     create = onCreate,
 }

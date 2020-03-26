@@ -113,9 +113,9 @@ add_executable(tests
     tests/common/world/chunk_test.cpp
     tests/common/network/net_host_test.cpp
     tests/common/network/command_dispatcher_test.cpp
-    tests/common/obd_parser_test.cpp
-    tests/common/scripting/script_engine_test.cpp
-
+    tests/common/util/obd_parser_test.cpp
+    tests/common/lua/script_engine_test.cpp
+    
     tests/client/lua/client_control_api_test.cpp
     tests/client/lua/gui_widget_api_test.cpp
 )

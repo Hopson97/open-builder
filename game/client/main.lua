@@ -1,17 +1,17 @@
 --
 -- Helpers
 --
-dofile("game/client/stack_menu.lua")   
+dofile("game/client/gui_helpers/common.lua")   
+dofile("game/client/gui_helpers/stack_menu.lua")   
 
 --
 --  Menus
 --
 dofile("game/client/menus/main_menu.lua")
-dofile("game/client/menus/play_game_menu.lua")
 dofile("game/client/menus/settings_menu.lua")
 dofile("game/client/menus/new_world_menu.lua")
 dofile("game/client/menus/join_world_menu.lua")
-dofile("game/client/menus/load_world_menu.lua")
+dofile("game/client/menus/world_select.lua")
 dofile("game/client/menus/pause_menu.lua")
 dofile("game/client/menus/error_screen.lua")
 dofile("game/client/menus/transition_screen.lua")
@@ -27,7 +27,7 @@ end)
 
 
 game.onError(function(errorMessage)
-    game.gui.change("error_screen", errorMessage)
+    game.gui.change("error_screen", {message = errorMessage})
 end)
 
 game.onEnterGame(function() 
@@ -43,7 +43,7 @@ end)
 game.onKeyReleased(game.Keyboard.Escape, function() 
     if game.control.isInGame() then
         game.control.pause()
-        game.gui.change("pause")
+        game.gui.push("pause")
         game.input.showMouse()
     end
 end)

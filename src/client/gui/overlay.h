@@ -20,8 +20,6 @@ namespace gui {
      */
     struct OverlayDefinition final {
         std::string id;
-        std::string title;
-
         sol::function create;
     };
 
