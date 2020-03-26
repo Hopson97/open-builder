@@ -6,7 +6,7 @@
 #include "../gui/widget/label_widget.h"
 #include "../gui/widget/text_box_widget.h"
 #include "../gui/widget/checkbox_widget.h"
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 
 namespace {
 
@@ -93,6 +93,8 @@ namespace {
         textboxApi["onMouseOff"] = sol::property(&gui::TextBoxWidget::setOnMouseOff);
 
         textboxApi["getText"] = &gui::TextBoxWidget::getText;
+        textboxApi["limitChars"] = &gui::TextBoxWidget::limitChars;
+        textboxApi["allowAllChars"] = &gui::TextBoxWidget::allowAllChars;
         textboxApi["hideInput"] = &gui::TextBoxWidget::hideInputText;
         textboxApi["placeholder"] = sol::property(&gui::TextBoxWidget::setPlaceholder);
         textboxApi["maxLength"] = sol::property(&gui::TextBoxWidget::setMaxLength);

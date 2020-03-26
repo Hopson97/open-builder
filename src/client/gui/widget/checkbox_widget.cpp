@@ -19,10 +19,6 @@ namespace gui {
 
     void CheckBoxWidget::setPosition(const GuiDimension& position)
     {
-        //GuiDimension textPosition = position;
-        //textPosition.offset.y += mp_rectangle->getBounds().height;
-
-        //mp_label->setPosition(textPosition);
         mp_rectangle->setPosition(position);
     }
 

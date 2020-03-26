@@ -19,10 +19,7 @@ function StackMenu:create(yStart, overlay, gap, title)
     vals.overlay = overlay
     vals.widgetGap = WIDGET_HEIGHT + gap
     if title ~= nil then
-        local label = overlay:addCenteredLabel()
-        label.position = GuiDim.new(0, 0, 0, vals.y)
-        label.text = title
-        label.textSize = 100
+        local label = createTitle(overlay, title, vals.y)
         vals.y = vals.y - 140
     end
     return vals
@@ -37,13 +34,6 @@ function StackMenu:nextWidgetPosition(width, centered, x, y)
     end
     self.y = (self.y + y) - self.widgetGap
     return position
-end
-
-function StackMenu:setBackground(image)
-    local background = self.overlay:addImage()
-    background.size = GuiDim.new(1.0, 0, 1.0, 0)
-    background.image = image
-    return background
 end
 
 function StackMenu:initBasicWidget(widget, x, y, w, h, keepAlignment, texture, textSize)
@@ -93,6 +83,10 @@ function StackMenu:initBasicWidget(widget, x, y, w, h, keepAlignment, texture, t
 
 end
 
+function StackMenu:setBackground(image)
+    return createBackground(self.overlay, image)
+end
+
 function StackMenu:addImage(texture, width, height)
     local image = self.overlay:addImage()
     image.size = GuiDim.new(0, width, 0, height)
@@ -133,6 +127,14 @@ function StackMenu:addLabel(text)
     self:initBasicWidget(label, 0, 0, WIDGET_WIDTH, WIDGET_HEIGHT, true, widgetTexture, 100)
     label.text = text
     return label
+end
+
+function StackMenu:addBackButton()
+    local backButton = self:addButton("Back")
+    backButton.onClick = function()
+        game.gui.pop()
+    end
+    return backButton
 end
 
 function StackMenu:pad(amount)
