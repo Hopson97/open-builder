@@ -51,13 +51,7 @@ function StackMenu:initBasicWidget(widget, x, y, w, h, keepAlignment, texture, t
             widget.textSize = textSize
         end   
 
-        widget.onMouseOver = function()
-            widget:setColour(1.25, 1.25, 1.25)
-        end
-
-        widget.onMouseOff = function()
-            widget:setColour(1, 1, 1)
-        end
+        setHighlightOnMouseOver(widget)
     else 
         -- use the x, y values as modifiers --
         position = self:nextWidgetPosition(w, false, x, y)
@@ -72,13 +66,7 @@ function StackMenu:initBasicWidget(widget, x, y, w, h, keepAlignment, texture, t
             widget.textSize = textSize
         end
 
-        widget.onMouseOver = function()
-            widget:setColour(1.25, 1.25, 1.25)
-        end
-
-        widget.onMouseOff = function()
-            widget:setColour(1, 1, 1)
-        end
+        setHighlightOnMouseOver(widget)
     end
 
 end

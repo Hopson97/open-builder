@@ -23,6 +23,7 @@ local function onCreate(overlay)
 
     playGame.onClick = function()
         game.gui.push("world_select")
+    end
 
     settings.onClick = function()
         game.gui.change("settings_menu")
@@ -45,6 +46,5 @@ end
 
 game.gui.addGui{
     id = "main_menu",
-    title = "Main Menu",
     create = onCreate,
 }
