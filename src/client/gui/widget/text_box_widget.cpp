@@ -118,10 +118,26 @@ namespace gui {
         }
     }
 
+    void TextBoxWidget::allowAllChars()
+    {
+        m_charsAuthorised = "";
+    }
+
+    void TextBoxWidget::limitChars(std::string charsAuthorised)
+    {
+        m_charsAuthorised = charsAuthorised;
+    }
+
+    bool TextBoxWidget::isCharacterAuthorised(unsigned char code)
+    {
+        return (m_charsAuthorised.find(code) != std::string::npos) ||
+                   (m_charsAuthorised == "");
+    }
+
     void TextBoxWidget::handleTextEntered(unsigned char code)
     {
         if (m_isActive) {
-            if (isCharacterValid(code) && m_textInput.length() < m_maxLength) {
+            if (isCharacterValid(code) && isCharacterAuthorised(code) && m_textInput.length() < m_maxLength) {
                 m_textInput.push_back(code);
                 m_displayText.push_back(m_inputHidden ? '*' : code);
                 mp_text->setText(m_displayText);
