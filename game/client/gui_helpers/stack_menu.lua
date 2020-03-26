@@ -73,7 +73,9 @@ function StackMenu:addLabel(text)
     local label = self.overlay:addLabel()
     label.textSize = 100
     label.position = self:nextWidgetPosition()
-    label.text = text
+    if text ~= nil then
+        label.text = text
+    end
     return label
 end
 

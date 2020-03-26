@@ -2,7 +2,7 @@
 local backgroundTexture = game.gui.getTexture("res/join_bg.png")
 local logoTexture = game.gui.getTexture("res/logo.png")
 
-local function onCreate(overlay, data)
+local function onCreate(overlay)
 
     local menu = StackMenu:create(900, overlay, 15, "Join World")
     menu:pad(20)
