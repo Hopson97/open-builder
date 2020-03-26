@@ -26,7 +26,7 @@ local function onCreate(overlay)
     end
 
     settings.onClick = function()
-        game.gui.change("settings_menu")
+        game.gui.push("settings_menu")
     end
 
     exitGame.onClick = function()
