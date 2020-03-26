@@ -1,6 +1,8 @@
 
 local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
 local logoTexture = game.gui.getTexture("res/logo.png")
+local checkboxTexture_unchecked = game.gui.getTexture("res/checkbox-unchecked.png")
+local checkboxTexture_checked = game.gui.getTexture("res/checkbox-checked.png")
 
 local function onCreate(overlay)
     local menu = StackMenu:create(900, overlay, 15)
@@ -8,30 +10,41 @@ local function onCreate(overlay)
     menu:addImage(logoTexture, 1064, 138)
     menu:pad(150)
 
-    local continue  = menu:addButton("Continue Game")
-    local playGame  = menu:addButton("Play Game")
+    local continue = menu:addButton("Continue Game")
+    local playGame = menu:addButton("Play Game")
     local settings  = menu:addButton("Settings")
     local exitGame  = menu:addButton("Exit Game")
+    local testCheck = menu:addCheckBox("Success!")
 
     continue.onClick = function()
-        game.gui.change("transition", { message = "Starting Game" } )
+        game.gui.change("transition", {message = "Starting Game"})
         game.control.loadWorld("Test")
-    end  
-    
+    end    
+
     playGame.onClick = function()
         game.gui.push("world_select")
-    end
 
     settings.onClick = function()
-        game.gui.push("settings_menu")
+        game.gui.change("settings_menu")
     end
 
     exitGame.onClick = function()
         game.control.shutdown()
     end
+
+    testCheck.onClick = function()
+        if(testCheck.checked) then
+            testCheck.checked = false
+            testCheck.image = checkboxTexture_unchecked
+        else
+            testCheck.checked = true
+            testCheck.image = checkboxTexture_checked
+        end
+    end
 end
 
 game.gui.addGui{
     id = "main_menu",
+    title = "Main Menu",
     create = onCreate,
 }
