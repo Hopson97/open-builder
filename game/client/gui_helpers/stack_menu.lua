@@ -113,7 +113,9 @@ end
 function StackMenu:addLabel(text)
     local label = self.overlay:addLabel()
     self:initBasicWidget(label, 0, 0, WIDGET_WIDTH, WIDGET_HEIGHT, true, widgetTexture, 100)
-    label.text = text
+    if(text ~= nil) then
+        label.text = text
+    end
     return label
 end
 
