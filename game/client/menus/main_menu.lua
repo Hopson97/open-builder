@@ -11,28 +11,21 @@ local function onCreate(overlay)
     menu:pad(150)
 
     local continue = menu:addButton("Continue Game")
-
-    local vanilla   = menu:addButton("Play Vanilla")
-    local modded    = menu:addButton("Play Modded")
+    local playGame = menu:addButton("Play Game")
     local settings  = menu:addButton("Settings")
     local exitGame  = menu:addButton("Exit Game")
     local testCheck = menu:addCheckBox("Success!")
 
     continue.onClick = function()
-        game.gui.change("transition", "Starting Game")
+        game.gui.change("transition", {message = "Starting Game"})
         game.control.loadWorld("Test")
     end    
 
-    vanilla.onClick = function()
-        game.gui.change("play_game", "Vanilla")
-    end
-
-    modded.onClick = function()
-        game.gui.change("play_game", "Modded")
-    end
+    playGame.onClick = function()
+        game.gui.push("world_select")
 
     settings.onClick = function()
-        game.gui.change("settings_menu", "test")
+        game.gui.change("settings_menu")
     end
 
     exitGame.onClick = function()
