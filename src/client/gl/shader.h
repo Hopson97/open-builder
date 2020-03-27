@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 #include <string>
+#include <string_view>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
