@@ -29,7 +29,7 @@ namespace gl {
         Shader(const Shader&) = delete;
         Shader& operator=(const Shader&) = delete;
 
-        void create(const std::string& vertexFile, const std::string& fragmentFile);
+        void create(const std::string_view vertexFile, const std::string_view fragmentFile);
         void destroy();
         void bind() const;
 
