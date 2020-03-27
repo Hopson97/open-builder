@@ -27,7 +27,9 @@ end)
 
 
 game.onError(function(errorMessage)
-    game.gui.change("error_screen", {message = errorMessage})
+    if errorMessage ~= nil then
+        game.gui.change("error_screen", {message = errorMessage})
+    end
 end)
 
 game.onEnterGame(function() 
