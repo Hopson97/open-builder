@@ -16,7 +16,7 @@ local function createWorldSelectButton(menu, slot)
         end
     else
         selector.onClick = function()
-            game.gui.push("new_world" )
+            game.gui.push("new_world")
         end
     end
 end
