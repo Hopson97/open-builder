@@ -71,7 +71,7 @@ namespace {
 
       public:
         ShaderStage(const std::string_view shaderPath, const GLenum shaderType)
-            : shaderID(compileShader(shaderPath, shaderType))
+            : shaderID(compileShader(loadFileContents(shaderPath), shaderType))
         {
         }
         ~ShaderStage()
@@ -118,7 +118,7 @@ namespace gl {
         }
         catch (const shader_compilation_error& e) {
             throw std::runtime_error("Shader " + vertFileFull +
-                                     " failed to compile: " + e.what());
+                                     " failed to compile:\n" + e.what());
         }
         catch (const shader_linkage_error& e) {
             throw std::runtime_error("Linking failed for shaders " + vertFileFull +
