@@ -66,10 +66,8 @@ namespace {
         return id;
     }
 
-    class ShaderStage {
+    struct ShaderStage {
         const GLuint shaderID;
-
-      public:
         ShaderStage(const std::string_view shaderPath, const GLenum shaderType)
             : shaderID(compileShader(loadFileContents(shaderPath), shaderType))
         {
@@ -77,10 +75,6 @@ namespace {
         ~ShaderStage()
         {
             glCheck(glDeleteShader(shaderID));
-        }
-        GLuint ID() const noexcept
-        {
-            return shaderID;
         }
     };
 } // namespace
@@ -105,11 +99,14 @@ namespace gl {
         return *this;
     }
 
-    void Shader::create(const std::string_view vertexFile, const std::string_view fragmentFile)
+    void Shader::create(const std::string_view vertexFile,
+                        const std::string_view fragmentFile)
     {
         glCheck(glUseProgram(0));
-        const std::string vertFileFull("shaders/" + std::string(vertexFile) + "_vertex.glsl");
-        const std::string fragFileFull("shaders/" + std::string(fragmentFile) + "_fragment.glsl");
+        const std::string vertFileFull("shaders/" + std::string(vertexFile) +
+                                       "_vertex.glsl");
+        const std::string fragFileFull("shaders/" + std::string(fragmentFile) +
+                                       "_fragment.glsl");
 
         try {
             const ShaderStage vertexShader(vertFileFull, GL_VERTEX_SHADER);
@@ -117,8 +114,8 @@ namespace gl {
             m_handle = linkProgram(vertexShader.ID(), fragmentShader.ID());
         }
         catch (const shader_compilation_error& e) {
-            throw std::runtime_error("Shader " + vertFileFull +
-                                     " failed to compile:\n" + e.what());
+            throw std::runtime_error("Shader " + vertFileFull + " failed to compile:\n" +
+                                     e.what());
         }
         catch (const shader_linkage_error& e) {
             throw std::runtime_error("Linking failed for shaders " + vertFileFull +
