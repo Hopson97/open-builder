@@ -111,7 +111,7 @@ namespace gl {
         try {
             const ShaderStage vertexShader(vertFileFull, GL_VERTEX_SHADER);
             const ShaderStage fragmentShader(fragFileFull, GL_FRAGMENT_SHADER);
-            m_handle = linkProgram(vertexShader.ID(), fragmentShader.ID());
+            m_handle = linkProgram(vertexShader.shaderID, fragmentShader.shaderID);
         }
         catch (const shader_compilation_error& e) {
             throw std::runtime_error("Shader " + vertFileFull + " failed to compile:\n" +
