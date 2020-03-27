@@ -24,23 +24,12 @@ local function onCreate(overlay)
     playGame.onClick = function()
         game.gui.push("world_select")
     end
-
     settings.onClick = function()
         game.gui.push("settings_menu")
     end
 
     exitGame.onClick = function()
         game.control.shutdown()
-    end
-
-    testCheck.onClick = function()
-        if(testCheck.checked) then
-            testCheck.checked = false
-            testCheck.image = checkboxTexture_unchecked
-        else
-            testCheck.checked = true
-            testCheck.image = checkboxTexture_checked
-        end
     end
 end
 

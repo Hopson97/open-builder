@@ -73,10 +73,13 @@ namespace {
     void addGuiCheckBoxApi(ScriptEngine& engine)
     {
         auto checkBoxApi = engine.lua.new_usertype<gui::CheckBoxWidget>("CheckBoxWidget");
+        checkBoxApi["checkedImage"] =
+            sol::property(&gui::CheckBoxWidget::setCheckedImage);
+        checkBoxApi["uncheckedImage"] =
+            sol::property(&gui::CheckBoxWidget::setUncheckedImage);
         checkBoxApi["image"] = sol::property(&gui::CheckBoxWidget::setImage);
         checkBoxApi["checked"] = sol::property(&gui::CheckBoxWidget::getChecked, &gui::CheckBoxWidget::setChecked);
 
-        checkBoxApi["onClick"] = sol::property(&gui::CheckBoxWidget::setOnClick);
         checkBoxApi["onMouseOver"] = sol::property(&gui::CheckBoxWidget::setOnMouseOver);
         checkBoxApi["onMouseOff"] = sol::property(&gui::CheckBoxWidget::setOnMouseOff);
 

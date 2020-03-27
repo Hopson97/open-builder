@@ -9,7 +9,7 @@ namespace gui {
     CheckBoxWidget::CheckBoxWidget(RectangleComponent* rectComponent, TextComponent* label)
         : mp_rectangle(rectComponent)
         , mp_label(label)
-        , isChecked(false)
+        , m_checked(false)
     {
         componentList.push_back(mp_rectangle);
         componentList.push_back(mp_label);
@@ -37,6 +37,16 @@ namespace gui {
         mp_rectangle->setTexture(Image);
     }
 
+    void CheckBoxWidget::setUncheckedImage(int Image)
+    {
+        uncheckedTexture = Image;
+    }
+
+    void CheckBoxWidget::setCheckedImage(int Image)
+    {
+        checkedTexture = Image;
+    }
+
     void CheckBoxWidget::setText(const std::string& text)
     {
         mp_label->setText(text);
@@ -47,12 +57,15 @@ namespace gui {
         mp_label->setFontSize(size);
     }
 
+    void CheckBoxWidget::setChecked(bool checked)
+    {
+        m_checked = checked;
+    }
+
     void CheckBoxWidget::handleClick(sf::Mouse::Button button, float mx, float my)
     {
         if (mp_rectangle->isInBounds(mx, my) && button == sf::Mouse::Left) {
-            if (m_onClick.valid()) {
-                m_onClick();
-            }
+            onClick();
         }
     }
 
@@ -70,9 +83,13 @@ namespace gui {
         }
     }
 
-    void CheckBoxWidget::setOnClick(sol::function function)
+    void CheckBoxWidget::onClick()
     {
-        m_onClick = function;
+        m_checked = !m_checked;
+        if (m_checked)
+            setImage(checkedTexture);
+        else
+            setImage(uncheckedTexture);
     }
 
     void CheckBoxWidget::setOnMouseOver(sol::function function)
@@ -91,6 +108,11 @@ namespace gui {
         pos.offset.x -= mp_rectangle->getBounds().width / 6;
 
         mp_label->setPosition(pos);
+    }
+
+    bool CheckBoxWidget::getChecked()
+    {
+        return m_checked;
     }
 
 

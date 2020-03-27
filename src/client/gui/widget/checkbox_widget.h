@@ -14,36 +14,35 @@ namespace gui {
 
         void setColour(float r, float g, float b) final override;
         void setImage(int Image);
+        void setUncheckedImage(int Image);
+        void setCheckedImage(int Image);
 
         void setText(const std::string& text);
         void setTextSize(unsigned size);
 
+        void setChecked(bool check);
+
         void handleClick(sf::Mouse::Button, float, float) final override;
-        void handleMouseMove(float, float) final override; // detects mouse movement
+        void handleMouseMove(float, float) final override; 
 
 
-		void setOnClick(sol::function function); // handles mouse movement
+		void onClick(); 
 		void setOnMouseOver(sol::function function);
 		void setOnMouseOff(sol::function function);
 
         void prepareRender() final override;
 
-		inline void setChecked(bool check)
-        {
-            isChecked = check;
-        };
-
-        inline bool getChecked()
-        {
-            return isChecked;
-        };
+        bool getChecked();
 
 	  private: 
-		  bool isChecked;
+
+          int checkedTexture;
+          int uncheckedTexture;
+
+		  bool m_checked;
           RectangleComponent* mp_rectangle = nullptr;
           TextComponent* mp_label = nullptr;
 
-		  sol::function m_onClick;
           sol::function m_onMoveOver;
           sol::function m_onMouseOff;
 	};

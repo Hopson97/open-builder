@@ -107,13 +107,15 @@ function StackMenu:addCheckBox(text)
     local checkBox = self.overlay:addCheckBox()
     self:initBasicWidget(checkBox, -250, 0, WIDGET_WIDTH - 500, WIDGET_HEIGHT, false, checkboxTexture_unchecked, 30)
     checkBox.text = text
+    checkBox.checkedImage = checkboxTexture_checked
+    checkBox.uncheckedImage = checkboxTexture_unchecked
     return checkBox
 end
 
 function StackMenu:addLabel(text)
     local label = self.overlay:addLabel()
     self:initBasicWidget(label, 0, 0, WIDGET_WIDTH, WIDGET_HEIGHT, true, widgetTexture, 100)
-    if(text ~= nil) then
+    if text ~= nil then
         label.text = text
     end
     return label
