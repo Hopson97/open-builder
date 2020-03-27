@@ -85,7 +85,7 @@ class ChunkRenderer final {
                                    const ViewFrustum& frustum,
                                    const glm::mat4& projectionViewMatrix,
                                    bool cameraInWater, 
-                                   float renderDistance = 10.f);
+                                   float renderDistance);
 
     // Used for the debug stat view
     int getTotalChunks() const;

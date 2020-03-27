@@ -15,6 +15,7 @@ struct ClientConfig {
     int windowHeight = 720;
     int fpsLimit = 60;
     int fov = 65;
+    float renderDistance = 50.f;
 
     float verticalSensitivity = 1.f;
     float horizontalSensitivity = 1.f;
