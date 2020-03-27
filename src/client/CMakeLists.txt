@@ -37,6 +37,7 @@ add_library(ob-client
     gui/widget/button_widget.cpp
     gui/widget/text_box_widget.cpp
     gui/widget/widget_helper.cpp
+    gui/widget/checkbox_widget.cpp
 
     window.cpp
 
