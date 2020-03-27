@@ -131,4 +131,6 @@ class Client final : public NetworkHost {
 
     unsigned m_noMeshingCount = 0;
     bool m_voxelMeshing = false;
+
+    float m_renderDistance;
 };

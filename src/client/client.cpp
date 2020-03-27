@@ -77,6 +77,8 @@ bool Client::init(const ClientConfig& config, float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
+    m_renderDistance = config.renderDistance;
+
     m_mouseSensitivity = {config.verticalSensitivity, config.horizontalSensitivity};
 
     m_rawPlayerSkin = gl::loadRawImageFile("skins/" + config.skinName);
@@ -347,7 +349,8 @@ void Client::render()
         m_chunks.manager.getVoxel(toVoxelPosition(mp_player->position)) ==
         m_voxelData.getVoxelId(CommonVoxel::Water);
     auto result = m_chunkRenderer.renderChunks(mp_player->position, m_frustum,
-                                               playerProjectionView, isPlayerInWater);
+                                               playerProjectionView, isPlayerInWater, 
+                                               m_renderDistance);
 
     // Render selection box
     if (m_voxelSelected) {

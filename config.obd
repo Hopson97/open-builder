@@ -2,6 +2,7 @@ CLIENT_DATA
     cap_fps 0
     fps_limit 60
     fov 90
+    renderDistance 50.f
 
     fullscreen 0
     window_width 1600

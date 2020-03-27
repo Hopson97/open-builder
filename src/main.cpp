@@ -59,6 +59,7 @@ namespace {
             std::stoi(clientData["shouldShowInstructions"]);
         config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
         config.client.fov = std::stoi(clientData["fov"]);
+        config.client.renderDistance = std::stoi(clientData["renderDistance"]);
         config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
         config.client.verticalSensitivity = std::stof(clientData["vertical_sensitivity"]);
         config.client.horizontalSensitivity =
