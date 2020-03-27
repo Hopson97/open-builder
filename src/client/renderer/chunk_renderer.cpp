@@ -39,6 +39,23 @@ namespace {
         }
     }
 
+     /**
+     * @brief Checks whether chunk is within the render distance using Euclidean distance
+     *
+     * @param cameraPosition The position of the camera (in world coordinates)
+     * @param chunkPosition The position of the chunk (in "chunk" coordinates)
+     * @param renderDistance The render distance
+     */
+    bool isChunkInRenderDistance(const glm::vec3& cameraPosition,
+                                 const ChunkPosition& chunkPosition,
+                                 const float renderDistance)
+    {
+        return std::pow((int)(cameraPosition.x / CHUNK_SIZE) - chunkPosition.x, 2) +
+                   std::pow((int)(cameraPosition.y / CHUNK_SIZE) - chunkPosition.y, 2) +
+                   std::pow((int)(cameraPosition.z / CHUNK_SIZE) - chunkPosition.z, 2) <=
+               std::pow(renderDistance, 2);
+    }
+
     /**
      * @brief Render a group of chunks
      *
@@ -49,10 +66,12 @@ namespace {
      */
     void renderChunks(const ChunkRenderList& chunks, const ViewFrustum& frustum,
                       gl::UniformLocation chunkPositionLocation,
-                      ChunkRenderResult& outResult)
+                      ChunkRenderResult& outResult, const glm::vec3& cameraPosition, 
+                      const float renderDistance)
     {
         for (const auto& chunk : chunks) {
-            if (frustum.chunkIsInFrustum(chunk.position)) {
+            if (isChunkInRenderDistance(cameraPosition, chunk.position, renderDistance) 
+                && frustum.chunkIsInFrustum(chunk.position)) {
 
                 glm::vec3 cp{chunk.position.x, chunk.position.y, chunk.position.z};
                 cp *= CHUNK_SIZE;
@@ -79,7 +98,6 @@ namespace {
                 {mesh.position, mesh.createBuffer(), mesh.calculateBufferSize()});
         }
     }
-
 } // namespace
 
 void ChunkRenderer::init()
@@ -120,7 +138,8 @@ void ChunkRenderer::updateMesh(const ChunkPosition& position,
 ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
                                               const ViewFrustum& frustum,
                                               const glm::mat4& projectionViewMatrix,
-                                              bool cameraInWater)
+                                              bool cameraInWater,
+                                              float renderDistance)
 {
     auto& solidDrawables = m_chunkRenderables[static_cast<int>(ChunkRenderType::Solid)];
     auto& fluidDrawables = m_chunkRenderables[static_cast<int>(ChunkRenderType::Fluid)];
@@ -138,14 +157,16 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     // Solid voxels
     m_solidShader.program.bind();
     gl::loadUniform(m_solidShader.projectionViewLocation, projectionViewMatrix);
-    ::renderChunks(solidDrawables, frustum, m_solidShader.chunkPositionLocation, result);
+    ::renderChunks(solidDrawables, frustum, m_solidShader.chunkPositionLocation, result, 
+                    cameraPosition, renderDistance);
 
     // Flora voxels
     m_floraShader.program.bind();
     gl::loadUniform(m_floraShader.projectionViewLocation, projectionViewMatrix);
     gl::loadUniform(m_floraShader.timeLocation, time);
     glDisable(GL_CULL_FACE);
-    ::renderChunks(floraDrawables, frustum, m_floraShader.chunkPositionLocation, result);
+    ::renderChunks(floraDrawables, frustum, m_floraShader.chunkPositionLocation, result,
+                   cameraPosition, renderDistance);
     glEnable(GL_CULL_FACE);
 
     // Fluid voxels
@@ -156,7 +177,8 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     if (cameraInWater) {
         glCheck(glCullFace(GL_FRONT));
     }
-    ::renderChunks(fluidDrawables, frustum, m_fluidShader.chunkPositionLocation, result);
+    ::renderChunks(fluidDrawables, frustum, m_fluidShader.chunkPositionLocation, result,
+                   cameraPosition, renderDistance);
     glCheck(glCullFace(GL_BACK));
     glCheck(glDisable(GL_BLEND));
 
