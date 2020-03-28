@@ -25,50 +25,10 @@ function StackMenu:create(yStart, overlay, gap, title)
     return vals
 end
 
-function StackMenu:nextWidgetPosition(width, centered, x, y)
-    local position
-    if(centered) then 
-        position = getWidgetCentre(width, self.y - y)
-    else
-        position = GuiDim.new(0, (1920 / 2 - width / 2) + x, 0, self.y - y)
-    end
-    self.y = (self.y + y) - self.widgetGap
+function StackMenu:nextWidgetPosition()
+    local position = getWidgetCentre(WIDGET_WIDTH, self.y)
+    self.y = self.y - self.widgetGap
     return position
-end
-
-function StackMenu:initBasicWidget(widget, x, y, w, h, keepAlignment, texture, textSize)
-    if(keepAlignment) then
-        -- center the button, and place it in sequence through the nextWidgetPosition function -- 
-        position = self:nextWidgetPosition(w, true, 0, 0)
-        widget.size = GuiDim.new(0, w, 0, h)
-        widget.position = position
-        
-        if(texture ~= nil) then
-            widget.image = texture
-        end
-
-        if(textSize ~= nil) then
-            widget.textSize = textSize
-        end   
-
-        setHighlightOnMouseOver(widget)
-    else 
-        -- use the x, y values as modifiers --
-        position = self:nextWidgetPosition(w, false, x, y)
-        widget.size = GuiDim.new(0, w, 0, h)
-        widget.position = position
-
-        if(texture ~= nil) then
-            widget.image = texture
-        end
-
-        if(textSize ~= nil) then
-            widget.textSize = textSize
-        end
-
-        setHighlightOnMouseOver(widget)
-    end
-
 end
 
 function StackMenu:setBackground(image)
@@ -84,10 +44,18 @@ function StackMenu:addImage(texture, width, height)
     return image
 end
 
+function StackMenu:initBasicWidget(widget)
+    widget.size = BUTTON_SIZE
+    widget.position = self:nextWidgetPosition()
+    widget.textSize = 50
+    widget.image = widgetTexture
+    setHighlightOnMouseOver(widget)
+end
+
 function StackMenu:addTextBox(label, placeholder)
     self:pad(25)
     local textBox = self.overlay:addTextBox()
-    self:initBasicWidget(textBox, 0, 0, WIDGET_WIDTH, WIDGET_HEIGHT, true, widgetTexture, 50)
+    self:initBasicWidget(textBox)
     textBox.placeholder = placeholder
     textBox.label = label
     textBox.maxLength = 25
@@ -97,7 +65,7 @@ end
 
 function StackMenu:addButton(text)
     local button = self.overlay:addButton()
-    self:initBasicWidget(button, 0, 0, WIDGET_WIDTH, WIDGET_HEIGHT, true, widgetTexture, 50)
+    self:initBasicWidget(button)
     button.text = text
 
     return button
@@ -105,8 +73,12 @@ end
 
 function StackMenu:addCheckBox(text)
     local checkBox = self.overlay:addCheckBox()
-    self:initBasicWidget(checkBox, -250, 0, WIDGET_WIDTH - 500, WIDGET_HEIGHT, false, checkboxTexture_unchecked, 30)
+    self:initBasicWidget(checkBox)
+    checkBox.position = GuiDim.new(0, (1920 / 2 - (WIDGET_WIDTH - 500) / 2), 0, self.y + self.widgetGap) -- LEFT OFF HERE!
+    checkBox.size = GuiDim.new(0, WIDGET_WIDTH - 500, 0, WIDGET_HEIGHT)
+    checkBox.image = checkboxTexture_unchecked
     checkBox.text = text
+    checkBox.textSize = 30
     checkBox.checkedImage = checkboxTexture_checked
     checkBox.uncheckedImage = checkboxTexture_unchecked
     return checkBox
@@ -114,7 +86,8 @@ end
 
 function StackMenu:addLabel(text)
     local label = self.overlay:addLabel()
-    self:initBasicWidget(label, 0, 0, WIDGET_WIDTH, WIDGET_HEIGHT, true, widgetTexture, 100)
+    label.textSize = 100
+    label.position = self:nextWidgetPosition()
     if text ~= nil then
         label.text = text
     end
