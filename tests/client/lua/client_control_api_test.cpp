@@ -20,8 +20,8 @@ TEST_CASE("The 'state' of the game can be safely controlled by the Lua")
 
     SECTION("The game can be shutdown via the lua API")
     {
-        engine.runLuaString("game.control.shutdown()");
-        REQUIRE(controller.executeAction({}, game, callbacks) == false);
+        engine.runLuaString("game.control():shutdown()");
+        REQUIRE(controller.executeAction(game, callbacks) == false);
     }
 
     // @TODO After the refactor, the rest of these tests will be able to be written

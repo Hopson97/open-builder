@@ -1,5 +1,5 @@
 
-local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
+local backgroundTexture = game.getTexture("res/menu_bg.png")
 
 local function onCreate(overlay, data)
     local label = overlay:addLabel()
@@ -12,7 +12,7 @@ local function onCreate(overlay, data)
     background.image = backgroundTexture
 end
 
-game.gui.addGui{
+game.gui():addGui{
     id = "transition",
     create = onCreate,
 }

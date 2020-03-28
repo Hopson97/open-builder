@@ -5,7 +5,6 @@
 
 class Game;
 class ClientLuaCallbacks;
-struct ClientConfig;
 
 /**
  * @brief Provides a Lua API for controlling the state of the client
@@ -22,8 +21,7 @@ class ClientStateController {
 
     class ControlAction {
       public:
-        virtual bool executeAction(const ClientConfig& config, Game& game,
-                                   StateId& currentState,
+        virtual bool executeAction(Game& game, StateId& currentState,
                                    ClientLuaCallbacks& callbacks) = 0;
     };
 
@@ -37,8 +35,7 @@ class ClientStateController {
     void shutdown();
 
     // C++ API Functions
-    bool executeAction(const ClientConfig& config, Game& game,
-                       ClientLuaCallbacks& callbacks);
+    bool executeAction(Game& game, ClientLuaCallbacks& callbacks);
 
     StateId currentState() const;
 

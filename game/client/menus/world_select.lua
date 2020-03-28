@@ -1,6 +1,6 @@
 
-local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
-local buttonTexture = game.gui.getTexture("res/button_small.png")
+local backgroundTexture = game.getTexture("res/menu_bg.png")
+local buttonTexture = game.getTexture("res/button_small.png")
 
 
 local function createWorldSelectButton(menu, slot)
@@ -11,12 +11,12 @@ local function createWorldSelectButton(menu, slot)
         local date = "01/01/20"
         selector.text = name .. '/' .. date
         selector.onClick = function()
-            game.gui.change("transition", { message = "Starting Game" } )
-            game.control.loadWorld("Test")
+            game.gui():change("transition", { message = "Starting Game" } )
+            game.control():loadWorld("Test")
         end
     else
         selector.onClick = function()
-            game.gui.push("new_world")
+            game.gui():push("new_world")
         end
     end
 end
@@ -38,7 +38,7 @@ local function onCreate(overlay)
     joinWorldButton.position = GuiDim.new(0.75, 0, 0.8, 0)
     setHighlightOnMouseOver(joinWorldButton)
     joinWorldButton.onClick = function()
-        game.gui.push("join_world")
+        game.gui():push("join_world")
     end
 
     menu:pad(50)
@@ -46,7 +46,7 @@ local function onCreate(overlay)
 end
 
 
-game.gui.addGui{
+game.gui():addGui{
     id = "world_select",
     create = onCreate,
 }

@@ -8,28 +8,21 @@ using State = ClientStateController::StateId;
 void luaInitClientControlApi(ScriptEngine& scriptEngine,
                              ClientStateController& clientState)
 {
-    auto controlApi = scriptEngine.addTable("control");
+    auto controlApi =
+        scriptEngine.lua.new_usertype<ClientStateController>("ClientStateController");
 
-    controlApi["pause"] = [&clientState] { clientState.pauseGame(); };
-    controlApi["resume"] = [&clientState] { clientState.resumeGame(); };
-
-    controlApi["exitGame"] = [&clientState] { clientState.exitGame(); };
-    controlApi["shutdown"] = [&clientState] { clientState.shutdown(); };
-
-    controlApi["createWorld"] = [&clientState](const std::string& name,
-                                               const std::string& seed) {
-        clientState.createWorld(name, seed);
+    scriptEngine.gameTable["control"] = [&clientState]() -> ClientStateController& {
+        return clientState;
     };
 
-    controlApi["loadWorld"] = [&clientState](const std::string& name) {
-        clientState.loadWorld(name);
+    controlApi["createWorld"] = &ClientStateController::createWorld;
+    controlApi["loadWorld"] = &ClientStateController::loadWorld;
+    controlApi["joinGame"] = &ClientStateController::joinWorld;
+    controlApi["isInGame"] = [](const ClientStateController& controller) {
+        return controller.currentState() == State::InGame;
     };
-
-    controlApi["joinGame"] = [&clientState](const std::string& ip) {
-        clientState.joinWorld(ip);
-    };
-
-    controlApi["isInGame"] = [&clientState] {
-        return clientState.currentState() == State::InGame;
-    };
+    controlApi["pause"] = &ClientStateController::pauseGame;
+    controlApi["resume"] = &ClientStateController::resumeGame;
+    controlApi["exitGame"] = &ClientStateController::exitGame;
+    controlApi["shutdown"] = &ClientStateController::shutdown;
 }

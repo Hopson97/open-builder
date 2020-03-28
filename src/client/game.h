@@ -7,8 +7,8 @@
 
 class Game {
   public:
-    bool initGame(ClientConfig config, const std::string& ipAddress);
-    bool initGame(ClientConfig config);
+    bool initGame(const std::string& ipAddress);
+    bool initGame();
 
     void stopGame();
 
@@ -20,7 +20,7 @@ class Game {
     void render();
 
   private:
-    bool init(ClientConfig config);
+    bool init(const std::string& ip);
 
     std::unique_ptr<Client> m_client;
     std::unique_ptr<ServerLauncher> m_serverLauncher;
