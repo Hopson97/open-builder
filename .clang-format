@@ -3,6 +3,10 @@ BasedOnStyle: LLVM
 IndentWidth: 4
 
 BreakBeforeBraces: Stroustrup
+
+
+
+
 FixNamespaceComments: true
 IndentCaseLabels: true
 NamespaceIndentation: All
