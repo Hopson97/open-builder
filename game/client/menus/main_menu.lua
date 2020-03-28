@@ -16,8 +16,8 @@ local function onCreate(overlay)
     local exitGame  = menu:addButton("Exit Game")
 
     continue.onClick = function()
-        game.gui.change("transition", {message = "Starting Game"})
-        game.control.loadWorld("Test")
+        game.gui():change("transition", {message = "Starting Game"})
+        game.control():loadWorld("Test")
     end    
   
     playGame.onClick = function()
