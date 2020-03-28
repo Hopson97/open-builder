@@ -14,7 +14,6 @@ local function onCreate(overlay)
     local playGame = menu:addButton("Play Game")
     local settings  = menu:addButton("Settings")
     local exitGame  = menu:addButton("Exit Game")
-    local testCheck = menu:addCheckBox("Success!")
 
     continue.onClick = function()
         game.gui.change("transition", {message = "Starting Game"})
