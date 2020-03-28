@@ -1,4 +1,4 @@
-local crosshairTexture = game.gui.getTexture("res/crosshair.png")
+local crosshairTexture = game.getTexture("res/crosshair.png")
 
 local function createHUD(hud) 
     local crosshair = hud:addImage()
@@ -7,7 +7,7 @@ local function createHUD(hud)
     crosshair.image = crosshairTexture
 end
 
-game.gui.addGui{
+game.gui():addGui{
     id = "hud",
     create = createHUD,
 }
