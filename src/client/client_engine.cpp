@@ -107,6 +107,10 @@ void runClientEngine()
                     isRunning = false;
                     break;
 
+                case sf::Event::MouseWheelScrolled:
+                    callbacks.onMouseWheelScroll(event.mouseWheelScroll);
+                    break;
+
                 case sf::Event::KeyReleased:
                     callbacks.onKeyboardKeyReleased(event.key.code);
                     break;
