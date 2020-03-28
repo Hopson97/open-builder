@@ -1,7 +1,7 @@
 local WIDGET_WIDTH = 800
 local WIDGET_HEIGHT = 90
 local BUTTON_SIZE = GuiDim.new(0, WIDGET_WIDTH, 0, WIDGET_HEIGHT)
-local widgetTexture = game.gui.getTexture("res/button.png")
+local widgetTexture = game.getTexture("res/button.png")
 
 StackMenu = {}
 StackMenu.__index = StackMenu
@@ -82,7 +82,7 @@ end
 function StackMenu:addBackButton()
     local backButton = self:addButton("Back")
     backButton.onClick = function()
-        game.gui.pop()
+        game.gui():pop()
     end
     return backButton
 end

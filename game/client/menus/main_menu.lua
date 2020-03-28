@@ -1,6 +1,6 @@
 
-local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
-local logoTexture = game.gui.getTexture("res/logo.png")
+local backgroundTexture = game.getTexture("res/menu_bg.png")
+local logoTexture = game.getTexture("res/logo.png")
 
 local function onCreate(overlay)
     local menu = StackMenu:create(900, overlay, 15)
@@ -14,16 +14,16 @@ local function onCreate(overlay)
     local exitGame  = menu:addButton("Exit Game")
 
     continue.onClick = function()
-        game.gui.change("transition", { message = "Starting Game" } )
+        game.gui():change("transition", { message = "Starting Game" } )
         game.control():loadWorld("Test")
     end  
     
     playGame.onClick = function()
-        game.gui.push("world_select")
+        game.gui():push("world_select")
     end
 
     settings.onClick = function()
-        game.gui.push("settings_menu")
+        game.gui():push("settings_menu")
     end
 
     exitGame.onClick = function()
@@ -31,7 +31,7 @@ local function onCreate(overlay)
     end
 end
 
-game.gui.addGui{
+game.gui():addGui{
     id = "main_menu",
     create = onCreate,
 }

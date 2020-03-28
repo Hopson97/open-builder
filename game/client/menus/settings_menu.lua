@@ -1,6 +1,6 @@
 
-local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
-local logoTexture = game.gui.getTexture("res/logo.png")
+local backgroundTexture = game.getTexture("res/menu_bg.png")
+local logoTexture = game.getTexture("res/logo.png")
 
 local function onCreate(overlay)
     local menu = StackMenu:create(900, overlay, 15, "Settings")
@@ -10,7 +10,7 @@ local function onCreate(overlay)
     menu:addBackButton("Back")
 end
 
-game.gui.addGui{
+game.gui():addGui{
     id = "settings_menu",
     create = onCreate,
 }

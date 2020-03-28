@@ -1,6 +1,6 @@
 
-local backgroundTexture = game.gui.getTexture("res/error_bg.png")
-local logoTexture = game.gui.getTexture("res/logo.png")
+local backgroundTexture = game.getTexture("res/error_bg.png")
+local logoTexture = game.getTexture("res/logo.png")
 
 local function onCreate(overlay, data)
 
@@ -14,11 +14,11 @@ local function onCreate(overlay, data)
 
     local backButton = menu:addButton("Main Menu")
     backButton.onClick = function()
-        game.gui.change("main_menu")
+        game.gui():change("main_menu")
     end
 end
 
-game.gui.addGui{
+game.gui():addGui{
     id = "error_screen",
     create = onCreate,
 }

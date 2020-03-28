@@ -1,6 +1,6 @@
 
-local backgroundTexture = game.gui.getTexture("res/join_bg.png")
-local logoTexture = game.gui.getTexture("res/logo.png")
+local backgroundTexture = game.getTexture("res/join_bg.png")
+local logoTexture = game.getTexture("res/logo.png")
 
 local function onCreate(overlay)
 
@@ -32,13 +32,13 @@ local function onCreate(overlay)
         local username = usernameBox:getText()
         local password = passwordBox:getText()
         if string.len(serverIp) > 0 then
-            game.gui.change("transition", { message = "Joining World" } )
+            game.gui():change("transition", { message = "Joining World" } )
             game.control():joinGame(serverIp, username, password)
         end
     end    
 end
 
-game.gui.addGui{
+game.gui():addGui{
     id = "join_world",
     create = onCreate,
 }

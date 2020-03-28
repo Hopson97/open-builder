@@ -22,30 +22,30 @@ dofile("game/client/menus/transition_screen.lua")
 dofile("game/client/hud.lua")
 
 game.onClientStartup(function()
-    game.gui.change("main_menu")
+    game.gui():change("main_menu")
 end)
 
 
 game.onError(function(errorMessage)
     if errorMessage ~= nil then
-        game.gui.change("error_screen", {message = errorMessage})
+        game.gui():change("error_screen", {message = errorMessage})
     end
 end)
 
 game.onEnterGame(function() 
     game.input.hideMouse()
-    game.gui.change("hud")
+    game.gui():change("hud")
 end)
 
 game.onExitGame(function() 
     game.input.showMouse()
-    game.gui.change("main_menu")
+    game.gui():change("main_menu")
 end)
 
 game.onKeyReleased(game.Keyboard.Escape, function() 
     if game.control():isInGame() then
         game.control():pause()
-        game.gui.push("pause")
+        game.gui():push("pause")
         game.input.showMouse()
     end
 end)

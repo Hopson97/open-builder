@@ -6,18 +6,18 @@ local function onCreate(overlay)
     local exit = menu:addButton("Exit")
 
     resume.onClick = function()
-        game.gui.pop()
+        game.gui():pop()
         game.input.hideMouse()
         game.control():resume()
     end
 
     exit.onClick = function()
-        game.gui.change("transition", {message = "Exiting"})
+        game.gui():change("transition", {message = "Exiting"})
         game.control():exitGame()
     end
 end
 
-game.gui.addGui{
+game.gui():addGui{
     id = "pause",
     create = onCreate,
 }
