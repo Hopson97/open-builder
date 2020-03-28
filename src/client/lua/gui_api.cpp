@@ -5,25 +5,16 @@
 #include "../gui/gui_system.h"
 #include "../renderer/gui_renderer.h"
 
-namespace {
-    using Gui = gui::GuiSystem;
-
-    void initGuiRenderApi(sol::table& guiTable, GuiRenderer& guiRenderer)
-    {
-        guiTable["getTexture"] = [&guiRenderer](const std::string& path) {
-            return guiRenderer.getTexture(path);
-        };
-    }
-} // namespace
-
 void luaInitGuiApi(ScriptEngine& scriptEngine, gui::GuiSystem& guiSystem,
                    GuiRenderer* guiRenderer)
 {
+    using Gui = gui::GuiSystem;
+
     scriptEngine.gameTable["gui"] = [&guiSystem]() -> gui::GuiSystem& {
         return guiSystem;
     };
 
-    auto guiApi = scriptEngine.lua.new_usertype<gui::GuiSystem>("GUISystem");
+    auto guiApi = scriptEngine.lua.new_usertype<Gui>("GUISystem");
     guiApi["push"] = &Gui::pushGui;
     guiApi["pop"] = &Gui::popGui;
     guiApi["change"] = &Gui::changeGui;
@@ -37,6 +28,8 @@ void luaInitGuiApi(ScriptEngine& scriptEngine, gui::GuiSystem& guiSystem,
     };
 
     if (guiRenderer) {
-        initGuiRenderApi(scriptEngine.gameTable, *guiRenderer);
+        scriptEngine.gameTable["getTexture"] = [guiRenderer](const std::string& path) {
+            return guiRenderer->getTexture(path);
+        };
     }
 }
