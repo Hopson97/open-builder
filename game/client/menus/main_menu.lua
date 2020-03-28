@@ -19,20 +19,21 @@ local function onCreate(overlay)
         game.gui.change("transition", {message = "Starting Game"})
         game.control.loadWorld("Test")
     end    
-
+  
     playGame.onClick = function()
-        game.gui.push("world_select")
+        game.gui():push("world_select")
     end
+  
     settings.onClick = function()
-        game.gui.push("settings_menu")
+        game.gui():push("settings_menu")
     end
 
     exitGame.onClick = function()
-        game.control.shutdown()
+        game.control():shutdown()
     end
 end
 
-game.gui.addGui{
+game.gui():addGui{
     id = "main_menu",
     create = onCreate,
 }

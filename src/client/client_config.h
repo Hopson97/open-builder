@@ -10,11 +10,25 @@
  * Mostly for the window and general graphics options
  */
 struct ClientConfig {
+  public:
+    static ClientConfig& get()
+    {
+        static ClientConfig config;
+        return config;
+    }
+
+    ClientConfig& operator=(const ClientConfig&) = delete;
+    ClientConfig& operator=(ClientConfig&&) = delete;
+
+    ClientConfig(const ClientConfig&) = delete;
+    ClientConfig(ClientConfig&&) = delete;
+
     bool fullScreen = false;
     int windowWidth = 1280;
     int windowHeight = 720;
     int fpsLimit = 60;
     int fov = 65;
+    float renderDistance = 50.f;
 
     float verticalSensitivity = 1.f;
     float horizontalSensitivity = 1.f;
@@ -25,5 +39,6 @@ struct ClientConfig {
     std::string skinName = "player";
     std::string texturePack = "default";
 
-    std::string serverIp = LOCAL_HOST;
+  private:
+    ClientConfig() = default;
 };

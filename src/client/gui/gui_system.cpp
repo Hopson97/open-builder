@@ -1,11 +1,12 @@
 #include "gui_system.h"
 
+#include "../client_config.h"
 #include "../lua/client_lua_api.h"
 
 namespace gui {
-    GuiSystem::GuiSystem(unsigned windowWidth, unsigned windowHeight)
-        : m_windowWidth(windowWidth)
-        , m_windowHeight(windowHeight)
+    GuiSystem::GuiSystem()
+        : m_windowWidth(ClientConfig::get().windowWidth)
+        , m_windowHeight(ClientConfig::get().windowHeight)
     {
     }
 
@@ -125,7 +126,7 @@ namespace gui {
 
     const Overlay& GuiSystem::getTop() const
     {
-        return *m_activeGuis.top();     
+        return *m_activeGuis.top();
     }
 
     glm::vec2 GuiSystem::windowToGuiCoords(float winX, float winY) const

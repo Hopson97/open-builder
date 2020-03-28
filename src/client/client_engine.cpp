@@ -40,11 +40,11 @@ namespace {
     //
 } // namespace
 
-void runClientEngine(const ClientConfig& config)
+void runClientEngine()
 {
     // Window/ OpenGL context setup
     sf::Window window;
-    if (!createWindowInitOpengl(window, config)) {
+    if (!createWindowInitOpengl(window)) {
         return; // EngineStatus::GLInitError;
     }
 
@@ -62,7 +62,7 @@ void runClientEngine(const ClientConfig& config)
     ClientLuaCallbacks callbacks;
 
     // Gui
-    gui::GuiSystem gui(config.windowWidth, config.windowHeight);
+    gui::GuiSystem gui;
     GuiRenderer guiRenderer;
 
     // Init all the lua api stuff
@@ -86,11 +86,10 @@ void runClientEngine(const ClientConfig& config)
     gl::Shader screenShader;
     gl::VertexArray screenVAO = makeScreenQuadVertexArray();
 
-    int width = config.windowWidth;
-    int height = config.windowHeight;
     guiRenderTarget.create(static_cast<unsigned>(GUI_WIDTH),
                            static_cast<unsigned>(GUI_HEIGHT));
-    worldRenderTarget.create(width, height);
+    worldRenderTarget.create(ClientConfig::get().windowWidth,
+                             ClientConfig::get().windowHeight);
     screenShader.create("minimal", "minimal");
 
     bool isRunning = true;
@@ -145,7 +144,8 @@ void runClientEngine(const ClientConfig& config)
         gui.render(guiRenderer);
 
         // Buffer to window
-        gl::unbindFramebuffers(width, height);
+        gl::unbindFramebuffers(ClientConfig::get().windowWidth,
+                               ClientConfig::get().windowHeight);
         glDisable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT);
         auto drawable = screenVAO.getDrawable();
@@ -165,7 +165,7 @@ void runClientEngine(const ClientConfig& config)
         //=======================================================================
 
         fps.update();
-        isRunning = control.executeAction(config, game, callbacks);
+        isRunning = control.executeAction(game, callbacks);
     }
     window.close();
 }

@@ -97,7 +97,7 @@ end
 function StackMenu:addBackButton()
     local backButton = self:addButton("Back")
     backButton.onClick = function()
-        game.gui.pop()
+        game.gui():pop()
     end
     return backButton
 end

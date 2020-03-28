@@ -23,7 +23,7 @@ namespace gui {
         };
 
       public:
-        GuiSystem(unsigned windowWidth, unsigned windowHeight);
+        GuiSystem();
 
         void handleEvent(const sf::Event& event);
         void update();

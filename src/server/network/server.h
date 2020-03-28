@@ -34,7 +34,7 @@ class Server final : public NetworkHost {
     };
 
   public:
-    Server(const ServerConfig& config);
+    Server();
 
     void update();
 

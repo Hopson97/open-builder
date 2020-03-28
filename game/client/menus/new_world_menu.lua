@@ -1,5 +1,5 @@
 
-local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
+local backgroundTexture = game.getTexture("res/menu_bg.png")
 
 local function onCreate(overlay, data)
     local menu = StackMenu:create(900, overlay, 15, "New World")
@@ -19,13 +19,13 @@ local function onCreate(overlay, data)
         local name = worldNameBox:getText()
         local seed = worldSeedBox:getText()
         if string.len(name) > 0 then
-            game.gui.change("transition", { message = "Creating World" } )
-            game.control.createWorld(name, seed)
+            game.gui():change("transition", { message = "Creating World" } )
+            game.control():createWorld(name, seed)
         end
     end    
 end
 
-game.gui.addGui{
+game.gui():addGui{
     id = "new_world",
     create = onCreate,
 }

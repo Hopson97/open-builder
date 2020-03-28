@@ -44,19 +44,19 @@ namespace {
 
 } // namespace
 
-bool createWindowInitOpengl(sf::Window& window, const ClientConfig& config)
+bool createWindowInitOpengl(sf::Window& window)
 {
     window.setKeyRepeatEnabled(false);
-    if (config.fullScreen) {
+    if (ClientConfig::get().fullScreen) {
         createWindow(window, sf::VideoMode::getDesktopMode(), sf::Style::Fullscreen);
     }
     else {
-        unsigned width = static_cast<unsigned>(config.windowWidth);
-        unsigned height = static_cast<unsigned>(config.windowHeight);
+        unsigned width = static_cast<unsigned>(ClientConfig::get().windowWidth);
+        unsigned height = static_cast<unsigned>(ClientConfig::get().windowHeight);
         createWindow(window, {width, height}, sf::Style::Close);
     }
-    if (config.isFpsCapped) {
-        window.setFramerateLimit(config.fpsLimit);
+    if (ClientConfig::get().isFpsCapped) {
+        window.setFramerateLimit(ClientConfig::get().fpsLimit);
     }
 
     return initOpenGL(window);

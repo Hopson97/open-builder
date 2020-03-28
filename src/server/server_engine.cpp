@@ -1,16 +1,13 @@
 #include "server_engine.h"
 #include "network/server.h"
-#include "server_config.h"
 #include <SFML/System/Clock.hpp>
 #include <atomic>
 #include <common/debug.h>
 #include <iostream>
 #include <thread>
 
-ServerLauncher::ServerLauncher(const ServerConfig& config, sf::Time timeout)
-    : m_server(config)
-    , m_config(config)
-    , m_timeout(timeout)
+ServerLauncher::ServerLauncher(sf::Time timeout)
+    : m_timeout(timeout)
 {
 }
 
@@ -47,7 +44,7 @@ void ServerLauncher::runAsThread()
 
 void ServerLauncher::launch()
 {
-    if (!m_server.createAsServer(m_config.maxConnections)) {
+    if (!m_server.createAsServer(16)) {
         std::cout << "Failed to create server.\n\n";
         return;
     }
