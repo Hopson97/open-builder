@@ -144,7 +144,8 @@ void runClientEngine()
         gui.render(guiRenderer);
 
         // Buffer to window
-        gl::unbindFramebuffers(ClientConfig::get().windowWidth, ClientConfig::get().windowHeight);
+        gl::unbindFramebuffers(ClientConfig::get().windowWidth,
+                               ClientConfig::get().windowHeight);
         glDisable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT);
         auto drawable = screenVAO.getDrawable();

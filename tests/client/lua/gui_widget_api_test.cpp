@@ -23,7 +23,7 @@ const std::string guiCreateScript = R"(
 TEST_CASE("GUI Widget API Tests")
 {
     ScriptEngine scriptEngine;
-    gui::GuiSystem gui(10, 10);
+    gui::GuiSystem gui;
     luaInitGuiApi(scriptEngine, gui);
     luaInitGuiWidgetApi(scriptEngine);
 

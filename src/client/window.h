@@ -5,7 +5,5 @@
 #include <SFML/Window/Window.hpp>
 #include <common/types.h>
 
-struct ClientConfig;
-
 bool createWindowInitOpengl(sf::Window& window);
 float getWindowAspect(const sf::Window& window);

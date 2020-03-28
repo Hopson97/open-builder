@@ -96,8 +96,7 @@ namespace {
 
     class ShutdownGameAction final : public ClientStateController::ControlAction {
       public:
-        bool executeAction(Game&, State&,
-                           ClientLuaCallbacks&) final override
+        bool executeAction(Game&, State&, ClientLuaCallbacks&) final override
         {
             return false;
         }
@@ -151,12 +150,10 @@ void ClientStateController::shutdown()
     m_nextAction = std::make_unique<ShutdownGameAction>();
 }
 
-bool ClientStateController::executeAction(Game& game,
-                                          ClientLuaCallbacks& callbacks)
+bool ClientStateController::executeAction(Game& game, ClientLuaCallbacks& callbacks)
 {
     if (m_nextAction) {
-        bool result =
-            m_nextAction->executeAction(game, m_currentState, callbacks);
+        bool result = m_nextAction->executeAction(game, m_currentState, callbacks);
         m_nextAction.release();
         return result;
     }

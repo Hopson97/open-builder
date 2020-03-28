@@ -1,9 +1,9 @@
 #include "chunk_renderer.h"
 
+#include "../client_config.h"
 #include "../gl/gl_errors.h"
 #include <common/world/world_constants.h>
 #include <numeric>
-#include "../client_config.h"
 
 namespace {
     /**
@@ -40,7 +40,7 @@ namespace {
         }
     }
 
-     /**
+    /**
      * @brief Checks whether chunk is within the render distance using Euclidean distance
      *
      * @param cameraPosition The position of the camera (in world coordinates)
@@ -70,8 +70,8 @@ namespace {
                       ChunkRenderResult& outResult, const glm::vec3& cameraPosition)
     {
         for (const auto& chunk : chunks) {
-            if (isChunkInRenderDistance(cameraPosition, chunk.position) 
-                && frustum.chunkIsInFrustum(chunk.position)) {
+            if (isChunkInRenderDistance(cameraPosition, chunk.position) &&
+                frustum.chunkIsInFrustum(chunk.position)) {
 
                 glm::vec3 cp{chunk.position.x, chunk.position.y, chunk.position.z};
                 cp *= CHUNK_SIZE;
@@ -106,8 +106,7 @@ void ChunkRenderer::init()
     m_shader.program.bind();
     m_shader.projectionViewLocation =
         m_shader.program.getUniformLocation("projectionViewMatrix");
-    m_shader.chunkPositionLocation =
-        m_shader.program.getUniformLocation("chunkPosition");
+    m_shader.chunkPositionLocation = m_shader.program.getUniformLocation("chunkPosition");
 }
 
 void ChunkRenderer::updateMesh(const ChunkPosition& position,
@@ -137,8 +136,8 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     // Solid voxels
     m_shader.program.bind();
     gl::loadUniform(m_shader.projectionViewLocation, projectionViewMatrix);
-    ::renderChunks(solidDrawables, frustum, m_shader.chunkPositionLocation, result, 
-                    cameraPosition);
+    ::renderChunks(solidDrawables, frustum, m_shader.chunkPositionLocation, result,
+                   cameraPosition);
 
     // Flora voxels
     glDisable(GL_CULL_FACE);

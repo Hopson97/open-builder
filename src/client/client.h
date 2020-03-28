@@ -16,7 +16,6 @@
 
 class Keyboard;
 struct InputState;
-struct ClientConfig;
 
 namespace gui {
     class LabelWidget;

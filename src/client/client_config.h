@@ -17,6 +17,12 @@ struct ClientConfig {
         return config;
     }
 
+    ClientConfig& operator=(const ClientConfig&) = delete;
+    ClientConfig& operator=(ClientConfig&&) = delete;
+
+    ClientConfig(const ClientConfig&) = delete;
+    ClientConfig(ClientConfig&&) = delete;
+
     bool fullScreen = false;
     int windowWidth = 1280;
     int windowHeight = 720;
@@ -34,5 +40,5 @@ struct ClientConfig {
     std::string texturePack = "default";
 
   private:
-    ClientConfig();
+    ClientConfig() = default;
 };

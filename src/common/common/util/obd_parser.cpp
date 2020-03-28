@@ -26,19 +26,14 @@ std::unordered_map<std::string, std::string> getObdDataRaw(const std::string& ob
     std::string line;
     std::string value;
 
-    while (std::getline(stream, line)) {
-        line = cleanString(line);
+    while (stream >> line) {
         if (line.empty()) {
             continue;
         }
-        while (stream >> line) {
-            if (line.empty()) {
-                continue;
-            }
-            stream >> value;
-            data.emplace(line, value);
-        }
+        stream >> value;
+        data.emplace(line, value);
     }
+
     return data;
 }
 

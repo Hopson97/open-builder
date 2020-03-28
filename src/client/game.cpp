@@ -2,7 +2,7 @@
 
 bool Game::initGame()
 {
-    //Client.serverIp = LOCAL_HOST;
+    // Client.serverIp = LOCAL_HOST;
 
     m_serverLauncher = std::make_unique<ServerLauncher>(sf::milliseconds(1000));
     m_serverLauncher->runAsThread();
