@@ -102,30 +102,12 @@ namespace {
 
 void ChunkRenderer::init()
 { // Chunk shader
-    m_solidShader.program.create("chunk/chunk", "chunk/chunk");
-    m_solidShader.program.bind();
-    m_solidShader.projectionViewLocation =
-        m_solidShader.program.getUniformLocation("projectionViewMatrix");
-    m_solidShader.chunkPositionLocation =
-        m_solidShader.program.getUniformLocation("chunkPosition");
-
-    // Fluids shader
-    m_fluidShader.program.create("chunk/water", "chunk/chunk");
-    m_fluidShader.program.bind();
-    m_fluidShader.projectionViewLocation =
-        m_fluidShader.program.getUniformLocation("projectionViewMatrix");
-    m_fluidShader.timeLocation = m_fluidShader.program.getUniformLocation("time");
-    m_fluidShader.chunkPositionLocation =
-        m_fluidShader.program.getUniformLocation("chunkPosition");
-
-    // Flora shader
-    m_floraShader.program.create("chunk/flora", "chunk/transparent");
-    m_floraShader.program.bind();
-    m_floraShader.projectionViewLocation =
-        m_floraShader.program.getUniformLocation("projectionViewMatrix");
-    m_floraShader.timeLocation = m_floraShader.program.getUniformLocation("time");
-    m_floraShader.chunkPositionLocation =
-        m_floraShader.program.getUniformLocation("chunkPosition");
+    m_shader.program.create("chunk", "chunk");
+    m_shader.program.bind();
+    m_shader.projectionViewLocation =
+        m_shader.program.getUniformLocation("projectionViewMatrix");
+    m_shader.chunkPositionLocation =
+        m_shader.program.getUniformLocation("chunkPosition");
 }
 
 void ChunkRenderer::updateMesh(const ChunkPosition& position,
@@ -152,32 +134,25 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     }
     m_chunkMeshes.clear();
 
-    float time = m_animationTimer.getElapsedTime().asSeconds();
     ChunkRenderResult result;
     // Solid voxels
-    m_solidShader.program.bind();
-    gl::loadUniform(m_solidShader.projectionViewLocation, projectionViewMatrix);
-    ::renderChunks(solidDrawables, frustum, m_solidShader.chunkPositionLocation, result, 
+    m_shader.program.bind();
+    gl::loadUniform(m_shader.projectionViewLocation, projectionViewMatrix);
+    ::renderChunks(solidDrawables, frustum, m_shader.chunkPositionLocation, result, 
                     cameraPosition, renderDistance);
 
     // Flora voxels
-    m_floraShader.program.bind();
-    gl::loadUniform(m_floraShader.projectionViewLocation, projectionViewMatrix);
-    gl::loadUniform(m_floraShader.timeLocation, time);
     glDisable(GL_CULL_FACE);
-    ::renderChunks(floraDrawables, frustum, m_floraShader.chunkPositionLocation, result,
+    ::renderChunks(floraDrawables, frustum, m_shader.chunkPositionLocation, result,
                    cameraPosition, renderDistance);
     glEnable(GL_CULL_FACE);
 
     // Fluid voxels
-    m_fluidShader.program.bind();
-    gl::loadUniform(m_fluidShader.projectionViewLocation, projectionViewMatrix);
-    gl::loadUniform(m_fluidShader.timeLocation, time);
     glCheck(glEnable(GL_BLEND));
     if (cameraInWater) {
         glCheck(glCullFace(GL_FRONT));
     }
-    ::renderChunks(fluidDrawables, frustum, m_fluidShader.chunkPositionLocation, result,
+    ::renderChunks(fluidDrawables, frustum, m_shader.chunkPositionLocation, result,
                    cameraPosition, renderDistance);
     glCheck(glCullFace(GL_BACK));
     glCheck(glDisable(GL_BLEND));

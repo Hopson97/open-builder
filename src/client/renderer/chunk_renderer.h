@@ -94,12 +94,8 @@ class ChunkRenderer final {
   private:
     void deleteChunkRenderables(const ChunkPosition& position);
 
-    ChunkShader m_solidShader;
-    ChunkAnimatedShader m_fluidShader;
-    ChunkAnimatedShader m_floraShader;
+    ChunkShader m_shader;
 
     std::vector<ChunkMeshCollection> m_chunkMeshes;
     std::array<ChunkRenderList, 3> m_chunkRenderables;
-
-    sf::Clock m_animationTimer;
 };
