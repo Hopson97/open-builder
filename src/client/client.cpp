@@ -344,9 +344,8 @@ void Client::render()
     bool isPlayerInWater =
         m_chunks.manager.getVoxel(toVoxelPosition(mp_player->position)) ==
         m_voxelData.getVoxelId(CommonVoxel::Water);
-    auto result =
-        m_chunkRenderer.renderChunks(mp_player->position, m_frustum, playerProjectionView,
-                                     isPlayerInWater);
+    auto result = m_chunkRenderer.renderChunks(mp_player->position, m_frustum,
+                                               playerProjectionView, isPlayerInWater);
 
     // Render selection box
     if (m_voxelSelected) {

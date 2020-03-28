@@ -62,7 +62,7 @@ namespace {
     LaunchType parseArgs(const std::vector<std::pair<std::string, std::string>>& args)
     {
 
-        LaunchType launchType;
+        LaunchType launchType = LaunchType::Client;
         for (const auto& option : args) {
             // Set launch type to be server.
             // Option: MAX_CONNECTIONS 2-16
@@ -95,6 +95,7 @@ namespace {
                 ClientConfig::get().skinName = option.second;
             }
         }
+        return launchType;
     }
 
     /**
@@ -154,11 +155,7 @@ int main(int argc, char** argv)
     }
 
     loadFromConfigFile();
-    auto launcher = parseArgs(args);
-
-    // return launchClient(config.client, false);
-
-    switch (launcher) {
+    switch (parseArgs(args)) {
         case LaunchType::Server: {
             ServerLauncher launcher(sf::seconds(0));
             launcher.run();

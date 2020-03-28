@@ -1,7 +1,7 @@
 #include "gui_system.h"
 
-#include "../lua/client_lua_api.h"
 #include "../client_config.h"
+#include "../lua/client_lua_api.h"
 
 namespace gui {
     GuiSystem::GuiSystem()
@@ -126,7 +126,7 @@ namespace gui {
 
     const Overlay& GuiSystem::getTop() const
     {
-        return *m_activeGuis.top();     
+        return *m_activeGuis.top();
     }
 
     glm::vec2 GuiSystem::windowToGuiCoords(float winX, float winY) const
