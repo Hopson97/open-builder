@@ -1,9 +1,9 @@
 local WIDGET_WIDTH = 800
 local WIDGET_HEIGHT = 90
 local BUTTON_SIZE = GuiDim.new(0, WIDGET_WIDTH, 0, WIDGET_HEIGHT)
-local widgetTexture = game.gui.getTexture("res/button.png")
-local checkboxTexture_unchecked = game.gui.getTexture("res/checkbox-unchecked.png")
-local checkboxTexture_checked = game.gui.getTexture("res/checkbox-checked.png")
+local widgetTexture = game.getTexture("res/button.png")
+local checkboxTexture_unchecked = game.getTexture("res/checkbox-unchecked.png")
+local checkboxTexture_checked = game.getTexture("res/checkbox-checked.png")
 
 StackMenu = {}
 StackMenu.__index = StackMenu
