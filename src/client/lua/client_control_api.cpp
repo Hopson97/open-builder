@@ -11,7 +11,7 @@ void luaInitClientControlApi(ScriptEngine& scriptEngine,
     auto controlApi =
         scriptEngine.lua.new_usertype<ClientStateController>("ClientStateController");
 
-   scriptEngine.gameTable["control"] = [&clientState]() -> ClientStateController& {
+    scriptEngine.gameTable["control"] = [&clientState]() -> ClientStateController& {
         return clientState;
     };
 

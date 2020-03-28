@@ -11,13 +11,12 @@ const std::string guiCreateScript = R"(
         image.image = 52
     end
 
-    game.gui.addGui{
+    game.gui():addGui{
         id = "test_gui",
-        title = "Test GUI",
         create = create
     }
 
-    game.gui.change("test_gui")
+    game.gui():change("test_gui")
 )";
 
 TEST_CASE("GUI Widget API Tests")
