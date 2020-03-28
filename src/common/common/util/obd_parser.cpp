@@ -19,38 +19,30 @@ namespace {
     }
 } // namespace
 
-std::vector<DataVoxel> getObdDataRaw(const std::string& obd)
+std::unordered_map<std::string, std::string> getObdDataRaw(const std::string& obd)
 {
-    std::vector<DataVoxel> data;
+    std::unordered_map<std::string, std::string> data;
     std::istringstream stream(obd);
     std::string line;
+    std::string value;
 
     while (std::getline(stream, line)) {
         line = cleanString(line);
         if (line.empty()) {
             continue;
         }
-        DataVoxel voxel;
-        voxel.type = line;
         while (stream >> line) {
             if (line.empty()) {
                 continue;
             }
-            if (line == "end") {
-                break;
-            }
-            else {
-                std::string value;
-                stream >> value;
-                voxel.data.emplace(line, value);
-            }
+            stream >> value;
+            data.emplace(line, value);
         }
-        data.push_back(std::move(voxel));
     }
     return data;
 }
 
-std::vector<DataVoxel> getObdData(const std::string& filename)
+std::unordered_map<std::string, std::string> getObdData(const std::string& filename)
 {
     return getObdDataRaw(loadFileContents(filename));
 }

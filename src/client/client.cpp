@@ -36,7 +36,7 @@ Client::Client()
     // clang-format on
 }
 
-bool Client::init(const ClientConfig& config, float aspect)
+bool Client::init(const std::string& ipAddress)
 {
     // OpenGL stuff
     m_cube = makeCubeVertexArray(1, 2, 1);
@@ -64,10 +64,8 @@ bool Client::init(const ClientConfig& config, float aspect)
     m_errorSkinTexture.create("res/skins/error.png", false);
     m_errorSkinTexture.bind();
 
-    m_texturePack = config.texturePack;
-
     // Set up the server connection
-    auto peer = NetworkHost::createAsClient(config.serverIp);
+    auto peer = NetworkHost::createAsClient(ipAddress);
     if (!peer) {
         return false;
     }
@@ -77,13 +75,11 @@ bool Client::init(const ClientConfig& config, float aspect)
     mp_player = &m_entities[NetworkHost::getPeerId()];
     mp_player->position = {CHUNK_SIZE * 2, CHUNK_SIZE * 2 + 1, CHUNK_SIZE * 2};
 
-    m_renderDistance = config.renderDistance;
-
-    m_mouseSensitivity = {config.verticalSensitivity, config.horizontalSensitivity};
-
-    m_rawPlayerSkin = gl::loadRawImageFile("skins/" + config.skinName);
+    m_rawPlayerSkin = gl::loadRawImageFile("skins/" + ClientConfig::get().skinName);
     sendPlayerSkin(m_rawPlayerSkin);
 
+    float aspect = static_cast<float>(ClientConfig::get().windowWidth) /
+                   static_cast<float>(ClientConfig::get().windowHeight);
     m_projectionMatrix = glm::perspective(3.14f / 2.0f, aspect, 0.01f, 2000.0f);
     return true;
 }
@@ -348,9 +344,9 @@ void Client::render()
     bool isPlayerInWater =
         m_chunks.manager.getVoxel(toVoxelPosition(mp_player->position)) ==
         m_voxelData.getVoxelId(CommonVoxel::Water);
-    auto result = m_chunkRenderer.renderChunks(mp_player->position, m_frustum,
-                                               playerProjectionView, isPlayerInWater, 
-                                               m_renderDistance);
+    auto result =
+        m_chunkRenderer.renderChunks(mp_player->position, m_frustum, playerProjectionView,
+                                     isPlayerInWater);
 
     // Render selection box
     if (m_voxelSelected) {

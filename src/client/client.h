@@ -40,7 +40,7 @@ class Client final : public NetworkHost {
   public:
     Client();
 
-    bool init(const ClientConfig& config, float aspect);
+    bool init(const std::string& ipAddress);
     void handleInput(const sf::Window& window, const Keyboard& keyboard,
                      const InputState& inputState);
     void onMouseRelease(sf::Mouse::Button button);
@@ -88,7 +88,6 @@ class Client final : public NetworkHost {
     gl::Texture2d m_errorSkinTexture;
     sf::Image m_rawPlayerSkin;
 
-    std::string m_texturePack;
     gl::TextureArray m_voxelTextures;
 
     ChunkRenderer m_chunkRenderer;
@@ -131,6 +130,4 @@ class Client final : public NetworkHost {
 
     unsigned m_noMeshingCount = 0;
     bool m_voxelMeshing = false;
-
-    float m_renderDistance;
 };
