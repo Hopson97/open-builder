@@ -94,11 +94,14 @@ void Client::handleInput(const sf::Window& window, const Keyboard& keyboard,
 
     if (inputState.isMouseLocked && window.hasFocus() &&
         sf::Mouse::getPosition(window).y >= 0) {
+        float verticalSensitivity = ClientConfig::get().verticalSensitivity;
+        float horizontalSensitivity = ClientConfig::get().horizontalSensitivity;
         auto change = sf::Mouse::getPosition(window) - lastMousePosition;
+
         mp_player->rotation.x +=
-            static_cast<float>(change.y / 8.0f * m_mouseSensitivity.vertical);
+            static_cast<float>(change.y / 8.0f * verticalSensitivity);
         mp_player->rotation.y +=
-            static_cast<float>(change.x / 8.0f * m_mouseSensitivity.horizontal);
+            static_cast<float>(change.x / 8.0f * horizontalSensitivity);
         sf::Mouse::setPosition({(int)window.getSize().x / 2, (int)window.getSize().y / 2},
                                window);
 
