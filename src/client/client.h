@@ -111,12 +111,6 @@ class Client final : public NetworkHost {
 
     VoxelPosition m_currentSelectedVoxelPos;
     bool m_voxelSelected = false;
-
-    struct {
-        float vertical = 0;
-        float horizontal = 0;
-    } m_mouseSensitivity;
-
     Entity* mp_player = nullptr;
 
     struct {
