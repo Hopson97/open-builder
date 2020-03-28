@@ -12,7 +12,7 @@ local function createWorldSelectButton(menu, slot)
         selector.text = name .. '/' .. date
         selector.onClick = function()
             game.gui.change("transition", { message = "Starting Game" } )
-            game.control.loadWorld("Test")
+            game.control():loadWorld("Test")
         end
     else
         selector.onClick = function()

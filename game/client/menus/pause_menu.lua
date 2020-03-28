@@ -8,12 +8,12 @@ local function onCreate(overlay)
     resume.onClick = function()
         game.gui.pop()
         game.input.hideMouse()
-        game.control.resume()
+        game.control():resume()
     end
 
     exit.onClick = function()
         game.gui.change("transition", {message = "Exiting"})
-        game.control.exitGame()
+        game.control():exitGame()
     end
 end
 
