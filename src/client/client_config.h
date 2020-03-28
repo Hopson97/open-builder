@@ -10,6 +10,13 @@
  * Mostly for the window and general graphics options
  */
 struct ClientConfig {
+  public:
+    static ClientConfig& get()
+    {
+        static ClientConfig config;
+        return config;
+    }
+
     bool fullScreen = false;
     int windowWidth = 1280;
     int windowHeight = 720;
@@ -26,5 +33,6 @@ struct ClientConfig {
     std::string skinName = "player";
     std::string texturePack = "default";
 
-    std::string serverIp = LOCAL_HOST;
+  private:
+    ClientConfig();
 };

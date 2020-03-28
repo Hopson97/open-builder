@@ -11,7 +11,6 @@
 #include "server/server_engine.h"
 
 #include "client/client_config.h"
-#include "server/server_config.h"
 
 #include <common/network/enet.h>
 #include <common/util/obd_parser.h>
@@ -32,46 +31,27 @@ namespace {
     };
 
     /**
-     * @brief Holds config for both client and server
-     */
-    struct Config {
-        LaunchType launchType = LaunchType::Client;
-
-        ServerConfig server;
-        ClientConfig client;
-    };
-
-    /**
      * @brief Loads config eg window size from the config.txt file
      * @param config The config object to put the data into
      */
-    void loadFromConfigFile(Config& config)
+    void loadFromConfigFile()
     {
         auto data = getObdData("config.obd");
-        auto clientData = data[0].data;
-        auto serverData = data[1].data;
+        auto& config = ClientConfig::get();
 
-        config.client.fullScreen = std::stoi(clientData["fullscreen"]);
-        config.client.windowWidth = std::stoi(clientData["window_width"]);
-        config.client.windowHeight = std::stoi(clientData["window_height"]);
-        config.client.isFpsCapped = std::stoi(clientData["cap_fps"]);
-        config.client.shouldShowInstructions =
-            std::stoi(clientData["shouldShowInstructions"]);
-        config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
-        config.client.fov = std::stoi(clientData["fov"]);
-        config.client.renderDistance = std::stoi(clientData["renderDistance"]);
-        config.client.fpsLimit = std::stoi(clientData["fps_limit"]);
-        config.client.verticalSensitivity = std::stof(clientData["vertical_sensitivity"]);
-        config.client.horizontalSensitivity =
-            std::stof(clientData["horizontal_sensitivity"]);
-        config.client.skinName = clientData["skin"];
-        config.client.texturePack = clientData["texture_pack"];
-        config.client.serverIp = clientData["server_ip"];
-        if (config.client.serverIp == "LOCAL") {
-            config.client.serverIp = LOCAL_HOST;
-        }
-
-        config.server.worldSize = std::stoi(serverData["world_size"]);
+        config.fullScreen = std::stoi(data["fullscreen"]);
+        config.windowWidth = std::stoi(data["window_width"]);
+        config.windowHeight = std::stoi(data["window_height"]);
+        config.isFpsCapped = std::stoi(data["cap_fps"]);
+        config.shouldShowInstructions = std::stoi(data["shouldShowInstructions"]);
+        config.fpsLimit = std::stoi(data["fps_limit"]);
+        config.fov = std::stoi(data["fov"]);
+        config.renderDistance = std::stoi(data["renderDistance"]);
+        config.fpsLimit = std::stoi(data["fps_limit"]);
+        config.verticalSensitivity = std::stof(data["vertical_sensitivity"]);
+        config.horizontalSensitivity = std::stof(data["horizontal_sensitivity"]);
+        config.skinName = data["skin"];
+        config.texturePack = data["texture_pack"];
     }
 
     /**
@@ -79,14 +59,15 @@ namespace {
      * @param config The config to load data into
      * @param args CLI arguments paired as <argument, param>
      */
-    void parseArgs(Config& config,
-                   const std::vector<std::pair<std::string, std::string>>& args)
+    LaunchType parseArgs(const std::vector<std::pair<std::string, std::string>>& args)
     {
+
+        LaunchType launchType;
         for (const auto& option : args) {
             // Set launch type to be server.
             // Option: MAX_CONNECTIONS 2-16
             if (option.first == "-server") {
-                config.launchType = LaunchType::Server;
+                launchType = LaunchType::Server;
                 try {
                     int maxConnections = std::stoi(option.second);
                     if (maxConnections < 2) {
@@ -104,14 +85,14 @@ namespace {
                     std::cout << "Unable to set max connections, defaulting to "
                                  "4. Reason: "
                               << e.what() << "\n";
-                    config.server.maxConnections = 4;
+                    // config.server.maxConnections = 4;
                 }
             }
             else if (option.first == "-client") {
-                config.launchType = LaunchType::Client;
+                launchType = LaunchType::Client;
             }
             else if (option.first == "-skin") {
-                config.client.skinName = option.second;
+                ClientConfig::get().skinName = option.second;
             }
         }
     }
@@ -161,9 +142,6 @@ namespace {
 
 int main(int argc, char** argv)
 {
-
-    Config config;
-
     if (enet_initialize() != 0) {
         return exitFailure("Failed to initialise enet");
     }
@@ -175,20 +153,20 @@ int main(int argc, char** argv)
         }
     }
 
-    loadFromConfigFile(config);
-    parseArgs(config, args);
+    loadFromConfigFile();
+    auto launcher = parseArgs(args);
 
     // return launchClient(config.client, false);
 
-    switch (config.launchType) {
+    switch (launcher) {
         case LaunchType::Server: {
-            ServerLauncher launcher(config.server, sf::seconds(0));
+            ServerLauncher launcher(sf::seconds(0));
             launcher.run();
             break;
         }
 
         case LaunchType::Client: {
-            runClientEngine(config.client);
+            runClientEngine();
             break;
         }
     }

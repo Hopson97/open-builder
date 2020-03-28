@@ -1,11 +1,12 @@
 #include "gui_system.h"
 
 #include "../lua/client_lua_api.h"
+#include "../client_config.h"
 
 namespace gui {
-    GuiSystem::GuiSystem(unsigned windowWidth, unsigned windowHeight)
-        : m_windowWidth(windowWidth)
-        , m_windowHeight(windowHeight)
+    GuiSystem::GuiSystem()
+        : m_windowWidth(ClientConfig::get().windowWidth)
+        , m_windowHeight(ClientConfig::get().windowHeight)
     {
     }
 

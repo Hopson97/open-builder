@@ -13,12 +13,10 @@ namespace {
         {
         }
 
-        bool executeAction(const ClientConfig& config, Game& game, State& m_currentState,
+        bool executeAction(Game& game, State& m_currentState,
                            ClientLuaCallbacks& callbacks) final override
         {
-            ClientConfig c = config;
-            c.serverIp = LOCAL_HOST;
-            if (game.initGame(config)) {
+            if (game.initGame()) {
                 callbacks.onEnterGame();
                 m_currentState = State::InGame;
             }
@@ -41,10 +39,10 @@ namespace {
         {
         }
 
-        bool executeAction(const ClientConfig& config, Game& game, State& m_currentState,
+        bool executeAction(Game& game, State& m_currentState,
                            ClientLuaCallbacks& callbacks) final override
         {
-            if (game.initGame(config)) {
+            if (game.initGame()) {
                 callbacks.onEnterGame();
                 m_currentState = State::InGame;
             }
@@ -66,10 +64,10 @@ namespace {
         {
         }
 
-        bool executeAction(const ClientConfig& config, Game& game, State& m_currentState,
+        bool executeAction(Game& game, State& m_currentState,
                            ClientLuaCallbacks& callbacks) final override
         {
-            if (game.initGame(config, m_serverIp)) {
+            if (game.initGame(m_serverIp)) {
                 callbacks.onEnterGame();
                 m_currentState = State::InGame;
             }
@@ -86,7 +84,7 @@ namespace {
 
     class ExitGameAction final : public ClientStateController::ControlAction {
       public:
-        bool executeAction(const ClientConfig&, Game& game, State& m_currentState,
+        bool executeAction(Game& game, State& m_currentState,
                            ClientLuaCallbacks& callbacks) final override
         {
             game.stopGame();
@@ -98,7 +96,7 @@ namespace {
 
     class ShutdownGameAction final : public ClientStateController::ControlAction {
       public:
-        bool executeAction(const ClientConfig&, Game&, State&,
+        bool executeAction(Game&, State&,
                            ClientLuaCallbacks&) final override
         {
             return false;
@@ -153,12 +151,12 @@ void ClientStateController::shutdown()
     m_nextAction = std::make_unique<ShutdownGameAction>();
 }
 
-bool ClientStateController::executeAction(const ClientConfig& config, Game& game,
+bool ClientStateController::executeAction(Game& game,
                                           ClientLuaCallbacks& callbacks)
 {
     if (m_nextAction) {
         bool result =
-            m_nextAction->executeAction(config, game, m_currentState, callbacks);
+            m_nextAction->executeAction(game, m_currentState, callbacks);
         m_nextAction.release();
         return result;
     }

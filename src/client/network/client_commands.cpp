@@ -2,6 +2,7 @@
 
 #include <common/debug.h>
 #include <common/world/chunk.h>
+#include "../client_config.h"
 #include <thread>
 
 void Client::sendPlayerPosition(const glm::vec3& position)
@@ -169,7 +170,7 @@ void Client::onGameRegistryData(sf::Packet& packet)
     // 2. Need to pass in the actual texture pack resolution
     m_voxelTextures.create(numVoxels * 3, 16);
 
-    const std::string texturePath = "texture_packs/" + m_texturePack + "/voxels/";
+    const std::string texturePath = "texture_packs/" + ClientConfig::get().texturePack + "/voxels/";
     for (u16 i = 0; i < numVoxels; i++) {
         std::string name;
         std::string textureTop;

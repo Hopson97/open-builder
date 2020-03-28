@@ -1,7 +1,6 @@
 #include "server.h"
 
 #include "../lua/server_lua_api.h"
-#include "../server_config.h"
 #include "../world/terrain_generation.h"
 #include <SFML/System/Clock.hpp>
 #include <algorithm>
@@ -10,9 +9,9 @@
 #include <iostream>
 #include <thread>
 
-Server::Server(const ServerConfig& config)
+Server::Server()
     : NetworkHost("Server")
-    , m_worldSize(config.worldSize)
+    , m_worldSize(16)
     , m_luaCallbacks(m_script)
 {
     // clang-format off

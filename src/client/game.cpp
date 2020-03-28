@@ -1,27 +1,24 @@
 #include "game.h"
 
-bool Game::initGame(ClientConfig config)
+bool Game::initGame()
 {
-    config.serverIp = LOCAL_HOST;
+    //Client.serverIp = LOCAL_HOST;
 
-    m_serverLauncher =
-        std::make_unique<ServerLauncher>(ServerConfig{8, 8}, sf::milliseconds(1000));
+    m_serverLauncher = std::make_unique<ServerLauncher>(sf::milliseconds(1000));
     m_serverLauncher->runAsThread();
 
-    return init(config);
+    return init(LOCAL_HOST);
 }
 
-bool Game::initGame(ClientConfig config, const std::string& ipAddress)
+bool Game::initGame(const std::string& ipAddress)
 {
-    config.serverIp = ipAddress;
-
-    return init(config);
+    return init(ipAddress);
 }
 
-bool Game::init(ClientConfig config)
+bool Game::init(const std::string& ip)
 {
     m_client = std::make_unique<Client>();
-    if (!m_client->init(config, (float)config.windowWidth / (float)config.windowHeight)) {
+    if (!m_client->init(ip)) {
         stopGame();
         return false;
     }
