@@ -1,8 +1,8 @@
 
-local backgroundTexture = game.gui.getTexture("res/menu_bg.png")
-local logoTexture = game.gui.getTexture("res/logo.png")
-local checkboxTexture_unchecked = game.gui.getTexture("res/checkbox-unchecked.png")
-local checkboxTexture_checked = game.gui.getTexture("res/checkbox-checked.png")
+local backgroundTexture = game.getTexture("res/menu_bg.png")
+local logoTexture = game.getTexture("res/logo.png")
+local checkboxTexture_unchecked = game.getTexture("res/checkbox-unchecked.png")
+local checkboxTexture_checked = game.getTexture("res/checkbox-checked.png")
 
 local function onCreate(overlay)
     local menu = StackMenu:create(900, overlay, 15)
