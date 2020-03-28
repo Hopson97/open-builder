@@ -15,7 +15,7 @@ local function onCreate(overlay)
 
     continue.onClick = function()
         game.gui.change("transition", { message = "Starting Game" } )
-        game.control.loadWorld("Test")
+        game.control():loadWorld("Test")
     end  
     
     playGame.onClick = function()
@@ -27,7 +27,7 @@ local function onCreate(overlay)
     end
 
     exitGame.onClick = function()
-        game.control.shutdown()
+        game.control():shutdown()
     end
 end
 
