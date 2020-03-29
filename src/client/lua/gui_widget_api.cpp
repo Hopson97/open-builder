@@ -5,6 +5,7 @@
 #include "../gui/widget/image_widget.h"
 #include "../gui/widget/label_widget.h"
 #include "../gui/widget/text_box_widget.h"
+#include "../gui/widget/checkbox_widget.h"
 #include <common/lua/script_engine.h>
 
 namespace {
@@ -69,6 +70,23 @@ namespace {
         addCommonAPI(buttonApi);
     }
 
+    void addGuiCheckBoxApi(ScriptEngine& engine)
+    {
+        auto checkBoxApi = engine.lua.new_usertype<gui::CheckBoxWidget>("CheckBoxWidget");
+        checkBoxApi["checkedImage"] =
+            sol::property(&gui::CheckBoxWidget::setCheckedImage);
+        checkBoxApi["uncheckedImage"] =
+            sol::property(&gui::CheckBoxWidget::setUncheckedImage);
+        checkBoxApi["image"] = sol::property(&gui::CheckBoxWidget::setImage);
+        checkBoxApi["checked"] = sol::property(&gui::CheckBoxWidget::getChecked, &gui::CheckBoxWidget::setChecked);
+
+        checkBoxApi["onMouseOver"] = sol::property(&gui::CheckBoxWidget::setOnMouseOver);
+        checkBoxApi["onMouseOff"] = sol::property(&gui::CheckBoxWidget::setOnMouseOff);
+
+        addCommonLabelApi(checkBoxApi);
+        addCommonAPI(checkBoxApi);
+    }
+
     void addGuiTextboxApi(ScriptEngine& engine)
     {
         auto textboxApi = engine.lua.new_usertype<gui::TextBoxWidget>("TextBoxWidget");
@@ -97,6 +115,7 @@ namespace {
         overlayApi["addButton"] = &gui::Overlay::addButton;
         overlayApi["addCenteredLabel"] = &gui::Overlay::addCenteredLabel;
         overlayApi["addTextBox"] = &gui::Overlay::addTextBox;
+        overlayApi["addCheckBox"] = &gui::Overlay::addCheckBox;
 
         overlayApi["hide"] = &gui::Overlay::hide;
         overlayApi["show"] = &gui::Overlay::show;
@@ -114,4 +133,6 @@ void luaInitGuiWidgetApi(ScriptEngine& scriptEngine)
     addGuiButtonApi(scriptEngine);
     addGuiTextboxApi(scriptEngine);
     addGuiCenteredLabelApi(scriptEngine);
+    addGuiCheckBoxApi(scriptEngine);
+
 }

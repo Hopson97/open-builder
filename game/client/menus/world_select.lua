@@ -30,7 +30,6 @@ local function onCreate(overlay)
         createWorldSelectButton(menu, characterSlot)
     end
 
-
     local joinWorldButton = overlay:addButton()
     joinWorldButton.textSize = 50
     joinWorldButton.text = "Join World"

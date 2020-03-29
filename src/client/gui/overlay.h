@@ -12,6 +12,7 @@ namespace gui {
     class ImageWidget;
     class LabelWidget;
     class ButtonWidget;
+    class CheckBoxWidget;
     class CenteredLabelWidget;
     class TextBoxWidget;
     /**
@@ -20,6 +21,7 @@ namespace gui {
      */
     struct OverlayDefinition final {
         std::string id;
+        
         sol::function create;
     };
 
@@ -40,6 +42,7 @@ namespace gui {
         ImageWidget* addImage();
         LabelWidget* addLabel();
         CenteredLabelWidget* addCenteredLabel();
+        CheckBoxWidget* addCheckBox();
         ButtonWidget* addButton();
         TextBoxWidget* addTextBox();
 

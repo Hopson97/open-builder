@@ -2,6 +2,8 @@ local WIDGET_WIDTH = 800
 local WIDGET_HEIGHT = 90
 local BUTTON_SIZE = GuiDim.new(0, WIDGET_WIDTH, 0, WIDGET_HEIGHT)
 local widgetTexture = game.getTexture("res/button.png")
+local checkboxTexture_unchecked = game.getTexture("res/checkbox-unchecked.png")
+local checkboxTexture_checked = game.getTexture("res/checkbox-checked.png")
 
 StackMenu = {}
 StackMenu.__index = StackMenu
@@ -67,6 +69,19 @@ function StackMenu:addButton(text)
     button.text = text
 
     return button
+end
+
+function StackMenu:addCheckBox(text)
+    local checkBox = self.overlay:addCheckBox()
+    self:initBasicWidget(checkBox)
+    checkBox.position = GuiDim.new(0, (1920 / 2 - (WIDGET_WIDTH - 500) / 2), 0, self.y + self.widgetGap) -- LEFT OFF HERE!
+    checkBox.size = GuiDim.new(0, WIDGET_WIDTH - 500, 0, WIDGET_HEIGHT)
+    checkBox.image = checkboxTexture_unchecked
+    checkBox.text = text
+    checkBox.textSize = 30
+    checkBox.checkedImage = checkboxTexture_checked
+    checkBox.uncheckedImage = checkboxTexture_unchecked
+    return checkBox
 end
 
 function StackMenu:addLabel(text)
