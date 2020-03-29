@@ -8,7 +8,7 @@ void ClientLuaCallbacks::initCallbacks(ScriptEngine& scriptEngine)
     scriptEngine.addCallbackApi("onEnterGame", m_onEnterGameCallbacks);
     scriptEngine.addCallbackApi("onExitGame", m_onExitGameCallbacks);
     scriptEngine.addCallbackApi("onError", m_onErrorCallbacks);
-    scriptEngine.addCallbackApi("onWheelScroll", m_onMouseWheelScroll);
+    scriptEngine.addCallbackApi("onMouseWheelScroll", m_onMouseWheelScroll);
 
     scriptEngine.addFunction("onKeyReleased",
                              [this](sf::Keyboard::Key key, sol::function f) {
