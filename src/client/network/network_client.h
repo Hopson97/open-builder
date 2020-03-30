@@ -18,11 +18,19 @@ enum class ConnectionState {
     Disconnected,
 };
 
-class NetworkClient {
+class NetworkClient final {
   public:
+    NetworkClient();
+    ~NetworkClient();
+    NetworkClient(const NetworkClient&) = delete;
+    NetworkClient(NetworkClient&&) = delete;
+    NetworkClient& operator=(const NetworkClient&) = delete;
+    NetworkClient& operator=(NetworkClient&& other) = delete;
+
     ConnectionResult connectTo(const std::string& ipaddress);
 
     void tick();
+    void disconnect();
 
     ConnectionState getConnnectionState() const;
 

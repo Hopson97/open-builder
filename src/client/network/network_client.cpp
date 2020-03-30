@@ -13,10 +13,21 @@ ConnectionResult::ConnectionResult(const char* msg)
 {
 }
 
-ConnectionResult NetworkClient::connectTo(const std::string& ipaddress)
+NetworkClient::NetworkClient()
 {
     // Create the network host
     mp_host = enet_host_create(nullptr, 1, 2, 0, 0);
+}
+NetworkClient::~NetworkClient()
+{
+    if (mp_host) {
+        disconnect();
+        enet_host_destroy(mp_host);
+    }
+}
+
+ConnectionResult NetworkClient::connectTo(const std::string& ipaddress)
+{
     if (!mp_host) {
         return "Failed to create the host.";
     }
@@ -71,6 +82,30 @@ void NetworkClient::tick()
             }
         }
     }
+}
+
+void NetworkClient::disconnect()
+{
+    assert(mp_host);
+    assert(m_serverConnection.peer);
+    enet_peer_disconnect(m_serverConnection.peer, 0);
+    ENetEvent event;
+    while (enet_host_service(mp_host, &event, 3000) > 0) {
+        switch (event.type) {
+            case ENET_EVENT_TYPE_RECEIVE:
+                enet_packet_destroy(event.packet);
+                break;
+
+            case ENET_EVENT_TYPE_DISCONNECT:
+                enet_host_flush(mp_host);
+                m_connectionState = ConnectionState::Disconnected;
+                return;
+
+            default:
+                break;
+        }
+    }
+    enet_peer_reset(m_serverConnection.peer);
 }
 
 ConnectionState NetworkClient::getConnnectionState() const
