@@ -10,6 +10,50 @@
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_data.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include "client_session.h"
+
+class Server {
+  public:
+    Server(int maxConnection);
+    ~Server();
+
+    bool isSetup() const;
+
+    void tick();
+    
+  private:
+    ENetHost* mp_host = nullptr;
+    std::vector<ClientSession> m_clients;
+    std::unordered_map<u32, ClientSession*> m_clientsMap;
+
+    int m_maxConnections;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 struct ServerConfig;
 
@@ -27,14 +71,14 @@ struct ConnectedClient {
     bool connected = false;
 };
 
-class Server final : public NetworkHost {
+class OLD_SERVER final : public NetworkHost {
     struct VoxelUpdate {
         VoxelPosition position;
         voxel_t voxel;
     };
 
   public:
-    Server();
+    OLD_SERVER();
 
     void update();
 
@@ -75,5 +119,5 @@ class Server final : public NetworkHost {
     VoxelDataManager m_voxelData;
     BiomeDataManager m_biomeData;
 
-    CommandDispatcher<Server, ServerCommand> m_commandDispatcher;
+    CommandDispatcher<OLD_SERVER, ServerCommand> m_commandDispatcher;
 };

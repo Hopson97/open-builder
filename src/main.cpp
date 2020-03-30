@@ -26,7 +26,7 @@ _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 
 namespace {
     enum class LaunchType {
-        Server,
+        OLD_SERVER,
         Client,
     };
 
@@ -67,7 +67,7 @@ namespace {
             // Set launch type to be server.
             // Option: MAX_CONNECTIONS 2-16
             if (option.first == "-server") {
-                launchType = LaunchType::Server;
+                launchType = LaunchType::OLD_SERVER;
                 try {
                     int maxConnections = std::stoi(option.second);
                     if (maxConnections < 2) {
@@ -156,7 +156,7 @@ int main(int argc, char** argv)
 
     loadFromConfigFile();
     switch (parseArgs(args)) {
-        case LaunchType::Server: {
+        case LaunchType::OLD_SERVER: {
             ServerLauncher launcher(sf::seconds(0));
             launcher.run();
             break;

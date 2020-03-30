@@ -31,6 +31,7 @@ namespace {
 
     int getPeerIdFromServer(ENetHost* host)
     {
+        return 0;
         int id = -1;
         sf::Clock test;
         ENetEvent event;

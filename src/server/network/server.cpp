@@ -9,15 +9,15 @@
 #include <iostream>
 #include <thread>
 
-Server::Server()
-    : NetworkHost("Server")
+OLD_SERVER::OLD_SERVER()
+    : NetworkHost("OLD_SERVER")
     , m_worldSize(16)
     , m_luaCallbacks(m_script)
 {
     // clang-format off
-    m_commandDispatcher.addCommand(ServerCommand::VoxelEdit, &Server::onVoxelEdit);
-    m_commandDispatcher.addCommand(ServerCommand::PlayerPosition, &Server::onPlayerPosition);
-    m_commandDispatcher.addCommand(ServerCommand::PlayerSkin, &Server::onPlayerSkin);
+    m_commandDispatcher.addCommand(ServerCommand::VoxelEdit, &OLD_SERVER::onVoxelEdit);
+    m_commandDispatcher.addCommand(ServerCommand::PlayerPosition, &OLD_SERVER::onPlayerPosition);
+    m_commandDispatcher.addCommand(ServerCommand::PlayerSkin, &OLD_SERVER::onPlayerSkin);
     // clang-format on
 
     // Add all the API needed to the Lua engine
@@ -44,7 +44,7 @@ Server::Server()
     }
 }
 
-void Server::sendChunk(peer_id_t peerId, const ChunkPosition& position)
+void OLD_SERVER::sendChunk(peer_id_t peerId, const ChunkPosition& position)
 {
     if (!m_connectedClients[peerId].connected) {
         return;
@@ -75,7 +75,7 @@ void Server::sendChunk(peer_id_t peerId, const ChunkPosition& position)
     sendToPeer(m_connectedClients[peerId].peer, packet, 1, ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Server::sendPlayerSkin(peer_id_t peerId, std::optional<peer_id_t> toPeer)
+void OLD_SERVER::sendPlayerSkin(peer_id_t peerId, std::optional<peer_id_t> toPeer)
 {
     sf::Packet skinPacket;
     skinPacket << ClientCommand::NewPlayerSkin;
@@ -92,7 +92,7 @@ void Server::sendPlayerSkin(peer_id_t peerId, std::optional<peer_id_t> toPeer)
     }
 }
 
-void Server::sendGameData(peer_id_t peerId)
+void OLD_SERVER::sendGameData(peer_id_t peerId)
 {
     sf::Packet packet;
     packet << ClientCommand::GameRegistryData;
@@ -115,7 +115,7 @@ void Server::sendGameData(peer_id_t peerId)
     sendToPeer(m_connectedClients[peerId].peer, packet, 0, ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Server::onPeerConnect(ENetPeer* peer)
+void OLD_SERVER::onPeerConnect(ENetPeer* peer)
 {
     int slot = findEmptySlot();
     if (slot >= 0) {
@@ -175,23 +175,23 @@ void Server::onPeerConnect(ENetPeer* peer)
     }
 }
 
-void Server::onPeerDisconnect(ENetPeer* peer)
+void OLD_SERVER::onPeerDisconnect(ENetPeer* peer)
 {
     removePeer(peer->connectID);
 }
 
-void Server::onPeerTimeout(ENetPeer* peer)
+void OLD_SERVER::onPeerTimeout(ENetPeer* peer)
 {
     removePeer(peer->connectID);
 }
 
-void Server::onCommandRecieve([[maybe_unused]] ENetPeer* peer, sf::Packet& packet,
-                              command_t command)
+void OLD_SERVER::onCommandRecieve([[maybe_unused]] ENetPeer* peer, sf::Packet& packet,
+                                  command_t command)
 {
     m_commandDispatcher.execute(*this, command, packet);
 }
 
-void Server::onPlayerPosition(sf::Packet& packet)
+void OLD_SERVER::onPlayerPosition(sf::Packet& packet)
 {
     peer_id_t id = 0;
     packet >> id;
@@ -199,7 +199,7 @@ void Server::onPlayerPosition(sf::Packet& packet)
         m_entities[id].position.z;
 }
 
-void Server::onVoxelEdit(sf::Packet& packet)
+void OLD_SERVER::onVoxelEdit(sf::Packet& packet)
 {
     VoxelPosition position;
     voxel_t voxel;
@@ -207,10 +207,10 @@ void Server::onVoxelEdit(sf::Packet& packet)
     m_world.voxelUpdates.push_back({position, voxel});
 }
 
-void Server::onPlayerSkin(sf::Packet& packet)
+void OLD_SERVER::onPlayerSkin(sf::Packet& packet)
 {
     if (packet.getDataSize() != (sizeof(command_t) + sizeof(peer_id_t) + 8192)) {
-        LOG("Server", "Player Skin Packet is of an invalid size");
+        LOG("OLD_SERVER", "Player Skin Packet is of an invalid size");
         return;
     }
 
@@ -227,7 +227,7 @@ void Server::onPlayerSkin(sf::Packet& packet)
     sendPlayerSkin(id);
 }
 
-void Server::update()
+void OLD_SERVER::update()
 {
     {
         sf::Packet packet;
@@ -266,7 +266,7 @@ void Server::update()
     }
 }
 
-int Server::findEmptySlot() const
+int OLD_SERVER::findEmptySlot() const
 {
     for (int i = 0; i < NetworkHost::getMaxConnections(); i++) {
         if (!m_connectedClients[i].connected) {
@@ -276,15 +276,15 @@ int Server::findEmptySlot() const
     return -1;
 }
 
-void Server::addPeer(ENetPeer* peer, peer_id_t id)
+void OLD_SERVER::addPeer(ENetPeer* peer, peer_id_t id)
 {
-    LOGVAR("Server", "New Peer, Peer Id:", (int)id);
+    LOGVAR("OLD_SERVER", "New Peer, Peer Id:", (int)id);
     m_connectedClients[id].peer = peer;
     m_connectedClients[id].connected = true;
     m_connectedClients[id].entityId = id;
 }
 
-void Server::removePeer(u32 connectionId)
+void OLD_SERVER::removePeer(u32 connectionId)
 {
     auto itr = std::find_if(m_connectedClients.begin(), m_connectedClients.end(),
                             [this, &connectionId](auto& conn) {
@@ -293,7 +293,7 @@ void Server::removePeer(u32 connectionId)
 
     assert(itr != m_connectedClients.cend());
     if (itr != m_connectedClients.cend()) {
-        LOGVAR("Server", "Client disconnected, Peer Id:", (int)itr->entityId);
+        LOGVAR("OLD_SERVER", "Client disconnected, Peer Id:", (int)itr->entityId);
         m_luaCallbacks.runPlayerLeaveCallbacks();
 
         m_entities[itr->entityId].active = false;
@@ -310,7 +310,7 @@ void Server::removePeer(u32 connectionId)
     }
 }
 
-glm::vec3 Server::findPlayerSpawnPosition()
+glm::vec3 OLD_SERVER::findPlayerSpawnPosition()
 {
     int x = (CHUNK_SIZE * m_worldSize) / 2;
     int z = (CHUNK_SIZE * m_worldSize) / 2;
@@ -330,4 +330,55 @@ glm::vec3 Server::findPlayerSpawnPosition()
         }
     }
     return {x, CHUNK_SIZE * m_worldSize, z};
+}
+
+Server::Server(int maxConnections)
+    : m_clients(maxConnections)
+    , m_maxConnections(maxConnections)
+{
+    ENetAddress address{};
+    address.host = ENET_HOST_ANY;
+    address.port = DEFAULT_PORT;
+
+    mp_host = enet_host_create(&address, maxConnections, 2, 0, 0);
+}
+
+Server::~Server()
+{
+    if (mp_host) {
+        enet_host_destroy(mp_host);
+    }
+}
+
+bool Server::isSetup() const
+{
+    return mp_host != nullptr;
+}
+
+void Server::tick()
+{
+    assert(mp_host);
+    ENetEvent event;
+    while (enet_host_service(mp_host, &event, 0) > 0) {
+        switch (event.type) {
+            case ENET_EVENT_TYPE_CONNECT:
+                std::cout << "Got a connection " << event.peer->incomingPeerID
+                          << std::endl;
+                break;
+
+            case ENET_EVENT_TYPE_DISCONNECT:
+            case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
+                std::cout << "Got a disconnection " << event.peer->incomingPeerID
+                          << std::endl;
+                break;
+
+            case ENET_EVENT_TYPE_RECEIVE:
+                std::cout << "Got a event " << event.peer->incomingPeerID
+                          << std::endl;
+                break;
+
+            default:
+                break;
+        }
+    }
 }

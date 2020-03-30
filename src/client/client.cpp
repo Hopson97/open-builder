@@ -152,7 +152,9 @@ void Client::handleInput(const sf::Window& window, const Keyboard& keyboard,
 void Client::onMouseRelease(sf::Mouse::Button button)
 {
     // Handle voxel removal/ voxel placing events
-
+    if (!m_hasReceivedGameData) {
+        return;
+    }
     auto voxels =
         getIntersectedVoxels(mp_player->position, forwardsVector(mp_player->rotation), 8);
 

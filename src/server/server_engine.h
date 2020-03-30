@@ -12,7 +12,7 @@ class ServerLauncher {
     NON_MOVEABLE(ServerLauncher)
 
     /**
-     * @brief Construct a new Server Launcher object
+     * @brief Construct a new OLD_SERVER Launcher object
      * @param timeout Time to wait before server exit after no connections are
      * connected
      */
@@ -26,7 +26,9 @@ class ServerLauncher {
   private:
     void launch();
 
-    Server m_server;
+    Server m_newServer;
+
+    //OLD_SERVER m_server;
     std::unique_ptr<std::thread> m_serverThread;
     std::atomic_bool m_isServerRunning;
 
