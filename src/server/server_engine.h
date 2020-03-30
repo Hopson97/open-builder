@@ -28,7 +28,7 @@ class ServerLauncher {
 
     Server m_newServer;
 
-    //OLD_SERVER m_server;
+    // OLD_SERVER m_server;
     std::unique_ptr<std::thread> m_serverThread;
     std::atomic_bool m_isServerRunning;
 

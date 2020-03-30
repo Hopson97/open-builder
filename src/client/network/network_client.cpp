@@ -6,8 +6,8 @@
 
 const ConnectionResult ConnectionResult::SUCCESS;
 
-ConnectionResult::ConnectionResult(const char* message)
-    : message(message)
+ConnectionResult::ConnectionResult(const char* msg)
+    : message(msg)
     , success(false)
 {
 }
@@ -28,12 +28,11 @@ ConnectionResult NetworkClient::connectTo(const std::string& ipaddress)
     }
 
     // Connect to the server
-    ENetPeer* server = enet_host_connect(mp_host, &address, 2, 0);
-    if (!server) {
+    m_serverConnection.peer = enet_host_connect(mp_host, &address, 2, 0);
+    if (!m_serverConnection.peer) {
         return "Failed to connect to the server.";
     }
-
-    std::cout << "yay\n";
+    
     return ConnectionResult::SUCCESS;
 }
 
@@ -49,6 +48,7 @@ void NetworkClient::tick()
                 case ConnectionState::Connected:
                 case ConnectionState::Disconnected:
                 case ConnectionState::Pending:
+                    break;
             }
         }
     }

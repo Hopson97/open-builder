@@ -1,10 +1,10 @@
 #include "overlay.h"
 
 #include "widget/button_widget.h"
+#include "widget/checkbox_widget.h"
 #include "widget/image_widget.h"
 #include "widget/label_widget.h"
 #include "widget/text_box_widget.h"
-#include "widget/checkbox_widget.h"
 #include <iostream>
 
 namespace gui {

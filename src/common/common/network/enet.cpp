@@ -13,4 +13,3 @@ void Connection::send(const sf::Packet& packet, int channel, u32 flags)
     auto enetPacket = createPacket(packet, flags);
     enet_peer_send(peer, channel, enetPacket);
 }
-

@@ -43,6 +43,8 @@ add_library(ob-client
 
     network/client_commands.cpp
 
+    network/network_client.cpp
+
     renderer/gui_renderer.cpp
     renderer/chunk_renderer.cpp
 )

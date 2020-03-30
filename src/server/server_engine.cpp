@@ -52,7 +52,7 @@ void ServerLauncher::launch()
     m_isServerRunning = true;
 
     while (m_isServerRunning) {
-        //50 tps
+        // 50 tps
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
         m_newServer.tick();
@@ -94,8 +94,8 @@ void ServerLauncher::stop()
             m_serverThread->join();
         }
 
-        //m_server.disconnectAllPeers();
-       // m_server.destroy();
+        // m_server.disconnectAllPeers();
+        // m_server.destroy();
         LOG("OLD_SERVER", "OLD_SERVER has exited.");
     }
 }

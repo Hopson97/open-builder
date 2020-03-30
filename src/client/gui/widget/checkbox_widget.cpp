@@ -6,7 +6,8 @@
 
 namespace gui {
 
-    CheckBoxWidget::CheckBoxWidget(RectangleComponent* rectComponent, TextComponent* label)
+    CheckBoxWidget::CheckBoxWidget(RectangleComponent* rectComponent,
+                                   TextComponent* label)
         : mp_rectangle(rectComponent)
         , mp_label(label)
         , m_checked(false)
@@ -114,6 +115,5 @@ namespace gui {
     {
         return m_checked;
     }
-
 
 } // namespace gui

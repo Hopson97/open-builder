@@ -358,7 +358,6 @@ bool Server::isSetup() const
 
 void Server::playerJoined()
 {
-
 }
 
 void Server::tick()
@@ -379,8 +378,7 @@ void Server::tick()
                 break;
 
             case ENET_EVENT_TYPE_RECEIVE:
-                std::cout << "Got a event " << event.peer->incomingPeerID
-                          << std::endl;
+                std::cout << "Got a event " << event.peer->incomingPeerID << std::endl;
                 break;
 
             default:

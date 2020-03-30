@@ -25,7 +25,7 @@ class Game {
     bool init(const std::string& ip);
 
     NetworkClient m_netClient;
-    
+
     std::unique_ptr<Client> m_client;
     std::unique_ptr<ServerLauncher> m_serverLauncher;
 };

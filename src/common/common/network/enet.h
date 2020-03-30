@@ -3,8 +3,8 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <enet/enet.h>
 
-#include <SFML/Network/Packet.hpp>
 #include "../types.h"
+#include <SFML/Network/Packet.hpp>
 
 enum class PacketFlag {
     None = 0,
