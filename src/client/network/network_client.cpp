@@ -1,5 +1,6 @@
 #include "network_client.h"
 
+#include <SFML/System/Clock.hpp>
 #include <cassert>
 #include <common/network/net_constants.h>
 #include <iostream>
@@ -32,7 +33,25 @@ ConnectionResult NetworkClient::connectTo(const std::string& ipaddress)
     if (!m_serverConnection.peer) {
         return "Failed to connect to the server.";
     }
-    
+
+    // Wait for a connection establishment
+    bool connected = [this] {
+        sf::Clock clock;
+        while (clock.getElapsedTime() < sf::seconds(3)) {
+            ENetEvent event;
+            while (enet_host_service(mp_host, &event, 0) > 0) {
+                if (event.type == ENET_EVENT_TYPE_CONNECT) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }();
+    if (!connected) {
+        return "Failed to establish connection with the server.";
+    }
+
+    m_connectionState = ConnectionState::Pending;
     return ConnectionResult::SUCCESS;
 }
 
@@ -52,4 +71,9 @@ void NetworkClient::tick()
             }
         }
     }
+}
+
+ConnectionState NetworkClient::getConnnectionState() const
+{
+    return m_connectionState;
 }

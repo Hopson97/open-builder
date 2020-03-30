@@ -17,7 +17,12 @@ bool Game::initGame(const std::string& ipAddress)
 
 bool Game::init(const std::string& ip)
 {
-    return m_netClient.connectTo(ip).success;
+    auto result = m_netClient.connectTo(ip);
+    if (!result.success) {
+        std::cout << "ERROR: " << result.message << "\n";
+        return false;
+    }
+    
     m_client = std::make_unique<Client>();
     if (!m_client->init(ip)) {
         stopGame();

@@ -24,6 +24,8 @@ class NetworkClient {
 
     void tick();
 
+    ConnectionState getConnnectionState() const;
+
   private:
     ConnectionState m_connectionState = ConnectionState::Disconnected;
     Connection m_serverConnection;
