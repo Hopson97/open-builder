@@ -6,10 +6,16 @@ struct ConnectionResult {
     ConnectionResult() = default;
     ConnectionResult(const char* message);
 
-    const char* message;
+    const char* message = nullptr;
     bool success = true;
 
     const static ConnectionResult SUCCESS;
+};
+
+enum class ConnectionState {
+    Pending,
+    Connected,
+    Disconnected,
 };
 
 class NetworkClient {
@@ -19,6 +25,7 @@ class NetworkClient {
     void tick();
 
   private:
+    ConnectionState m_connectionState = ConnectionState::Disconnected;
     Connection m_serverConnection;
     ENetHost* mp_host;
 };

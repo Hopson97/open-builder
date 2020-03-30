@@ -17,10 +17,6 @@
 class Keyboard;
 struct InputState;
 
-namespace gui {
-    class LabelWidget;
-}
-
 struct VoxelUpdate {
     VoxelPosition position;
     voxel_t voxel = 0;

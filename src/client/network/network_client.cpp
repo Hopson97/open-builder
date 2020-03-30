@@ -43,13 +43,13 @@ void NetworkClient::tick()
     assert(mp_host);
     ENetEvent event;
     while (enet_host_service(mp_host, &event, 0) > 0) {
-        switch (event.type) {
-            case ENET_EVENT_TYPE_RECEIVE:
-                std::cout << "Got a event " << event.peer->incomingPeerID << std::endl;
-                break;
-
-            default:
-                break;
+        if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+            std::cout << "Got a event " << event.peer->incomingPeerID << std::endl;
+            switch (m_connectionState) {
+                case ConnectionState::Connected:
+                case ConnectionState::Disconnected:
+                case ConnectionState::Pending:
+            }
         }
     }
 }
