@@ -5,6 +5,8 @@
 #include <memory>
 #include <server_engine.h>
 
+#include "network/network_client.h"
+
 class Game {
   public:
     bool initGame(const std::string& ipAddress);
@@ -22,6 +24,8 @@ class Game {
   private:
     bool init(const std::string& ip);
 
+    NetworkClient m_netClient;
+    
     std::unique_ptr<Client> m_client;
     std::unique_ptr<ServerLauncher> m_serverLauncher;
 };

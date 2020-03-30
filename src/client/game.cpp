@@ -17,6 +17,7 @@ bool Game::initGame(const std::string& ipAddress)
 
 bool Game::init(const std::string& ip)
 {
+    return m_netClient.connectTo(ip).success;
     m_client = std::make_unique<Client>();
     if (!m_client->init(ip)) {
         stopGame();
@@ -27,14 +28,14 @@ bool Game::init(const std::string& ip)
 
 void Game::stopGame()
 {
-    if (m_serverLauncher) {
-        m_serverLauncher->stop();
-        m_serverLauncher.release();
-    }
     if (m_client) {
         m_client->endGame();
         m_client->destroy();
         m_client.release();
+    }
+    if (m_serverLauncher) {
+        m_serverLauncher->stop();
+        m_serverLauncher.release();
     }
 }
 
@@ -55,8 +56,9 @@ void Game::input(sf::Window& window, const Keyboard& keyboard,
 
 void Game::update(float dt)
 {
-    if (m_client) {
-        m_client->update(dt);
+    if (m_serverLauncher) {
+        m_netClient.tick();
+        // m_client->update(dt);
     }
 }
 

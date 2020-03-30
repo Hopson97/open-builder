@@ -336,10 +336,11 @@ Server::Server(int maxConnections)
     : m_clients(maxConnections)
     , m_maxConnections(maxConnections)
 {
+    m_clientsMap.reserve(maxConnections);
+
     ENetAddress address{};
     address.host = ENET_HOST_ANY;
     address.port = DEFAULT_PORT;
-
     mp_host = enet_host_create(&address, maxConnections, 2, 0, 0);
 }
 
@@ -353,6 +354,11 @@ Server::~Server()
 bool Server::isSetup() const
 {
     return mp_host != nullptr;
+}
+
+void Server::playerJoined()
+{
+
 }
 
 void Server::tick()
@@ -381,4 +387,11 @@ void Server::tick()
                 break;
         }
     }
+}
+
+void Server::addPendingConnection(ENetPeer* peer)
+{
+    Connection connection;
+    connection.peer = peer;
+    m_pendingConnections.push_back(connection);
 }

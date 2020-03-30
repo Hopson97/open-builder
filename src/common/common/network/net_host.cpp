@@ -52,11 +52,6 @@ namespace {
         }
         return id;
     }
-
-    ENetPacket* createPacket(sf::Packet& packet, u32 flags)
-    {
-        return enet_packet_create(packet.getData(), packet.getDataSize(), flags);
-    }
 } // namespace
 
 NetworkHost::NetworkHost(std::string&& name)

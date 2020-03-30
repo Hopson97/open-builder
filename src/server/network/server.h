@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../lua/server_lua_callback.h"
+#include "client_session.h"
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/lua/script_engine.h>
@@ -10,7 +11,6 @@
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_data.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include "client_session.h"
 
 class Server {
   public:
@@ -19,41 +19,21 @@ class Server {
 
     bool isSetup() const;
 
+    void playerJoined();
+
     void tick();
-    
+
   private:
+    void addPendingConnection(ENetPeer* peer);
+
     ENetHost* mp_host = nullptr;
     std::vector<ClientSession> m_clients;
     std::unordered_map<u32, ClientSession*> m_clientsMap;
 
+    std::vector<Connection> m_pendingConnections;
+
     int m_maxConnections;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 struct ServerConfig;
 

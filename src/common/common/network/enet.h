@@ -2,7 +2,9 @@
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <enet/enet.h>
+
 #include <SFML/Network/Packet.hpp>
+#include "../types.h"
 
 enum class PacketFlag {
     None = 0,
@@ -10,7 +12,9 @@ enum class PacketFlag {
     Unsequenced = ENET_PACKET_FLAG_UNSEQUENCED,
 };
 
+ENetPacket* createPacket(const sf::Packet& packet, u32 flags);
+
 struct Connection {
     ENetPeer* peer = nullptr;
-    void send(const sf::Packet& packet);
+    void send(const sf::Packet& packet, int channel = 0, u32 flags = 0);
 };
