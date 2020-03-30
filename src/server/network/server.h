@@ -24,6 +24,7 @@ class Server {
     void tick();
 
   private:
+    void handlePacket(ENetPacket* enetPacket, ENetPeer* peer);
     void addPendingConnection(ENetPeer* peer);
 
     ENetHost* mp_host = nullptr;

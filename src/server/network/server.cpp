@@ -379,6 +379,7 @@ void Server::tick()
 
             case ENET_EVENT_TYPE_RECEIVE:
                 std::cout << "Got a event " << event.peer->incomingPeerID << std::endl;
+                handlePacket(event.packet, event.peer);
                 enet_packet_destroy(event.packet);
                 break;
 
@@ -386,6 +387,11 @@ void Server::tick()
                 break;
         }
     }
+}
+
+void Server::handlePacket(ENetPacket* enetPacket, ENetPeer* peer)
+{
+    std::cout << "Got a packet from " << peer->incomingPeerID << std::endl;
 }
 
 void Server::addPendingConnection(ENetPeer* peer)

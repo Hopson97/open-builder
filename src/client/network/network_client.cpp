@@ -30,6 +30,8 @@ ClientConnectionResult NetworkClient::connectTo(const std::string& ipaddress)
     if (result.success) {
         m_connectionState = ConnectionState::Pending;
     }
+    sf::Packet temp;
+    m_serverConnection.send(temp, 0, ENET_PACKET_FLAG_RELIABLE);
     return result;
 }
 
