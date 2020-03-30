@@ -32,7 +32,7 @@ class Server {
 
     std::vector<Connection> m_pendingConnections;
 
-    int m_maxConnections;
+    int m_maxConnections = 0;
 };
 
 struct ServerConfig;

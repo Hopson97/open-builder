@@ -21,8 +21,7 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint, GLenum sever
             break;
 
         case GL_DEBUG_SEVERITY_NOTIFICATION:
-            severity_str = "notification";
-            break;
+            return;
     }
 
     const char* src = "?";

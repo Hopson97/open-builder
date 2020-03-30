@@ -1,16 +1,7 @@
 #pragma once
 
+#include <common/macros.h>
 #include <common/network/enet.h>
-
-struct ConnectionResult {
-    ConnectionResult() = default;
-    ConnectionResult(const char* message);
-
-    const char* message = nullptr;
-    bool success = true;
-
-    const static ConnectionResult SUCCESS;
-};
 
 enum class ConnectionState {
     Pending,
@@ -22,12 +13,8 @@ class NetworkClient final {
   public:
     NetworkClient();
     ~NetworkClient();
-    NetworkClient(const NetworkClient&) = delete;
-    NetworkClient(NetworkClient&&) = delete;
-    NetworkClient& operator=(const NetworkClient&) = delete;
-    NetworkClient& operator=(NetworkClient&& other) = delete;
 
-    ConnectionResult connectTo(const std::string& ipaddress);
+    ClientConnectionResult connectTo(const std::string& ipaddress);
 
     void tick();
     void disconnect();
@@ -38,4 +25,8 @@ class NetworkClient final {
     ConnectionState m_connectionState = ConnectionState::Disconnected;
     Connection m_serverConnection;
     ENetHost* mp_host;
+
+  public:
+    NON_COPYABLE(NetworkClient)
+    NON_MOVEABLE(NetworkClient)
 };
