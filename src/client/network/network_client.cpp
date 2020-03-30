@@ -13,8 +13,11 @@ NetworkClient::NetworkClient()
 NetworkClient::~NetworkClient()
 {
     if (mp_host) {
-        disconnect();
         enet_host_destroy(mp_host);
+    }
+
+    if (getConnnectionState() == ConnectionState::Connected) {
+        disconnect();
     }
 }
 
@@ -54,6 +57,7 @@ void NetworkClient::tick()
                 case ConnectionState::Pending:
                     break;
             }
+            enet_packet_destroy(event.packet);
         }
     }
 }

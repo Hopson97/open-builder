@@ -39,4 +39,15 @@ TEST_CASE("Network client test")
         
         REQUIRE(client.getConnnectionState() == ConnectionState::Pending);
     }
+
+    SECTION("The client can disconnect from the server")
+    {
+        ServerHelper server;
+        NetworkClient client;
+        client.connectTo(LOCAL_HOST);
+        client.tick();
+        client.disconnect();
+        
+        REQUIRE(client.getConnnectionState() == ConnectionState::Disconnected);
+    }
 }

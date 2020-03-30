@@ -58,7 +58,7 @@ bool disconnectEnetClient(ENetHost* host, Connection& serverConnection)
 {
     enet_peer_disconnect(serverConnection.peer, 0);
     ENetEvent event;
-    while (enet_host_service(host, &event, 3000) > 0) {
+    while (enet_host_service(host, &event, 2000) > 0) {
         if (event.type == ENET_EVENT_TYPE_RECEIVE) {
             enet_packet_destroy(event.packet);
         }

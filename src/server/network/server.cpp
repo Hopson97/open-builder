@@ -379,6 +379,7 @@ void Server::tick()
 
             case ENET_EVENT_TYPE_RECEIVE:
                 std::cout << "Got a event " << event.peer->incomingPeerID << std::endl;
+                enet_packet_destroy(event.packet);
                 break;
 
             default:
