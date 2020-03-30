@@ -51,7 +51,10 @@ ConnectionResult NetworkClient::connectTo(const std::string& ipaddress)
         while (clock.getElapsedTime() < sf::seconds(3)) {
             ENetEvent event;
             while (enet_host_service(mp_host, &event, 0) > 0) {
-                if (event.type == ENET_EVENT_TYPE_CONNECT) {
+                if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+                    enet_packet_destroy(event.packet);
+                }
+                else if (event.type == ENET_EVENT_TYPE_CONNECT) {
                     return true;
                 }
             }
@@ -64,6 +67,26 @@ ConnectionResult NetworkClient::connectTo(const std::string& ipaddress)
 
     m_connectionState = ConnectionState::Pending;
     return ConnectionResult::SUCCESS;
+}
+
+void NetworkClient::disconnect()
+{
+    assert(mp_host);
+    assert(m_serverConnection.peer);
+    enet_peer_disconnect(m_serverConnection.peer, 0);
+    ENetEvent event;
+    while (enet_host_service(mp_host, &event, 3000) > 0) {
+        if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+            enet_packet_destroy(event.packet);
+        }
+        else if (event.type == ENET_EVENT_TYPE_DISCONNECT) {
+            enet_host_flush(mp_host);
+            m_connectionState = ConnectionState::Disconnected;
+            m_serverConnection.peer = nullptr;
+            return;
+        }
+    }
+    enet_peer_reset(m_serverConnection.peer);
 }
 
 void NetworkClient::tick()
@@ -82,30 +105,6 @@ void NetworkClient::tick()
             }
         }
     }
-}
-
-void NetworkClient::disconnect()
-{
-    assert(mp_host);
-    assert(m_serverConnection.peer);
-    enet_peer_disconnect(m_serverConnection.peer, 0);
-    ENetEvent event;
-    while (enet_host_service(mp_host, &event, 3000) > 0) {
-        switch (event.type) {
-            case ENET_EVENT_TYPE_RECEIVE:
-                enet_packet_destroy(event.packet);
-                break;
-
-            case ENET_EVENT_TYPE_DISCONNECT:
-                enet_host_flush(mp_host);
-                m_connectionState = ConnectionState::Disconnected;
-                return;
-
-            default:
-                break;
-        }
-    }
-    enet_peer_reset(m_serverConnection.peer);
 }
 
 ConnectionState NetworkClient::getConnnectionState() const
