@@ -21,8 +21,11 @@ NetworkClient::NetworkClient()
 NetworkClient::~NetworkClient()
 {
     if (mp_host) {
-        disconnect();
         enet_host_destroy(mp_host);
+    }
+
+    if (getConnnectionState() == ConnectionState::Connected) {
+        disconnect();
     }
 }
 
@@ -47,18 +50,16 @@ ConnectionResult NetworkClient::connectTo(const std::string& ipaddress)
 
     // Wait for a connection establishment
     bool connected = [this] {
-        sf::Clock clock;
-        while (clock.getElapsedTime() < sf::seconds(3)) {
-            ENetEvent event;
-            while (enet_host_service(mp_host, &event, 0) > 0) {
-                if (event.type == ENET_EVENT_TYPE_RECEIVE) {
-                    enet_packet_destroy(event.packet);
-                }
-                else if (event.type == ENET_EVENT_TYPE_CONNECT) {
-                    return true;
-                }
+        ENetEvent event;
+        while (enet_host_service(mp_host, &event, 2000) > 0) {
+            if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+                enet_packet_destroy(event.packet);
+            }
+            else if (event.type == ENET_EVENT_TYPE_CONNECT) {
+                return true;
             }
         }
+
         return false;
     }();
     if (!connected) {
@@ -75,7 +76,7 @@ void NetworkClient::disconnect()
     assert(m_serverConnection.peer);
     enet_peer_disconnect(m_serverConnection.peer, 0);
     ENetEvent event;
-    while (enet_host_service(mp_host, &event, 3000) > 0) {
+    while (enet_host_service(mp_host, &event, 2000) > 0) {
         if (event.type == ENET_EVENT_TYPE_RECEIVE) {
             enet_packet_destroy(event.packet);
         }
@@ -103,6 +104,7 @@ void NetworkClient::tick()
                 case ConnectionState::Pending:
                     break;
             }
+            enet_packet_destroy(event.packet);
         }
     }
 }

@@ -22,7 +22,7 @@ bool Game::init(const std::string& ip)
         std::cout << "ERROR: " << result.message << "\n";
         return false;
     }
-    
+
     m_client = std::make_unique<Client>();
     if (!m_client->init(ip)) {
         stopGame();
@@ -34,6 +34,7 @@ bool Game::init(const std::string& ip)
 void Game::stopGame()
 {
     if (m_client) {
+        m_netClient.disconnect();
         m_client->endGame();
         m_client->destroy();
         m_client.release();
