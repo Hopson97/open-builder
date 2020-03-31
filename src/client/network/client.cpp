@@ -1,4 +1,4 @@
-#include "network_client.h"
+#include "client.h"
 
 #include <SFML/System/Clock.hpp>
 #include <cassert>
@@ -6,13 +6,13 @@
 #include <common/network/net_constants.h>
 #include <iostream>
 
-NetworkClient::NetworkClient()
+Client::Client()
     : mp_host(enet_host_create(nullptr, 1, 2, 0, 0))
     , m_salt(createHandshakeRandom())
 {
 }
 
-NetworkClient::~NetworkClient()
+Client::~Client()
 {
     if (mp_host) {
         enet_host_destroy(mp_host);
@@ -23,7 +23,7 @@ NetworkClient::~NetworkClient()
     }
 }
 
-ClientConnectionResult NetworkClient::connectTo(const std::string& ipaddress)
+ClientConnectionResult Client::connectTo(const std::string& ipaddress)
 {
     auto result = connectEnetClientTo(mp_host, m_serverConnection, ipaddress.c_str());
     if (result.success) {
@@ -36,7 +36,7 @@ ClientConnectionResult NetworkClient::connectTo(const std::string& ipaddress)
     return result;
 }
 
-void NetworkClient::disconnect()
+void Client::disconnect()
 {
     assert(mp_host);
     assert(m_serverConnection.peer);
@@ -45,7 +45,7 @@ void NetworkClient::disconnect()
     }
 }
 
-void NetworkClient::tick()
+void Client::tick()
 {
     assert(m_serverConnection.peer);
     assert(mp_host);
@@ -60,12 +60,12 @@ void NetworkClient::tick()
     }
 }
 
-ConnectionState NetworkClient::getConnnectionState() const
+ConnectionState Client::getConnnectionState() const
 {
     return m_connectionState;
 }
 
-void NetworkClient::handlePacket(ClientPacket& packet)
+void Client::handlePacket(ClientPacket& packet)
 {
     using Cmd = ClientCommand;
     std::cout << "Got a event " << (int)packet.command << std::endl;
@@ -78,7 +78,7 @@ void NetworkClient::handlePacket(ClientPacket& packet)
 
 }
 
-void NetworkClient::onHandshakeChallenge(ClientPacket& packet)
+void Client::onHandshakeChallenge(ClientPacket& packet)
 {
     u32 salt = 0;
     packet.payload >> salt;

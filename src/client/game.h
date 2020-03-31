@@ -1,11 +1,15 @@
 #pragma once
 
-#include "client.h"
 #include "client_config.h"
 #include <memory>
+#include <SFML/Window/Mouse.hpp>
+#include <SFML/Window/Window.hpp>
 #include <server_engine.h>
 
-#include "network/network_client.h"
+#include "network/client.h"
+
+class Keyboard;
+struct InputState;
 
 class Game {
   public:
@@ -24,8 +28,9 @@ class Game {
   private:
     bool init(const std::string& ip);
 
-    NetworkClient m_netClient;
+    Client m_client;
 
-    std::unique_ptr<Client> m_client;
+    bool m_isInGame = false;
+
     std::unique_ptr<ServerLauncher> m_serverLauncher;
 };

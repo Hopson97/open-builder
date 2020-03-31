@@ -12,10 +12,10 @@ enum class ConnectionState {
     Disconnected,
 };
 
-class NetworkClient final {
+class Client final {
   public:
-    NetworkClient();
-    ~NetworkClient();
+    Client();
+    ~Client();
 
     ClientConnectionResult connectTo(const std::string& ipaddress);
 
@@ -37,6 +37,6 @@ class NetworkClient final {
     u32 m_salt;
 
   public:
-    NON_COPYABLE(NetworkClient)
-    NON_MOVEABLE(NetworkClient)
+    NON_COPYABLE(Client)
+    NON_MOVEABLE(Client)
 };

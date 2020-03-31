@@ -11,11 +11,6 @@ class ServerLauncher {
     NON_COPYABLE(ServerLauncher)
     NON_MOVEABLE(ServerLauncher)
 
-    /**
-     * @brief Construct a new OLD_SERVER Launcher object
-     * @param timeout Time to wait before server exit after no connections are
-     * connected
-     */
     ServerLauncher(sf::Time timeout);
     ~ServerLauncher();
 
@@ -27,8 +22,6 @@ class ServerLauncher {
     void launch();
 
     Server m_newServer;
-
-    // OLD_SERVER m_server;
     std::unique_ptr<std::thread> m_serverThread;
     std::atomic_bool m_isServerRunning;
 

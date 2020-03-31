@@ -15,7 +15,6 @@ add_library(ob-client
 
     client_state_controller.cpp
     client_engine.cpp
-    client.cpp
     game.cpp
 
     lua/client_lua_callback.cpp
@@ -42,8 +41,7 @@ add_library(ob-client
     window.cpp
 
     network/client_commands.cpp
-
-    network/network_client.cpp
+    network/client.cpp
 
     renderer/gui_renderer.cpp
     renderer/chunk_renderer.cpp
