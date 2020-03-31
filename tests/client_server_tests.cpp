@@ -53,6 +53,7 @@ TEST_CASE("Client/Server connection tests")
         Client client;
         client.connectTo(LOCAL_HOST);
         client.tick();
+        REQUIRE(client.getConnnectionState() == ConnectionState::Pending);
         client.disconnect();
 
         REQUIRE(client.getConnnectionState() == ConnectionState::Disconnected);
