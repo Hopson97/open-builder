@@ -1,6 +1,9 @@
 #include "enet.h"
 
 #include <cassert>
+#include <random>
+#include <ctime>
+#include <limits>
 
 #include "net_constants.h"
 
@@ -31,6 +34,9 @@ void Connection::send(const sf::Packet& packet, int channel, u32 flags)
 ClientConnectionResult connectEnetClientTo(ENetHost* host, Connection& serverConnection,
                                            const char* ipAddress)
 {
+    if (!host) {
+        return "Failed to create the host.";
+    }
     // Create address for the client to connect to
     ENetAddress address{};
     address.port = DEFAULT_PORT;
@@ -80,9 +86,18 @@ bool disconnectEnetClient(ENetHost* host, Connection& serverConnection)
     enet_peer_reset(serverConnection.peer);
 }
 
-void broadcastToPeers(ENetHost* host, u8 channel, sf::Packet& packet, u32 flags)
+void broadcastToPeers(ENetHost* host, sf::Packet& packet, u8 channel, u32 flags)
 {
     auto enetpacket = createPacket(packet, flags);
     enet_host_broadcast(host, channel, enetpacket);
 }
+
+u32 createHandshakeRandom()
+{
+    std::mt19937 rng(std::time(nullptr));
+    std::uniform_int_distribution<u32> dist(0, 4294967290);
+    return dist(rng);
+}
+
+
 

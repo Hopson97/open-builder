@@ -21,8 +21,22 @@ struct Connection {
     void send(const sf::Packet& packet, int channel = 0, u32 flags = 0);
 };
 
+template <typename Command>
+struct Packet {
+    Packet(ENetPacket* packet)
+    {
+        payload.append(packet->data, packet->dataLength);
+        payload << command << salt;
+    }
+
+    Command command;
+    u32 salt;
+    sf::Packet payload;
+};
+
 ENetPacket* createPacket(const sf::Packet& packet, u32 flags);
 ClientConnectionResult connectEnetClientTo(ENetHost* host, Connection& serverConnection,
                                            const char* ipAddress);
 bool disconnectEnetClient(ENetHost* host, Connection& serverConnection);
 void broadcastToPeers(ENetHost* host, sf::Packet& packet, u8 channel = 0, u32 flags = 0);
+u32 createHandshakeRandom();
