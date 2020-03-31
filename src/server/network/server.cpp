@@ -1,5 +1,7 @@
 #include "server.h"
 
+#include <common/network/net_constants.h>
+
 Server::Server(int maxConnections)
     : m_clients(maxConnections)
     , m_maxConnections(maxConnections)

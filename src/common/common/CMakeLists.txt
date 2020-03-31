@@ -3,7 +3,6 @@ add_library(ob-common
     util/file_io.cpp
     util/obd_parser.cpp
     debug.cpp
-    network/net_host.cpp
     network/enet.cpp
     lua/script_engine.cpp
     lua/util_api.cpp
