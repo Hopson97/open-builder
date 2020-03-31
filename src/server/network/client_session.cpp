@@ -13,7 +13,7 @@ void PendingClientSession::sendAcceptConnection()
     auto outgoing = createPacket(ClientCommand::ConnectionAcceptance, salt);
 
     // '1' meaning accept
-    outgoing << 1;
+    outgoing << (u8)1;
     connection.send(outgoing, 0, ENET_PACKET_FLAG_RELIABLE);
 }
 
@@ -22,7 +22,7 @@ void PendingClientSession::sendRejectConnection(const char* reason)
     auto outgoing = createPacket(ClientCommand::ConnectionAcceptance, salt);
 
     // '0' meaning reject
-    outgoing << 0 << std::string(reason);
+    outgoing << (u8)0 << std::string(reason);
     connection.send(outgoing, 0, ENET_PACKET_FLAG_RELIABLE);
 }
 

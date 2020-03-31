@@ -118,7 +118,7 @@ add_executable(tests
     tests/client/lua/client_control_api_test.cpp
     tests/client/lua/gui_widget_api_test.cpp
 
-    tests/client/network/client_test.cpp
+    tests/client_server_tests.cpp
 )
 
 include_dirs(tests)

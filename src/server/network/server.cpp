@@ -37,15 +37,11 @@ void Server::tick()
     while (enet_host_service(mp_host, &event, 0) > 0) {
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
-                std::cout << "Got a connection " << event.peer->incomingPeerID
-                          << std::endl;
                 addPendingConnection(event.peer);
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
             case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
-                std::cout << "Got a disconnection " << event.peer->incomingPeerID
-                          << std::endl;
                 break;
 
             case ENET_EVENT_TYPE_RECEIVE: {
@@ -99,7 +95,6 @@ void Server::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
                 itr->salt = salt;
                 int slot = createClientSession(peer, salt);
                 if (slot != -1) {
-                    std::cout << "Connection was accepted\n";
                     pending.sendAcceptConnection();
                 }
                 else {
@@ -107,7 +102,6 @@ void Server::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
                 }
             }
             else {
-                std::cout << "Connection was rejected\n";
             }
             itr = m_pendingConnections.erase(itr);
         }
@@ -118,7 +112,6 @@ int Server::createClientSession(ENetPeer* peer, u32 salt)
 {
     for (int i = 0; i < m_clients.size(); i++) {
         if (!m_clients[i].isActive()) {
-            std::cout << "Session created!\n";
             m_clients[i].init(peer, salt);
             return true;
         }
