@@ -92,7 +92,7 @@ enum class ServerCommand : command_t {
     // Sends a random number to the server
     // Data:
     // u32: The random number, combined with the server random using ^
-    HandshakePartTwo,
+    HandshakeResponse,
 
     // Command to tell server the position of a player
     // Data:

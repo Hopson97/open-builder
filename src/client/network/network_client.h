@@ -28,6 +28,8 @@ class NetworkClient final {
     void handlePendingPacket(ClientPacket& packet);
     void handlePacket(ClientPacket& packet);
 
+    void onHandshakeChallenge(ClientPacket& packet);
+
     ConnectionState m_connectionState = ConnectionState::Disconnected;
     Connection m_serverConnection;
     ENetHost* mp_host;

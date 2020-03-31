@@ -357,10 +357,6 @@ bool Server::isSetup() const
     return mp_host != nullptr;
 }
 
-void Server::playerJoined()
-{
-}
-
 void Server::tick()
 {
     assert(mp_host);
@@ -370,6 +366,7 @@ void Server::tick()
             case ENET_EVENT_TYPE_CONNECT:
                 std::cout << "Got a connection " << event.peer->incomingPeerID
                           << std::endl;
+                addPendingConnection(event.peer);
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
@@ -379,7 +376,6 @@ void Server::tick()
                 break;
 
             case ENET_EVENT_TYPE_RECEIVE: {
-                std::cout << "Got a event " << event.peer->incomingPeerID << std::endl;
                 ServerPacket packet(event.packet);
                 handlePacket(packet, event.peer);
                 enet_packet_destroy(event.packet);
@@ -391,9 +387,17 @@ void Server::tick()
     }
 }
 
-void Server::handlePacket(ServerPacket& enetPacket, ENetPeer* peer)
+void Server::handlePacket(ServerPacket& packet, ENetPeer* peer)
 {
-    std::cout << "Got a packet from " << peer->incomingPeerID << std::endl;
+    using Cmd = ServerCommand;
+    std::cout << "Command " << (int)packet.command << " Size: " << packet.payload.getDataSize() <<  std::endl;
+
+    // clang-format off
+    switch (packet.command) {
+        case Cmd::HandshakePartOne: onHandshakePartOne(packet, peer); break;
+        case Cmd::HandshakeResponse: onHandshakeResponse(packet, peer); break;
+    }
+    // clang-format on
 }
 
 void Server::addPendingConnection(ENetPeer* peer)
@@ -401,4 +405,36 @@ void Server::addPendingConnection(ENetPeer* peer)
     Connection connection;
     connection.peer = peer;
     m_pendingConnections.push_back(connection);
+}
+
+void Server::onHandshakePartOne(ServerPacket& packet, ENetPeer* peer)
+{
+    for (auto& pending : m_pendingConnections) {
+        if (pending.peer->incomingPeerID == peer->incomingPeerID) {
+            pending.salt = packet.salt;
+            auto outgoing = createPacket(ClientCommand::HandshakeChallenge, pending.salt);
+            outgoing << m_salt;
+            pending.send(outgoing);
+        }
+    }
+}
+
+void Server::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
+{
+    for (auto itr = m_pendingConnections.begin(); itr != m_pendingConnections.end();) {
+        if (itr->peer->incomingPeerID == peer->incomingPeerID) {
+            // Accept or Reject connection
+            u32 salt = itr->salt ^ m_salt;
+            if (salt == packet.salt) {
+                itr->salt = salt;
+                Connection connection = *itr;
+                std::cout << "Player joined!\n";
+                itr = m_pendingConnections.erase(itr);
+            }
+            else {
+                std::cout << "Connection was rejected\n";
+                itr = m_pendingConnections.erase(itr);
+            }
+        }
+    }
 }

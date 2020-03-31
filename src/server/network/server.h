@@ -20,14 +20,14 @@ class Server {
     ~Server();
 
     bool isSetup() const;
-
-    void playerJoined();
-
     void tick();
 
   private:
-    void handlePacket(ServerPacket& enetPacket, ENetPeer* peer);
+    void handlePacket(ServerPacket& packet, ENetPeer* peer);
     void addPendingConnection(ENetPeer* peer);
+
+    void onHandshakePartOne(ServerPacket& packet, ENetPeer* peer);
+    void onHandshakeResponse(ServerPacket& packet, ENetPeer* peer);
 
     ENetHost* mp_host = nullptr;
     std::vector<ClientSession> m_clients;

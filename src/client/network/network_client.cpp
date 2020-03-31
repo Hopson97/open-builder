@@ -52,15 +52,11 @@ void NetworkClient::tick()
     ENetEvent event;
     while (enet_host_service(mp_host, &event, 0) > 0) {
         if (event.type == ENET_EVENT_TYPE_RECEIVE) {
-            std::cout << "Got a event " << event.peer->incomingPeerID << std::endl;
             ClientPacket packet(event.packet);
-            if (m_connectionState == ConnectionState::Connected) {
-                handlePacket(packet);
-            }
-            else if (m_connectionState == ConnectionState::Pending)
-                handlePendingPacket(packet);
+            handlePacket(packet);
+            enet_packet_destroy(event.packet);
         }
-        enet_packet_destroy(event.packet);
+       
     }
 }
 
@@ -69,13 +65,25 @@ ConnectionState NetworkClient::getConnnectionState() const
     return m_connectionState;
 }
 
-void NetworkClient::handlePendingPacket(ClientPacket& packet)
-{
-    auto command = static_cast<ClientCommand>(packet.command);
-    switch (command) {
-    }
-}
-
 void NetworkClient::handlePacket(ClientPacket& packet)
 {
+    using Cmd = ClientCommand;
+    std::cout << "Got a event " << (int)packet.command << std::endl;
+    // clang-format off
+    switch (packet.command) {
+        case Cmd::HandshakeChallenge: onHandshakeChallenge(packet); break;
+        default: break;
+    }
+    // clang-format on
+
+}
+
+void NetworkClient::onHandshakeChallenge(ClientPacket& packet)
+{
+    u32 salt = 0;
+    packet.payload >> salt;
+    u32 newSalt = m_salt ^ salt;
+
+    auto response = createPacket(ServerCommand::HandshakeResponse, newSalt);
+    m_serverConnection.send(response);
 }

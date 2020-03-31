@@ -15,8 +15,6 @@ ClientConnectionResult::ClientConnectionResult(const char* msg)
 {
 }
 
-
-
 ENetPacket* createPacket(const sf::Packet& packet, u32 flags)
 {
     return enet_packet_create(packet.getData(), packet.getDataSize(), flags);
@@ -28,8 +26,6 @@ void Connection::send(const sf::Packet& packet, int channel, u32 flags)
     auto enetPacket = createPacket(packet, flags);
     enet_peer_send(peer, channel, enetPacket);
 }
-
-
 
 ClientConnectionResult connectEnetClientTo(ENetHost* host, Connection& serverConnection,
                                            const char* ipAddress)
