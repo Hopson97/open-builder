@@ -38,10 +38,12 @@ ClientConnectionResult Client::connectTo(const std::string& ipaddress)
 
 void Client::disconnect()
 {
-    assert(mp_host);
-    assert(m_serverConnection.peer);
-    if (disconnectEnetClient(mp_host, m_serverConnection)) {
-        m_connectionState = ConnectionState::Disconnected;
+    if (m_connectionState != ConnectionState::Disconnected) {
+        assert(mp_host);
+        assert(m_serverConnection.peer);
+        if (disconnectEnetClient(mp_host, m_serverConnection)) {
+            m_connectionState = ConnectionState::Disconnected;
+        }
     }
 }
 
