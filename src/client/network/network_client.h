@@ -2,6 +2,9 @@
 
 #include <common/macros.h>
 #include <common/network/enet.h>
+#include <common/network/net_command.h>
+
+using ClientPacket = Packet<ClientCommand>;
 
 enum class ConnectionState {
     Pending,
@@ -22,9 +25,14 @@ class NetworkClient final {
     ConnectionState getConnnectionState() const;
 
   private:
+    void handlePendingPacket(ClientPacket& packet);
+    void handlePacket(ClientPacket& packet);
+
     ConnectionState m_connectionState = ConnectionState::Disconnected;
     Connection m_serverConnection;
     ENetHost* mp_host;
+
+    u32 m_salt;
 
   public:
     NON_COPYABLE(NetworkClient)

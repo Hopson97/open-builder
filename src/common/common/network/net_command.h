@@ -7,6 +7,12 @@
         Commands to be sent to the client
 */
 enum class ClientCommand : command_t {
+    // Send handshake response to the client
+    // Data:
+    // u32: The random number sent from the client
+    // u32: The server's random number
+    HandshakeChallenge,
+
     // Send peer ID to a new connection
     // Data:
     // peer_id_t: The ID of this client
@@ -78,6 +84,16 @@ enum class ClientCommand : command_t {
         Commands to be sent to server
 */
 enum class ServerCommand : command_t {
+    // Sends a random number to the server
+    // Data:
+    // u32: The random number
+    HandshakePartOne,
+
+    // Sends a random number to the server
+    // Data:
+    // u32: The random number, combined with the server random using ^
+    HandshakePartTwo,
+
     // Command to tell server the position of a player
     // Data:
     // peer_id_t: The player which position is being sent

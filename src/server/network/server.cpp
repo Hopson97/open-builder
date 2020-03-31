@@ -335,6 +335,7 @@ glm::vec3 OLD_SERVER::findPlayerSpawnPosition()
 Server::Server(int maxConnections)
     : m_clients(maxConnections)
     , m_maxConnections(maxConnections)
+    , m_salt(createHandshakeRandom())
 {
     m_clientsMap.reserve(maxConnections);
 
@@ -377,11 +378,12 @@ void Server::tick()
                           << std::endl;
                 break;
 
-            case ENET_EVENT_TYPE_RECEIVE:
+            case ENET_EVENT_TYPE_RECEIVE: {
                 std::cout << "Got a event " << event.peer->incomingPeerID << std::endl;
-                handlePacket(event.packet, event.peer);
+                ServerPacket packet(event.packet);
+                handlePacket(packet, event.peer);
                 enet_packet_destroy(event.packet);
-                break;
+            } break;
 
             default:
                 break;
@@ -389,7 +391,7 @@ void Server::tick()
     }
 }
 
-void Server::handlePacket(ENetPacket* enetPacket, ENetPeer* peer)
+void Server::handlePacket(ServerPacket& enetPacket, ENetPeer* peer)
 {
     std::cout << "Got a packet from " << peer->incomingPeerID << std::endl;
 }

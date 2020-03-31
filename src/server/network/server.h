@@ -12,6 +12,8 @@
 #include <common/world/voxel_data.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+using ServerPacket = Packet<ServerCommand>;
+
 class Server {
   public:
     Server(int maxConnection);
@@ -24,7 +26,7 @@ class Server {
     void tick();
 
   private:
-    void handlePacket(ENetPacket* enetPacket, ENetPeer* peer);
+    void handlePacket(ServerPacket& enetPacket, ENetPeer* peer);
     void addPendingConnection(ENetPeer* peer);
 
     ENetHost* mp_host = nullptr;
@@ -34,6 +36,8 @@ class Server {
     std::vector<Connection> m_pendingConnections;
 
     int m_maxConnections = 0;
+
+    u32 m_salt;
 };
 
 struct ServerConfig;
