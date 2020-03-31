@@ -1,7 +1,6 @@
 #include "client_session.h"
 #include <common/network/net_command.h>
 
-
 void PendingClientSession::sendHandshakeChallenge(u32 serversalt)
 {
     auto outgoing = createPacket(ClientCommand::HandshakeChallenge, salt);
@@ -37,8 +36,10 @@ void ClientSession::init(ENetPeer* peer, u32 salt)
 
 void ClientSession::disconnect()
 {
-    enet_peer_disconnect(m_clientConnection.peer, 0);
-    m_isActive = false;
+    if (m_isActive) {
+        enet_peer_disconnect(m_clientConnection.peer, 0);
+        m_isActive = false;
+    }
 }
 
 bool ClientSession::verify(u32 salt) const
@@ -50,4 +51,3 @@ bool ClientSession::isActive() const
 {
     return m_isActive;
 }
-

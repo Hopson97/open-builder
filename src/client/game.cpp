@@ -56,6 +56,5 @@ void Game::update(float dt)
 void Game::render()
 {
     if (m_isInGame) {
-        
     }
 }

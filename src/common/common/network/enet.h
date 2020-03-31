@@ -57,5 +57,3 @@ inline sf::Packet createPacket(T command, u32 salt)
     packet << command << salt;
     return packet;
 }
-
-

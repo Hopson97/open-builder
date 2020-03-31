@@ -2,6 +2,7 @@
 add_library(ob-server
     server_engine.cpp
     network/server.cpp
+    network/client_session.cpp
     world/terrain_generation.cpp
     lua/data_api.cpp 
     lua/world_api.cpp

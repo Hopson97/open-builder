@@ -1,9 +1,9 @@
 #pragma once
 
 #include "client_config.h"
-#include <memory>
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Window.hpp>
+#include <memory>
 #include <server_engine.h>
 
 #include "network/client.h"

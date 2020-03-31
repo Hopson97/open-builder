@@ -56,7 +56,6 @@ void Client::tick()
             handlePacket(packet);
             enet_packet_destroy(event.packet);
         }
-       
     }
 }
 
@@ -74,7 +73,6 @@ void Client::handlePacket(ClientPacket& packet)
         default: break;
     }
     // clang-format on
-
 }
 
 void Client::onHandshakeChallenge(ClientPacket& packet)
@@ -103,6 +101,5 @@ void Client::onConnectionAcceptance(ClientPacket& packet)
         std::cout << "Rejected!\n" << reason << std::endl;
 
         m_connectionState = ConnectionState::Disconnected;
-    
     }
 }

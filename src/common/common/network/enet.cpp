@@ -1,9 +1,9 @@
 #include "enet.h"
 
 #include <cassert>
-#include <random>
 #include <ctime>
 #include <limits>
+#include <random>
 
 #include "net_constants.h"
 
@@ -48,14 +48,13 @@ ClientConnectionResult connectEnetClientTo(ENetHost* host, Connection& serverCon
 
     // Wait for a connection establishment
     bool connected = [&host] {
-            ENetEvent event;
-            while (enet_host_service(host, &event, 2000) > 0) {
-                if (event.type == ENET_EVENT_TYPE_RECEIVE) {
-                    enet_packet_destroy(event.packet);
-                }
-                else if (event.type == ENET_EVENT_TYPE_CONNECT) {
-                    return true;
-                
+        ENetEvent event;
+        while (enet_host_service(host, &event, 2000) > 0) {
+            if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+                enet_packet_destroy(event.packet);
+            }
+            else if (event.type == ENET_EVENT_TYPE_CONNECT) {
+                return true;
             }
         }
         return false;
@@ -80,6 +79,7 @@ bool disconnectEnetClient(ENetHost* host, Connection& serverConnection)
         }
     }
     enet_peer_reset(serverConnection.peer);
+    return false;
 }
 
 void broadcastToPeers(ENetHost* host, sf::Packet& packet, u8 channel, u32 flags)
@@ -94,6 +94,3 @@ u32 createHandshakeRandom()
     std::uniform_int_distribution<u32> dist(0, 4294967290);
     return dist(rng);
 }
-
-
-

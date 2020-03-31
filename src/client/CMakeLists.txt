@@ -40,7 +40,6 @@ add_library(ob-client
 
     window.cpp
 
-    network/client_commands.cpp
     network/client.cpp
 
     renderer/gui_renderer.cpp
