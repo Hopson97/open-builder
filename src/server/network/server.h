@@ -29,11 +29,13 @@ class Server {
     void onHandshakePartOne(ServerPacket& packet, ENetPeer* peer);
     void onHandshakeResponse(ServerPacket& packet, ENetPeer* peer);
 
+    int createClientSession(ENetPeer* peer, u32 salt);
+
     ENetHost* mp_host = nullptr;
     std::vector<ClientSession> m_clients;
     std::unordered_map<u32, ClientSession*> m_clientsMap;
 
-    std::vector<Connection> m_pendingConnections;
+    std::vector<PendingClientSession> m_pendingConnections;
 
     int m_maxConnections = 0;
 

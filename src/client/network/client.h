@@ -25,10 +25,10 @@ class Client final {
     ConnectionState getConnnectionState() const;
 
   private:
-    void handlePendingPacket(ClientPacket& packet);
     void handlePacket(ClientPacket& packet);
 
     void onHandshakeChallenge(ClientPacket& packet);
+    void onConnectionAcceptance(ClientPacket& packet);
 
     ConnectionState m_connectionState = ConnectionState::Disconnected;
     Connection m_serverConnection;

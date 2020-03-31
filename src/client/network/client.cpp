@@ -68,7 +68,6 @@ ConnectionState Client::getConnnectionState() const
 void Client::handlePacket(ClientPacket& packet)
 {
     using Cmd = ClientCommand;
-    std::cout << "Got a event " << (int)packet.command << std::endl;
     // clang-format off
     switch (packet.command) {
         case Cmd::HandshakeChallenge: onHandshakeChallenge(packet); break;
@@ -80,10 +79,30 @@ void Client::handlePacket(ClientPacket& packet)
 
 void Client::onHandshakeChallenge(ClientPacket& packet)
 {
+    std::cout << "Got handshake challenge\n";
     u32 salt = 0;
     packet.payload >> salt;
     u32 newSalt = m_salt ^ salt;
 
     auto response = createPacket(ServerCommand::HandshakeResponse, newSalt);
     m_serverConnection.send(response);
+}
+
+void Client::onConnectionAcceptance(ClientPacket& packet)
+{
+    u8 isAccepted = 0;
+    packet.payload >> isAccepted;
+    if (isAccepted) {
+        std::cout << "Connected!\n";
+        m_connectionState = ConnectionState::Connected;
+    }
+    else {
+        std::string reason;
+        packet.payload >> reason;
+
+        std::cout << "Rejected!\n" << reason << std::endl;
+
+        m_connectionState = ConnectionState::Disconnected;
+    
+    }
 }

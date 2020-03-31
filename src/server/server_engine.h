@@ -21,7 +21,7 @@ class ServerLauncher {
   private:
     void launch();
 
-    Server m_newServer;
+    Server m_server;
     std::unique_ptr<std::thread> m_serverThread;
     std::atomic_bool m_isServerRunning;
 

@@ -13,6 +13,12 @@ enum class ClientCommand : command_t {
     // u32: The server's random number
     HandshakeChallenge,
 
+    // Sends either a connection rejection or accept to a joining client
+    // Data:
+    // u8 - 0 for reject, 1 for accept
+    // string - Optional - Reason for connection rejection
+    ConnectionAcceptance,
+/*
     // Send peer ID to a new connection
     // Data:
     // peer_id_t: The ID of this client
@@ -77,7 +83,7 @@ enum class ClientCommand : command_t {
     GameRegistryData,
 
     // For getting the number of commands, used by CommandDispatcher
-    COUNT,
+    COUNT,*/
 };
 
 /**
@@ -93,7 +99,7 @@ enum class ServerCommand : command_t {
     // Data:
     // u32: The random number, combined with the server random using ^
     HandshakeResponse,
-
+/*
     // Command to tell server the position of a player
     // Data:
     // peer_id_t: The player which position is being sent
@@ -112,7 +118,7 @@ enum class ServerCommand : command_t {
     PlayerSkin,
 
     // For getting the number of commands, used by CommandDispatcher
-    COUNT,
+    COUNT,*/
 };
 
 template <typename CommandType>

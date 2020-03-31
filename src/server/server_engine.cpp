@@ -7,7 +7,7 @@
 #include <thread>
 
 ServerLauncher::ServerLauncher(sf::Time timeout)
-    : m_newServer(16)
+    : m_server(16)
     , m_timeout(timeout)
 {
 }
@@ -42,14 +42,14 @@ void ServerLauncher::runAsThread()
 
 void ServerLauncher::launch()
 {
-    if (!m_newServer.isSetup()) {
+    if (!m_server.isSetup()) {
         return;
     }
     m_isServerRunning = true;
-    LOG("Server ", "Server has been launched.");
+    LOG("Server ", "Launched.");
     while (m_isServerRunning) {
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
-        m_newServer.tick();
+        m_server.tick();
     }
 }
 
@@ -60,6 +60,6 @@ void ServerLauncher::stop()
         if (m_serverThread->joinable()) {
             m_serverThread->join();
         }
-        LOG("OLD_SERVER", "OLD_SERVER has exited.");
+        LOG("Server", "Exited.");
     }
 }

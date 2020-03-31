@@ -19,6 +19,9 @@ Server::~Server()
 {
     if (mp_host) {
         enet_host_destroy(mp_host);
+        for (auto& session : m_clients) {
+            session.disconnect();
+        }
     }
 }
 
@@ -60,8 +63,6 @@ void Server::tick()
 void Server::handlePacket(ServerPacket& packet, ENetPeer* peer)
 {
     using Cmd = ServerCommand;
-    std::cout << "Command " << (int)packet.command << " Size: " << packet.payload.getDataSize() <<  std::endl;
-
     // clang-format off
     switch (packet.command) {
         case Cmd::HandshakePartOne: onHandshakePartOne(packet, peer); break;
@@ -72,19 +73,17 @@ void Server::handlePacket(ServerPacket& packet, ENetPeer* peer)
 
 void Server::addPendingConnection(ENetPeer* peer)
 {
-    Connection connection;
-    connection.peer = peer;
-    m_pendingConnections.push_back(connection);
+    PendingClientSession session;
+    session.connection.peer = peer;
+    m_pendingConnections.push_back(session);
 }
 
 void Server::onHandshakePartOne(ServerPacket& packet, ENetPeer* peer)
 {
     for (auto& pending : m_pendingConnections) {
-        if (pending.peer->incomingPeerID == peer->incomingPeerID) {
+        if (pending.connection.peer->incomingPeerID == peer->incomingPeerID) {
             pending.salt = packet.salt;
-            auto outgoing = createPacket(ClientCommand::HandshakeChallenge, pending.salt);
-            outgoing << m_salt;
-            pending.send(outgoing);
+            pending.sendHandshakeChallenge(m_salt);
         }
     }
 }
@@ -92,19 +91,37 @@ void Server::onHandshakePartOne(ServerPacket& packet, ENetPeer* peer)
 void Server::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
 {
     for (auto itr = m_pendingConnections.begin(); itr != m_pendingConnections.end();) {
-        if (itr->peer->incomingPeerID == peer->incomingPeerID) {
-            // Accept or Reject connection
+        auto& pending = *itr;
+        auto peer = pending.connection.peer;
+        if (peer->incomingPeerID == peer->incomingPeerID) {
             u32 salt = itr->salt ^ m_salt;
             if (salt == packet.salt) {
                 itr->salt = salt;
-                Connection connection = *itr;
-                std::cout << "Player joined!\n";
-                itr = m_pendingConnections.erase(itr);
+                int slot = createClientSession(peer, salt);
+                if (slot != -1) {
+                    std::cout << "Connection was accepted\n";
+                    pending.sendAcceptConnection();
+                }
+                else {
+                    pending.sendRejectConnection("Game Full");
+                }
             }
             else {
                 std::cout << "Connection was rejected\n";
-                itr = m_pendingConnections.erase(itr);
             }
+            itr = m_pendingConnections.erase(itr);
         }
     }
+}
+
+int Server::createClientSession(ENetPeer* peer, u32 salt)
+{
+    for (int i = 0; i < m_clients.size(); i++) {
+        if (!m_clients[i].isActive()) {
+            std::cout << "Session created!\n";
+            m_clients[i].init(peer, salt);
+            return true;
+        }
+    }
+    return false;
 }
