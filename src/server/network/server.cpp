@@ -3,48 +3,41 @@
 #include <common/network/net_constants.h>
 
 Server::Server(int maxConnections)
-    : m_clients(maxConnections)
+    : m_host({ENET_HOST_ANY, DEFAULT_PORT}, maxConnections)
+    , m_clients(maxConnections)
     , m_maxConnections(maxConnections)
     , m_salt(createHandshakeRandom())
 {
     m_clientsMap.reserve(maxConnections);
-
-    ENetAddress address{};
-    address.host = ENET_HOST_ANY;
-    address.port = DEFAULT_PORT;
-    mp_host = enet_host_create(&address, maxConnections, 2, 0, 0);
 }
 
 Server::~Server()
 {
-    if (mp_host) {
-        enet_host_destroy(mp_host);
-        for (auto& session : m_clients) {
-            session.disconnect();
-        }
+    for (auto& session : m_clients) {
+        session.disconnect();
     }
 }
 
 bool Server::isSetup() const
 {
-    return mp_host != nullptr;
+    return m_host.handle != nullptr;
 }
 
 void Server::tick()
 {
-    assert(mp_host);
-    ENetEvent event;
-    while (enet_host_service(mp_host, &event, 0) > 0) {
+    assert(m_host.handle);
+    NetEvent event;
+    while (m_host.pumpEvent(event)) {
         switch (event.type) {
-            case ENET_EVENT_TYPE_CONNECT:
+            case NetEventType::Connection:
                 addPendingConnection(event.peer);
                 break;
 
-            case ENET_EVENT_TYPE_DISCONNECT:
-            case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
+            case NetEventType::Disconnect:
+            case NetEventType::Timeout:
                 break;
 
-            case ENET_EVENT_TYPE_RECEIVE: {
+            case NetEventType::Data: {
                 ServerPacket packet(event.packet);
                 handlePacket(packet, event.peer);
                 enet_packet_destroy(event.packet);
@@ -52,6 +45,7 @@ void Server::tick()
 
             default:
                 break;
+
         }
     }
 }

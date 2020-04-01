@@ -31,7 +31,7 @@ class Server {
 
     int createClientSession(ENetPeer* peer, u32 salt);
 
-    ENetHost* mp_host = nullptr;
+    NetHost m_host;
     std::vector<ClientSession> m_clients;
     std::unordered_map<u32, ClientSession*> m_clientsMap;
 
