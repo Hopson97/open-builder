@@ -45,7 +45,6 @@ void Server::tick()
 
             default:
                 break;
-
         }
     }
 }
@@ -57,6 +56,7 @@ void Server::handlePacket(ServerPacket& packet, ENetPeer* peer)
     switch (packet.command) {
         case Cmd::HandshakePartOne: onHandshakePartOne(packet, peer); break;
         case Cmd::HandshakeResponse: onHandshakeResponse(packet, peer); break;
+        default: std::cout << "Some other event smh\n"; break;
     }
     // clang-format on
 }

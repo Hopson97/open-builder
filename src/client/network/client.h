@@ -32,7 +32,7 @@ class Client final {
 
     ConnectionState m_connectionState = ConnectionState::Disconnected;
     Connection m_serverConnection;
-    ENetHost* mp_host;
+    NetHost m_host;
 
     u32 m_salt;
 

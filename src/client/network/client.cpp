@@ -7,17 +7,12 @@
 #include <iostream>
 
 Client::Client()
-    : mp_host(enet_host_create(nullptr, 1, 2, 0, 0))
-    , m_salt(createHandshakeRandom())
+    : m_salt(createHandshakeRandom())
 {
 }
 
 Client::~Client()
 {
-    if (mp_host) {
-        enet_host_destroy(mp_host);
-    }
-
     if (getConnnectionState() == ConnectionState::Connected) {
         disconnect();
     }
@@ -25,7 +20,7 @@ Client::~Client()
 
 ClientConnectionResult Client::connectTo(const std::string& ipaddress)
 {
-    auto result = connectEnetClientTo(mp_host, m_serverConnection, ipaddress.c_str());
+    auto result = connectEnetClientTo(m_host.handle, m_serverConnection, ipaddress.c_str());
     if (result.success) {
         m_connectionState = ConnectionState::Pending;
 
@@ -39,9 +34,9 @@ ClientConnectionResult Client::connectTo(const std::string& ipaddress)
 void Client::disconnect()
 {
     if (m_connectionState != ConnectionState::Disconnected) {
-        assert(mp_host);
+        assert(m_host.handle);
         assert(m_serverConnection.peer);
-        if (disconnectEnetClient(mp_host, m_serverConnection)) {
+        if (disconnectEnetClient(m_host.handle, m_serverConnection)) {
             m_connectionState = ConnectionState::Disconnected;
         }
     }
@@ -50,10 +45,10 @@ void Client::disconnect()
 void Client::tick()
 {
     assert(m_serverConnection.peer);
-    assert(mp_host);
-    ENetEvent event;
-    while (enet_host_service(mp_host, &event, 0) > 0) {
-        if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+    assert(m_host.handle);
+    NetEvent event;
+    while (m_host.pumpEvent(event)) {
+        if (event.type == NetEventType::Data) {
             ClientPacket packet(event.packet);
             handlePacket(packet);
             enet_packet_destroy(event.packet);
