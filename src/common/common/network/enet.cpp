@@ -9,22 +9,76 @@
 
 const ClientConnectionResult ClientConnectionResult::SUCCESS;
 
+namespace {
+    void destroyENetHost(ENetHost* host)
+    {
+        if (host) {
+            enet_host_destroy(host);
+        }
+    }
+} // namespace
+
 ClientConnectionResult::ClientConnectionResult(const char* msg)
     : message(msg)
     , success(false)
 {
 }
 
-ENetPacket* createPacket(const sf::Packet& packet, u32 flags)
-{
-    return enet_packet_create(packet.getData(), packet.getDataSize(), flags);
-}
-
+/**
+    Connection functions
+*/
 void Connection::send(const sf::Packet& packet, int channel, u32 flags)
 {
     assert(peer);
     auto enetPacket = createPacket(packet, flags);
     enet_peer_send(peer, channel, enetPacket);
+}
+
+/**
+    Net Host functions
+*/
+NetHost::NetHost(const ENetAddress& address, int maximumConnections) noexcept
+{
+    handle = enet_host_create(&address, maximumConnections, 2, 0, 0);
+}
+
+NetHost::~NetHost() noexcept
+{
+    destroyENetHost(handle);
+}
+
+NetHost::NetHost(NetHost&& other) noexcept
+    : handle(other.handle)
+{
+    destroyENetHost(other.handle);
+    other.handle = nullptr;
+}
+
+NetHost& NetHost::operator=(NetHost&& other) noexcept
+{
+    destroyENetHost(other.handle);
+    other.handle = nullptr;
+    return *this;
+}
+
+bool NetHost::pumpEvent(NetEvent& event)
+{
+    if (enet_host_service(handle, &event.data, 0))
+    {
+        event.type = static_cast<NetEventType>(event.data.type);
+        event.packet = event.data.packet;
+        event.peer = event.data.peer;
+        return true;
+    }
+    return false;
+}
+
+/**
+    Network helper functions
+*/
+ENetPacket* createPacket(const sf::Packet& packet, u32 flags)
+{
+    return enet_packet_create(packet.getData(), packet.getDataSize(), flags);
 }
 
 ClientConnectionResult connectEnetClientTo(ENetHost* host, Connection& serverConnection,
@@ -90,7 +144,7 @@ void broadcastToPeers(ENetHost* host, sf::Packet& packet, u8 channel, u32 flags)
 
 u32 createHandshakeRandom()
 {
-    std::mt19937 rng(std::time(nullptr));
+    std::mt19937 rng(static_cast<unsigned>(std::time(nullptr)));
     std::uniform_int_distribution<u32> dist(0, 4294967290);
     return dist(rng);
 }

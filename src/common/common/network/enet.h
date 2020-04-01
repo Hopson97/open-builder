@@ -3,6 +3,7 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <enet/enet.h>
 
+#include "../macros.h"
 #include "../types.h"
 #include <SFML/Network/Packet.hpp>
 #include <iostream>
@@ -22,6 +23,36 @@ struct Connection {
     u32 salt = 0;
 
     void send(const sf::Packet& packet, int channel = 0, u32 flags = 0);
+};
+
+enum class NetEventType {
+    None = ENET_EVENT_TYPE_NONE,
+    Data = ENET_EVENT_TYPE_RECEIVE,
+    Connection = ENET_EVENT_TYPE_CONNECT,
+    Disconnect = ENET_EVENT_TYPE_DISCONNECT,
+    Timeout = ENET_EVENT_TYPE_DISCONNECT_TIMEOUT,
+};
+
+struct NetEvent {
+    ENetEvent data;
+    NetEventType type;
+
+    ENetPacket* packet = nullptr;
+    ENetPeer* peer = nullptr;
+};
+
+struct NetHost {
+    ENetHost* handle = nullptr;
+
+    NetHost(const ENetAddress& address, int maximumConnections) noexcept;
+    ~NetHost() noexcept;
+
+    NetHost(NetHost&& other) noexcept;
+    NetHost& operator=(NetHost&& other) noexcept;
+
+    bool pumpEvent(NetEvent& event);
+
+    NON_COPYABLE(NetHost)
 };
 
 template <typename Command>
