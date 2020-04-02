@@ -69,6 +69,8 @@ void Client::handlePacket(ClientPacket& packet)
     switch (packet.command()) {
         case Cmd::HandshakeChallenge:   onHandshakeChallenge(packet);   break;
         case Cmd::ConnectionAcceptance: onConnectionAcceptance(packet); break;
+           
+        case Cmd::PlayerJoined:         onPlayerJoin(packet);           break;
     }
     // clang-format on
 }
@@ -93,4 +95,9 @@ void Client::onConnectionAcceptance(ClientPacket& packet)
         std::cout << "Rejected!\n" << reason << std::endl;
         m_connectionState = ConnectionState::Disconnected;
     }
+}
+
+void Client::onPlayerJoin(ClientPacket& packet)
+{
+    std::cout << "Player joined!\n";
 }

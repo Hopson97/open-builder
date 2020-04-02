@@ -31,6 +31,8 @@ class Client final {
     void onHandshakeChallenge(ClientPacket& packet);
     void onConnectionAcceptance(ClientPacket& packet);
 
+    void onPlayerJoin(ClientPacket& packet);
+
     ConnectionState m_connectionState = ConnectionState::Disconnected;
     Connection m_serverConnection;
     NetHost m_host;

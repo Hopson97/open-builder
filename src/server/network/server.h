@@ -29,6 +29,8 @@ class Server {
     void onHandshakePartOne(ServerPacket& packet, ENetPeer* peer);
     void onHandshakeResponse(ServerPacket& packet, ENetPeer* peer);
 
+    void broadcastPlayerJoin();
+
     int createClientSession(ENetPeer* peer, u32 salt);
 
     NetHost m_host;

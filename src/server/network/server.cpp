@@ -89,6 +89,7 @@ void Server::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
                 int slot = createClientSession(peer, salt);
                 if (slot != -1) {
                     pending.sendAcceptConnection();
+                    broadcastPlayerJoin();
                 }
                 else {
                     pending.sendRejectConnection("Game Full");
@@ -99,6 +100,12 @@ void Server::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
             itr = m_pendingConnections.erase(itr);
         }
     }
+}
+
+void Server::broadcastPlayerJoin()
+{
+    ServerPacket packet(ClientCommand::PlayerJoined, m_salt);
+    broadcastToPeers(m_host.handle, packet.get(), 0, ENET_PACKET_FLAG_RELIABLE);
 }
 
 int Server::createClientSession(ENetPeer* peer, u32 salt)

@@ -141,7 +141,7 @@ bool disconnectEnetClient(ENetHost* host, Connection& serverConnection)
     return false;
 }
 
-void broadcastToPeers(ENetHost* host, sf::Packet& packet, u8 channel, u32 flags)
+void broadcastToPeers(ENetHost* host, const sf::Packet& packet, u8 channel, u32 flags)
 {
     auto enetpacket = createPacket(packet, flags);
     enet_host_broadcast(host, channel, enetpacket);
