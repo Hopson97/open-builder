@@ -1,29 +1,31 @@
 #include "client_session.h"
 #include <common/network/net_command.h>
 
+#include "server.h"
+
 void PendingClientSession::sendHandshakeChallenge(u32 serversalt)
 {
-    auto outgoing = createPacket(ClientCommand::HandshakeChallenge, salt);
-    outgoing << serversalt;
-    connection.send(outgoing, 0, ENET_PACKET_FLAG_RELIABLE);
+    ServerPacket outgoing(ClientCommand::HandshakeChallenge, salt);
+    outgoing.write(serversalt);
+    connection.send(outgoing.get(), 0, ENET_PACKET_FLAG_RELIABLE);
 }
 
 void PendingClientSession::sendAcceptConnection()
 {
-    auto outgoing = createPacket(ClientCommand::ConnectionAcceptance, salt);
-
-    // '1' meaning accept
-    outgoing << (u8)1;
-    connection.send(outgoing, 0, ENET_PACKET_FLAG_RELIABLE);
+    // 1 meaning accept
+    ServerPacket outgoing(ClientCommand::ConnectionAcceptance, salt);
+    outgoing.write((u8)1);
+    connection.send(outgoing.get(), 0, ENET_PACKET_FLAG_RELIABLE);
 }
 
 void PendingClientSession::sendRejectConnection(const char* reason)
 {
-    auto outgoing = createPacket(ClientCommand::ConnectionAcceptance, salt);
+    // 0 meaning accept
+    ServerPacket outgoing(ClientCommand::ConnectionAcceptance, salt);
+    outgoing.write((u8)0);
+    outgoing.write(std::string(reason));
 
-    // '0' meaning reject
-    outgoing << (u8)0 << std::string(reason);
-    connection.send(outgoing, 0, ENET_PACKET_FLAG_RELIABLE);
+    connection.send(outgoing.get(), 0, ENET_PACKET_FLAG_RELIABLE);
 }
 
 void ClientSession::init(ENetPeer* peer, u32 salt)

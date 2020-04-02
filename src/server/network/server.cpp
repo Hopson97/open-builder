@@ -9,6 +9,7 @@ Server::Server(int maxConnections)
     , m_salt(createHandshakeRandom())
 {
     m_clientsMap.reserve(maxConnections);
+    std::cout << "Server salt: " << m_salt << std::endl;
 }
 
 Server::~Server()
@@ -53,7 +54,7 @@ void Server::handlePacket(ServerPacket& packet, ENetPeer* peer)
 {
     using Cmd = ServerCommand;
     // clang-format off
-    switch (packet.command) {
+    switch (packet.command()) {
         case Cmd::HandshakePartOne: onHandshakePartOne(packet, peer); break;
         case Cmd::HandshakeResponse: onHandshakeResponse(packet, peer); break;
         default: std::cout << "Some other event smh\n"; break;
@@ -72,7 +73,7 @@ void Server::onHandshakePartOne(ServerPacket& packet, ENetPeer* peer)
 {
     for (auto& pending : m_pendingConnections) {
         if (pending.connection.peer->incomingPeerID == peer->incomingPeerID) {
-            pending.salt = packet.salt;
+            pending.salt = packet.salt();
             pending.sendHandshakeChallenge(m_salt);
         }
     }
@@ -85,7 +86,7 @@ void Server::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
         auto peer = pending.connection.peer;
         if (peer->incomingPeerID == peer->incomingPeerID) {
             u32 salt = itr->salt ^ m_salt;
-            if (salt == packet.salt) {
+            if (salt == packet.salt()) {
                 itr->salt = salt;
                 int slot = createClientSession(peer, salt);
                 if (slot != -1) {
@@ -104,7 +105,7 @@ void Server::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
 
 int Server::createClientSession(ENetPeer* peer, u32 salt)
 {
-    for (int i = 0; i < m_clients.size(); i++) {
+    for (unsigned i = 0; i < m_clients.size(); i++) {
         if (!m_clients[i].isActive()) {
             m_clients[i].init(peer, salt);
             return true;

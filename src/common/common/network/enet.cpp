@@ -34,6 +34,11 @@ void Connection::send(const sf::Packet& packet, int channel, u32 flags)
     enet_peer_send(peer, channel, enetPacket);
 }
 
+NetHost::NetHost()
+{
+    handle = enet_host_create(nullptr, 1, 2, 0, 0);
+}
+
 /**
     Net Host functions
 */

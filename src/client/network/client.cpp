@@ -20,7 +20,8 @@ Client::~Client()
 
 ClientConnectionResult Client::connectTo(const std::string& ipaddress)
 {
-    auto result = connectEnetClientTo(m_host.handle, m_serverConnection, ipaddress.c_str());
+    auto result =
+        connectEnetClientTo(m_host.handle, m_serverConnection, ipaddress.c_str());
     if (result.success) {
         m_connectionState = ConnectionState::Pending;
 
@@ -65,8 +66,8 @@ void Client::handlePacket(ClientPacket& packet)
 {
     using Cmd = ClientCommand;
     // clang-format off
-    switch (packet.command) {
-        case Cmd::HandshakeChallenge: onHandshakeChallenge(packet); break;
+    switch (packet.command()) {
+        case Cmd::HandshakeChallenge:   onHandshakeChallenge(packet);   break;
         case Cmd::ConnectionAcceptance: onConnectionAcceptance(packet); break;
         default: break;
     }
@@ -75,29 +76,22 @@ void Client::handlePacket(ClientPacket& packet)
 
 void Client::onHandshakeChallenge(ClientPacket& packet)
 {
-    std::cout << "Got handshake challenge\n";
-    u32 salt = 0;
-    packet.payload >> salt;
+    u32 salt = packet.read<u32>();
     u32 newSalt = m_salt ^ salt;
-
-    auto response = createPacket(ServerCommand::HandshakeResponse, newSalt);
-    m_serverConnection.send(response);
+    ClientPacket response(ServerCommand::HandshakeResponse, newSalt);
+    m_serverConnection.send(response.get());
 }
 
 void Client::onConnectionAcceptance(ClientPacket& packet)
 {
-    u8 isAccepted = 0;
-    packet.payload >> isAccepted;
+    u8 isAccepted = packet.read<u8>();
     if (isAccepted) {
         std::cout << "Connected!\n";
         m_connectionState = ConnectionState::Connected;
     }
     else {
-        std::string reason;
-        packet.payload >> reason;
-
+        std::string reason = packet.read<std::string>();
         std::cout << "Rejected!\n" << reason << std::endl;
-
         m_connectionState = ConnectionState::Disconnected;
     }
 }

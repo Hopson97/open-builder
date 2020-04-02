@@ -3,8 +3,9 @@
 #include <common/macros.h>
 #include <common/network/enet.h>
 #include <common/network/net_command.h>
+#include <common/network/packet.h>
 
-using ClientPacket = Packet<ClientCommand>;
+using ClientPacket = Packet<ClientCommand, ServerCommand>;
 
 enum class ConnectionState {
     Pending,
