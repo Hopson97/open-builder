@@ -22,7 +22,7 @@ class ServerLauncher {
     void launch();
 
     Server m_server;
-    std::unique_ptr<std::thread> m_serverThread;
+    std::thread m_serverThread;
     std::atomic_bool m_isServerRunning;
 
     sf::Time m_timeout;

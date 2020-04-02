@@ -19,12 +19,11 @@ ServerLauncher::~ServerLauncher()
 
 void ServerLauncher::run()
 {
-    std::cout << "Server Console Commands:\n"
-              << "exit - Exits server and disconnects everyone\n\n";
-    m_serverThread = std::make_unique<std::thread>([this] {
+    printf("Type 'exit' to shutdown server");
+    m_serverThread = std::thread([this] {
         std::string input;
         while (m_isServerRunning) {
-            std::cin >> input;
+            std::getline(std::cin, input);
             if (input == "exit") {
                 std::cout << "Exiting server.\n\n";
                 m_isServerRunning = false;
@@ -37,7 +36,7 @@ void ServerLauncher::run()
 
 void ServerLauncher::runAsThread()
 {
-    m_serverThread = std::make_unique<std::thread>([this] { launch(); });
+    m_serverThread = std::thread([this] { launch(); });
 }
 
 void ServerLauncher::launch()
@@ -46,7 +45,6 @@ void ServerLauncher::launch()
         return;
     }
     m_isServerRunning = true;
-    LOG("Server ", "Launched.");
     while (m_isServerRunning) {
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
         m_server.tick();
@@ -55,11 +53,8 @@ void ServerLauncher::launch()
 
 void ServerLauncher::stop()
 {
-    if (m_serverThread && m_serverThread->joinable()) {
-        m_isServerRunning = false;
-        if (m_serverThread->joinable()) {
-            m_serverThread->join();
-        }
-        LOG("Server", "Exited.");
+    m_isServerRunning = false;
+    if (m_serverThread.joinable()) {
+        m_serverThread.join();
     }
 }
