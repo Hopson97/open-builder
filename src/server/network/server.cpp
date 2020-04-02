@@ -9,7 +9,6 @@ Server::Server(int maxConnections)
     , m_salt(createHandshakeRandom())
 {
     m_clientsMap.reserve(maxConnections);
-    std::cout << "Server salt: " << m_salt << std::endl;
 }
 
 Server::~Server()
@@ -55,9 +54,8 @@ void Server::handlePacket(ServerPacket& packet, ENetPeer* peer)
     using Cmd = ServerCommand;
     // clang-format off
     switch (packet.command()) {
-        case Cmd::HandshakePartOne: onHandshakePartOne(packet, peer); break;
-        case Cmd::HandshakeResponse: onHandshakeResponse(packet, peer); break;
-        default: std::cout << "Some other event smh\n"; break;
+        case Cmd::HandshakePartOne:     onHandshakePartOne(packet, peer);   break;
+        case Cmd::HandshakeResponse:    onHandshakeResponse(packet, peer);  break;
     }
     // clang-format on
 }

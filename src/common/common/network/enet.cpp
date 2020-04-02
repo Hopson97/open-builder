@@ -16,6 +16,11 @@ namespace {
             enet_host_destroy(host);
         }
     }
+
+    ENetPacket* createPacket(const sf::Packet& packet, u32 flags)
+    {
+        return enet_packet_create(packet.getData(), packet.getDataSize(), flags);
+    }
 } // namespace
 
 ClientConnectionResult::ClientConnectionResult(const char* msg)
@@ -81,11 +86,6 @@ bool NetHost::pumpEvent(NetEvent& event)
 /**
     Network helper functions
 */
-ENetPacket* createPacket(const sf::Packet& packet, u32 flags)
-{
-    return enet_packet_create(packet.getData(), packet.getDataSize(), flags);
-}
-
 ClientConnectionResult connectEnetClientTo(ENetHost* host, Connection& serverConnection,
                                            const char* ipAddress)
 {

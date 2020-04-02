@@ -69,7 +69,6 @@ void Client::handlePacket(ClientPacket& packet)
     switch (packet.command()) {
         case Cmd::HandshakeChallenge:   onHandshakeChallenge(packet);   break;
         case Cmd::ConnectionAcceptance: onConnectionAcceptance(packet); break;
-        default: break;
     }
     // clang-format on
 }

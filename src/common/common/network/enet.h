@@ -56,7 +56,6 @@ struct NetHost {
     NON_COPYABLE(NetHost)
 };
 
-ENetPacket* createPacket(const sf::Packet& packet, u32 flags);
 ClientConnectionResult connectEnetClientTo(ENetHost* host, Connection& serverConnection,
                                            const char* ipAddress);
 bool disconnectEnetClient(ENetHost* host, Connection& serverConnection);
