@@ -15,14 +15,24 @@ enum class ClientCommand : command_t {
 
     // Sends either a connection rejection or accept to a joining client
     // Data:
-    // u8 - 0 for reject, 1 for accept
-    // string - Optional - Reason for connection rejection
+    // u8: 0 for reject, 1 for accept
+    // string: Optional - Reason for connection rejection
     ConnectionAcceptance,
+
+    // Forces the user to exit the game
+    // Data:
+    // string: reason
+    ForceExitGame,
 
     // Sends data about a player joining the game
     // Data:
     // nothing... yet
     PlayerJoined,
+
+    // Sends info that a player has left the game
+    // Data:
+    // nothing... yet
+    PlayerLeave,
     /*
         // Send peer ID to a new connection
         // Data:

@@ -13,6 +13,8 @@ Server::Server(int maxConnections)
 
 Server::~Server()
 {
+    broadcastServerShutdown();
+    enet_host_flush(m_host.handle);
     for (auto& session : m_clients) {
         session.disconnect();
     }
@@ -35,6 +37,7 @@ void Server::tick()
 
             case NetEventType::Disconnect:
             case NetEventType::Timeout:
+                handleDisconnection(event.peer);
                 break;
 
             case NetEventType::Data: {
@@ -79,10 +82,11 @@ void Server::onHandshakePartOne(ServerPacket& packet, ENetPeer* peer)
 
 void Server::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
 {
-    for (auto itr = m_pendingConnections.begin(); itr != m_pendingConnections.end();) {
+    auto itr = findPendingSession(peer->incomingPeerID);
+    if (itr != m_pendingConnections.end()) {
         auto& pending = *itr;
-        auto peer = pending.connection.peer;
-        if (peer->incomingPeerID == peer->incomingPeerID) {
+        auto thepeer = pending.connection.peer;
+        if (thepeer->incomingPeerID == peer->incomingPeerID) {
             u32 salt = itr->salt ^ m_salt;
             if (salt == packet.salt()) {
                 itr->salt = salt;
@@ -108,13 +112,55 @@ void Server::broadcastPlayerJoin()
     broadcastToPeers(m_host.handle, packet.get(), 0, ENET_PACKET_FLAG_RELIABLE);
 }
 
+void Server::broadcastPlayerLeave()
+{
+    ServerPacket packet(ClientCommand::PlayerLeave, m_salt);
+    broadcastToPeers(m_host.handle, packet.get(), 0, ENET_PACKET_FLAG_RELIABLE);
+}
+
+void Server::broadcastServerShutdown()
+{
+    ServerPacket packet(ClientCommand::ForceExitGame, m_salt);
+    packet.write(std::string("Host has exited the game."));
+    broadcastToPeers(m_host.handle, packet.get(), 0, ENET_PACKET_FLAG_RELIABLE);
+}
+
 int Server::createClientSession(ENetPeer* peer, u32 salt)
 {
     for (unsigned i = 0; i < m_clients.size(); i++) {
         if (!m_clients[i].isActive()) {
             m_clients[i].init(peer, salt);
+            m_clientsMap[peer->incomingPeerID] = i;
             return true;
         }
     }
     return false;
+}
+
+void Server::handleDisconnection(ENetPeer* peer)
+{
+    auto itr = m_clientsMap.find(peer->incomingPeerID);
+    if (itr != m_clientsMap.end()) {
+        auto index = itr->second;
+        m_clients[index].disconnect();
+        m_clientsMap.erase(itr);
+        broadcastPlayerLeave();
+    }
+    else {
+        auto itr = findPendingSession(peer->incomingPeerID);
+        if (itr != m_pendingConnections.end()) {
+            m_pendingConnections.erase(itr);
+        }
+    }
+}
+
+std::vector<PendingClientSession>::iterator Server::findPendingSession(u32 peerId)
+{
+    for (auto itr = m_pendingConnections.begin(); itr != m_pendingConnections.end();) {
+        auto thepeer = itr->connection.peer;
+        if (thepeer->incomingPeerID == peerId) {
+            return itr;
+        }
+    }
+    return m_pendingConnections.end();
 }

@@ -69,8 +69,10 @@ void Client::handlePacket(ClientPacket& packet)
     switch (packet.command()) {
         case Cmd::HandshakeChallenge:   onHandshakeChallenge(packet);   break;
         case Cmd::ConnectionAcceptance: onConnectionAcceptance(packet); break;
+        case Cmd::ForceExitGame:        onForceExit(packet);            break;
            
-        case Cmd::PlayerJoined:         onPlayerJoin(packet);           break;
+        case Cmd::PlayerJoined:     onPlayerJoin(packet);   break;
+        case Cmd::PlayerLeave:      onPlayerLeave(packet);  break;
     }
     // clang-format on
 }
@@ -100,4 +102,16 @@ void Client::onConnectionAcceptance(ClientPacket& packet)
 void Client::onPlayerJoin(ClientPacket& packet)
 {
     std::cout << "Player joined!\n";
+}
+
+void Client::onPlayerLeave(ClientPacket& packet)
+{
+    std::cout << "Player left!\n";
+}
+
+void Client::onForceExit(ClientPacket& packet)
+{
+    m_connectionState = ConnectionState::Disconnected;
+    auto reason = packet.read<std::string>();
+    std::cout << "Forced to leave game: " << reason << "\n";
 }

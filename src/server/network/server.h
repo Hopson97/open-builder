@@ -5,12 +5,12 @@
 #include <SFML/System/Time.hpp>
 #include <array>
 #include <common/lua/script_engine.h>
+#include <common/network/net_command.h>
+#include <common/network/packet.h>
 #include <common/world/biome.h>
 #include <common/world/chunk_manager.h>
 #include <common/world/voxel_data.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <common/network/net_command.h>
-#include <common/network/packet.h>
 
 using ServerPacket = Packet<ServerCommand, ClientCommand>;
 
@@ -30,12 +30,17 @@ class Server {
     void onHandshakeResponse(ServerPacket& packet, ENetPeer* peer);
 
     void broadcastPlayerJoin();
+    void broadcastPlayerLeave();
+    void broadcastServerShutdown();
 
     int createClientSession(ENetPeer* peer, u32 salt);
+    void handleDisconnection(ENetPeer* peer);
+
+    std::vector<PendingClientSession>::iterator findPendingSession(u32 peerId);
 
     NetHost m_host;
     std::vector<ClientSession> m_clients;
-    std::unordered_map<u32, ClientSession*> m_clientsMap;
+    std::unordered_map<u32, int> m_clientsMap;
 
     std::vector<PendingClientSession> m_pendingConnections;
 

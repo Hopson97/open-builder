@@ -32,6 +32,8 @@ class Client final {
     void onConnectionAcceptance(ClientPacket& packet);
 
     void onPlayerJoin(ClientPacket& packet);
+    void onPlayerLeave(ClientPacket& packet);
+    void onForceExit(ClientPacket& packet);
 
     ConnectionState m_connectionState = ConnectionState::Disconnected;
     Connection m_serverConnection;

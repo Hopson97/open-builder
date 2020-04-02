@@ -51,6 +51,9 @@ void Game::update(float dt)
 {
     if (m_isInGame) {
         m_client.tick();
+        if (m_client.getConnnectionState() == ConnectionState::Disconnected) {
+            stopGame();
+        }
     }
 }
 
