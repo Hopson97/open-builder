@@ -2,6 +2,7 @@
 
 #include "gl/primitive.h"
 #include "lua/client_lua_api.h"
+#include "client_config.h"
 #include "window.h"
 
 bool ClientEngine::init(sf::Window& window)
@@ -31,7 +32,7 @@ void ClientEngine::runClient()
 {
     while (mp_window->isOpen()) {
         pollWindowEvents();
-        m_game.input(*mp_window, m_keyboard, m_inputState);
+        m_game.handleInput(m_keyboard, m_inputState);
         update();
         render();
 
@@ -44,7 +45,7 @@ void ClientEngine::runClient()
 void ClientEngine::update()
 {
     m_fpsCounter.update();
-    m_game.update(0.16f);
+    m_game.tick(0.16f);
     m_gui.update();
 }
 
@@ -90,6 +91,7 @@ void ClientEngine::pollWindowEvents()
         if (mp_window->hasFocus()) {
             m_keyboard.update(event);
             m_gui.handleEvent(event);
+            m_game.handleEvent(event);
         }
         switch (event.type) {
             case sf::Event::MouseWheelScrolled:
@@ -98,10 +100,6 @@ void ClientEngine::pollWindowEvents()
 
             case sf::Event::KeyReleased:
                 m_luaCallbacks.onKeyboardKeyReleased(event.key.code);
-                break;
-
-            case sf::Event::MouseButtonReleased:
-                m_game.onMouseRelease(event.mouseButton.button);
                 break;
 
             default:

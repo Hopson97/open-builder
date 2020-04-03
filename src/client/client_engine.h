@@ -1,7 +1,7 @@
 #pragma once
 
 #include "client_state_controller.h"
-#include "game.h"
+#include "game/game.h"
 #include "gui/gui_system.h"
 #include "input/input_state.h"
 #include "input/keyboard.h"

@@ -15,7 +15,10 @@ add_library(ob-client
 
     client_state_controller.cpp
     client_engine.cpp
-    game.cpp
+
+    game/game.cpp
+    game/game_def.cpp
+    game/game_type.cpp
 
     lua/client_lua_callback.cpp
     lua/gui_api.cpp
