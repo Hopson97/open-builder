@@ -15,6 +15,8 @@
 #include <common/network/enet.h>
 #include <common/util/obd_parser.h>
 
+#include "client/window.h"
+
 // Enable nvidia
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -163,7 +165,14 @@ int main(int argc, char** argv)
         }
 
         case LaunchType::Client: {
-            runClientEngine();
+            sf::Window window;
+            if (!createWindowInitOpengl(window)) {
+                return -1;
+            }
+            ClientEngine client;
+            if (client.init(window)) {
+                client.runClient();
+            }
             break;
         }
     }
