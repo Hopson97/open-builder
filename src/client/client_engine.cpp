@@ -28,6 +28,7 @@ bool ClientEngine::init(sf::Window& window)
     m_screenBuffer = makeScreenQuadVertexArray();
 
     m_stateManager.push(m_gui, std::make_unique<MainMenuGameState>(m_stateManager));
+    m_stateManager.updateStack(m_gui);
 
     return true;
 }
@@ -43,7 +44,7 @@ void ClientEngine::runClient()
         update();
         render();
 
-        m_stateManager.updateStack();
+        m_stateManager.updateStack(m_gui);
         if (!m_controller.executeAction(m_game, m_luaCallbacks)) {
             mp_window->close();
         }

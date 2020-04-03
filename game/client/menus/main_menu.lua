@@ -15,6 +15,7 @@ local function onCreate(overlay)
     local settings  = menu:addButton("Settings")
     local exitGame  = menu:addButton("Exit Game")
 
+    continue.id = "continue_game"
     exitGame.id = "exit_button";
 
     continue.onClick = function()
@@ -28,10 +29,6 @@ local function onCreate(overlay)
   
     settings.onClick = function()
         game.gui():push("settings_menu")
-    end
-
-    exitGame.onClick = function()
-        --game.control():shutdown()
     end
 end
 

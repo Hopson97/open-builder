@@ -42,10 +42,10 @@ class StateManager {
 
     // Must be called at the end of each frame of
     // the game
-    void updateStack();
+    void updateStack(gui::GuiSystem& gui);
 
   private:
-    void updateTop();
+    void updateTop(gui::GuiSystem& gui);
 
     enum class Action {
         Push,
