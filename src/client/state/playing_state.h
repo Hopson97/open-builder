@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../network/client.h"
+#include <server_engine.h>
 #include "state_manager.h"
 
 class PlayingState final : public ClientGameState {
@@ -12,5 +14,9 @@ class PlayingState final : public ClientGameState {
 
     void onStart(gui::GuiSystem& gui) final override;
     void onShutdown() final override;
+
+  private:
+    ServerLauncher m_localServer;
+    Client m_client;
 };
 #pragma once
