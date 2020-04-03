@@ -1,10 +1,8 @@
 #include "client_engine.h"
 
-#include "lua/client_lua_api.h"
 #include "gl/primitive.h"
+#include "lua/client_lua_api.h"
 #include "window.h"
-
-#include "state/main_menu_state.h"
 
 bool ClientEngine::init(sf::Window& window)
 {
@@ -26,25 +24,17 @@ bool ClientEngine::init(sf::Window& window)
 
     m_screenShader.create("minimal", "minimal");
     m_screenBuffer = makeScreenQuadVertexArray();
-
-    m_stateManager.push(m_gui, std::make_unique<MainMenuGameState>(m_stateManager));
-    m_stateManager.updateStack(m_gui);
-
     return true;
 }
 
 void ClientEngine::runClient()
 {
-    while (mp_window->isOpen() && !m_stateManager.isEmpty()) {
+    while (mp_window->isOpen()) {
         pollWindowEvents();
-
-        m_stateManager.handleInput();
         m_game.input(*mp_window, m_keyboard, m_inputState);
-
         update();
         render();
 
-        m_stateManager.updateStack(m_gui);
         if (!m_controller.executeAction(m_game, m_luaCallbacks)) {
             mp_window->close();
         }
@@ -53,7 +43,6 @@ void ClientEngine::runClient()
 
 void ClientEngine::update()
 {
-    m_stateManager.handleUpdate();
     m_fpsCounter.update();
     m_game.update(0.16f);
     m_gui.update();
@@ -67,8 +56,6 @@ void ClientEngine::render()
     m_worldRenderTarget.bind();
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     m_game.render();
-
-    m_stateManager.handleRender();
 
     // GUI
     m_guiRenderTarget.bind();
@@ -86,6 +73,7 @@ void ClientEngine::render()
 
     m_worldRenderTarget.bindTexture();
     drawable.draw();
+
     glEnable(GL_BLEND);
 
     m_guiRenderTarget.bindTexture();

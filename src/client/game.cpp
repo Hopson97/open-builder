@@ -27,6 +27,7 @@ bool Game::init(const std::string& ip)
 
 void Game::stopGame()
 {
+    m_isInGame = false;
     m_client.disconnect();
     if (m_serverLauncher) {
         m_serverLauncher->stop();

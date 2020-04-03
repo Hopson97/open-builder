@@ -1,6 +1,7 @@
 #pragma once
 
 #include "client_state_controller.h"
+#include "game.h"
 #include "gui/gui_system.h"
 #include "input/input_state.h"
 #include "input/keyboard.h"
@@ -9,8 +10,6 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Window.hpp>
 #include <common/lua/script_engine.h>
-#include "state/state_manager.h"
-#include "game.h"
 
 struct FPSCounter final {
     sf::Clock timer;
@@ -62,8 +61,6 @@ class ClientEngine {
 
     gl::Shader m_screenShader;
     gl::VertexArray m_screenBuffer;
-
-    StateManager m_stateManager;
 
     Game m_game;
 };

@@ -11,8 +11,8 @@ local function createWorldSelectButton(menu, slot)
         local date = "01/01/20"
         selector.text = name .. '/' .. date
         selector.onClick = function()
-            --game.gui():change("transition", { message = "Starting Game" } )
-            --game.control():loadWorld("Test")
+            game.gui():change("transition", { message = "Starting Game" } )
+            game.control():loadWorld("Test")
         end
     else
         selector.onClick = function()

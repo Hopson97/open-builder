@@ -73,8 +73,7 @@ NetHost& NetHost::operator=(NetHost&& other) noexcept
 
 bool NetHost::pumpEvent(NetEvent& event)
 {
-    if (enet_host_service(handle, &event.data, 0))
-    {
+    if (enet_host_service(handle, &event.data, 0)) {
         event.type = static_cast<NetEventType>(event.data.type);
         event.packet = event.data.packet;
         event.peer = event.data.peer;

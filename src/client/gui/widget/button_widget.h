@@ -22,8 +22,7 @@ namespace gui {
         void handleClick(sf::Mouse::Button button, float mx, float my) final override;
         void handleMouseMove(float mx, float my) final override;
 
-        void setOnClick(std::function<void(void)> function);
-        void setOnClickLua(sol::function function);
+        void setOnClick(sol::function function);
         void setOnMouseOver(sol::function function);
         void setOnMouseOff(sol::function function);
 
@@ -33,8 +32,7 @@ namespace gui {
         TextComponent* mp_text = nullptr;
         RectangleComponent* mp_rectangle = nullptr;
 
-        std::function<void(void)> m_onClick;
-        sol::function m_onClickLua;
+        sol::function m_onClick;
         sol::function m_onMoveOver;
         sol::function m_onMouseOff;
     };

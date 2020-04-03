@@ -6,8 +6,9 @@
 #include <iostream>
 #include <thread>
 
-ServerLauncher::ServerLauncher()
+ServerLauncher::ServerLauncher(sf::Time timeout)
     : m_server(16)
+    , m_timeout(timeout)
 {
 }
 

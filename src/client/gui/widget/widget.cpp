@@ -2,8 +2,6 @@
 
 #include "../component/component.h"
 
-#include <iostream>
-
 namespace gui {
 
     void Widget::setColour(float r, float g, float b)
@@ -11,12 +9,6 @@ namespace gui {
         for (auto component : componentList) {
             component->colour = {r, g, b};
         }
-    }
-
-    void Widget::setId(const std::string& newid)
-    {
-        id = newid;
-        std::cout << "id set to " << id << std::endl;
     }
 
     void Widget::hide()

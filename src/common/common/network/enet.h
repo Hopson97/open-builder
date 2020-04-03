@@ -59,5 +59,6 @@ struct NetHost {
 ClientConnectionResult connectEnetClientTo(ENetHost* host, Connection& serverConnection,
                                            const char* ipAddress);
 bool disconnectEnetClient(ENetHost* host, Connection& serverConnection);
-void broadcastToPeers(ENetHost* host, const sf::Packet& packet, u8 channel = 0, u32 flags = 0);
+void broadcastToPeers(ENetHost* host, const sf::Packet& packet, u8 channel = 0,
+                      u32 flags = 0);
 u32 createHandshakeRandom();

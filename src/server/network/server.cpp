@@ -147,9 +147,9 @@ void Server::handleDisconnection(ENetPeer* peer)
         broadcastPlayerLeave();
     }
     else {
-        auto itr = findPendingSession(peer->incomingPeerID);
-        if (itr != m_pendingConnections.end()) {
-            m_pendingConnections.erase(itr);
+        auto pending = findPendingSession(peer->incomingPeerID);
+        if (pending != m_pendingConnections.end()) {
+            m_pendingConnections.erase(pending);
         }
     }
 }

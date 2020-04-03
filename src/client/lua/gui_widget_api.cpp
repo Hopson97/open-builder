@@ -9,13 +9,12 @@
 #include <common/lua/script_engine.h>
 
 namespace {
+
     template <typename T>
     void addCommonAPI(sol::usertype<T>& api)
     {
         api["position"] = sol::property(&T::setPosition);
         api["size"] = sol::property(&T::setSize);
-        api["id"] = sol::property(&T::setId);
-
         api["hide"] = &T::hide;
         api["show"] = &T::show;
 
@@ -63,7 +62,7 @@ namespace {
         auto buttonApi = engine.lua.new_usertype<gui::ButtonWidget>("ButtonWidget");
         buttonApi["image"] = sol::property(&gui::ButtonWidget::setImage);
 
-        buttonApi["onClick"] = sol::property(&gui::ButtonWidget::setOnClickLua);
+        buttonApi["onClick"] = sol::property(&gui::ButtonWidget::setOnClick);
         buttonApi["onMouseOver"] = sol::property(&gui::ButtonWidget::setOnMouseOver);
         buttonApi["onMouseOff"] = sol::property(&gui::ButtonWidget::setOnMouseOff);
 

@@ -9,8 +9,9 @@
 class ServerLauncher {
   public:
     NON_COPYABLE(ServerLauncher)
+    NON_MOVEABLE(ServerLauncher)
 
-    ServerLauncher();
+    ServerLauncher(sf::Time timeout);
     ~ServerLauncher();
 
     void run();
@@ -23,4 +24,6 @@ class ServerLauncher {
     Server m_server;
     std::thread m_serverThread;
     std::atomic_bool m_isServerRunning;
+
+    sf::Time m_timeout;
 };

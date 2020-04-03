@@ -33,9 +33,9 @@ local function onCreate(overlay)
        -- local username = usernameBox:getText()
       --  local password = passwordBox:getText()
         if string.len(serverIp) > 0 then
-        --    game.gui():change("transition", { message = "Joining World" } )
+            game.gui():change("transition", { message = "Joining World" } )
             --game.control():joinGame(serverIp, username, password)
-        --    game.control():joinGame(serverIp, "", "")
+            game.control():joinGame(serverIp, "", "")
         end
     end    
 end

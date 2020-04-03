@@ -19,6 +19,7 @@ namespace gui {
             None,
             Push,
             Pop,
+            Change,
         };
 
       public:
@@ -28,21 +29,17 @@ namespace gui {
         void update();
         void render(GuiRenderer& guiRenderer);
 
-        void changeGui(const std::string& name);
-
         // Debugging/ Testing purposes
         int getActiveGuiRectCount() const;
         int getActiveGuiTextCount() const;
 
         // Lua API
         void addGuiDefintion(const gui::OverlayDefinition& def);
-        void pushGui(const std::string& name);
+        void changeGui(const std::string& name, const sol::table& data);
+        void pushGui(const std::string& name, const sol::table& data);
         void popGui();
 
-        void onGuiChange(std::function<void(const std::string& name, Overlay& overlay)> callback);
-
       private:
-        void callGuiUpdateCallback();
         void clearGuis();
         Overlay& getTop();
         const Overlay& getTop() const;
@@ -56,9 +53,6 @@ namespace gui {
 
         unsigned m_windowWidth;
         unsigned m_windowHeight;
-
-        std::function<void(const std::string& name, Overlay& overlay)>
-            m_onGuiUpdateCallback;
     };
 
 } // namespace gui
