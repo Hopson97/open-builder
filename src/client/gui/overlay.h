@@ -46,6 +46,12 @@ namespace gui {
         ButtonWidget* addButton();
         TextBoxWidget* addTextBox();
 
+        // C++ API
+        ButtonWidget* findButton(const std::string& name);
+        TextBoxWidget* findTextbox(const std::string& name);
+        CheckBoxWidget* findCheckbox(const std::string& name);
+
+
         void prepareWidgetsForRender();
 
         void hide();
@@ -60,6 +66,8 @@ namespace gui {
         std::vector<std::unique_ptr<TextComponent>> textComponents;
 
       private:
+        Widget* findWidget(const std::string& name);
+
         std::vector<std::unique_ptr<Widget>> m_widgets;
         bool m_isHidden = false;
     };

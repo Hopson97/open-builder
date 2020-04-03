@@ -15,9 +15,11 @@ local function onCreate(overlay)
     local settings  = menu:addButton("Settings")
     local exitGame  = menu:addButton("Exit Game")
 
+    exitGame.id = "exit_button";
+
     continue.onClick = function()
-        game.gui():change("transition", {message = "Starting Game"})
-        game.control():loadWorld("Test")
+      --  game.gui():change("transition", {message = "Starting Game"})
+      --  game.control():loadWorld("Test")
     end    
   
     playGame.onClick = function()
@@ -29,7 +31,7 @@ local function onCreate(overlay)
     end
 
     exitGame.onClick = function()
-        game.control():shutdown()
+        --game.control():shutdown()
     end
 end
 

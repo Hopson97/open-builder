@@ -48,7 +48,10 @@ namespace gui {
     void ButtonWidget::handleClick(sf::Mouse::Button button, float mx, float my)
     {
         if (mp_rectangle->isInBounds(mx, my) && button == sf::Mouse::Left) {
-            if (m_onClick.valid()) {
+            if (m_onClickLua.valid()) {
+                m_onClickLua();
+            }
+            if (m_onClick) {
                 m_onClick();
             }
         }
@@ -67,7 +70,13 @@ namespace gui {
             }
         }
     }
-    void ButtonWidget::setOnClick(sol::function function)
+
+    void ButtonWidget::setOnClick(std::function<void(void)> function)
+    {
+        m_onClick = function;
+    }
+
+    void ButtonWidget::setOnClickLua(sol::function function)
     {
         m_onClick = function;
     }

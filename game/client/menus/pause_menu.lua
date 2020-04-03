@@ -12,8 +12,8 @@ local function onCreate(overlay)
     end
 
     exit.onClick = function()
-        game.gui():change("transition", {message = "Exiting"})
-        game.control():exitGame()
+        --game.gui():change("transition", {message = "Exiting"})
+        --game.control():exitGame()
     end
 end
 

@@ -1,22 +1,26 @@
 #pragma once
 
-#include <stack>
-#include <memory>
 #include <common/macros.h>
+#include <memory>
+#include <stack>
 
 class StateManager;
 class Keyboard;
+
+namespace gui {
+    class GuiSystem;
+}
 
 class ClientGameState {
   public:
     ClientGameState(StateManager& manager);
     virtual ~ClientGameState() = default;
 
-    virtual void input() = 0;
-    virtual void update() = 0;
-    virtual void render() = 0;
+    virtual void input(){};
+    virtual void update(){};
+    virtual void render(){};
 
-    virtual void onStart() = 0;
+    virtual void onStart(gui::GuiSystem& gui) = 0;
     virtual void onShutdown() = 0;
 
   protected:
@@ -27,23 +31,26 @@ class ClientGameState {
 
 class StateManager {
   public:
-    void forceState(std::unique_ptr<ClientGameState> gameState);
-    void push(std::unique_ptr<ClientGameState> gameState);
+    void push(gui::GuiSystem& gui, std::unique_ptr<ClientGameState> gameState);
     void pop();
 
     void handleInput();
     void handleUpdate();
     void handleRender();
-        
+
+    bool isEmpty() const;
+
     // Must be called at the end of each frame of
     // the game
     void updateStack();
-    
+
   private:
     void updateTop();
 
     enum class Action {
-        Push, Pop, None,
+        Push,
+        Pop,
+        None,
     };
     std::unique_ptr<ClientGameState> m_pendingState;
     Action m_pendingAction = Action::None;

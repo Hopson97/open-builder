@@ -24,8 +24,7 @@ namespace gui {
          * @return std::unique_ptr<Overlay> A newly created overlay, as a pointer such
          * that the Lua is able to store it without risk
          */
-        std::unique_ptr<Overlay> createOverlay(const std::string& name,
-                                               const sol::table& data);
+        std::unique_ptr<Overlay> createOverlay(const std::string& name);
 
       private:
         std::vector<OverlayDefinition> m_overlays;

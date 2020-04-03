@@ -15,10 +15,7 @@ void luaInitGuiApi(ScriptEngine& scriptEngine, gui::GuiSystem& guiSystem,
     };
 
     auto guiApi = scriptEngine.lua.new_usertype<Gui>("GUISystem");
-    guiApi["push"] = sol::overload(
-        &Gui::pushGui, [](Gui& gui, const std::string& id) { gui.pushGui(id, {}); });
-    guiApi["change"] = sol::overload(
-        &Gui::changeGui, [](Gui& gui, const std::string& id) { gui.changeGui(id, {}); });
+    guiApi["push"] = &Gui::pushGui;
     guiApi["pop"] = &Gui::popGui;
 
     guiApi["addGui"] = [](Gui& gui, const sol::table& guiDefintion) {

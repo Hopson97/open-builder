@@ -3,6 +3,14 @@
 #include <SFML/Window/Event.hpp>
 #include <vector>
 
+enum class WidgetType {
+    Button,
+    Checkbox,
+    Image,
+    Label,
+    Textbox,
+};
+
 namespace gui {
     struct GuiDimension;
     class RectangleComponent;
@@ -17,19 +25,20 @@ namespace gui {
         virtual void handleClick(sf::Mouse::Button, float, float){};
         virtual void handleMouseMove(float, float){};
         virtual void handleKeyRelease(sf::Keyboard::Key){};
-        virtual void handleTextEntered(unsigned char)
-        {
-        }
+        virtual void handleTextEntered(unsigned char){};
         virtual void prepareRender(){};
         virtual void setColour(float r, float g, float b);
 
         virtual void setPosition(const GuiDimension& position) = 0;
         virtual void setSize(const GuiDimension& size) = 0;
 
+        virtual void setId(const std::string& id);
+
         void hide();
         void show();
 
         std::vector<Component*> componentList;
+        std::string id;
     };
 
 } // namespace gui

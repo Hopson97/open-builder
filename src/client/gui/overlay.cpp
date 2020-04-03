@@ -77,6 +77,33 @@ namespace gui {
         return dynamic_cast<TextBoxWidget*>(widget);
     }
 
+    ButtonWidget* Overlay::findButton(const std::string& name)
+    {
+        auto button = findWidget(name);
+        if (button) {
+            return dynamic_cast<ButtonWidget*>(button);
+        }
+        return nullptr;
+    }
+
+    TextBoxWidget* Overlay::findTextbox(const std::string& name)
+    {
+        auto textbox = findWidget(name);
+        if (textbox) {
+            return dynamic_cast<TextBoxWidget*>(textbox);
+        }
+        return nullptr;
+    }
+
+    CheckBoxWidget* Overlay::findCheckbox(const std::string& name)
+    {
+        auto checkbox = findWidget(name);
+        if (checkbox) {
+            return dynamic_cast<CheckBoxWidget*>(checkbox);
+        }
+        return nullptr;
+    }
+
     void Overlay::prepareWidgetsForRender()
     {
         for (auto& widget : m_widgets) {
@@ -127,6 +154,16 @@ namespace gui {
     bool Overlay::isHidden() const
     {
         return m_isHidden;
+    }
+
+    Widget* Overlay::findWidget(const std::string& name)
+    {
+        for (auto& widget : m_widgets) {
+            if (widget->id == name) {
+                return widget.get();
+            }
+        }
+        return nullptr;
     }
 
 } // namespace gui

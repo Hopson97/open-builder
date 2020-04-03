@@ -56,11 +56,6 @@ namespace gui {
                     m_activeGuis.pop();
                     break;
 
-                case gui::GuiSystem::Action::Change:
-                    clearGuis();
-                    m_activeGuis.push(std::move(m_pendingGui));
-                    break;
-
                 default:
                     break;
             }
@@ -79,21 +74,29 @@ namespace gui {
         return getTop().textComponents.size();
     }
 
-    void GuiSystem::changeGui(const std::string& name, const sol::table& data)
+    void GuiSystem::changeGui(const std::string& name)
     {
-        m_nextAction = Action::Change;
-        m_pendingGui = m_overlayFactory.createOverlay(name, data);
+        clearGuis();
+        m_activeGuis.push(m_overlayFactory.createOverlay(name));
     }
 
-    void GuiSystem::pushGui(const std::string& name, const sol::table& data)
+    void GuiSystem::pushGui(const std::string& name)
     {
         m_nextAction = Action::Push;
-        m_pendingGui = m_overlayFactory.createOverlay(name, data);
+        m_pendingGui = m_overlayFactory.createOverlay(name);
     }
 
     void GuiSystem::popGui()
     {
         m_nextAction = Action::Pop;
+    }
+
+    void GuiSystem::onGuiChange(
+        std::function<void(const std::string& name, Overlay& overlay)> callback)
+    {
+        m_onGuiUpdateCallback = callback;
+        auto& gui = *m_activeGuis.top();
+        callback(gui.definition.id, gui);
     }
 
     void GuiSystem::addGuiDefintion(const gui::OverlayDefinition& def)
@@ -109,6 +112,14 @@ namespace gui {
                 gui.prepareWidgetsForRender();
                 guiRenderer.render(gui);
             }
+        }
+    }
+
+    void GuiSystem::callGuiUpdateCallback()
+    {
+        if (!m_activeGuis.empty()) {
+            auto& gui = *m_activeGuis.top();
+            m_onGuiUpdateCallback(gui.definition.id, gui);
         }
     }
 

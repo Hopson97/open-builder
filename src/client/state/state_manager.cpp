@@ -7,17 +7,11 @@ ClientGameState::ClientGameState(StateManager& manager)
 {
 }
 
-void StateManager::forceState(std::unique_ptr<ClientGameState> gameState)
+void StateManager::push(gui::GuiSystem& gui, std::unique_ptr<ClientGameState> gameState)
 {
     m_stateStack.emplace(std::move(gameState));
     updateTop();
-    mp_top->onStart();
-}
-
-void StateManager::push(std::unique_ptr<ClientGameState> gameState)
-{
-    m_pendingAction = Action::Push;
-    m_pendingState = std::move(gameState);
+    mp_top->onStart(gui);
 }
 
 void StateManager::pop()
@@ -43,6 +37,11 @@ void StateManager::handleRender()
     mp_top->render();
 }
 
+bool StateManager::isEmpty() const
+{
+    return m_stateStack.empty();
+}
+
 void StateManager::updateStack()
 {
     if (m_pendingAction == Action::Pop && !m_stateStack.empty()) {
@@ -51,13 +50,12 @@ void StateManager::updateStack()
         m_stateStack.pop();
         updateTop();
     }
-    else if (m_pendingAction == Action::Push) {
-        forceState(std::move(m_pendingState));
-    }
     m_pendingAction = Action::None;
 }
 
 void StateManager::updateTop()
 {
-    mp_top = m_stateStack.top().get();
+    if (!isEmpty()) {
+        mp_top = m_stateStack.top().get();
+    }
 }
