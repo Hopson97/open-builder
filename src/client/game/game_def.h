@@ -40,4 +40,6 @@ class ClientGameDef {
     Camera m_camera;
 
     Client m_client;
+
+    EntityState m_playerPosition;
 };

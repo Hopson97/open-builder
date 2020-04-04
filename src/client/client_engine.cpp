@@ -47,6 +47,9 @@ void ClientEngine::update()
     m_fpsCounter.update();
     m_game.tick(0.16f);
     m_gui.update();
+    if (((int)m_fpsCounter.frameCount % 256) == 0) {
+        std::cout << m_fpsCounter.frameTime << '\n';
+    }
 }
 
 void ClientEngine::render()

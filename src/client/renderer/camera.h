@@ -2,12 +2,21 @@
 
 #include "../maths.h"
 
+#include <common/world/entity_state.h>
+
 struct Camera {
-    glm::vec3 position{0.0f};
-    glm::vec3 rotation{0.0f};
+  public:
+    static Camera createCamera(const EntityState& entityToFollow);
 
-    ViewFrustum m_frustum{};
-    glm::mat4 m_projection{1.0f};
+    void follow(const EntityState& state);
+    void update();
+    const glm::mat4& getProjectionView();
 
-    static Camera createCamera(const glm::vec3& position);
+  private:
+    glm::mat4 m_projectionMatrix;
+    glm::mat4 m_projectionViewMatrix;
+
+    ViewFrustum m_frustum;
+
+    const EntityState* mp_entityFollowing;
 };
