@@ -1,6 +1,17 @@
 #include "server.h"
 
 #include <common/network/net_constants.h>
+#include <common/debug.h>
+
+#define AUTHENTICATE_PACKET \
+    auto itr = m_clientsMap.find(peer->incomingPeerID); \
+    if (itr == m_clientsMap.end()) {\
+        return;\
+    }\
+    auto& client = m_clients.at(itr->second);\
+    if (!client.verify(packet.getSalt())) {\
+        return;\
+    }\
 
 Server::Server(int maxConnections)
     : m_host({ENET_HOST_ANY, DEFAULT_PORT}, maxConnections)
@@ -59,6 +70,8 @@ void Server::handlePacket(ServerPacket& packet, ENetPeer* peer)
     switch (packet.command()) {
         case Cmd::HandshakePartOne:     onHandshakePartOne(packet, peer);   break;
         case Cmd::HandshakeResponse:    onHandshakeResponse(packet, peer);  break;
+
+        case Cmd::PlayerState:  onPlayerState(packet, peer);  break;
     }
     // clang-format on
 }
@@ -74,7 +87,7 @@ void Server::onHandshakePartOne(ServerPacket& packet, ENetPeer* peer)
 {
     for (auto& pending : m_pendingConnections) {
         if (pending.connection.peer->incomingPeerID == peer->incomingPeerID) {
-            pending.salt = packet.salt();
+            pending.salt = packet.getSalt();
             pending.sendHandshakeChallenge(m_salt);
         }
     }
@@ -88,7 +101,7 @@ void Server::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
         auto thepeer = pending.connection.peer;
         if (thepeer->incomingPeerID == peer->incomingPeerID) {
             u32 salt = itr->salt ^ m_salt;
-            if (salt == packet.salt()) {
+            if (salt == packet.getSalt()) {
                 itr->salt = salt;
                 int slot = createClientSession(peer, salt);
                 if (slot != -1) {
@@ -104,6 +117,13 @@ void Server::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
             itr = m_pendingConnections.erase(itr);
         }
     }
+}
+
+void Server::onPlayerState(ServerPacket& packet, ENetPeer* peer)
+{
+    AUTHENTICATE_PACKET
+    auto position = packet.read<glm::vec3>();
+    auto rotation = packet.read<glm::vec3>();
 }
 
 void Server::broadcastPlayerJoin()

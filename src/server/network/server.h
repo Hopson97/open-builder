@@ -28,6 +28,8 @@ class Server {
 
     void onHandshakePartOne(ServerPacket& packet, ENetPeer* peer);
     void onHandshakeResponse(ServerPacket& packet, ENetPeer* peer);
+    
+    void onPlayerState(ServerPacket& packet, ENetPeer* peer);
 
     void broadcastPlayerJoin();
     void broadcastPlayerLeave();

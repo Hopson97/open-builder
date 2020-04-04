@@ -114,6 +114,14 @@ enum class ServerCommand : command_t {
     // Data:
     // u32: The random number, combined with the server random using ^
     HandshakeResponse,
+
+    // Current position of the player,
+    // Data:
+    // float[3]: The current position of the player
+    // float[3]: The current rotation of the player
+    PlayerState,
+
+
     /*
         // Command to tell server the position of a player
         // Data:

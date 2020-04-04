@@ -4,6 +4,7 @@
 #include <cassert>
 #include <common/network/net_command.h>
 #include <common/network/net_constants.h>
+#include <common/world/entity_state.h>
 #include <iostream>
 
 Client::Client()
@@ -57,11 +58,6 @@ void Client::tick()
     }
 }
 
-ConnectionState Client::getConnnectionState() const
-{
-    return m_connectionState;
-}
-
 void Client::handlePacket(ClientPacket& packet)
 {
     using Cmd = ClientCommand;
@@ -77,11 +73,25 @@ void Client::handlePacket(ClientPacket& packet)
     // clang-format on
 }
 
+ConnectionState Client::getConnnectionState() const
+{
+    return m_connectionState;
+}
+
+void Client::sendPlayerState(const EntityState& state)
+{
+    ClientPacket packet(ServerCommand::PlayerState, m_salt);
+    packet.write(state.position);
+    packet.write(state.rotation);
+    m_serverConnection.send(packet.get());
+}
+
 void Client::onHandshakeChallenge(ClientPacket& packet)
 {
     u32 salt = packet.read<u32>();
     u32 newSalt = m_salt ^ salt;
-    ClientPacket response(ServerCommand::HandshakeResponse, newSalt);
+    m_salt = newSalt;
+    ClientPacket response(ServerCommand::HandshakeResponse, m_salt);
     m_serverConnection.send(response.get());
 }
 

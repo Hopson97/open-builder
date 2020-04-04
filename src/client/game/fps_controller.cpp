@@ -4,6 +4,7 @@
 #include "../input/input_state.h"
 #include "../input/keyboard.h"
 #include "../window.h"
+#include <common/debug.h>
 
 namespace {
     void mouseInput(glm::vec3& rotation)
@@ -14,7 +15,6 @@ namespace {
         float verticalSensitivity = ClientConfig::get().verticalSensitivity;
         float horizontalSensitivity = ClientConfig::get().horizontalSensitivity;
         auto change = sf::Mouse::getPosition(ctx) - lastMousePosition;
-
         rotation.x += static_cast<float>(change.y / 8.0f * verticalSensitivity);
         rotation.y += static_cast<float>(change.x / 8.0f * horizontalSensitivity);
         sf::Mouse::setPosition({(int)ctx.getSize().x / 2, (int)ctx.getSize().y / 2}, ctx);
@@ -28,8 +28,7 @@ namespace {
 #endif
     }
 
-    void keyboardInput(const Keyboard& keyboard, glm::vec3& rotation,
-                       glm::vec3& velocity)
+    void keyboardInput(const Keyboard& keyboard, glm::vec3& rotation, glm::vec3& velocity)
     {
         // Handle keyboard input
         float PLAYER_SPEED = 5.0f;

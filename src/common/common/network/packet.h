@@ -3,6 +3,11 @@
 #include "enet.h"
 #include "net_command.h"
 
+#include <glm/vec3.hpp>
+
+sf::Packet& operator>>(sf::Packet& packet,  glm::vec3& vect);
+sf::Packet& operator<<(sf::Packet& packet, const glm::vec3& vect);
+
 template <typename Incoming, typename Outgoing>
 class Packet {
   public:
@@ -33,7 +38,7 @@ class Packet {
 
     const sf::Packet& get() const;
     Incoming command() const;
-    u32 salt() const;
+    u32 getSalt() const;
 
   private:
     Incoming m_command;
@@ -68,7 +73,7 @@ inline Incoming Packet<Incoming, Outgoing>::command() const
 }
 
 template <typename Incoming, typename Outgoing>
-inline u32 Packet<Incoming, Outgoing>::salt() const
+inline u32 Packet<Incoming, Outgoing>::getSalt() const
 {
     return m_salt;
 }

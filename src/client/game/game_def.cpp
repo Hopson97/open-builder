@@ -25,7 +25,6 @@ bool ClientGameDef::start(const std::string ipAddress)
 
 void ClientGameDef::handleEvent(const sf::Event& event)
 {
-
 }
 
 void ClientGameDef::handleInput(const Keyboard& keyboard, const InputState& inputState)
@@ -44,6 +43,8 @@ void ClientGameDef::tick(float dt)
 
     m_playerPosition.position += m_playerVelocity * dt;
     m_playerVelocity *= 0.90 * dt;
+
+    m_client.sendPlayerState(m_playerPosition);
 }
 
 void ClientGameDef::render()

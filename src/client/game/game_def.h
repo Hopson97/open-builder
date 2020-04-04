@@ -4,15 +4,16 @@
 #include <SFML/Window/Event.hpp>
 
 #include "../gl/shader.h"
+#include "../gl/textures.h"
 #include "../gl/vertex_array.h"
 #include "../renderer/camera.h"
-#include "../gl/textures.h"
 
 class Keyboard;
 struct InputState;
 
 void handleFpsCameraInput(glm::vec3& rotation, glm::vec3& velocity,
-                          const Keyboard& keyboard, const InputState& inputState);
+                                         const Keyboard& keyboard,
+                                         const InputState& inputState);
 
 class ClientGameDef {
   public:

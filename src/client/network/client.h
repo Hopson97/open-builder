@@ -5,6 +5,8 @@
 #include <common/network/net_command.h>
 #include <common/network/packet.h>
 
+struct EntityState;
+
 using ClientPacket = Packet<ClientCommand, ServerCommand>;
 
 enum class ConnectionState {
@@ -24,6 +26,8 @@ class Client final {
     void disconnect();
 
     ConnectionState getConnnectionState() const;
+
+    void sendPlayerState(const EntityState& state);
 
   private:
     void handlePacket(ClientPacket& packet);
