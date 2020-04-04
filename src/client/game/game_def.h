@@ -7,13 +7,10 @@
 #include "../gl/textures.h"
 #include "../gl/vertex_array.h"
 #include "../renderer/camera.h"
+#include "client_world.h"
 
 class Keyboard;
 struct InputState;
-
-void handleFpsCameraInput(glm::vec3& rotation, glm::vec3& velocity,
-                                         const Keyboard& keyboard,
-                                         const InputState& inputState);
 
 class ClientGameDef {
   public:
@@ -32,19 +29,13 @@ class ClientGameDef {
     bool start(const std::string ipAddress);
 
   private:
+    void handlePlayerInput(const Keyboard& keyboard);
+
     virtual void onShutdown() = 0;
 
-    // temp
-    gl::VertexArray m_vao;
-    gl::Shader m_entityShader;
-    gl::UniformLocation m_entityProj;
-    gl::UniformLocation m_entityModel;
-    gl::Texture2d m_playerTexture;
+    ClientWorld m_world;
 
     Camera m_camera;
 
     Client m_client;
-
-    EntityState m_playerPosition;
-    glm::vec3 m_playerVelocity{0.0f};
 };

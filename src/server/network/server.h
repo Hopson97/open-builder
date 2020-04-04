@@ -12,11 +12,11 @@
 #include <common/world/voxel_data.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-using ServerPacket = Packet<ServerCommand, ClientCommand>;
+class ServerWorld;
 
 class Server {
   public:
-    Server(int maxConnection);
+    Server(int maxConnection, ServerWorld& world);
     ~Server();
 
     bool isSetup() const;
@@ -28,11 +28,11 @@ class Server {
 
     void onHandshakePartOne(ServerPacket& packet, ENetPeer* peer);
     void onHandshakeResponse(ServerPacket& packet, ENetPeer* peer);
-    
+
     void onPlayerState(ServerPacket& packet, ENetPeer* peer);
 
-    void broadcastPlayerJoin();
-    void broadcastPlayerLeave();
+    void broadcastPlayerJoin(u32 playerId);
+    void broadcastPlayerLeave(u32 playerId);
     void broadcastServerShutdown();
 
     int createClientSession(ENetPeer* peer, u32 salt);
@@ -49,4 +49,6 @@ class Server {
     int m_maxConnections = 0;
 
     u32 m_salt;
+
+    ServerWorld* mp_world;
 };

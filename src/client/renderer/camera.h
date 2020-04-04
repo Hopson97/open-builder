@@ -4,19 +4,20 @@
 
 #include <common/world/entity_state.h>
 
-struct Camera {
+class Camera {
   public:
-    static Camera createCamera(const EntityState& entityToFollow);
+    static Camera createCamera();
+    void update(const EntityState& entity);
 
-    void follow(const EntityState& state);
-    void update();
-    const glm::mat4& getProjectionView();
+    const ViewFrustum& getFrustum() const;
+    const glm::mat4& getProjectionView() const;
+    const glm::vec3& getPosition() const;
 
   private:
-    glm::mat4 m_projectionMatrix;
-    glm::mat4 m_projectionViewMatrix;
+    glm::mat4 m_projectionMatrix{1.0f};
+    glm::mat4 m_projectionViewMatrix{1.0f};
+    glm::vec3 m_position{1.0f};
+    glm::vec3 m_rotation{1.0f};
 
     ViewFrustum m_frustum;
-
-    const EntityState* mp_entityFollowing;
 };

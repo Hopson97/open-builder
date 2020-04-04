@@ -7,7 +7,7 @@
 #include <thread>
 
 ServerLauncher::ServerLauncher()
-    : m_server(16)
+    : m_server(16, m_world)
 {
 }
 
@@ -47,6 +47,7 @@ void ServerLauncher::launch()
     while (m_isServerRunning) {
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
         m_server.tick();
+        m_world.tick();
     }
 }
 

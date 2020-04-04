@@ -5,6 +5,7 @@
 #include <atomic>
 #include <common/macros.h>
 #include <thread>
+#include "world/server_world.h"
 
 class ServerLauncher {
   public:
@@ -23,4 +24,6 @@ class ServerLauncher {
     Server m_server;
     std::thread m_serverThread;
     std::atomic_bool m_isServerRunning;
+
+    ServerWorld m_world;
 };

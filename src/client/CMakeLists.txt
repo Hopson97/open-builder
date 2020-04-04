@@ -1,8 +1,7 @@
 
 add_library(ob-client
     input/keyboard.cpp
-    world/chunk_mesh.cpp
-    world/chunk_mesh_generation.cpp
+
     maths.cpp
 
     gl/textures.cpp
@@ -19,6 +18,8 @@ add_library(ob-client
     game/game.cpp
     game/game_def.cpp
     game/game_type.cpp
+    game/chunk_mesh.cpp
+    game/chunk_mesh_generation.cpp
 
     lua/client_lua_callback.cpp
     lua/gui_api.cpp

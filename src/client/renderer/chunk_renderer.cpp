@@ -2,6 +2,7 @@
 
 #include "../client_config.h"
 #include "../gl/gl_errors.h"
+#include "camera.h"
 #include <common/world/world_constants.h>
 #include <numeric>
 
@@ -116,10 +117,7 @@ void ChunkRenderer::updateMesh(const ChunkPosition& position,
     deleteChunkRenderables(position);
 }
 
-ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
-                                              const ViewFrustum& frustum,
-                                              const glm::mat4& projectionViewMatrix,
-                                              bool cameraInWater)
+ChunkRenderResult ChunkRenderer::renderChunks(const Camera& camera, bool cameraInWater)
 {
     auto& solidDrawables = m_chunkRenderables[static_cast<int>(ChunkRenderType::Solid)];
     auto& fluidDrawables = m_chunkRenderables[static_cast<int>(ChunkRenderType::Fluid)];
@@ -132,17 +130,20 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     }
     m_chunkMeshes.clear();
 
+    const glm::mat4& pv = camera.getProjectionView();
+    const glm::vec3& pos = camera.getPosition();
+    const ViewFrustum& frustum = camera.getFrustum();
+
+
     ChunkRenderResult result;
     // Solid voxels
     m_shader.program.bind();
-    gl::loadUniform(m_shader.projectionViewLocation, projectionViewMatrix);
-    ::renderChunks(solidDrawables, frustum, m_shader.chunkPositionLocation, result,
-                   cameraPosition);
+    gl::loadUniform(m_shader.projectionViewLocation, pv);
+    ::renderChunks(solidDrawables, frustum, m_shader.chunkPositionLocation, result, pos);
 
     // Flora voxels
     glDisable(GL_CULL_FACE);
-    ::renderChunks(floraDrawables, frustum, m_shader.chunkPositionLocation, result,
-                   cameraPosition);
+    ::renderChunks(floraDrawables, frustum, m_shader.chunkPositionLocation, result, pos);
     glEnable(GL_CULL_FACE);
 
     // Fluid voxels
@@ -150,8 +151,7 @@ ChunkRenderResult ChunkRenderer::renderChunks(const glm::vec3& cameraPosition,
     if (cameraInWater) {
         glCheck(glCullFace(GL_FRONT));
     }
-    ::renderChunks(fluidDrawables, frustum, m_shader.chunkPositionLocation, result,
-                   cameraPosition);
+    ::renderChunks(fluidDrawables, frustum, m_shader.chunkPositionLocation, result, pos);
     glCheck(glCullFace(GL_BACK));
     glCheck(glDisable(GL_BLEND));
 

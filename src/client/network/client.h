@@ -6,8 +6,7 @@
 #include <common/network/packet.h>
 
 struct EntityState;
-
-using ClientPacket = Packet<ClientCommand, ServerCommand>;
+class ClientWorld;
 
 enum class ConnectionState {
     Pending,
@@ -19,6 +18,8 @@ class Client final {
   public:
     Client();
     ~Client();
+
+    void setWorld(ClientWorld& world);
 
     ClientConnectionResult connectTo(const std::string& ipaddress);
 
@@ -35,13 +36,15 @@ class Client final {
     void onHandshakeChallenge(ClientPacket& packet);
     void onConnectionAcceptance(ClientPacket& packet);
 
-    void onPlayerJoin(ClientPacket& packet);
-    void onPlayerLeave(ClientPacket& packet);
+    void onAddEntity(ClientPacket& packet);
+    void onRemoveEntity(ClientPacket& packet);
     void onForceExit(ClientPacket& packet);
 
     ConnectionState m_connectionState = ConnectionState::Disconnected;
     Connection m_serverConnection;
     NetHost m_host;
+
+    ClientWorld* mp_world = nullptr;
 
     u32 m_salt;
 

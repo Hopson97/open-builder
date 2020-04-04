@@ -3,12 +3,9 @@
 #include "../client_config.h"
 #include <cassert>
 
-Camera Camera::createCamera(const EntityState& entityToFollow)
+Camera Camera::createCamera()
 {
     Camera camera;
-
-    camera.mp_entityFollowing = &entityToFollow;
-
     float width = ClientConfig::get().windowWidth;
     float height = ClientConfig::get().windowHeight;
     camera.m_projectionMatrix =
@@ -16,23 +13,29 @@ Camera Camera::createCamera(const EntityState& entityToFollow)
     return camera;
 }
 
-void Camera::follow(const EntityState& state)
-{
-    mp_entityFollowing - &state;
-}
 
-void Camera::update()
+void Camera::update(const EntityState& entity)
 {
-    assert(mp_entityFollowing);
     m_frustum.update(m_projectionViewMatrix);
 
-    auto& position = mp_entityFollowing->position;
-    auto& rotation = mp_entityFollowing->rotation;
+    m_position = entity.position;
+    m_rotation = entity.rotation;
 
-    m_projectionViewMatrix = createProjectionViewMatrix(position, rotation, m_projectionMatrix);
+    m_projectionViewMatrix =
+        createProjectionViewMatrix(m_position, m_rotation, m_projectionMatrix);
 }
 
-const glm::mat4& Camera::getProjectionView()
+const ViewFrustum& Camera::getFrustum() const
+{
+    return m_frustum;
+}
+
+const glm::mat4& Camera::getProjectionView() const
 {
     return m_projectionViewMatrix;
+}
+
+const glm::vec3& Camera::getPosition() const
+{
+    return m_position;
 }

@@ -4,8 +4,8 @@ fps_limit 60
 fov 90
 renderDistance 50.f
 fullscreen 0
-window_width 1600
-window_height 900
+window_width 1280
+window_height 720
 vertical_sensitivity 1
 horizontal_sensitivity 1
 skin player

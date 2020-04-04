@@ -13,10 +13,17 @@ enum class ClientCommand : command_t {
     // u32: The server's random number
     HandshakeChallenge,
 
-    // Sends either a connection rejection or accept to a joining client
+    // Sends either a connection rejection or accept to a joining client + basic info about the game
     // Data:
     // u8: 0 for reject, 1 for accept
     // string: Optional - Reason for connection rejection
+    // [If connection accepted, then it sends over data]
+    // u32: The player ID of this player
+    // u32: The active entity count - count
+    // [Loop this]
+    // u32: The ID of the entity
+    // float[3]: The position of the entity
+    // float[3]: The rotation of the entity
     ConnectionAcceptance,
 
     // Forces the user to exit the game
@@ -26,13 +33,18 @@ enum class ClientCommand : command_t {
 
     // Sends data about a player joining the game
     // Data:
-    // nothing... yet
-    PlayerJoined,
+    // u32: The number of entities to add
+    // [Loop this]
+    // u32: The ID of the entity
+    // float[3]: The position of the entity
+    // float[3]: The rotation of the entity
+    AddEntity,
 
     // Sends info that a player has left the game
     // Data:
-    // nothing... yet
-    PlayerLeave,
+    // u32: The ID of the entity
+    RemoveEntity,
+
     /*
         // Send peer ID to a new connection
         // Data:

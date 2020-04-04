@@ -46,6 +46,9 @@ class Packet {
     sf::Packet m_payload;
 };
 
+using ServerPacket = Packet<ServerCommand, ClientCommand>;
+using ClientPacket = Packet<ClientCommand, ServerCommand>;
+
 template <typename Incoming, typename Outgoing>
 inline Packet<Incoming, Outgoing>::Packet(ENetPacket* packet)
 {

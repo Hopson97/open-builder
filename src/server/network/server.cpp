@@ -1,23 +1,26 @@
 #include "server.h"
 
-#include <common/network/net_constants.h>
 #include <common/debug.h>
+#include <common/network/net_constants.h>
 
-#define AUTHENTICATE_PACKET \
-    auto itr = m_clientsMap.find(peer->incomingPeerID); \
-    if (itr == m_clientsMap.end()) {\
-        return;\
-    }\
-    auto& client = m_clients.at(itr->second);\
-    if (!client.verify(packet.getSalt())) {\
-        return;\
-    }\
+#include "../world/server_world.h"
 
-Server::Server(int maxConnections)
+#define AUTHENTICATE_PACKET                                                              \
+    auto itr = m_clientsMap.find(peer->incomingPeerID);                                  \
+    if (itr == m_clientsMap.end()) {                                                     \
+        return;                                                                          \
+    }                                                                                    \
+    auto& client = m_clients.at(itr->second);                                            \
+    if (!client.verify(packet.getSalt())) {                                              \
+        return;                                                                          \
+    }
+
+Server::Server(int maxConnections, ServerWorld& world)
     : m_host({ENET_HOST_ANY, DEFAULT_PORT}, maxConnections)
     , m_clients(maxConnections)
     , m_maxConnections(maxConnections)
     , m_salt(createHandshakeRandom())
+    , mp_world(&world)
 {
     m_clientsMap.reserve(maxConnections);
 }
@@ -105,8 +108,8 @@ void Server::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
                 itr->salt = salt;
                 int slot = createClientSession(peer, salt);
                 if (slot != -1) {
-                    pending.sendAcceptConnection();
-                    broadcastPlayerJoin();
+                    pending.sendAcceptConnection(m_clients[slot].getPlayerId(),
+                                                 *mp_world);
                 }
                 else {
                     pending.sendRejectConnection("Game Full");
@@ -124,17 +127,32 @@ void Server::onPlayerState(ServerPacket& packet, ENetPeer* peer)
     AUTHENTICATE_PACKET
     auto position = packet.read<glm::vec3>();
     auto rotation = packet.read<glm::vec3>();
+
+    auto& player = mp_world->findEntity(client.getPlayerId());
+    player.lastPosition = player.position;
+    player.lastRotation = player.rotation;
+
+    player.position = position;
+    player.rotation = rotation;
 }
 
-void Server::broadcastPlayerJoin()
+void Server::broadcastPlayerJoin(u32 playerId)
 {
-    ServerPacket packet(ClientCommand::PlayerJoined, m_salt);
+    ServerPacket packet(ClientCommand::AddEntity, m_salt);
+    packet.write((u32)1);
+    packet.write(playerId);
+    std::cout << "Player join " << playerId << std::endl;
+    auto& player = mp_world->findEntity(playerId);
+    packet.write(player.position);
+    packet.write(player.rotation);
+
     broadcastToPeers(m_host.handle, packet.get(), 0, ENET_PACKET_FLAG_RELIABLE);
 }
 
-void Server::broadcastPlayerLeave()
+void Server::broadcastPlayerLeave(u32 playerId)
 {
-    ServerPacket packet(ClientCommand::PlayerLeave, m_salt);
+    ServerPacket packet(ClientCommand::RemoveEntity, m_salt);
+    packet.write(playerId);
     broadcastToPeers(m_host.handle, packet.get(), 0, ENET_PACKET_FLAG_RELIABLE);
 }
 
@@ -149,12 +167,14 @@ int Server::createClientSession(ENetPeer* peer, u32 salt)
 {
     for (unsigned i = 0; i < m_clients.size(); i++) {
         if (!m_clients[i].isActive()) {
-            m_clients[i].init(peer, salt);
+            u32 playerId = mp_world->addEntity();
+            m_clients[i].init(peer, salt, playerId);
             m_clientsMap[peer->incomingPeerID] = i;
-            return true;
+            broadcastPlayerJoin(playerId);
+            return i;
         }
     }
-    return false;
+    return -1;
 }
 
 void Server::handleDisconnection(ENetPeer* peer)
@@ -162,9 +182,10 @@ void Server::handleDisconnection(ENetPeer* peer)
     auto itr = m_clientsMap.find(peer->incomingPeerID);
     if (itr != m_clientsMap.end()) {
         auto index = itr->second;
+        mp_world->removeEntity(m_clients[index].getPlayerId());
         m_clients[index].disconnect();
+        broadcastPlayerLeave(m_clients[index].getPlayerId());
         m_clientsMap.erase(itr);
-        broadcastPlayerLeave();
     }
     else {
         auto pending = findPendingSession(peer->incomingPeerID);
