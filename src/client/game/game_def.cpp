@@ -25,10 +25,13 @@ bool ClientGameDef::start(const std::string ipAddress)
 
 void ClientGameDef::handleEvent(const sf::Event& event)
 {
+
 }
 
-void ClientGameDef::handleInput(const Keyboard& keybaord, const InputState& inputState)
+void ClientGameDef::handleInput(const Keyboard& keyboard, const InputState& inputState)
 {
+    handleFpsCameraInput(m_playerPosition.rotation, m_playerVelocity, keyboard,
+                         inputState);
 }
 
 void ClientGameDef::tick(float dt)
@@ -38,6 +41,9 @@ void ClientGameDef::tick(float dt)
     if (m_client.getConnnectionState() == ConnectionState::Disconnected) {
         shutdown();
     }
+
+    m_playerPosition.position += m_playerVelocity * dt;
+    m_playerVelocity *= 0.90 * dt;
 }
 
 void ClientGameDef::render()

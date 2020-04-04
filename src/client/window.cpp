@@ -6,6 +6,8 @@
 #include <glad/glad.h>
 #include <iostream>
 
+const sf::Window* Window::context = nullptr;
+
 namespace {
 
     bool initOpenGL(const sf::Window& window)
@@ -44,8 +46,9 @@ namespace {
 
 } // namespace
 
-bool createWindowInitOpengl(sf::Window& window)
+bool Window::createWindowInitOpengl(sf::Window& window)
 {
+    context = &window;
     window.setKeyRepeatEnabled(false);
     if (ClientConfig::get().fullScreen) {
         createWindow(window, sf::VideoMode::getDesktopMode(), sf::Style::Fullscreen);
@@ -62,7 +65,7 @@ bool createWindowInitOpengl(sf::Window& window)
     return initOpenGL(window);
 }
 
-float getWindowAspect(const sf::Window& window)
+float Window::getWindowAspect(const sf::Window& window)
 {
     return static_cast<float>(window.getSize().x) /
            static_cast<float>(window.getSize().y);

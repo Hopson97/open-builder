@@ -11,12 +11,15 @@
 class Keyboard;
 struct InputState;
 
+void handleFpsCameraInput(glm::vec3& rotation, glm::vec3& velocity,
+                          const Keyboard& keyboard, const InputState& inputState);
+
 class ClientGameDef {
   public:
     virtual ~ClientGameDef() = default;
 
     void handleEvent(const sf::Event& event);
-    void handleInput(const Keyboard& keybaord, const InputState& inputState);
+    void handleInput(const Keyboard& keyboard, const InputState& inputState);
     void tick(float dt);
     void render();
 
@@ -42,4 +45,5 @@ class ClientGameDef {
     Client m_client;
 
     EntityState m_playerPosition;
+    glm::vec3 m_playerVelocity{0.0f};
 };

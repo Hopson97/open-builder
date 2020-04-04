@@ -166,7 +166,7 @@ int main(int argc, char** argv)
 
         case LaunchType::Client: {
             sf::Window window;
-            if (!createWindowInitOpengl(window)) {
+            if (!Window::createWindowInitOpengl(window)) {
                 return -1;
             }
             ClientEngine client;
