@@ -63,7 +63,6 @@ void ClientGameDef::handlePlayerInput(const Keyboard& keyboard)
 
     auto& player = m_world.getPlayer();
     glm::vec3& rotation = player.rotation;
-    glm::vec3& positiion = player.position;
     glm::vec3& velocity = player.velocity;
 
     float verticalSensitivity = ClientConfig::get().verticalSensitivity;

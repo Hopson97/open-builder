@@ -5,11 +5,13 @@
 #include <common/network/net_constants.h>
 #include <memory>
 #include <server/network/server.h>
+#include <server/world/server_world.h>
 #include <thread>
 
 struct ServerHelper {
     ServerHelper(int max = 2)
-        : server(max)
+        :   world (1)
+        ,   server(max, world)
     {
         runner = std::make_unique<std::thread>([&]() {
             while (running) {
@@ -23,10 +25,11 @@ struct ServerHelper {
         running = false;
         runner->join();
     }
-
+    ServerWorld world;
     Server server;
     std::atomic_bool running = true;
     std::unique_ptr<std::thread> runner;
+
 };
 
 void tickClient(Client& client, int times)

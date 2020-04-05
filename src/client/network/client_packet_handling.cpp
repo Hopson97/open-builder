@@ -18,6 +18,11 @@ void Client::onConnectionAcceptance(ClientPacket& packet)
     if (isAccepted) {
         std::cout << "Connected!\n";
         m_connectionState = ConnectionState::Connected;
+        
+        // For certain unit tests, the world doesn't exist
+        if (!mp_world) {
+            return;
+        }
 
         u32 playerId = packet.read<u32>();
         mp_world->setPlayerId(playerId);
@@ -53,6 +58,10 @@ void Client::onAddEntity(ClientPacket& packet)
         u32 entityId = packet.read<u32>();
         glm::vec3 position = packet.read<glm::vec3>();
         glm::vec3 rotation = packet.read<glm::vec3>();
+        // For certain unit tests, the world doesn't exist
+        if (!mp_world) {
+            return;
+        }
         mp_world->addEntity(entityId, position, rotation);
     }
 }
@@ -71,6 +80,10 @@ void Client::onAddChunk(ClientPacket& packet)
             voxel_t type = packet.read<voxel_t>();
             u16 count = packet.read<u16>();
             voxels.emplace_back(type, count);
+        }
+        // For certain unit tests, the world doesn't exist
+        if (!mp_world) {
+            return;
         }
         mp_world->createChunkFromCompressed(position, voxels);
     }

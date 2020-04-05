@@ -3,6 +3,7 @@
 #include <array>
 #include <common/world/coordinate.h>
 #include <common/world/world_constants.h>
+#include <vector>
 
 class ChunkManager;
 class BiomeDataManager;

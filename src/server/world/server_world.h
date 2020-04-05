@@ -12,7 +12,7 @@
 
 class ServerWorld {
   public:
-    ServerWorld();
+    ServerWorld(int size);
 
     void tick();
 

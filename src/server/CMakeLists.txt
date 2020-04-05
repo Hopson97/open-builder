@@ -4,7 +4,10 @@ add_library(ob-server
     network/server.cpp
     network/client_session.cpp
     network/pending_client_session.cpp
+
     world/terrain_generation.cpp
+    world/server_world.cpp
+
     lua/data_api.cpp 
     lua/world_api.cpp
     lua/server_lua_callback.cpp

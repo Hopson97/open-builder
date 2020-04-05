@@ -7,7 +7,8 @@
 #include <thread>
 
 ServerEngine::ServerEngine()
-    : m_server(16, m_world)
+    :   m_world (10)
+    ,   m_server(16, m_world)
 {
 }
 

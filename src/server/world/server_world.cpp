@@ -5,7 +5,7 @@
 
 #include "terrain_generation.h"
 
-ServerWorld::ServerWorld()
+ServerWorld::ServerWorld(int size)
     : m_luaCallbacks(m_lua)
 {
     m_entities.resize(1024);
@@ -21,10 +21,10 @@ ServerWorld::ServerWorld()
 
     m_voxelData.initCommonVoxelTypes();
 
-    for (int z = 0; z < 10; z++) {
-        for (int x = 0; x < 10; x++) {
+    for (int z = 0; z < size; z++) {
+        for (int x = 0; x < size; x++) {
             auto chunks =
-                generateTerrain(m_chunks, x, z, m_voxelData, m_biomeData, 9000, 10);
+                generateTerrain(m_chunks, x, z, m_voxelData, m_biomeData, 9000, size);
             for (auto& chunk : chunks)
                 m_currentChunks.insert(chunk);
         }
@@ -59,7 +59,7 @@ const std::vector<EntityState>& ServerWorld::getEntities() const
 void ServerWorld::serialiseEntities(ServerPacket& packet) const
 {
     packet.write(entityCount);
-    for (int i = 1; i < m_entities.size(); i++) {
+    for (u32 i = 1; i < m_entities.size(); i++) {
         const auto& state = m_entities[i];
         if (state.active) {
             packet.write(static_cast<u32>(i));
@@ -71,7 +71,7 @@ void ServerWorld::serialiseEntities(ServerPacket& packet) const
 
 u32 ServerWorld::addEntity()
 {
-    for (int i = 1; i < m_entities.size(); i++) {
+    for (u32 i = 1; i < m_entities.size(); i++) {
         auto& state = m_entities[i];
         if (!state.active) {
             entityCount++;

@@ -20,6 +20,7 @@ add_library(ob-client
     game/game_type.cpp
     game/chunk_mesh.cpp
     game/chunk_mesh_generation.cpp
+    game/client_world.cpp
 
     lua/client_lua_callback.cpp
     lua/gui_api.cpp
@@ -45,7 +46,9 @@ add_library(ob-client
     window.cpp
 
     network/client.cpp
+    network/client_packet_handling.cpp
 
+    renderer/camera.cpp
     renderer/gui_renderer.cpp
     renderer/chunk_renderer.cpp
 )

@@ -20,10 +20,9 @@ class ServerEngine {
 
   private:
     void launch();
-
+    ServerWorld m_world;
     Server m_server;
     std::thread m_serverThread;
     std::atomic_bool m_isServerRunning;
 
-    ServerWorld m_world;
 };

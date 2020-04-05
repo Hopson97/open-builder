@@ -22,7 +22,6 @@ namespace {
     {
         voxel_t air = voxelData.getVoxelId(CommonVoxel::Air);
 
-        auto& thisVoxel = voxelData.getVoxelData(thisId);
         auto& compareVoxel = voxelData.getVoxelData(compareId);
         if (compareId == air) {
             return true;
