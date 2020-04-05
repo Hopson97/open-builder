@@ -162,6 +162,16 @@ enum class ServerCommand : command_t {
     // float[3]: The current rotation of the player
     PlayerState,
 
+    // Sends a player's mouse state for left clicking. (Eg for time based click events)
+    // Data:
+    // u8: 0 for click, 1 for release
+    MouseState,
+
+    // Sends a player interaction. This is when they right-click
+    // Data:
+    // ???
+    Interaction,
+
     /*
         // Command to tell server the position of a player
         // Data:

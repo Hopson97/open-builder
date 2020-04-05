@@ -18,7 +18,9 @@ void ServerEngine::handlePacket(ServerPacket& packet, ENetPeer* peer)
         case Cmd::HandshakePartOne:     onHandshakePartOne(packet, peer);   break;
         case Cmd::HandshakeResponse:    onHandshakeResponse(packet, peer);  break;
 
-        case Cmd::PlayerState:  onPlayerState(packet, peer);  break;
+        case Cmd::Interaction:  onInteraction(packet, peer);    break;
+        case Cmd::MouseState:   onMouseState(packet, peer);     break;
+        case Cmd::PlayerState:  onPlayerState(packet, peer);    break;
     }
     // clang-format on
 }
@@ -56,6 +58,22 @@ void ServerEngine::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
             itr = m_pendingConnections.erase(itr);
         }
     }
+}
+
+void ServerEngine::onInteraction(ServerPacket& packet, ENetPeer* peer)
+{
+    AUTHENTICATE_PACKET
+    auto& player = m_world.findEntity(client.getPlayerId());
+
+
+}
+
+void ServerEngine::onMouseState(ServerPacket& packet, ENetPeer* peer)
+{
+    AUTHENTICATE_PACKET
+    auto& player = m_world.findEntity(client.getPlayerId());
+
+    bool click = packet.read<u8>();
 }
 
 void ServerEngine::onPlayerState(ServerPacket& packet, ENetPeer* peer)

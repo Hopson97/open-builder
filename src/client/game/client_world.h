@@ -34,6 +34,8 @@ class ClientWorld {
     void addVoxelType(VoxelData&& voxel);
     void initialiseCommonVoxels();
 
+    bool isVoxelInteractable(const VoxelPosition& position);
+
     bool hasChunk(const ChunkPosition& position) const;
     void createChunkFromCompressed(const ChunkPosition& position,
                                    const CompressedVoxels& voxels);

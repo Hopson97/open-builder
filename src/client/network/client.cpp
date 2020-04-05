@@ -87,6 +87,19 @@ ConnectionState Client::getConnnectionState() const
     return m_connectionState;
 }
 
+void Client::sendInteraction()
+{
+    ClientPacket packet(ServerCommand::Interaction, m_salt);
+    m_serverConnection.send(packet.get());
+}
+
+void Client::sendMouseEvent(MouseEventState state)
+{
+    ClientPacket packet(ServerCommand::MouseState, m_salt);
+    packet.write(static_cast<u8>(state == MouseEventState::Click ? 0 : 1));
+    m_serverConnection.send(packet.get());
+}
+
 void Client::sendPlayerState(const EntityState& state)
 {
     ClientPacket packet(ServerCommand::PlayerState, m_salt);

@@ -14,6 +14,8 @@ enum class ConnectionState {
     Disconnected,
 };
 
+enum class MouseEventState { Click, Release };
+
 class Client final {
   public:
     Client();
@@ -28,6 +30,8 @@ class Client final {
 
     ConnectionState getConnnectionState() const;
 
+    void sendInteraction();
+    void sendMouseEvent(MouseEventState state);
     void sendPlayerState(const EntityState& state);
 
   private:

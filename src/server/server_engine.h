@@ -34,7 +34,10 @@ class ServerEngine {
     void onHandshakePartOne(ServerPacket& packet, ENetPeer* peer);
     void onHandshakeResponse(ServerPacket& packet, ENetPeer* peer);
 
+    void onInteraction(ServerPacket& packet, ENetPeer* peer);
+    void onMouseState(ServerPacket& packet, ENetPeer* peer);
     void onPlayerState(ServerPacket& packet, ENetPeer* peer);
+   
 
     void broadcastPlayerJoin(u32 playerId);
     void broadcastPlayerLeave(u32 playerId);

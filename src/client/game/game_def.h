@@ -2,6 +2,7 @@
 
 #include "../network/client.h"
 #include <SFML/Window/Event.hpp>
+#include <SFML/System/Clock.hpp>
 
 #include "../gl/shader.h"
 #include "../gl/textures.h"
@@ -11,6 +12,16 @@
 
 class Keyboard;
 struct InputState;
+
+struct SelectedBoxRenderer {
+    gl::Shader program;
+    gl::UniformLocation modelLocation;
+    gl::UniformLocation projectionViewLocation;
+    gl::VertexArray m_selectionBox;
+
+    void create();
+    void render(const Camera& camera, const VoxelPosition& position);
+};
 
 class ClientGameDef {
   public:
@@ -34,8 +45,13 @@ class ClientGameDef {
     virtual void onShutdown() = 0;
 
     ClientWorld m_world;
-
     Camera m_camera;
-
     Client m_client;
+
+    SelectedBoxRenderer m_selectionBoxRenderer;
+    VoxelPosition m_currentSelectedVoxelPos;
+    bool m_isVoxelSelected = false;
+
+    sf::Clock m_timer;
+    sf::Time m_lastTime;
 };

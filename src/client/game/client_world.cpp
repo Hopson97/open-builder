@@ -148,6 +148,14 @@ void ClientWorld::initialiseCommonVoxels()
     m_voxelData.initCommonVoxelTypes();
 }
 
+bool ClientWorld::isVoxelInteractable(const VoxelPosition& position)
+{
+    auto voxelId = m_chunks.getVoxel(position);
+    auto type = m_voxelData.getVoxelData(voxelId).type;
+
+    return type == VoxelType::Solid || type == VoxelType::Flora;
+}
+
 bool ClientWorld::hasChunk(const ChunkPosition& position) const
 {
     return m_chunks.hasChunk(position);

@@ -94,9 +94,7 @@ class Client final : public NetworkHost {
     } m_basicShader;
 
     struct {
-        gl::Shader program;
-        gl::UniformLocation modelLocation;
-        gl::UniformLocation projectionViewLocation;
+
     } m_selectionShader;
 
     // For time-based render stuff eg waves in the water

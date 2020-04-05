@@ -4,6 +4,34 @@
 #include "../input/input_state.h"
 #include "../input/keyboard.h"
 #include "../window.h"
+#include "../gl/gl_errors.h"
+#include "../gl/primitive.h"
+
+void SelectedBoxRenderer::create()
+{
+    program.create("selection", "selection");
+    program.bind();
+    modelLocation = program.getUniformLocation("modelMatrix");
+    projectionViewLocation = program.getUniformLocation("projectionViewMatrix");
+    m_selectionBox = makeWireCubeVertexArray(1, 1, 1);
+}
+
+void SelectedBoxRenderer::render(const Camera& camera, const VoxelPosition& position)
+{
+    glCheck(glEnable(GL_BLEND));
+    glCheck(glEnable(GL_LINE_SMOOTH));
+    glCheck(glLineWidth(8.0));
+    program.bind();
+    glm::mat4 modelMatrix{1.0};
+    float size = 1.005f;
+    translateMatrix(modelMatrix, {position.x - (size - 1) / 2, position.y - (size - 1) / 2,
+                     position.z - (size - 1) / 2});
+    scaleMatrix(modelMatrix, size);
+    gl::loadUniform(modelLocation, modelMatrix);
+    gl::loadUniform(projectionViewLocation, camera.getProjectionView());
+    m_selectionBox.getDrawable().bindAndDraw(GL_LINES);
+    glCheck(glDisable(GL_BLEND));
+}
 
 bool ClientGameDef::start(const std::string ipAddress)
 {
@@ -16,6 +44,7 @@ bool ClientGameDef::start(const std::string ipAddress)
     m_client.setWorld(m_world);
 
     m_camera = Camera::createCamera();
+    m_selectionBoxRenderer.create();
 
     // TODO Move to the client/server handling
     m_world.setupData(1024);
@@ -30,30 +59,72 @@ void ClientGameDef::shutdown()
 
 void ClientGameDef::handleEvent(const sf::Event& event)
 {
+    if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.mouseButton.button == sf::Mouse::Left) {
+            m_client.sendMouseEvent(MouseEventState::Click);
+        }
+        else {
+            m_client.sendInteraction();
+        }
+    }
+    else if (event.type == sf::Event::MouseButtonReleased) {
+        if (event.mouseButton.button == sf::Mouse::Left) {
+            m_client.sendMouseEvent(MouseEventState::Release);
+        }
+    }
 }
 
 void ClientGameDef::handleInput(const Keyboard& keyboard, const InputState& inputState)
 {
+    if (m_client.getConnnectionState() != ConnectionState::Connected) {
+        return;
+    }
+
     if (inputState.isMouseLocked) {
         handlePlayerInput(keyboard);
+    }
+
+    // Test whether the voxel the player is looking at is interactable
+    auto& player = m_world.getPlayer();
+    auto& position = player.position;
+    auto& rotation = player.rotation;
+
+    m_isVoxelSelected = false;
+    auto voxels = getIntersectedVoxels(position, forwardsVector(rotation), 8);
+    for (auto& position : voxels) {
+        if (m_world.isVoxelInteractable(position)) {
+            m_currentSelectedVoxelPos = position;
+            m_isVoxelSelected = true;
+            break;
+        }
     }
 }
 
 void ClientGameDef::tick(float dt)
 {
-    m_camera.update(m_world.getPlayer());
     m_client.tick();
+    if (m_client.getConnnectionState() != ConnectionState::Connected) {
+        return;
+    }
+
+    m_camera.update(m_world.getPlayer());
     m_world.tick(dt);
     if (m_client.getConnnectionState() == ConnectionState::Disconnected) {
         shutdown();
     }
 
-    m_client.sendPlayerState(m_world.getPlayer());
+    auto thisTime = m_timer.getElapsedTime();
+    if (thisTime - m_lastTime > sf::milliseconds(50)) {
+        m_client.sendPlayerState(m_world.getPlayer());
+    }
 }
 
 void ClientGameDef::render()
 {
     m_world.render(m_camera);
+    if (m_isVoxelSelected) {
+        m_selectionBoxRenderer.render(m_camera, m_currentSelectedVoxelPos);
+    }
 }
 
 void ClientGameDef::handlePlayerInput(const Keyboard& keyboard)
