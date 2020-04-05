@@ -159,7 +159,7 @@ int main(int argc, char** argv)
     loadFromConfigFile();
     switch (parseArgs(args)) {
         case LaunchType::OLD_SERVER: {
-            ServerLauncher launcher;
+            ServerEngine launcher;
             launcher.run();
             break;
         }

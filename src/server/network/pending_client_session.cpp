@@ -1,8 +1,8 @@
 #include "client_session.h"
 #include <common/network/net_command.h>
 
-#include "server.h"
 #include "../world/server_world.h"
+#include "server.h"
 
 void PendingClientSession::sendHandshakeChallenge(u32 serversalt)
 {
@@ -27,13 +27,19 @@ void PendingClientSession::sendAcceptConnection(u32 playerId, ServerWorld& world
     ServerPacket outgoing(ClientCommand::ConnectionAcceptance, salt);
     outgoing.write((u8)1);
 
-    // Send ititial player state
-    std::cout << playerId << std::endl;
+    // Send the player ID
     outgoing.write(playerId);
 
-    // Send entities
-    world.serialiseEntities(outgoing);
+    // Send game data about voxels
+    auto& voxels = world.getVoxelData().getVoxelData();
+    outgoing.write(static_cast<u16>(voxels.size()));
+    std::cout << "sending " << voxels.size() << " voxels\n";
+    for (const VoxelData& voxel : voxels) {
+        outgoing.write(voxel);
+    }
 
+    // Send current world entities
+    world.serialiseEntities(outgoing);
 
     connection.send(outgoing.get(), 0, ENET_PACKET_FLAG_RELIABLE);
 }

@@ -6,17 +6,17 @@
 #include <iostream>
 #include <thread>
 
-ServerLauncher::ServerLauncher()
+ServerEngine::ServerEngine()
     : m_server(16, m_world)
 {
 }
 
-ServerLauncher::~ServerLauncher()
+ServerEngine::~ServerEngine()
 {
     stop();
 }
 
-void ServerLauncher::run()
+void ServerEngine::run()
 {
     printf("Type 'exit' to shutdown server");
     m_serverThread = std::thread([this] {
@@ -33,12 +33,12 @@ void ServerLauncher::run()
     launch();
 }
 
-void ServerLauncher::runAsThread()
+void ServerEngine::runAsThread()
 {
     m_serverThread = std::thread([this] { launch(); });
 }
 
-void ServerLauncher::launch()
+void ServerEngine::launch()
 {
     if (!m_server.isSetup()) {
         return;
@@ -53,7 +53,7 @@ void ServerLauncher::launch()
     }
 }
 
-void ServerLauncher::stop()
+void ServerEngine::stop()
 {
     m_isServerRunning = false;
     if (m_serverThread.joinable()) {

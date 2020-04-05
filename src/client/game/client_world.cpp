@@ -1,9 +1,21 @@
 #include "client_world.h"
+#include "../client_config.h"
 #include "../gl/primitive.h"
 #include "../maths.h"
 #include "../renderer/camera.h"
 #include "chunk_mesh_generation.h"
 #include <common/debug.h>
+
+GLuint VoxelTextureMap::getTextureId(const std::string& name)
+{
+    auto itr = textureMap.find(name);
+    if (itr == textureMap.end()) {
+        GLuint textureId = textures.addTexture(name);
+        textureMap.emplace(name, textureId);
+        return textureId;
+    }
+    return itr->second;
+}
 
 ClientWorld::ClientWorld()
 {
@@ -87,6 +99,34 @@ void ClientWorld::removeEntity(u32 id)
 {
     assert(id <= m_entities.size());
     m_entities[id].active = false;
+}
+
+void ClientWorld::setVoxelTextureCount(int count)
+{
+    // 1. Need to somehow work out the exact amount of textures needed
+    // 2. Need to pass in the actual texture pack resolution (right now it is hardcoded 16)
+    m_voxelTextures.textures.create(count * 3, 16);
+}
+
+void ClientWorld::addVoxelType(VoxelData&& voxel)
+{
+    const std::string texturePath =
+        "texture_packs/" + ClientConfig::get().texturePack + "/voxels/";
+
+    std::string& top = voxel.topTexture;
+    std::string& side = voxel.sideTexture;
+    std::string& bottom = voxel.topTexture;
+
+    voxel.topTextureId = m_voxelTextures.getTextureId(texturePath + top);
+    voxel.sideTextureId = m_voxelTextures.getTextureId(texturePath + side);
+    voxel.bottomTextureId = m_voxelTextures.getTextureId(texturePath + bottom);
+
+    m_voxelData.addVoxelData(std::move(voxel)); 
+}
+
+void ClientWorld::initialiseCommonVoxels()
+{
+    m_voxelData.initCommonVoxelTypes();
 }
 
 EntityState& ClientWorld::getPlayer()

@@ -5,8 +5,13 @@
 
 #include <glm/vec3.hpp>
 
-sf::Packet& operator>>(sf::Packet& packet,  glm::vec3& vect);
+struct VoxelData;
+
+sf::Packet& operator>>(sf::Packet& packet, glm::vec3& vect);
 sf::Packet& operator<<(sf::Packet& packet, const glm::vec3& vect);
+
+sf::Packet& operator>>(sf::Packet& packet, VoxelData& voxelData);
+sf::Packet& operator<<(sf::Packet& packet, const VoxelData& voxelData);
 
 template <typename Incoming, typename Outgoing>
 class Packet {

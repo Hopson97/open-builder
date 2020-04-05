@@ -2,13 +2,17 @@
 
 #include <common/world/entity_state.h>
 #include <common/world/chunk_manager.h>
+#include <common/world/voxel_data.h>
 #include "../renderer/chunk_renderer.h"
 #include "../gl/textures.h"
 
 class Camera;
 
-struct LocalPlayer {
-    EntityState* m_entity;
+struct VoxelTextureMap {
+    std::unordered_map<std::string, GLuint> textureMap;
+    gl::TextureArray textures;
+
+    GLuint getTextureId(const std::string& name);
 };
 
 class ClientWorld {
@@ -25,14 +29,21 @@ class ClientWorld {
     void updateEntity(u32 id, const glm::vec3& position, const glm::vec3& rotation);
     void removeEntity(u32 id);
 
+    void setVoxelTextureCount(int count);
+    void addVoxelType(VoxelData&& voxel);
+    void initialiseCommonVoxels();
+
     EntityState& getPlayer();
     u32 getPlayerId() const;
 
   private:
     std::vector<EntityState> m_entities;
+
     ChunkManager m_chunks;
     ChunkRenderer m_chunkRenderer;
-    Chunk* chunk = nullptr;
+
+    VoxelDataManager m_voxelData;
+    VoxelTextureMap m_voxelTextures;
 
     u32 m_playerId = 0;
 

@@ -13,17 +13,32 @@ enum class ClientCommand : command_t {
     // u32: The server's random number
     HandshakeChallenge,
 
-    // Sends either a connection rejection or accept to a joining client + basic info about the game
-    // Data:
-    // u8: 0 for reject, 1 for accept
-    // string: Optional - Reason for connection rejection
-    // [If connection accepted, then it sends over data]
-    // u32: The player ID of this player
-    // u32: The active entity count - count
-    // [Loop this]
-    // u32: The ID of the entity
-    // float[3]: The position of the entity
-    // float[3]: The rotation of the entity
+    /*
+         Sends either a connection rejection or accept to a joining client + basic info
+       about the game Data: u8: 0 for reject, 1 for accept [If connection rejected, then
+       it sends over a reason] string: Reason for connection rejection
+
+         [Else If connection accepted, then it sends over data]
+         u32: The player ID of this player
+
+         - Voxel Data -
+         u16: The number of different voxel types (VoxelCount)
+         [Loop this VoxelCount times]
+         String: name
+         String: the voxel's top texture
+         String: the voxel's side texture
+         String: the voxel's bottom texture
+         u8: The voxels mesh style aka VoxelMeshStyle
+         u8: The voxels state/type aka VoxelType
+         u8: Whether the voxel is collidable or not
+
+         - Active Entity Data -
+         u32: The active entity count (EntityCount)
+         [Loop this EntityCount times]
+         u32: The ID of the entity
+         float[3]: The position of the entity
+         float[3]: The rotation of the entity
+    */
     ConnectionAcceptance,
 
     // Forces the user to exit the game
@@ -140,7 +155,6 @@ enum class ServerCommand : command_t {
     // float[3]: The current position of the player
     // float[3]: The current rotation of the player
     PlayerState,
-
 
     /*
         // Command to tell server the position of a player

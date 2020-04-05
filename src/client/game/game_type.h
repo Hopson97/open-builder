@@ -13,7 +13,7 @@ class LocalGame final : public ClientGameDef {
     void onShutdown() final override;
 
     const std::string m_worldName;
-    ServerLauncher m_serverLauncher;
+    ServerEngine m_serverLauncher;
 };
 
 class RemoteGame final : public ClientGameDef {

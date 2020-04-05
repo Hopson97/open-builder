@@ -2,7 +2,6 @@
 
 #include "../game/client_world.h"
 
-
 void Client::onHandshakeChallenge(ClientPacket& packet)
 {
     u32 salt = packet.read<u32>();
@@ -21,6 +20,14 @@ void Client::onConnectionAcceptance(ClientPacket& packet)
 
         u32 playerId = packet.read<u32>();
         mp_world->setPlayerId(playerId);
+
+        u16 voxels = packet.read<u16>();
+        mp_world->setVoxelTextureCount(voxels);
+        for (u16 i = 0; i < voxels; i++) {
+            auto voxel = packet.read<VoxelData>();
+            mp_world->addVoxelType(std::move(voxel));
+        }
+        mp_world->initialiseCommonVoxels();
 
         u32 count = packet.read<u32>();
         for (u32 i = 0; i < count; i++) {

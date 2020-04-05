@@ -7,12 +7,12 @@
 #include <thread>
 #include "world/server_world.h"
 
-class ServerLauncher {
+class ServerEngine {
   public:
-    NON_COPYABLE(ServerLauncher)
+    NON_COPYABLE(ServerEngine)
 
-    ServerLauncher();
-    ~ServerLauncher();
+    ServerEngine();
+    ~ServerEngine();
 
     void run();
     void runAsThread();
