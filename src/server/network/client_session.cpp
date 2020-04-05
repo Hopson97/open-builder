@@ -2,7 +2,6 @@
 #include <common/network/net_command.h>
 
 #include "../world/server_world.h"
-#include "server.h"
 
 void ClientSession::init(ENetPeer* peer, u32 salt, u32 playerId)
 {

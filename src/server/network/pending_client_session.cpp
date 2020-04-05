@@ -2,7 +2,6 @@
 #include <common/network/net_command.h>
 
 #include "../world/server_world.h"
-#include "server.h"
 
 void PendingClientSession::sendHandshakeChallenge(u32 serversalt)
 {
