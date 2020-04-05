@@ -14,6 +14,11 @@ bool LocalGame::start()
     return ClientGameDef::start(LOCAL_HOST);
 }
 
+bool LocalGame::isGameMode()
+{
+    return true;
+}
+
 void LocalGame::onShutdown()
 {
     m_serverLauncher.stop();
@@ -30,7 +35,22 @@ bool RemoteGame::start()
     return ClientGameDef::start(m_serverIp);
 }
 
+bool RemoteGame::isGameMode()
+{
+    return true;
+}
+
 void RemoteGame::onShutdown()
 {
     // empty
+}
+
+bool EmptyGame::start()
+{
+    return false;
+}
+
+bool EmptyGame::isGameMode()
+{
+    return false;
 }

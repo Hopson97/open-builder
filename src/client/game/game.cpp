@@ -1,5 +1,12 @@
 #include "game.h"
 
+#include "game_type.h"
+
+Game::Game()
+{
+    m_gameDef = std::make_unique<EmptyGame>();
+}
+
 bool Game::start()
 {
     if (isInGame()) {
@@ -11,8 +18,9 @@ bool Game::start()
 void Game::shutdown()
 {
     if (isInGame()) {
+        std::cout << "Shutting down\n";
         m_gameDef->shutdown();
-        m_gameDef.release();
+        m_gameDef = std::make_unique<EmptyGame>();
     }
 }
 
@@ -46,5 +54,5 @@ void Game::render()
 
 bool Game::isInGame() const
 {
-    return m_gameDef != nullptr;
+    return m_gameDef->isGameMode();
 }

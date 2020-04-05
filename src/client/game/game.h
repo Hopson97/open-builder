@@ -13,6 +13,8 @@ class Game {
         m_gameDef = std::make_unique<T>(std::forward<Args>(args)...);
     }
 
+    Game();
+
     bool start();
     void shutdown();
 

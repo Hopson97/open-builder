@@ -106,13 +106,15 @@ void ServerEngine::tick()
 void ServerEngine::stop()
 {
     m_isServerRunning = false;
-    broadcastServerShutdown();
+    if (m_isServerRunning) {
 
-    enet_host_flush(m_host.handle);
-    for (auto& session : m_clients) {
-        session.disconnect();
+        broadcastServerShutdown();
+
+        enet_host_flush(m_host.handle);
+        for (auto& session : m_clients) {
+            session.disconnect();
+        }
     }
-
     if (m_serverThread.joinable()) {
         m_serverThread.join();
     }

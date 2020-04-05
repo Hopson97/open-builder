@@ -10,13 +10,6 @@
 const ClientConnectionResult ClientConnectionResult::SUCCESS;
 
 namespace {
-    void destroyENetHost(ENetHost* host)
-    {
-        if (host) {
-            enet_host_destroy(host);
-        }
-    }
-
     ENetPacket* createPacket(const sf::Packet& packet, u32 flags)
     {
         return enet_packet_create(packet.getData(), packet.getDataSize(), flags);
@@ -50,23 +43,29 @@ NetHost::NetHost()
 NetHost::NetHost(const ENetAddress& address, int maximumConnections) noexcept
 {
     handle = enet_host_create(&address, maximumConnections, 2, 0, 0);
+    if (!handle) {
+        std::cout << "Failed to create server\n";
+    }
 }
 
 NetHost::~NetHost() noexcept
 {
-    destroyENetHost(handle);
+    if (handle) {
+        enet_host_destroy(handle);
+    }
+    std::cout << "Destroyed enet\n";
 }
 
 NetHost::NetHost(NetHost&& other) noexcept
     : handle(other.handle)
 {
-    destroyENetHost(other.handle);
+    enet_host_destroy(other.handle);
     other.handle = nullptr;
 }
 
 NetHost& NetHost::operator=(NetHost&& other) noexcept
 {
-    destroyENetHost(other.handle);
+    enet_host_destroy(other.handle);
     other.handle = nullptr;
     return *this;
 }

@@ -90,7 +90,8 @@ void ClientWorld::render(const Camera& camera)
         auto& entity = m_entities[i];
         if (entity.active && i != m_playerId) {
             glm::mat4 model{1.0f};
-            translateMatrix(model, entity.position);
+            translateMatrix(model, {entity.position.x - 0.5, entity.position.y - 3,
+                                    entity.position.z - 0.5});
             gl::loadUniform(m_entityModel, model);
             d.draw();
         }

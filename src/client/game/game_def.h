@@ -33,6 +33,7 @@ class ClientGameDef {
     void render();
 
     virtual bool start() = 0;
+    virtual bool isGameMode() = 0;
 
     void shutdown();
 
