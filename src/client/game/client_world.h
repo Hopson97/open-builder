@@ -5,6 +5,7 @@
 #include <common/world/voxel_data.h>
 #include "../renderer/chunk_renderer.h"
 #include "../gl/textures.h"
+#include <queue>
 
 class Camera;
 
@@ -33,6 +34,10 @@ class ClientWorld {
     void addVoxelType(VoxelData&& voxel);
     void initialiseCommonVoxels();
 
+    bool hasChunk(const ChunkPosition& position) const;
+    void createChunkFromCompressed(const ChunkPosition& position,
+                                   const CompressedVoxels& voxels);
+
     EntityState& getPlayer();
     u32 getPlayerId() const;
 
@@ -41,6 +46,7 @@ class ClientWorld {
 
     ChunkManager m_chunks;
     ChunkRenderer m_chunkRenderer;
+    std::vector<ChunkPosition> m_chunkUpdates;
 
     VoxelDataManager m_voxelData;
     VoxelTextureMap m_voxelTextures;

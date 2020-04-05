@@ -8,8 +8,9 @@ class ChunkManager;
 class BiomeDataManager;
 class VoxelDataManager;
 
-void generateTerrain(ChunkManager& chunkManager, int chunkX, int chunkZ,
-                     const VoxelDataManager& voxelData, const BiomeDataManager& biomeData,
-                     int seed, int worldSize);
+std::vector<ChunkPosition> generateTerrain(ChunkManager& chunkManager, int chunkX,
+                                           int chunkZ, const VoxelDataManager& voxelData,
+                                           const BiomeDataManager& biomeData, int seed,
+                                           int worldSize);
 
 float generateSeed(const std::string& input);

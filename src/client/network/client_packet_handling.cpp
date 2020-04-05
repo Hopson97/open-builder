@@ -1,5 +1,6 @@
 #include "client.h"
 
+#include <common/debug.h>
 #include "../game/client_world.h"
 
 void Client::onHandshakeChallenge(ClientPacket& packet)
@@ -53,6 +54,25 @@ void Client::onAddEntity(ClientPacket& packet)
         glm::vec3 position = packet.read<glm::vec3>();
         glm::vec3 rotation = packet.read<glm::vec3>();
         mp_world->addEntity(entityId, position, rotation);
+    }
+}
+
+void Client::onAddChunk(ClientPacket& packet)
+{
+    ChunkPosition position;
+    position.x = packet.read<i32>();
+    position.y = packet.read<i32>();
+    position.z = packet.read<i32>();
+
+    if (!mp_world->hasChunk(position)) {
+        CompressedVoxels voxels;
+        u32 blockCount = packet.read<u32>();
+        for (u32 i = 0; i < blockCount; i++) {
+            voxel_t type = packet.read<voxel_t>();
+            u16 count = packet.read<u16>();
+            voxels.emplace_back(type, count);
+        }
+        mp_world->createChunkFromCompressed(position, voxels);
     }
 }
 

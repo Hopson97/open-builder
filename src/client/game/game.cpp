@@ -12,6 +12,7 @@ void Game::shutdown()
 {
     if (isInGame()) {
         m_gameDef->shutdown();
+        m_gameDef.release();
     }
 }
 

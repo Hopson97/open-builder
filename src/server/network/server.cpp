@@ -64,6 +64,12 @@ void Server::tick()
                 break;
         }
     }
+
+    for (auto& client : m_clients) {
+        if (client.isActive()) {
+            client.tick(*mp_world);
+        } 
+   }
 }
 
 void Server::broadcastPacket(ServerPacket& packet, int channel, int flags)

@@ -73,6 +73,7 @@ void Client::handlePacket(ClientPacket& packet)
         case Cmd::ForceExitGame:        onForceExit             (packet);   break;
 
         case Cmd::AddEntity:            onAddEntity             (packet);   break;
+        case Cmd::AddChunk:             onAddChunk              (packet);   break;
         case Cmd::RemoveEntity:         onRemoveEntity          (packet);   break;
         case Cmd::UpdateEntityStates:   onUpdateEntityStates    (packet);   break;
 

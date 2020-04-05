@@ -2,8 +2,11 @@
 
 #include <common/network/enet.h>
 #include <common/network/packet.h>
+#include <unordered_set>
+#include <common/world/coordinate.h>
 
 class ServerWorld;
+class Chunk;
 
 struct PendingClientSession {
     Connection connection;
@@ -21,15 +24,23 @@ class ClientSession {
 
     void sendPacket(const ServerPacket& packet, u32 channel = 0, u32 flags = 0);
 
+    void tick(ServerWorld& world);
+
     bool verify(u32 salt) const;
     bool isActive() const;
     u32 getPlayerId() const;
 
   private:
+    void sendAddChunk(const Chunk& chunk);
+
+    std::unordered_set<ChunkPosition, ChunkPositionHash> m_sentChunks;
+
     Connection m_clientConnection;
     u32 m_salt = 0;
 
     u32 m_playerId = 0;
 
     bool m_isActive = false;
+
+    int dist = 4;
 };

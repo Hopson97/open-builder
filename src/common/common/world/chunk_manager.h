@@ -17,6 +17,7 @@ class ChunkManager final {
     Chunk& addChunk(const ChunkPosition& chunk);
 
     const Chunk& getChunk(const ChunkPosition& chunk);
+    const Chunk& getChunk(const ChunkPosition& chunk) const;
 
     voxel_t getVoxel(const VoxelPosition& voxelPosition) const;
     void setVoxel(const VoxelPosition& voxelPosition, voxel_t voxel);

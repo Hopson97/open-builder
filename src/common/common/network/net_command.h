@@ -68,6 +68,12 @@ enum class ClientCommand : command_t {
     // float[3]: The rotation of the entity
     UpdateEntityStates,
 
+    // The voxel data of a chunk
+    // Data:
+    // i32[3] The position of the chunk
+    // voxel[CHUNK_VOLUME] The voxel data
+    AddChunk,
+
     /*
         // Send peer ID to a new connection
         // Data:

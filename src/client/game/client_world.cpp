@@ -49,6 +49,23 @@ void ClientWorld::tick(float dt)
     auto& player = getPlayer();
     player.position += player.velocity * dt;
     player.velocity *= 0.90 * dt;
+
+    // Update chunks
+    i32 count = 0;
+    for (auto itr = m_chunkUpdates.begin(); itr != m_chunkUpdates.end();) {
+        if (m_chunks.hasNeighbours(*itr)) {
+            const Chunk& chunk = m_chunks.getChunk(*itr);
+            ChunkMeshCollection meshes = makeChunkMesh(chunk, m_voxelData);
+            m_chunkRenderer.updateMesh(*itr, std::move(meshes));
+            itr = m_chunkUpdates.erase(itr);
+            if (count++ > 3) {
+                break;
+            }
+        }
+        else {
+            itr++;
+        }
+    }
 }
 
 void ClientWorld::render(const Camera& camera)
@@ -56,6 +73,7 @@ void ClientWorld::render(const Camera& camera)
     if (!m_issetup) {
         return;
     }
+    m_voxelTextures.textures.bind();
     m_chunkRenderer.renderChunks(camera, false);
 
     m_entityShader.bind();
@@ -104,7 +122,8 @@ void ClientWorld::removeEntity(u32 id)
 void ClientWorld::setVoxelTextureCount(int count)
 {
     // 1. Need to somehow work out the exact amount of textures needed
-    // 2. Need to pass in the actual texture pack resolution (right now it is hardcoded 16)
+    // 2. Need to pass in the actual texture pack resolution (right now it is hardcoded
+    // 16)
     m_voxelTextures.textures.create(count * 3, 16);
 }
 
@@ -121,12 +140,25 @@ void ClientWorld::addVoxelType(VoxelData&& voxel)
     voxel.sideTextureId = m_voxelTextures.getTextureId(texturePath + side);
     voxel.bottomTextureId = m_voxelTextures.getTextureId(texturePath + bottom);
 
-    m_voxelData.addVoxelData(std::move(voxel)); 
+    m_voxelData.addVoxelData(std::move(voxel));
 }
 
 void ClientWorld::initialiseCommonVoxels()
 {
     m_voxelData.initCommonVoxelTypes();
+}
+
+bool ClientWorld::hasChunk(const ChunkPosition& position) const
+{
+    return m_chunks.hasChunk(position);
+}
+
+void ClientWorld::createChunkFromCompressed(const ChunkPosition& position,
+                                            const CompressedVoxels& voxels)
+{
+    Chunk& chunk = m_chunks.addChunk(position);
+    chunk.voxels = decompressVoxelData(voxels);
+    m_chunkUpdates.push_back(position);
 }
 
 EntityState& ClientWorld::getPlayer()

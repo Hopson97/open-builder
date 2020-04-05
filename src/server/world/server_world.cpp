@@ -1,13 +1,15 @@
 #include "server_world.h"
 
-#include <cassert>
 #include "../lua/server_lua_api.h"
+#include <cassert>
+
+#include "terrain_generation.h"
 
 ServerWorld::ServerWorld()
     : m_luaCallbacks(m_lua)
 {
     m_entities.resize(1024);
-    
+
     // Initialise the Lua API
     luaInitDataApi(m_lua, m_biomeData, m_voxelData);
     luaInitWorldApi(m_lua);
@@ -16,10 +18,30 @@ ServerWorld::ServerWorld()
     m_lua.lua["path"] = "game/";
     m_lua.runLuaFile("game/voxels.lua");
     m_lua.runLuaFile("game/biomes.lua");
+
+    m_voxelData.initCommonVoxelTypes();
+
+    for (int z = 0; z < 10; z++) {
+        for (int x = 0; x < 10; x++) {
+            auto chunks =
+                generateTerrain(m_chunks, x, z, m_voxelData, m_biomeData, 9000, 10);
+            for (auto& chunk : chunks)
+                m_currentChunks.insert(chunk);
+        }
+    }
 }
 
 void ServerWorld::tick()
 {
+    /*
+    while (!m_chunkGenerationQueue.empty()) {
+        auto pos = m_chunkGenerationQueue.front();
+        m_chunkGenerationQueue.pop();
+        std::cout << "Generating terrain\n";
+        generateTerrain(m_chunks, pos.x, pos.z, m_voxelData, m_biomeData, 1234, 16);
+        m_currentChunks.insert(pos);
+    }
+    */
     /*
     for (int i = 1; i < m_entities.size(); i++) {
         EntityState& state = m_entities[i];
@@ -81,4 +103,20 @@ const VoxelDataManager& ServerWorld::getVoxelData() const
 const BiomeDataManager& ServerWorld::getBiomeData() const
 {
     return m_biomeData;
+}
+
+const Chunk* ServerWorld::getChunk(const ChunkPosition& chunkPosition)
+{
+    if (m_currentChunks.find(chunkPosition) != m_currentChunks.end()) {
+        return &m_chunks.getChunk(chunkPosition);
+    }
+    else {
+        m_chunkGenerationQueue.push(chunkPosition);
+        return nullptr;
+    }
+}
+
+const ChunkPositionMap<Chunk>& ServerWorld::getChunks() const
+{
+    return m_chunks.chunks();
 }

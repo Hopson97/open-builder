@@ -7,6 +7,8 @@
 #include <common/world/chunk_manager.h>
 #include <common/world/entity_state.h>
 #include <common/world/voxel_data.h>
+#include <unordered_set>
+#include <queue>
 
 class ServerWorld {
   public:
@@ -24,7 +26,13 @@ class ServerWorld {
     const VoxelDataManager& getVoxelData() const;
     const BiomeDataManager& getBiomeData() const;
 
+    const Chunk* getChunk(const ChunkPosition& chunkPosition);
+    const ChunkPositionMap<Chunk>& getChunks() const;
+
   private:
+    std::queue<ChunkPosition> m_chunkGenerationQueue;
+    std::unordered_set<ChunkPosition, ChunkPositionHash> m_currentChunks;
+
     std::vector<EntityState> m_entities;
     u32 entityCount = 0;
     ChunkManager m_chunks;
