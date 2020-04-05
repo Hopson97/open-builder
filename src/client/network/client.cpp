@@ -71,9 +71,11 @@ void Client::handlePacket(ClientPacket& packet)
         case Cmd::HandshakeChallenge:   onHandshakeChallenge    (packet);   break;
         case Cmd::ConnectionAcceptance: onConnectionAcceptance  (packet);   break;
         case Cmd::ForceExitGame:        onForceExit             (packet);   break;
+        case Cmd::GameData:             onGameData              (packet);   break;
 
         case Cmd::AddEntity:            onAddEntity             (packet);   break;
         case Cmd::AddChunk:             onAddChunk              (packet);   break;
+        case Cmd::PlayerSpawnPoint:     onPlayerSpawnPoint      (packet);   break;
         case Cmd::RemoveEntity:         onRemoveEntity          (packet);   break;
         case Cmd::UpdateEntityStates:   onUpdateEntityStates    (packet);   break;
 
@@ -105,6 +107,12 @@ void Client::sendPlayerState(const EntityState& state)
     ClientPacket packet(ServerCommand::PlayerState, m_salt);
     packet.write(state.position);
     packet.write(state.rotation);
+    m_serverConnection.send(packet.get());
+}
+
+void Client::sendSpawnRequest()
+{
+    ClientPacket packet(ServerCommand::SpawnRequest, m_salt);
     m_serverConnection.send(packet.get());
 }
 

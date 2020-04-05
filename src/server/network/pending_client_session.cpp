@@ -20,14 +20,9 @@ void PendingClientSession::sendRejectConnection(const char* reason)
     connection.send(outgoing.get(), 0, ENET_PACKET_FLAG_RELIABLE);
 }
 
-void PendingClientSession::sendAcceptConnection(u32 playerId, ServerWorld& world)
+void PendingClientSession::sendGameData(const ServerWorld& world)
 {
-    // 1 meaning accept
-    ServerPacket outgoing(ClientCommand::ConnectionAcceptance, salt);
-    outgoing.write((u8)1);
-
-    // Send the player ID
-    outgoing.write(playerId);
+    ServerPacket outgoing(ClientCommand::GameData, salt);
 
     // Send game data about voxels
     auto& voxels = world.getVoxelData().getVoxelData();
@@ -39,6 +34,20 @@ void PendingClientSession::sendAcceptConnection(u32 playerId, ServerWorld& world
 
     // Send current world entities
     world.serialiseEntities(outgoing);
+
+    connection.send(outgoing.get(), 0, ENET_PACKET_FLAG_RELIABLE);
+}
+
+void PendingClientSession::sendAcceptConnection(u32 playerId)
+{
+    // 1 meaning accept
+    ServerPacket outgoing(ClientCommand::ConnectionAcceptance, salt);
+    outgoing.write((u8)1);
+
+    // Send the player ID
+    outgoing.write(playerId);
+
+
 
     connection.send(outgoing.get(), 0, ENET_PACKET_FLAG_RELIABLE);
 }

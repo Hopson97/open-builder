@@ -33,16 +33,19 @@ class Client final {
     void sendInteraction();
     void sendMouseEvent(MouseEventState state);
     void sendPlayerState(const EntityState& state);
+    void sendSpawnRequest();
 
   private:
     void handlePacket(ClientPacket& packet);
 
     void onHandshakeChallenge(ClientPacket& packet);
     void onConnectionAcceptance(ClientPacket& packet);
+    void onGameData(ClientPacket& packet);
 
     void onAddEntity(ClientPacket& packet);
     void onAddChunk(ClientPacket& packet);
     void onForceExit(ClientPacket& packet);
+    void onPlayerSpawnPoint(ClientPacket& packet);
     void onRemoveEntity(ClientPacket& packet);
     void onUpdateEntityStates(ClientPacket& packet);
 

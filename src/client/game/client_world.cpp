@@ -74,12 +74,16 @@ void ClientWorld::render(const Camera& camera)
         return;
     }
     m_voxelTextures.textures.bind();
-    m_chunkRenderer.renderChunks(camera, false);
 
+    // Render chunks, getting the block at the player position for """effects"""
+    auto playerVoxel = m_chunks.getVoxel(toVoxelPosition(getPlayer().position));
+    auto waterId = m_voxelData.getVoxelId(CommonVoxel::Water);
+    m_chunkRenderer.renderChunks(camera, playerVoxel == waterId);
+
+    // Render entities
     m_entityShader.bind();
     m_playerTexture.bind();
     gl::loadUniform(m_entityProj, camera.getProjectionView());
-
     auto d = m_vao.getDrawable();
     d.bind();
     for (u32 i = 1; i < m_entities.size(); i++) {

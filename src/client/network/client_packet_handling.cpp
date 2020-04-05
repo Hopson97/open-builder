@@ -1,7 +1,7 @@
 #include "client.h"
 
-#include <common/debug.h>
 #include "../game/client_world.h"
+#include <common/debug.h>
 
 void Client::onHandshakeChallenge(ClientPacket& packet)
 {
@@ -18,7 +18,7 @@ void Client::onConnectionAcceptance(ClientPacket& packet)
     if (isAccepted) {
         std::cout << "Connected!\n";
         m_connectionState = ConnectionState::Connected;
-        
+
         // For certain unit tests, the world doesn't exist
         if (!mp_world) {
             return;
@@ -27,26 +27,31 @@ void Client::onConnectionAcceptance(ClientPacket& packet)
         u32 playerId = packet.read<u32>();
         mp_world->setPlayerId(playerId);
 
-        u16 voxels = packet.read<u16>();
-        mp_world->setVoxelTextureCount(voxels);
-        for (u16 i = 0; i < voxels; i++) {
-            auto voxel = packet.read<VoxelData>();
-            mp_world->addVoxelType(std::move(voxel));
-        }
-        mp_world->initialiseCommonVoxels();
-
-        u32 count = packet.read<u32>();
-        for (u32 i = 0; i < count; i++) {
-            u32 id = packet.read<u32>();
-            auto position = packet.read<glm::vec3>();
-            auto rotation = packet.read<glm::vec3>();
-            mp_world->addEntity(id, position, rotation);
-        }
+        sendSpawnRequest();
     }
     else {
         std::string reason = packet.read<std::string>();
         std::cout << "Rejected!\n" << reason << std::endl;
         m_connectionState = ConnectionState::Disconnected;
+    }
+}
+
+void Client::onGameData(ClientPacket& packet)
+{
+    u16 voxels = packet.read<u16>();
+    mp_world->setVoxelTextureCount(voxels);
+    for (u16 i = 0; i < voxels; i++) {
+        auto voxel = packet.read<VoxelData>();
+        mp_world->addVoxelType(std::move(voxel));
+    }
+    mp_world->initialiseCommonVoxels();
+
+    u32 count = packet.read<u32>();
+    for (u32 i = 0; i < count; i++) {
+        u32 id = packet.read<u32>();
+        auto position = packet.read<glm::vec3>();
+        auto rotation = packet.read<glm::vec3>();
+        mp_world->addEntity(id, position, rotation);
     }
 }
 
@@ -101,6 +106,12 @@ void Client::onForceExit(ClientPacket& packet)
     m_connectionState = ConnectionState::Disconnected;
     auto reason = packet.read<std::string>();
     std::cout << "Forced to leave game: " << reason << "\n";
+}
+
+void Client::onPlayerSpawnPoint(ClientPacket& packet)
+{
+    glm::vec3 position = packet.read<glm::vec3>();
+    mp_world->getPlayer().position = position;
 }
 
 void Client::onUpdateEntityStates(ClientPacket& packet)

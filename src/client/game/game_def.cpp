@@ -13,14 +13,14 @@ void SelectedBoxRenderer::create()
     program.bind();
     modelLocation = program.getUniformLocation("modelMatrix");
     projectionViewLocation = program.getUniformLocation("projectionViewMatrix");
-    m_selectionBox = makeWireCubeVertexArray(1, 1, 1);
+    m_selectionBox = makeWireCubeVertexArray(1.02f, 1.02f, 1.02f);
 }
 
 void SelectedBoxRenderer::render(const Camera& camera, const VoxelPosition& position)
 {
     glCheck(glEnable(GL_BLEND));
     glCheck(glEnable(GL_LINE_SMOOTH));
-    glCheck(glLineWidth(8.0));
+    glCheck(glLineWidth(2.0));
     program.bind();
     glm::mat4 modelMatrix{1.0};
     float size = 1.005f;
@@ -151,7 +151,7 @@ void ClientGameDef::handlePlayerInput(const Keyboard& keyboard)
     lastMousePosition.y = (int)window.getSize().y / 2;
 #endif
 
-    float PLAYER_SPEED = 5.0f;
+    float PLAYER_SPEED = 3.0f;
     if (keyboard.isKeyDown(sf::Keyboard::LControl)) {
         PLAYER_SPEED *= 10;
     }

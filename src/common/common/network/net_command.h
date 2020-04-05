@@ -14,32 +14,33 @@ enum class ClientCommand : command_t {
     HandshakeChallenge,
 
     /*
-         Sends either a connection rejection or accept to a joining client + basic info
+         Sends either a connection rejection or accept to a joining client
        about the game Data: u8: 0 for reject, 1 for accept [If connection rejected, then
        it sends over a reason] string: Reason for connection rejection
 
-         [Else If connection accepted, then it sends over data]
+         [Else If connection accepted,
          u32: The player ID of this player
-
-         - Voxel Data -
-         u16: The number of different voxel types (VoxelCount)
-         [Loop this VoxelCount times]
-         String: name
-         String: the voxel's top texture
-         String: the voxel's side texture
-         String: the voxel's bottom texture
-         u8: The voxels mesh style aka VoxelMeshStyle
-         u8: The voxels state/type aka VoxelType
-         u8: Whether the voxel is collidable or not
-
-         - Active Entity Data -
-         u32: The active entity count (EntityCount)
-         [Loop this EntityCount times]
-         u32: The ID of the entity
-         float[3]: The position of the entity
-         float[3]: The rotation of the entity
     */
     ConnectionAcceptance,
+    
+    // Data about the game itself
+    // - Voxel Data -
+    // u16: The number of different voxel types (VoxelCount)
+    // [Loop this VoxelCount times]
+    // String: name
+    // String: the voxel's top texture
+    // String: the voxel's side texture
+    // String: the voxel's bottom texture
+    // u8: The voxels mesh style aka VoxelMeshStyle
+    // u8: The voxels state/type aka VoxelType
+    // u8: Whether the voxel is collidable or not   //
+    // - Active Entity Data -
+    // u32: The active entity count (EntityCount)
+    // [Loop this EntityCount times]
+    // u32: The ID of the entity
+    // float[3]: The position of the entity
+    // float[3]: The rotation of the entity
+    GameData,
 
     // Forces the user to exit the game
     // Data:
@@ -73,6 +74,12 @@ enum class ClientCommand : command_t {
     // i32[3] The position of the chunk
     // voxel[CHUNK_VOLUME] The voxel data
     AddChunk,
+
+    // Position for player when they spawn
+    // Data:
+    // float[3]: The X, Y, Z position of the entity
+    PlayerSpawnPoint,
+
 
     /*
         // Send peer ID to a new connection
@@ -161,6 +168,11 @@ enum class ServerCommand : command_t {
     // float[3]: The current position of the player
     // float[3]: The current rotation of the player
     PlayerState,
+
+    // A request to find a spawn point for the player
+    // Data: 
+    // None, the player is worked out from the enet peer send
+    SpawnRequest,
 
     // Sends a player's mouse state for left clicking. (Eg for time based click events)
     // Data:

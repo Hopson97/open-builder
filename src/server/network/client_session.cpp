@@ -66,3 +66,11 @@ void ClientSession::sendAddChunk(const Chunk& chunk)
 
     m_clientConnection.send(outgoing.get(), 1, ENET_PACKET_FLAG_RELIABLE);
 }
+
+void ClientSession::sendPlayerSpawnPoint(const glm::vec3& position)
+{
+    ServerPacket outgoing(ClientCommand::PlayerSpawnPoint, m_salt);
+    outgoing.write(position);
+
+    m_clientConnection.send(outgoing.get(), 0, ENET_PACKET_FLAG_RELIABLE);
+}

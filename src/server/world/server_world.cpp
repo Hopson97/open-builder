@@ -120,3 +120,25 @@ const ChunkPositionMap<Chunk>& ServerWorld::getChunks() const
 {
     return m_chunks.chunks();
 }
+
+glm::vec3 ServerWorld::getPlayerSpawnPosition(u32 playerId)
+{
+    int x = CHUNK_SIZE * 4;
+    int z = CHUNK_SIZE * 4;
+
+    for (int chunkY = 10 - 1; chunkY >= 0; chunkY--) {
+        auto chunkPosition = worldToChunkPosition({x, 0, z});
+        chunkPosition.y = chunkY;
+        auto& spawn = m_chunks.getChunk(chunkPosition);
+
+        for (int voxelY = CHUNK_SIZE - 1; voxelY >= 0; voxelY--) {
+            auto voxelPosition = toLocalVoxelPosition({x, 0, z});
+            voxelPosition.y = voxelY;
+            if (spawn.qGetVoxel(voxelPosition) != 0) {
+                auto worldY = chunkY * CHUNK_SIZE + voxelY + 3;
+                return {x, worldY, z};
+            }
+        }
+    }
+    return {x, CHUNK_SIZE * 3, z};
+}

@@ -21,6 +21,7 @@ void ServerEngine::handlePacket(ServerPacket& packet, ENetPeer* peer)
         case Cmd::Interaction:  onInteraction(packet, peer);    break;
         case Cmd::MouseState:   onMouseState(packet, peer);     break;
         case Cmd::PlayerState:  onPlayerState(packet, peer);    break;
+        case Cmd::SpawnRequest: onSpawnRequest(packet, peer);   break;
     }
     // clang-format on
 }
@@ -47,13 +48,12 @@ void ServerEngine::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
                 itr->salt = salt;
                 int slot = createClientSession(peer, salt);
                 if (slot != -1) {
-                    pending.sendAcceptConnection(m_clients[slot].getPlayerId(), m_world);
+                    pending.sendAcceptConnection(m_clients[slot].getPlayerId());
+                    pending.sendGameData(m_world);
                 }
                 else {
                     pending.sendRejectConnection("Game Full");
                 }
-            }
-            else {
             }
             itr = m_pendingConnections.erase(itr);
         }
@@ -64,8 +64,6 @@ void ServerEngine::onInteraction(ServerPacket& packet, ENetPeer* peer)
 {
     AUTHENTICATE_PACKET
     auto& player = m_world.findEntity(client.getPlayerId());
-
-
 }
 
 void ServerEngine::onMouseState(ServerPacket& packet, ENetPeer* peer)
@@ -88,6 +86,13 @@ void ServerEngine::onPlayerState(ServerPacket& packet, ENetPeer* peer)
 
     player.position = position;
     player.rotation = rotation;
+}
+
+void ServerEngine::onSpawnRequest(ServerPacket& packet, ENetPeer* peer)
+{
+    AUTHENTICATE_PACKET
+    auto id = client.getPlayerId();
+    client.sendPlayerSpawnPoint(m_world.getPlayerSpawnPosition(id));
 }
 
 void ServerEngine::handleDisconnection(ENetPeer* peer)

@@ -7,8 +7,8 @@
 #include <common/world/chunk_manager.h>
 #include <common/world/entity_state.h>
 #include <common/world/voxel_data.h>
-#include <unordered_set>
 #include <queue>
+#include <unordered_set>
 
 class ServerWorld {
   public:
@@ -28,6 +28,8 @@ class ServerWorld {
 
     const Chunk* getChunk(const ChunkPosition& chunkPosition);
     const ChunkPositionMap<Chunk>& getChunks() const;
+
+    glm::vec3 getPlayerSpawnPosition(u32 playerId);
 
   private:
     std::queue<ChunkPosition> m_chunkGenerationQueue;

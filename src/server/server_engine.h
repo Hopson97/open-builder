@@ -1,7 +1,7 @@
 #pragma once
 
-#include "world/server_world.h"
 #include "network/client_session.h"
+#include "world/server_world.h"
 #include <SFML/System/Time.hpp>
 #include <atomic>
 #include <common/macros.h>
@@ -37,7 +37,7 @@ class ServerEngine {
     void onInteraction(ServerPacket& packet, ENetPeer* peer);
     void onMouseState(ServerPacket& packet, ENetPeer* peer);
     void onPlayerState(ServerPacket& packet, ENetPeer* peer);
-   
+    void onSpawnRequest(ServerPacket& packet, ENetPeer* peer);
 
     void broadcastPlayerJoin(u32 playerId);
     void broadcastPlayerLeave(u32 playerId);

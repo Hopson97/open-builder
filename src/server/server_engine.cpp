@@ -2,9 +2,9 @@
 #include <SFML/System/Clock.hpp>
 #include <atomic>
 #include <common/debug.h>
+#include <common/network/net_constants.h>
 #include <iostream>
 #include <thread>
-#include <common/network/net_constants.h>
 
 const int MAX_CONNECTS = 10;
 
@@ -27,7 +27,6 @@ bool ServerEngine::isSetup() const
 {
     return m_host.handle != nullptr;
 }
-
 
 void ServerEngine::run()
 {
@@ -61,13 +60,12 @@ void ServerEngine::launch()
 
     while (m_isServerRunning) {
 
-
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
         tick();
 
         m_world.tick();
-        
+
         broadcastEntityStates();
     }
 }
@@ -146,7 +144,6 @@ void ServerEngine::addPendingConnection(ENetPeer* peer)
     m_pendingConnections.push_back(session);
 }
 
-
 int ServerEngine::createClientSession(ENetPeer* peer, u32 salt)
 {
     for (unsigned i = 0; i < m_clients.size(); i++) {
@@ -159,4 +156,42 @@ int ServerEngine::createClientSession(ENetPeer* peer, u32 salt)
         }
     }
     return -1;
+}
+
+//
+// B R O A D C A S T S
+//
+void ServerEngine::broadcastEntityStates()
+{
+    ServerPacket packet(ClientCommand::UpdateEntityStates, m_salt);
+    m_world.serialiseEntities(packet);
+
+    broadcastPacket(packet);
+}
+
+void ServerEngine::broadcastPlayerJoin(u32 playerId)
+{
+    ServerPacket packet(ClientCommand::AddEntity, m_salt);
+    packet.write((u32)1);
+    packet.write(playerId);
+    std::cout << "Player join " << playerId << std::endl;
+    auto& player = m_world.findEntity(playerId);
+    packet.write(player.position);
+    packet.write(player.rotation);
+
+    broadcastToPeers(m_host.handle, packet.get(), 0, ENET_PACKET_FLAG_RELIABLE);
+}
+
+void ServerEngine::broadcastPlayerLeave(u32 playerId)
+{
+    ServerPacket packet(ClientCommand::RemoveEntity, m_salt);
+    packet.write(playerId);
+    broadcastToPeers(m_host.handle, packet.get(), 0, ENET_PACKET_FLAG_RELIABLE);
+}
+
+void ServerEngine::broadcastServerShutdown()
+{
+    ServerPacket packet(ClientCommand::ForceExitGame, m_salt);
+    packet.write(std::string("Host has exited the game."));
+    broadcastToPeers(m_host.handle, packet.get(), 0, ENET_PACKET_FLAG_RELIABLE);
 }
