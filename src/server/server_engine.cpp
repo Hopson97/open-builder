@@ -48,6 +48,8 @@ void ServerLauncher::launch()
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
         m_server.tick();
         m_world.tick();
+        
+        m_server.broadcastEntityStates();
     }
 }
 

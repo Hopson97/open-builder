@@ -23,12 +23,12 @@ const std::vector<EntityState>& ServerWorld::getEntities() const
     return m_entities;
 }
 
-void ServerWorld::serialiseEntities(ServerPacket& packet, u32 omit) const
+void ServerWorld::serialiseEntities(ServerPacket& packet) const
 {
-    packet.write(entityCount - 1);
+    packet.write(entityCount);
     for (int i = 1; i < m_entities.size(); i++) {
         const auto& state = m_entities[i];
-        if (state.active && i != omit) {
+        if (state.active) {
             packet.write(static_cast<u32>(i));
             packet.write(state.position);
             packet.write(state.rotation);
@@ -53,6 +53,7 @@ void ServerWorld::removeEntity(u32 id)
 {
     assert(id < m_entities.size());
     m_entities[id].active = false;
+    entityCount--;
 }
 
 EntityState& ServerWorld::findEntity(u32 id)

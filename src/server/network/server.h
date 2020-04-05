@@ -22,7 +22,11 @@ class Server {
     bool isSetup() const;
     void tick();
 
+    void broadcastEntityStates();
+
   private:
+    void broadcastPacket(ServerPacket& packet, int channel = 0, int flags = 0);
+
     void handlePacket(ServerPacket& packet, ENetPeer* peer);
     void addPendingConnection(ENetPeer* peer);
 
@@ -30,6 +34,7 @@ class Server {
     void onHandshakeResponse(ServerPacket& packet, ENetPeer* peer);
 
     void onPlayerState(ServerPacket& packet, ENetPeer* peer);
+
 
     void broadcastPlayerJoin(u32 playerId);
     void broadcastPlayerLeave(u32 playerId);

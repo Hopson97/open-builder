@@ -20,6 +20,11 @@ void ClientSession::disconnect()
     }
 }
 
+void ClientSession::sendPacket(const ServerPacket& packet, u32 channel, u32 flags)
+{
+    m_clientConnection.send(packet.get(), channel, flags);
+}
+
 bool ClientSession::verify(u32 salt) const
 {
     return salt == m_clientConnection.salt;

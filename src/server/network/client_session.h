@@ -1,6 +1,7 @@
 #pragma once
 
 #include <common/network/enet.h>
+#include <common/network/packet.h>
 
 class ServerWorld;
 
@@ -18,10 +19,11 @@ class ClientSession {
     void init(ENetPeer* peer, u32 salt, u32 playerId);
     void disconnect();
 
+    void sendPacket(const ServerPacket& packet, u32 channel = 0, u32 flags = 0);
+
     bool verify(u32 salt) const;
     bool isActive() const;
     u32 getPlayerId() const;
-
 
   private:
     Connection m_clientConnection;

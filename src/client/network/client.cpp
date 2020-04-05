@@ -1,6 +1,5 @@
 #include "client.h"
 
-#include "../game/client_world.h"
 #include <SFML/System/Clock.hpp>
 #include <cassert>
 #include <common/network/net_command.h>
@@ -72,9 +71,12 @@ void Client::handlePacket(ClientPacket& packet)
         case Cmd::HandshakeChallenge:   onHandshakeChallenge    (packet);   break;
         case Cmd::ConnectionAcceptance: onConnectionAcceptance  (packet);   break;
         case Cmd::ForceExitGame:        onForceExit             (packet);   break;
-           
-        case Cmd::AddEntity:    onAddEntity     (packet);   break;
-        case Cmd::RemoveEntity: onRemoveEntity  (packet);  break;
+
+        case Cmd::AddEntity:            onAddEntity             (packet);   break;
+        case Cmd::RemoveEntity:         onRemoveEntity          (packet);   break;
+        case Cmd::UpdateEntityStates:   onUpdateEntityStates    (packet);   break;
+
+        default: std::cout << "Unhandled packet! Command ID: " << (int)packet.command() << '\n'; break;
     }
     // clang-format on
 }
@@ -92,62 +94,3 @@ void Client::sendPlayerState(const EntityState& state)
     m_serverConnection.send(packet.get());
 }
 
-void Client::onHandshakeChallenge(ClientPacket& packet)
-{
-    u32 salt = packet.read<u32>();
-    u32 newSalt = m_salt ^ salt;
-    m_salt = newSalt;
-    ClientPacket response(ServerCommand::HandshakeResponse, m_salt);
-    m_serverConnection.send(response.get());
-}
-
-void Client::onConnectionAcceptance(ClientPacket& packet)
-{
-    u8 isAccepted = packet.read<u8>();
-    if (isAccepted) {
-        std::cout << "Connected!\n";
-        m_connectionState = ConnectionState::Connected;
-
-        u32 playerId = packet.read<u32>();
-        mp_world->setPlayerId(playerId);
-
-        u32 count = packet.read<u32>();
-        for (u32 i = 0; i < count; i++) {
-            u32 id = packet.read<u32>();
-            auto position = packet.read<glm::vec3>();
-            auto rotation = packet.read<glm::vec3>();
-            mp_world->addEntity(id, position, rotation);
-        }
-    }
-    else {
-        std::string reason = packet.read<std::string>();
-        std::cout << "Rejected!\n" << reason << std::endl;
-        m_connectionState = ConnectionState::Disconnected;
-    }
-}
-
-void Client::onAddEntity(ClientPacket& packet)
-{
-    std::cout << "Player joined!\n";
-    u32 count = packet.read<u32>();
-    for (u32 i = 0; i < count; i++) {
-        u32 entityId = packet.read<u32>();
-        glm::vec3 position = packet.read<glm::vec3>();
-        glm::vec3 rotation = packet.read<glm::vec3>();
-        mp_world->addEntity(entityId, position, rotation);
-    }
-}
-
-void Client::onRemoveEntity(ClientPacket& packet)
-{
-    u32 entityId = packet.read<u32>();
-    mp_world->removeEntity(entityId);
-    std::cout << "Player left!\n";
-}
-
-void Client::onForceExit(ClientPacket& packet)
-{
-    m_connectionState = ConnectionState::Disconnected;
-    auto reason = packet.read<std::string>();
-    std::cout << "Forced to leave game: " << reason << "\n";
-}

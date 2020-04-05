@@ -22,9 +22,11 @@ class ClientWorld {
     void render(const Camera& camera);
 
     void addEntity(u32 id, const glm::vec3& position, const glm::vec3& rotation);
+    void updateEntity(u32 id, const glm::vec3& position, const glm::vec3& rotation);
     void removeEntity(u32 id);
 
     EntityState& getPlayer();
+    u32 getPlayerId() const;
 
   private:
     std::vector<EntityState> m_entities;

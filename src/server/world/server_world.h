@@ -11,7 +11,7 @@ class ServerWorld {
     void tick();
 
     const std::vector<EntityState>& getEntities() const;
-    void serialiseEntities(ServerPacket& packet, u32 omit) const;
+    void serialiseEntities(ServerPacket& packet) const;
 
     u32 addEntity();
     void removeEntity(u32 id);

@@ -66,6 +66,14 @@ void Server::tick()
     }
 }
 
+void Server::broadcastPacket(ServerPacket& packet, int channel, int flags)
+{
+    for (auto& client : m_clients) {
+        if (client.isActive())
+            client.sendPacket(packet, channel, flags);
+    }
+}
+
 void Server::handlePacket(ServerPacket& packet, ENetPeer* peer)
 {
     using Cmd = ServerCommand;
@@ -134,6 +142,14 @@ void Server::onPlayerState(ServerPacket& packet, ENetPeer* peer)
 
     player.position = position;
     player.rotation = rotation;
+}
+
+void Server::broadcastEntityStates()
+{
+    ServerPacket packet(ClientCommand::UpdateEntityStates, m_salt);
+    mp_world->serialiseEntities(packet);
+
+    broadcastPacket(packet);
 }
 
 void Server::broadcastPlayerJoin(u32 playerId)

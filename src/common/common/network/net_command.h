@@ -45,6 +45,14 @@ enum class ClientCommand : command_t {
     // u32: The ID of the entity
     RemoveEntity,
 
+    // Update entities states (position and rotation)
+    // u32: The number of entities to update
+    // [Loop this]
+    // u32: The ID of the entity
+    // float[3]: The position of the entity
+    // float[3]: The rotation of the entity
+    UpdateEntityStates,
+
     /*
         // Send peer ID to a new connection
         // Data:

@@ -32,7 +32,7 @@ void PendingClientSession::sendAcceptConnection(u32 playerId, ServerWorld& world
     outgoing.write(playerId);
 
     // Send entities
-    world.serialiseEntities(outgoing, playerId);
+    world.serialiseEntities(outgoing);
 
 
     connection.send(outgoing.get(), 0, ENET_PACKET_FLAG_RELIABLE);

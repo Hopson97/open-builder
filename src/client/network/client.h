@@ -37,8 +37,9 @@ class Client final {
     void onConnectionAcceptance(ClientPacket& packet);
 
     void onAddEntity(ClientPacket& packet);
-    void onRemoveEntity(ClientPacket& packet);
     void onForceExit(ClientPacket& packet);
+    void onRemoveEntity(ClientPacket& packet);
+    void onUpdateEntityStates(ClientPacket& packet);
 
     ConnectionState m_connectionState = ConnectionState::Disconnected;
     Connection m_serverConnection;
