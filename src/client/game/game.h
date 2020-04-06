@@ -1,9 +1,9 @@
 #pragma once
 
+#include "game_def.h"
 #include <SFML/Window/Event.hpp>
 #include <memory>
 #include <server_engine.h>
-#include "game_def.h"
 
 class Game {
   public:

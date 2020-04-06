@@ -53,7 +53,6 @@ NetHost::~NetHost() noexcept
     if (handle) {
         enet_host_destroy(handle);
     }
-    std::cout << "Destroyed enet\n";
 }
 
 NetHost::NetHost(NetHost&& other) noexcept

@@ -25,7 +25,7 @@ voxel_t VoxelDataManager::addVoxelData(const VoxelData& voxel)
 
 const VoxelData& VoxelDataManager::getVoxelData(voxel_t id) const
 {
-    
+
     return m_voxels.at(id);
 }
 

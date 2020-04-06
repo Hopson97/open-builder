@@ -47,7 +47,5 @@ void PendingClientSession::sendAcceptConnection(u32 playerId)
     // Send the player ID
     outgoing.write(playerId);
 
-
-
     connection.send(outgoing.get(), 0, ENET_PACKET_FLAG_RELIABLE);
 }

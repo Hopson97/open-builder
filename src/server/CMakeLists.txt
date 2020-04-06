@@ -1,7 +1,7 @@
 
 add_library(ob-server
     server_engine.cpp
-    network/server.cpp
+    network/server_packet_handling.cpp
     network/client_session.cpp
     network/pending_client_session.cpp
 

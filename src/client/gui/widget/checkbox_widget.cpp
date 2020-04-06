@@ -10,7 +10,6 @@ namespace gui {
                                    TextComponent* label)
         : mp_rectangle(rectComponent)
         , mp_label(label)
-        , m_checked(false)
     {
         componentList.push_back(mp_rectangle);
         componentList.push_back(mp_label);

@@ -14,7 +14,6 @@ bool LocalGame::start()
     return ClientGameDef::start(LOCAL_HOST);
 }
 
-
 void LocalGame::onShutdown()
 {
     m_serverLauncher.stop();

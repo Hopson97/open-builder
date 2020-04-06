@@ -12,7 +12,6 @@ class Chunk;
 struct PendingClientSession {
     Connection connection;
     u32 salt = 0;
-    u32 playerId = 0;
 
     void sendHandshakeChallenge(u32 serversalt);
     void sendAcceptConnection(u32 playerId);

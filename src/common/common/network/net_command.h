@@ -22,7 +22,7 @@ enum class ClientCommand : command_t {
          u32: The player ID of this player
     */
     ConnectionAcceptance,
-    
+
     // Data about the game itself
     // - Voxel Data -
     // u16: The number of different voxel types (VoxelCount)
@@ -108,7 +108,7 @@ enum class ServerCommand : command_t {
     PlayerState,
 
     // A request to find a spawn point for the player
-    // Data: 
+    // Data:
     // None, the player is worked out from the enet peer send
     SpawnRequest,
 

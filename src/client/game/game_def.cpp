@@ -1,11 +1,11 @@
 #include "game_def.h"
 
 #include "../client_config.h"
+#include "../gl/gl_errors.h"
+#include "../gl/primitive.h"
 #include "../input/input_state.h"
 #include "../input/keyboard.h"
 #include "../window.h"
-#include "../gl/gl_errors.h"
-#include "../gl/primitive.h"
 
 void SelectedBoxRenderer::create()
 {
@@ -24,7 +24,8 @@ void SelectedBoxRenderer::render(const Camera& camera, const VoxelPosition& posi
     program.bind();
     glm::mat4 modelMatrix{1.0};
     float size = 1.005f;
-    translateMatrix(modelMatrix, {position.x - (size - 1) / 2, position.y - (size - 1) / 2,
+    translateMatrix(modelMatrix,
+                    {position.x - (size - 1) / 2, position.y - (size - 1) / 2,
                      position.z - (size - 1) / 2});
     scaleMatrix(modelMatrix, size);
     gl::loadUniform(modelLocation, modelMatrix);

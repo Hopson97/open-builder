@@ -1,9 +1,9 @@
 #pragma once
 
+#include "../game/chunk_mesh.h"
 #include "../gl/shader.h"
 #include "../gl/vertex_array.h"
 #include <common/maths.h>
-#include "../game/chunk_mesh.h"
 
 #include <SFML/System/Clock.hpp>
 #include <common/world/coordinate.h>
@@ -81,8 +81,7 @@ class ChunkRenderer final {
      * @return ChunkRenderResult The count of chunks rendered and their total buffer size
      * this frame
      */
-    ChunkRenderResult renderChunks(const Camera& camera,
-                                   bool cameraInWater);
+    ChunkRenderResult renderChunks(const Camera& camera, bool cameraInWater);
 
     // Used for the debug stat view
     int getTotalChunks() const;

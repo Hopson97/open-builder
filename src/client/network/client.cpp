@@ -65,6 +65,7 @@ void Client::tick()
 
 void Client::handlePacket(ClientPacket& packet)
 {
+    std::cout << "Client got packet: " << (int)packet.command() << std::endl;
     using Cmd = ClientCommand;
     // clang-format off
     switch (packet.command()) {

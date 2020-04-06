@@ -134,7 +134,6 @@ ChunkRenderResult ChunkRenderer::renderChunks(const Camera& camera, bool cameraI
     const glm::vec3& pos = camera.getPosition();
     const ViewFrustum& frustum = camera.getFrustum();
 
-
     ChunkRenderResult result;
     // Solid voxels
     m_shader.program.bind();

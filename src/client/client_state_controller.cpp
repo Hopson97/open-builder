@@ -1,7 +1,7 @@
 #include "client_state_controller.h"
 #include "game/game.h"
-#include "lua/client_lua_callback.h"
 #include "game/game_type.h"
+#include "lua/client_lua_callback.h"
 
 namespace {
     using State = ClientStateController::StateId;

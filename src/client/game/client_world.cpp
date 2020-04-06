@@ -1,10 +1,10 @@
 #include "client_world.h"
 #include "../client_config.h"
 #include "../gl/primitive.h"
-#include <common/maths.h>
 #include "../renderer/camera.h"
 #include "chunk_mesh_generation.h"
 #include <common/debug.h>
+#include <common/maths.h>
 
 GLuint VoxelTextureMap::getTextureId(const std::string& name)
 {

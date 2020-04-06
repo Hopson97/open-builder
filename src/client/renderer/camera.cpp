@@ -13,7 +13,6 @@ Camera Camera::createCamera()
     return camera;
 }
 
-
 void Camera::update(const EntityState& entity)
 {
     m_frustum.update(m_projectionViewMatrix);

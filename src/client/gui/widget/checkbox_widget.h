@@ -37,9 +37,9 @@ namespace gui {
         int checkedTexture;
         int uncheckedTexture;
 
-        bool m_checked;
         RectangleComponent* mp_rectangle = nullptr;
         TextComponent* mp_label = nullptr;
+        bool m_checked = false;
 
         sol::function m_onMoveOver;
         sol::function m_onMouseOff;

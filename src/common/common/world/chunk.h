@@ -19,8 +19,7 @@ using VoxelArray = std::array<voxel_t, CHUNK_VOLUME>;
  */
 using CompressedVoxels = std::vector<std::pair<voxel_t, u16>>;
 
-struct VoxelUpdate
-{
+struct VoxelUpdate {
     VoxelPosition voxelPosition;
     voxel_t voxel;
 };

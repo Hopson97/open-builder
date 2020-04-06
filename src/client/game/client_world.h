@@ -1,10 +1,10 @@
 #pragma once
 
-#include <common/world/entity_state.h>
-#include <common/world/chunk_manager.h>
-#include <common/world/voxel_data.h>
-#include "../renderer/chunk_renderer.h"
 #include "../gl/textures.h"
+#include "../renderer/chunk_renderer.h"
+#include <common/world/chunk_manager.h>
+#include <common/world/entity_state.h>
+#include <common/world/voxel_data.h>
 #include <queue>
 
 class Camera;

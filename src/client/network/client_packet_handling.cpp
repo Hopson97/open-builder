@@ -10,6 +10,7 @@ void Client::onHandshakeChallenge(ClientPacket& packet)
     m_salt = newSalt;
     ClientPacket response(ServerCommand::HandshakeResponse, m_salt);
     m_serverConnection.send(response.get());
+    std::cout << "Challenging\n";
 }
 
 void Client::onConnectionAcceptance(ClientPacket& packet)
@@ -69,8 +70,7 @@ void Client::onAddEntity(ClientPacket& packet)
         packet.read(position);
         packet.read(rotation);
 
-        if (!mp_world)
-        {
+        if (!mp_world) {
             return;
         }
         mp_world->addEntity(entityId, position, rotation);

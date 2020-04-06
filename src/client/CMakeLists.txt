@@ -2,8 +2,6 @@
 add_library(ob-client
     input/keyboard.cpp
 
-    maths.cpp
-
     gl/textures.cpp
     gl/shader.cpp
     gl/font.cpp

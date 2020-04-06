@@ -4,6 +4,7 @@ add_library(ob-common
     util/obd_parser.cpp
     util/random_number_generator.cpp
 
+    maths.cpp
     debug.cpp
 
     network/enet.cpp

@@ -2,9 +2,9 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "world/coordinate.h"
 #include <array>
 #include <cfloat>
-#include <common/world/coordinate.h>
 #include <vector>
 
 glm::mat4 createProjectionViewMatrix(const glm::vec3& position, const glm::vec3& rotation,
