@@ -64,7 +64,7 @@ void GuiRenderer::render(const gui::Overlay& overlay)
     }
 
     // Render the text of the GUI
-    // TODO Maybe sort text by font size?
+    // @TODO Maybe sort text by font size?
     // m_font.bindTexture();
     glCullFace(GL_FRONT);
     glEnable(GL_BLEND);

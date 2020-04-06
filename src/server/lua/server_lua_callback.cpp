@@ -1,6 +1,6 @@
 #include "server_lua_callback.h"
 
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 
 ServerLuaCallbacks::ServerLuaCallbacks(ScriptEngine& scriptEngine)
 {

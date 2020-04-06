@@ -2,14 +2,14 @@
 #include "chunk_manager.h"
 
 namespace {
-// clang-format off
+    // clang-format off
     bool voxelPositionOutOfChunkBounds(const VoxelPosition& voxelPosition) {
         return 
         voxelPosition.x < 0 || voxelPosition.x >= CHUNK_SIZE ||
         voxelPosition.y < 0 || voxelPosition.y >= CHUNK_SIZE ||
         voxelPosition.z < 0 || voxelPosition.z >= CHUNK_SIZE;
     }
-// clang-format on
+    // clang-format on
 } // namespace
 
 Chunk::Chunk(ChunkManager& manager, const ChunkPosition& position)

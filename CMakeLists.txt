@@ -106,9 +106,18 @@ add_subdirectory(src/common/common)
 add_subdirectory(src/client)
 add_subdirectory(src/server)
 
+
+
 add_executable(${PROJECT_NAME}
     src/main.cpp
 )
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/server/
+)
+
+
 
 target_include_directories(ob-common
     PRIVATE 
@@ -121,12 +130,19 @@ include_dirs(ob-client)
 include_dirs(ob-server)
 link_exe(${PROJECT_NAME})
 
+
 if(OPENBUILDER_USE_HUNTER)
 create_target_launcher(${PROJECT_NAME}
 #        RUNTIME_LIBRARY_DIRS ""
         WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
     )
 endif()
+
+target_include_directories(ob-client
+    PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/server/
+)
+
 
 
 #Create the unit test executable
@@ -136,20 +152,21 @@ add_executable(tests
     tests/common/world/chunk_manager_test.cpp
     tests/common/world/coordinate_test.cpp
     tests/common/world/chunk_test.cpp
-    tests/common/network/net_host_test.cpp
-    tests/common/network/command_dispatcher_test.cpp
-    tests/common/obd_parser_test.cpp
-    tests/common/scripting/script_engine_test.cpp
 
+    tests/common/util/obd_parser_test.cpp
+    tests/common/lua/script_engine_test.cpp
+    
     tests/client/lua/client_control_api_test.cpp
-    tests/client/lua/gui_api_test.cpp
     tests/client/lua/gui_widget_api_test.cpp
+
+    tests/client_server_tests.cpp
 )
 
 include_dirs(tests)
 target_include_directories(tests
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/server
 )
 
 link_exe(tests)

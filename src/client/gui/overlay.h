@@ -9,56 +9,59 @@
 
 namespace gui {
 
-class ImageWidget;
-class LabelWidget;
-class ButtonWidget;
-class CenteredLabelWidget;
-/**
- * @brief Defines how a GUI should be created.
- * This is created in the Client Lua code
- */
-struct OverlayDefinition final {
-    std::string id;
-    std::string title;
+    class ImageWidget;
+    class LabelWidget;
+    class ButtonWidget;
+    class CheckBoxWidget;
+    class CenteredLabelWidget;
+    class TextBoxWidget;
+    /**
+     * @brief Defines how a GUI should be created.
+     * This is created in the Client Lua code
+     */
+    struct OverlayDefinition final {
+        std::string id;
 
-    sol::function create;
-};
+        sol::function create;
+    };
 
-/**
- * @brief Holds the components that make up some GUI overlay, eg HUD, menus etc
- */
-class Overlay final {
-  public:
-    Overlay(const OverlayDefinition& overlayDefinition);
+    /**
+     * @brief Holds the components that make up some GUI overlay, eg HUD, menus etc
+     */
+    class Overlay final {
+      public:
+        Overlay(const OverlayDefinition& overlayDefinition);
 
-    void handleClick(sf::Mouse::Button button, float mx, float my);
-    void handleMouseMove(sf::Event::MouseMoveEvent);
-    void handleKeyRelease(sf::Keyboard::Key);
+        void handleClick(sf::Mouse::Button button, float mx, float my);
+        void handleMouseMove(sf::Event::MouseMoveEvent);
+        void handleKeyRelease(sf::Keyboard::Key);
+        void handleTextEntered(unsigned char keycode);
 
-    // These widget adding function return non-owning pointers
-    // They are mostly called via Lua code, which is why it is pointers
-    ImageWidget* addImage();
-    LabelWidget* addLabel();
-    CenteredLabelWidget* addCenteredLabel();
-    ButtonWidget* addButton();
+        // These widget adding function return non-owning pointers
+        // They are mostly called via Lua code, which is why it is pointers
+        ImageWidget* addImage();
+        LabelWidget* addLabel();
+        CenteredLabelWidget* addCenteredLabel();
+        CheckBoxWidget* addCheckBox();
+        ButtonWidget* addButton();
+        TextBoxWidget* addTextBox();
 
-    void prepareWidgetsForRender();
+        void prepareWidgetsForRender();
 
-    int widgetCount() const;
-    void hide();
-    void show();
-    bool isHidden() const;
+        void hide();
+        void show();
+        bool isHidden() const;
 
-    // The overlay defintion that created this overlay
-    const OverlayDefinition& definition;
+        // The overlay defintion that created this overlay
+        const OverlayDefinition& definition;
 
-    // Stored as pointers to allow them to be stored/used by the Lua code
-    std::vector<std::unique_ptr<RectangleComponent>> rectangleComponents;
-    std::vector<std::unique_ptr<TextComponent>> textComponents;
+        // Stored as pointers to allow them to be stored/used by the Lua code
+        std::vector<std::unique_ptr<RectangleComponent>> rectangleComponents;
+        std::vector<std::unique_ptr<TextComponent>> textComponents;
 
-  private:
-    std::vector<std::unique_ptr<Widget>> m_widgets;
-    bool m_isHidden = false;
-};
+      private:
+        std::vector<std::unique_ptr<Widget>> m_widgets;
+        bool m_isHidden = false;
+    };
 
 } // namespace gui

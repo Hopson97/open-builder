@@ -1,9 +1,6 @@
 
 add_library(ob-client
     input/keyboard.cpp
-    world/chunk_mesh.cpp
-    world/chunk_mesh_generation.cpp
-    maths.cpp
 
     gl/textures.cpp
     gl/shader.cpp
@@ -13,8 +10,15 @@ add_library(ob-client
     gl/gl_errors.cpp
     gl/primitive.cpp
 
+    client_state_controller.cpp
     client_engine.cpp
-    client.cpp
+
+    game/game.cpp
+    game/game_def.cpp
+    game/game_type.cpp
+    game/chunk_mesh.cpp
+    game/chunk_mesh_generation.cpp
+    game/client_world.cpp
 
     lua/client_lua_callback.cpp
     lua/gui_api.cpp
@@ -22,9 +26,9 @@ add_library(ob-client
     lua/client_input_api.cpp
     lua/client_control_api.cpp
 
-    gui/overlay_stack.cpp
     gui/overlay.cpp
     gui/overlay_factory.cpp
+    gui/gui_system.cpp
     
     gui/component/rectangle_component.cpp
     gui/component/text_component.cpp
@@ -33,11 +37,16 @@ add_library(ob-client
     gui/widget/image_widget.cpp
     gui/widget/label_widget.cpp
     gui/widget/button_widget.cpp
+    gui/widget/text_box_widget.cpp
+    gui/widget/widget_helper.cpp
+    gui/widget/checkbox_widget.cpp
 
     window.cpp
 
-    network/client_commands.cpp
+    network/client.cpp
+    network/client_packet_handling.cpp
 
+    renderer/camera.cpp
     renderer/gui_renderer.cpp
     renderer/chunk_renderer.cpp
 )
@@ -48,6 +57,7 @@ set_flags(ob-client)
 target_link_libraries(ob-client 
     glad
     ob-common
+    ob-server
     Threads::Threads 
     ${SFML_LIBRARIES} 
     ${SFML_DEPENDENCIES}

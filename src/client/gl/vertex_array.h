@@ -4,53 +4,53 @@
 #include <vector>
 
 namespace gl {
-/**
- * @brief Minimal information for drawing with glDrawElements
- *
- */
-class Drawable final {
-  public:
-    Drawable(GLuint vao, GLsizei indices);
+    /**
+     * @brief Minimal information for drawing with glDrawElements
+     *
+     */
+    class Drawable final {
+      public:
+        Drawable(GLuint vao, GLsizei indices);
 
-    void bindAndDraw(GLenum drawMode = GL_TRIANGLES) const;
+        void bindAndDraw(GLenum drawMode = GL_TRIANGLES) const;
 
-    void bind() const;
-    void draw(GLenum drawMode = GL_TRIANGLES) const;
+        void bind() const;
+        void draw(GLenum drawMode = GL_TRIANGLES) const;
 
-  private:
-    const GLuint m_handle = 0;
-    const GLsizei m_indicesCount = 0;
-};
+      private:
+        const GLuint m_handle = 0;
+        const GLsizei m_indicesCount = 0;
+    };
 
-/**
- * @brief Wrapper for an OpenGL vertex array object (aka VAO)
- */
-class VertexArray final {
-  public:
-    VertexArray();
-    ~VertexArray();
+    /**
+     * @brief Wrapper for an OpenGL vertex array object (aka VAO)
+     */
+    class VertexArray final {
+      public:
+        VertexArray();
+        ~VertexArray();
 
-    VertexArray(VertexArray&& other);
-    VertexArray& operator=(VertexArray&& other);
+        VertexArray(VertexArray&& other);
+        VertexArray& operator=(VertexArray&& other);
 
-    VertexArray(const VertexArray&) = delete;
-    VertexArray& operator=(const VertexArray&) = delete;
+        VertexArray(const VertexArray&) = delete;
+        VertexArray& operator=(const VertexArray&) = delete;
 
-    void create();
-    void destroy();
-    void bind() const;
+        void create();
+        void destroy();
+        void bind() const;
 
-    Drawable getDrawable() const;
+        Drawable getDrawable() const;
 
-    void addVertexBuffer(int magnitude, const std::vector<GLuint>& data);
-    void addVertexBuffer(int magnitude, const std::vector<GLfloat>& data);
-    void addIndexBuffer(const std::vector<GLuint>& indices);
+        void addVertexBuffer(int magnitude, const std::vector<GLuint>& data);
+        void addVertexBuffer(int magnitude, const std::vector<GLfloat>& data);
+        void addIndexBuffer(const std::vector<GLuint>& indices);
 
-  private:
-    void reset();
+      private:
+        void reset();
 
-    std::vector<GLuint> m_bufferObjects;
-    GLuint m_handle = 0;
-    GLsizei m_indicesCount = 0;
-};
+        std::vector<GLuint> m_bufferObjects;
+        GLuint m_handle = 0;
+        GLsizei m_indicesCount = 0;
+    };
 } // namespace gl

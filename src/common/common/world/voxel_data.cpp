@@ -1,5 +1,7 @@
 #include "voxel_data.h"
 
+#include <iostream>
+
 VoxelDataManager::VoxelDataManager()
     : m_commonVoxels(static_cast<size_t>(CommonVoxel::Count))
 {
@@ -7,10 +9,6 @@ VoxelDataManager::VoxelDataManager()
 
 void VoxelDataManager::initCommonVoxelTypes()
 {
-    // TODO Eventually some of this won't be needed as "common voxels" as this
-    // stuff
-    // would be delagated to the Lua instead
-    // For now though, this can work as a placeholder
     m_commonVoxels[(u8)CommonVoxel::Air] = getVoxelId("openbuilder_air");
     m_commonVoxels[(u8)CommonVoxel::Stone] = getVoxelId("openbuilder_stone");
     m_commonVoxels[(u8)CommonVoxel::Sand] = getVoxelId("openbuilder_sand");
@@ -27,6 +25,7 @@ voxel_t VoxelDataManager::addVoxelData(const VoxelData& voxel)
 
 const VoxelData& VoxelDataManager::getVoxelData(voxel_t id) const
 {
+
     return m_voxels.at(id);
 }
 
@@ -37,7 +36,7 @@ const VoxelData& VoxelDataManager::getVoxelData(const std::string& name) const
 
 voxel_t VoxelDataManager::getVoxelId(CommonVoxel commonVoxel) const
 {
-    // TODO Change to operator[] once can be sure it is working
+    // @TODO Change to operator[] once can be sure it is working
     return m_commonVoxels.at((u8)commonVoxel);
 }
 

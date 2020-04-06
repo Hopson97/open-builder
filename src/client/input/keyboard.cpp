@@ -10,11 +10,15 @@ void Keyboard::update(sf::Event e)
     m_recentlyReleased = sf::Keyboard::KeyCount;
     switch (e.type) {
         case sf::Event::KeyReleased:
+            if (e.key.code == -1)
+                return;
             m_recentlyReleased = e.key.code;
             m_keys[e.key.code] = false;
             break;
 
         case sf::Event::KeyPressed:
+            if (e.key.code == -1)
+                return;
             m_keys[e.key.code] = true;
             break;
 

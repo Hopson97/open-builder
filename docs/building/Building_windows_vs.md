@@ -1,6 +1,6 @@
 
 # Why
-Sometimes CMake doesn't work or can be a pain on Windows. 
+Sometimes CMake doesn't work or can be a pain on Windows.
 
 This article will talk you through a somewhat hacky way of doing it, but it will work if you follow the guide exactly.
 
@@ -26,7 +26,7 @@ Open a terminal (eg powershell) somewhere (NOT the same folder as your project) 
 
 `git clone https://github.com/Hopson97/open-builder.git`
 
-Open file explorer to this location, and also where the visual studio project. Ensure you can seen hidden files eg .git (View> Tick "Hidden Items". 
+Open file explorer to this location, and also where the visual studio project. Ensure you can seen hidden files eg .git (View> Tick "Hidden Items".
 
 Move/ Copy the ALL files from the Git repo folder to the Visual Studio Project:
 
@@ -42,7 +42,7 @@ Open up the visual studio project and click on "Show All Files" on the solution 
 
 ![Show All Files](https://i.imgur.com/izlbSYN.png)
 
-This should all the files. 
+This should show all the files.
 
 ## Step 4: Include the `src/` and `deps/` in the project
 
@@ -74,16 +74,18 @@ Eg for `src`:
 
 This will open up another window.
 
-In here, you'll need to add **4** include directories:
+In here, you'll need to add **5** include directories:
 
 1. Where you installed SFML, add the `include`folder
 2. The `deps`directory (Which is part of this project)
-3. The `src\common`directory
-4. The `deps\lua\` directory
+3. The `deps\lua` directory
+4. The `src\common`directory
+5. The `src\server` directory
 
 It should look like this:
 
-![Include Directories](https://i.imgur.com/eX4mVuw.png)
+![Include Directories](https://i.imgur.com/tWVWXzj.png)
+
 
 Click "OK".
 
@@ -101,7 +103,7 @@ Visual Studio needs to know where SFML libs are.
 
 Keep the modal open
 
-## Step 8: Link SFML 
+## Step 8: Link SFML
 
 You'll now need to link the SFML libraries.
 
@@ -111,7 +113,7 @@ Go to `Linker > Input` and set the configuration mode to "Debug":
 
 ![Debug](https://i.imgur.com/SGjpi69.png)
 
-Open `Additional Directories`, copy paste these into the text box
+Open `Additional Dependencies`, copy paste these into the text box
 
 ```
 sfml-graphics-d.lib
@@ -135,7 +137,7 @@ After, it should look like this:
 We now need to do the same for release mode.
 
 1. Set the configuration mode to "Release":
-2. Open `Additional Directories`, copy paste these into the text box
+2. Open `Additional Dependencies`, copy paste these into the text box
 3. **Make sure they are on different lines**
 
 ```

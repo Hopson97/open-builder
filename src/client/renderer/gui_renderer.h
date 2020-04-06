@@ -9,7 +9,7 @@
 #include <vector>
 
 namespace gui {
-class Overlay;
+    class Overlay;
 } // namespace gui
 
 class GuiRenderer final {

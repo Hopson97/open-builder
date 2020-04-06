@@ -1,18 +1,42 @@
 #!/bin/bash
 echo "Thank you for choosing to install this beautiful piece of software!"
+build=true
+while [ "$1" != "" ]; do
+    case $1 in
+        --no-build )            shift
+                                build=false
+                                ;;
+    esac
+    shift
+done
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 1>&2
-   exit 1
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "Trying to install dependencies for macOS..."
+        if brew install cmake make SFML; then
+            echo "Successfully installed dependencies for macOS"
+            if [[ "$build" = true ]]; then 
+                echo "Generating Makefiles..."
+                mkdir build
+                cd build
+                cmake ..
+                echo "Building project..."
+                if make; then
+                    echo "Built the project. Enjoy!"
+                    exit 0
+                else
+                    echo "Failed to build the project!"
+                    exit 1
+                fi
+            fi
+        else
+            echo "Could not install one or more dependencies. Exiting..."
+            exit 1
+        fi
+    else
+        echo "This script must be run as root" 1>&2
+        exit 1
+    fi
 else
-    build=true
-    while [ "$1" != "" ]; do
-        case $1 in
-            --no-build )            shift
-                                    build=false
-                                    ;;
-        esac
-        shift
-    done
     arch=$(uname -m)
     kernel=$(uname -r)
     declare -A osInfo;
@@ -54,7 +78,7 @@ else
             exit 1
         fi
     elif [[ ${pkgman} == apt ]]; then
-        if apt-get -y update && apt-get -y --fix-missing install cmake make pkg-config gcc g++ libsfml-dev libegl1-mesa-dev; then
+        if apt-get -y update && apt-get -y --upgrade --fix-missing install cmake make pkg-config gcc-8 g++-8 libsfml-dev libegl1-mesa-dev; then
             echo "Successfully installed dependencies for your system."
         else
             echo "Failed to install dependencies!"

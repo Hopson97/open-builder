@@ -1,67 +1,38 @@
 #include "client_lua_api.h"
 
-#include <common/scripting/script_engine.h>
+#include <common/lua/script_engine.h>
 
-#include "../gui/overlay.h"
-#include "../gui/overlay_factory.h"
-#include "../gui/overlay_stack.h"
+#include "../gui/gui_system.h"
 #include "../renderer/gui_renderer.h"
 
-namespace {
-void initOverlayDefinitionCreateApi(sol::table& guiTable,
-                                    gui::OverlayFactory& overlayFactory)
+void luaInitGuiApi(ScriptEngine& scriptEngine, gui::GuiSystem& guiSystem,
+                   GuiRenderer* guiRenderer)
 {
-    guiTable["addGui"] = [&](const sol::table& guiDefintion) {
+    using Gui = gui::GuiSystem;
+
+    scriptEngine.gameTable["gui"] = [&guiSystem]() -> gui::GuiSystem& {
+        return guiSystem;
+    };
+
+    auto guiApi = scriptEngine.lua.new_usertype<Gui>("GUISystem");
+    guiApi["push"] = sol::overload(
+        &Gui::pushGui, [](Gui& gui, const std::string& id) { gui.pushGui(id, {}); });
+    guiApi["change"] = sol::overload(
+        &Gui::changeGui, [](Gui& gui, const std::string& id) { gui.changeGui(id, {}); });
+    guiApi["pop"] = &Gui::popGui;
+
+    guiApi["addGui"] = [](Gui& gui, const sol::table& guiDefintion) {
         gui::OverlayDefinition overlay;
 
         overlay.id = guiDefintion["id"];
-        overlay.title = guiDefintion["title"];
         overlay.create = guiDefintion["create"];
 
-        overlayFactory.addOverlay(overlay);
+        gui.addGuiDefintion(overlay);
     };
-}
-
-void initGuiRenderApi(sol::table& guiTable, GuiRenderer& guiRenderer)
-{
-    guiTable["getTexture"] = [&guiRenderer](const std::string& path) {
-        return guiRenderer.getTexture(path);
-    };
-}
-
-void initGuiStackApi(sol::table& guiTable, gui::OverlayFactory& overlayFactory,
-                     gui::OverlayStack& overlayStack)
-{
-    guiTable["push"] = sol::overload(
-        [&](const std::string guiId, const std::string& data) {
-            overlayStack.pushLayer(overlayFactory.createOverlay(guiId, data));
-        },
-        [&](const std::string guiId) {
-            overlayStack.pushLayer(overlayFactory.createOverlay(guiId, ""));
-        });
-
-    guiTable["change"] = sol::overload(
-        [&](const std::string guiId, const std::string& data) {
-            overlayStack.resetToLayer(overlayFactory.createOverlay(guiId, data));
-        },
-        [&](const std::string guiId) {
-            overlayStack.resetToLayer(overlayFactory.createOverlay(guiId, ""));
-        });
-
-    guiTable["pop"] = [&]() { overlayStack.popLayer(); };
-
-} // namespace
-
-} // namespace
-
-void luaInitGuiApi(ScriptEngine& scriptEngine, gui::OverlayFactory& overlayFactory,
-                   gui::OverlayStack& overlayStack, GuiRenderer* guiRenderer)
-{
-    auto guiTable = scriptEngine.addTable("gui");
-    initOverlayDefinitionCreateApi(guiTable, overlayFactory);
-    initGuiStackApi(guiTable, overlayFactory, overlayStack);
 
     if (guiRenderer) {
-        initGuiRenderApi(guiTable, *guiRenderer);
+        scriptEngine.gameTable["getTexture"] = [guiRenderer](const std::string& path) {
+            return guiRenderer->getTexture(path);
+        };
     }
 }

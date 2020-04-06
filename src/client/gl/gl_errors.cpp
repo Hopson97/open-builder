@@ -21,8 +21,7 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint, GLenum sever
             break;
 
         case GL_DEBUG_SEVERITY_NOTIFICATION:
-            severity_str = "notification";
-            break;
+            return;
     }
 
     const char* src = "?";
@@ -81,6 +80,7 @@ void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint, GLenum sever
 
 void initGLDebug()
 {
+#ifndef __APPLE__
 #ifndef NDEBUG
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // disable if in release
@@ -90,6 +90,7 @@ void initGLDebug()
     // this disables messages printed for successfully compiled shaders
     glDebugMessageControl(GL_DEBUG_SOURCE_SHADER_COMPILER, GL_DEBUG_TYPE_OTHER,
                           GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+#endif
 }
 
 void glCheckError(const char* file, unsigned int line, const char* expression)
@@ -134,8 +135,8 @@ void glCheckError(const char* file, unsigned int line, const char* expression)
 
         // Log the error
         std::cerr << "An internal OpenGL call failed in "
-                  << fileString.substr(fileString.find_last_of("\\/") + 1).c_str() << "(" << line
-                  << ")."
+                  << fileString.substr(fileString.find_last_of("\\/") + 1).c_str() << "("
+                  << line << ")."
                   << "\nExpression:\n   " << expression << "\nError description:\n   "
                   << error.c_str() << "\n   " << description.c_str() << "\n"
                   << std::endl;

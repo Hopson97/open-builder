@@ -51,6 +51,7 @@
 #elif defined _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4505) // unreferenced local function has been removed GEE THANKS
+#pragma warning(disable : 4996) // Remove deprecated errors
 #endif					  // clang++ vs. g++ vs. VC++
 
 // beginning of sol/forward.hpp

@@ -1,42 +1,28 @@
 #include "client_lua_api.h"
 
-#include "../engine_status.h"
-#include <common/scripting/script_engine.h>
+#include "../client_state_controller.h"
+#include <common/lua/script_engine.h>
 
-void luaInitClientControlApi(ScriptEngine& scriptEngine, ClientState& clientState)
+using State = ClientStateController::StateId;
+
+void luaInitClientControlApi(ScriptEngine& scriptEngine,
+                             ClientStateController& clientState)
 {
-    auto stateEnum = scriptEngine.addTable("State");
-    stateEnum["InMenu"] = ClientState::InMenu;
-    stateEnum["InGame"] = ClientState::InGame;
-    stateEnum["Paused"] = ClientState::Paused;
+    auto controlApi =
+        scriptEngine.lua.new_usertype<ClientStateController>("ClientStateController");
 
-    stateEnum["ExitGame"] = ClientState::ExitGame;
-    stateEnum["StartGame"] = ClientState::StartGame;
-    stateEnum["Shutdown"] = ClientState::Shutdown;
-
-    auto controlApi = scriptEngine.addTable("control");
-    controlApi["currentState"] = [&clientState] { return clientState; };
-    controlApi["shutdown"] = [&clientState] { clientState = ClientState::Shutdown; };
-
-    controlApi["pause"] = [&clientState] {
-        if (clientState == ClientState::InGame) {
-            clientState = ClientState::Paused;
-        }
-    };
-    controlApi["resume"] = [&clientState] {
-        if (clientState == ClientState::Paused) {
-            clientState = ClientState::InGame;
-        }
-    };
-    controlApi["exitGame"] = [&clientState] {
-        if (clientState == ClientState::Paused) {
-            clientState = ClientState::ExitGame;
-        }
+    scriptEngine.gameTable["control"] = [&clientState]() -> ClientStateController& {
+        return clientState;
     };
 
-    controlApi["startGame"] = [&clientState] {
-        if (clientState == ClientState::InMenu) {
-            clientState = ClientState::StartGame;
-        }
+    controlApi["createWorld"] = &ClientStateController::createWorld;
+    controlApi["loadWorld"] = &ClientStateController::loadWorld;
+    controlApi["joinGame"] = &ClientStateController::joinWorld;
+    controlApi["isInGame"] = [](const ClientStateController& controller) {
+        return controller.currentState() == State::InGame;
     };
+    controlApi["pause"] = &ClientStateController::pauseGame;
+    controlApi["resume"] = &ClientStateController::resumeGame;
+    controlApi["exitGame"] = &ClientStateController::exitGame;
+    controlApi["shutdown"] = &ClientStateController::shutdown;
 }

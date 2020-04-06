@@ -1,0 +1,18 @@
+name: macOS C/C++ CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-10.15, macos-latest ]
+    name: Compilation on ${{ matrix.os }} 
+    steps:
+     - name: Checkout code
+       uses: actions/checkout@master
+     - name: Install dependencies
+       run: bash scripts/install.sh --no-build
+     - name: Build
+       run: bash scripts/install.sh
