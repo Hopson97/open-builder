@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
 
+if(OPENBUILDER_USE_HUNTER)
+    include(${CMAKE_CURRENT_LIST_DIR}/cmake/Hunter/HunterGate.cmake)
+    HunterGate(
+        URL "https://github.com/cpp-pm/hunter/archive/v0.23.250.tar.gz"
+        SHA1 "0e6ce3072a280110f33162e0265fb3796652673f"
+    )
+endif()
+
 #Set up project
 project(open-builder 
     VERSION 1.0
@@ -63,16 +71,33 @@ function (link_exe target)
     )
 endfunction(link_exe)
 
-#Set module path
-set(
-    CMAKE_MODULE_PATH 
-    "${CMAKE_SOURCE_DIR}/cmake_modules" 
-    ${CMAKE_MODULE_PATH}
-)
+
 
 # Find libraries
 find_package(Threads)
-find_package(SFML REQUIRED audio network graphics window system)
+
+if(OPENBUILDER_USE_HUNTER)
+    #used to set working directory and runtime lib dir for VS and create launcher scripts for linux/mac
+    hunter_add_package(CreateLaunchers)
+    find_package(CreateLaunchers CONFIG REQUIRED)
+    include(CreateLaunchers)
+
+    hunter_add_package(SFML)
+    find_package(SFML COMPONENTS audio network graphics window system CONFIG REQUIRED)
+
+    #used to make hunter target work like the old non-config find_package
+    set(SFML_LIBRARIES sfml-audio sfml-network sfml-graphics sfml-window sfml-system)
+    set(SFML_DEPENDENCIES "")
+else()
+#Set module path
+    set(
+        CMAKE_MODULE_PATH 
+        "${CMAKE_SOURCE_DIR}/cmake_modules" 
+        ${CMAKE_MODULE_PATH}
+    )
+
+    find_package(SFML REQUIRED audio network graphics window system)
+endif()
 
 # Add local libraries
 add_subdirectory(deps)
@@ -105,10 +130,19 @@ include_dirs(ob-client)
 include_dirs(ob-server)
 link_exe(${PROJECT_NAME})
 
+
+if(OPENBUILDER_USE_HUNTER)
+create_target_launcher(${PROJECT_NAME}
+#        RUNTIME_LIBRARY_DIRS ""
+        WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
+    )
+endif()
+
 target_include_directories(ob-client
     PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/server/
 )
+
 
 
 #Create the unit test executable
