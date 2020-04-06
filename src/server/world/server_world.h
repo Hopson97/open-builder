@@ -10,6 +10,8 @@
 #include <queue>
 #include <unordered_set>
 
+enum class InteractionKind { PlaceBlock, DigBlock };
+
 class ServerWorld {
   public:
     ServerWorld(int size);
@@ -31,8 +33,9 @@ class ServerWorld {
 
     glm::vec3 getPlayerSpawnPosition(u32 playerId);
 
-    std::optional<VoxelPosition>
-    tryDig(const glm::vec3& position, const glm::vec3& rotation);
+    std::optional<VoxelPosition> tryInteract(InteractionKind kind,
+                                             const glm::vec3& position,
+                                             const glm::vec3& rotation);
 
   private:
     std::queue<ChunkPosition> m_chunkGenerationQueue;

@@ -144,17 +144,32 @@ glm::vec3 ServerWorld::getPlayerSpawnPosition(u32 playerId)
     return {x, CHUNK_SIZE * 3, z};
 }
 
-std::optional<VoxelPosition>
-ServerWorld::tryDig(const glm::vec3& position, const glm::vec3& rotation)
+std::optional<VoxelPosition> ServerWorld::tryInteract(InteractionKind kind,
+                                                      const glm::vec3& position,
+                                                      const glm::vec3& rotation)
 {
     auto voxelPositions = getIntersectedVoxels(position, forwardsVector(rotation), 8);
+    if (voxelPositions.empty()) {
+        return {};
+    }
+    VoxelPosition& previous = voxelPositions.at(0);
+
     for (auto& voxelPosition : voxelPositions) {
         auto voxelId = m_chunks.getVoxel(voxelPosition);
         auto type = m_voxelData.getVoxelData(voxelId).type;
         if (type == VoxelType::Solid || type == VoxelType::Flora) {
-            m_chunks.setVoxel(voxelPosition, m_voxelData.getVoxelId(CommonVoxel::Air));
-            return voxelPosition;
+            auto air = m_voxelData.getVoxelId(CommonVoxel::Air);
+            auto stone = m_voxelData.getVoxelId(CommonVoxel::Stone);
+
+            VoxelUpdate update;
+            update.voxel = kind == InteractionKind::DigBlock ? air : stone;
+            update.voxelPosition =
+                kind == InteractionKind::DigBlock ? voxelPosition : previous;
+
+            m_chunks.setVoxel(update.voxelPosition, update.voxel);
+            return update.voxelPosition;
         }
+        previous = voxelPosition;
     }
     return {};
 }
