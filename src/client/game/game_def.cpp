@@ -152,7 +152,7 @@ void ClientGameDef::handlePlayerInput(const Keyboard& keyboard)
     lastMousePosition.y = (int)window.getSize().y / 2;
 #endif
 
-    float PLAYER_SPEED = 3.0f;
+    float PLAYER_SPEED = 1.0f;
     if (keyboard.isKeyDown(sf::Keyboard::LControl)) {
         PLAYER_SPEED *= 10;
     }
