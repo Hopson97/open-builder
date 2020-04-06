@@ -1,13 +1,15 @@
 #pragma once
 
+#include "../game/chunk_mesh.h"
 #include "../gl/shader.h"
 #include "../gl/vertex_array.h"
-#include "../maths.h"
-#include "../world/chunk_mesh.h"
+#include <common/maths.h>
 
 #include <SFML/System/Clock.hpp>
 #include <common/world/coordinate.h>
 #include <vector>
+
+class Camera;
 
 /**
  * @brief A mesh that makes up the verticies and such of a chunk in the world
@@ -73,18 +75,13 @@ class ChunkRenderer final {
     /**
      * @brief Render all chunks (that are in view)
      *
-     * @param cameraPosition The position of the camera
-     * @param frustum The viewing frustum, for frustum culling
-     * @param projectionViewMatrix Projection view matrix for the shaders
+     * @param camera The camera to render the chunks from
      * @param cameraInWater Is the camera in water, for rendering special effects if the
      * case
      * @return ChunkRenderResult The count of chunks rendered and their total buffer size
      * this frame
      */
-    ChunkRenderResult renderChunks(const glm::vec3& cameraPosition,
-                                   const ViewFrustum& frustum,
-                                   const glm::mat4& projectionViewMatrix,
-                                   bool cameraInWater);
+    ChunkRenderResult renderChunks(const Camera& camera, bool cameraInWater);
 
     // Used for the debug stat view
     int getTotalChunks() const;

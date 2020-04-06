@@ -1,9 +1,9 @@
 #include "text_component.h"
 
 #include "../../gl/font.h"
-#include "../../maths.h"
 #include "../../renderer/gui_shader.h"
 #include "../gui_constants.h"
+#include <common/maths.h>
 
 namespace {
     struct Mesh {

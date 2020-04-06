@@ -15,6 +15,8 @@
 #include <common/network/enet.h>
 #include <common/util/obd_parser.h>
 
+#include "client/window.h"
+
 // Enable nvidia
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -26,7 +28,7 @@ _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 
 namespace {
     enum class LaunchType {
-        Server,
+        OLD_SERVER,
         Client,
     };
 
@@ -67,7 +69,7 @@ namespace {
             // Set launch type to be server.
             // Option: MAX_CONNECTIONS 2-16
             if (option.first == "-server") {
-                launchType = LaunchType::Server;
+                launchType = LaunchType::OLD_SERVER;
                 try {
                     int maxConnections = std::stoi(option.second);
                     if (maxConnections < 2) {
@@ -156,14 +158,21 @@ int main(int argc, char** argv)
 
     loadFromConfigFile();
     switch (parseArgs(args)) {
-        case LaunchType::Server: {
-            ServerLauncher launcher(sf::seconds(0));
+        case LaunchType::OLD_SERVER: {
+            ServerEngine launcher;
             launcher.run();
             break;
         }
 
         case LaunchType::Client: {
-            runClientEngine();
+            sf::Window window;
+            if (!Window::createWindowInitOpengl(window)) {
+                return -1;
+            }
+            ClientEngine client;
+            if (client.init(window)) {
+                client.runClient();
+            }
             break;
         }
     }

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <array>
 #include <sol/sol.hpp>
 #include <vector>
@@ -25,7 +25,7 @@ class ClientLuaCallbacks {
     std::vector<sol::function> m_onExitGameCallbacks;
     std::vector<sol::function> m_onErrorCallbacks;
     std::vector<sol::function> m_onMouseWheelScroll;
-  
+
     std::array<std::vector<sol::function>, sf::Keyboard::KeyCount>
         m_onKeyReleaseCallbacks;
 };

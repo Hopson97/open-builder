@@ -2,11 +2,18 @@
 add_library(ob-common
     util/file_io.cpp
     util/obd_parser.cpp
+    util/random_number_generator.cpp
+
+    maths.cpp
     debug.cpp
-    network/net_host.cpp
+
+    network/enet.cpp
+    network/packet.cpp
+
     lua/script_engine.cpp
     lua/util_api.cpp
-    util/random_number_generator.cpp
+
+
     world/chunk.cpp
     world/chunk_manager.cpp
     world/coordinate.cpp

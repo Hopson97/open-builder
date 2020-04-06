@@ -2,10 +2,10 @@
 
 #include "../gui/overlay.h"
 #include "../gui/widget/button_widget.h"
+#include "../gui/widget/checkbox_widget.h"
 #include "../gui/widget/image_widget.h"
 #include "../gui/widget/label_widget.h"
 #include "../gui/widget/text_box_widget.h"
-#include "../gui/widget/checkbox_widget.h"
 #include <common/lua/script_engine.h>
 
 namespace {
@@ -78,7 +78,8 @@ namespace {
         checkBoxApi["uncheckedImage"] =
             sol::property(&gui::CheckBoxWidget::setUncheckedImage);
         checkBoxApi["image"] = sol::property(&gui::CheckBoxWidget::setImage);
-        checkBoxApi["checked"] = sol::property(&gui::CheckBoxWidget::getChecked, &gui::CheckBoxWidget::setChecked);
+        checkBoxApi["checked"] = sol::property(&gui::CheckBoxWidget::getChecked,
+                                               &gui::CheckBoxWidget::setChecked);
 
         checkBoxApi["onMouseOver"] = sol::property(&gui::CheckBoxWidget::setOnMouseOver);
         checkBoxApi["onMouseOff"] = sol::property(&gui::CheckBoxWidget::setOnMouseOff);
@@ -134,5 +135,4 @@ void luaInitGuiWidgetApi(ScriptEngine& scriptEngine)
     addGuiTextboxApi(scriptEngine);
     addGuiCenteredLabelApi(scriptEngine);
     addGuiCheckBoxApi(scriptEngine);
-
 }

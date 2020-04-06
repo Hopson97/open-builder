@@ -184,11 +184,13 @@ namespace {
 
 } // namespace
 
-void generateTerrain(ChunkManager& chunkManager, int chunkX, int chunkZ,
-                     const VoxelDataManager& voxelData, const BiomeDataManager& biomeData,
-                     int seed, int worldSize)
+std::vector<ChunkPosition> generateTerrain(ChunkManager& chunkManager, int chunkX,
+                                           int chunkZ, const VoxelDataManager& voxelData,
+                                           const BiomeDataManager& biomeData, int seed,
+                                           int worldSize)
 {
     ChunkPosition position{chunkX, 0, chunkZ};
+    std::vector<ChunkPosition> positions;
 
     auto heightMap = createChunkHeightMap(position, worldSize, seed);
     auto biomeMap = createBiomeMap(position, 9876);
@@ -198,7 +200,9 @@ void generateTerrain(ChunkManager& chunkManager, int chunkX, int chunkZ,
         Chunk& chunk = chunkManager.addChunk({chunkX, y, chunkZ});
         createTerrain(chunk, heightMap, biomeMap, voxelData, biomeData, seed);
         chunkManager.ensureNeighbours(chunk.getPosition());
+        positions.emplace_back(chunkX, y, chunkZ);
     }
+    return positions;
 }
 
 float generateSeed(const std::string& input)

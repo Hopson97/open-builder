@@ -1,5 +1,6 @@
 #include "client_state_controller.h"
-#include "game.h"
+#include "game/game.h"
+#include "game/game_type.h"
 #include "lua/client_lua_callback.h"
 
 namespace {
@@ -16,7 +17,8 @@ namespace {
         bool executeAction(Game& game, State& m_currentState,
                            ClientLuaCallbacks& callbacks) final override
         {
-            if (game.initGame()) {
+            game.setGameDefintion<LocalGame>("Test");
+            if (game.start()) {
                 callbacks.onEnterGame();
                 m_currentState = State::InGame;
             }
@@ -42,7 +44,8 @@ namespace {
         bool executeAction(Game& game, State& m_currentState,
                            ClientLuaCallbacks& callbacks) final override
         {
-            if (game.initGame()) {
+            game.setGameDefintion<LocalGame>("Test");
+            if (game.start()) {
                 callbacks.onEnterGame();
                 m_currentState = State::InGame;
             }
@@ -67,7 +70,8 @@ namespace {
         bool executeAction(Game& game, State& m_currentState,
                            ClientLuaCallbacks& callbacks) final override
         {
-            if (game.initGame(m_serverIp)) {
+            game.setGameDefintion<RemoteGame>(m_serverIp);
+            if (game.start()) {
                 callbacks.onEnterGame();
                 m_currentState = State::InGame;
             }
@@ -87,7 +91,7 @@ namespace {
         bool executeAction(Game& game, State& m_currentState,
                            ClientLuaCallbacks& callbacks) final override
         {
-            game.stopGame();
+            game.shutdown();
             callbacks.onExitGame();
             m_currentState = State::InMenu;
             return true;
@@ -154,7 +158,7 @@ bool ClientStateController::executeAction(Game& game, ClientLuaCallbacks& callba
 {
     if (m_nextAction) {
         bool result = m_nextAction->executeAction(game, m_currentState, callbacks);
-        m_nextAction.release();
+        m_nextAction.reset();
         return result;
     }
     return true;

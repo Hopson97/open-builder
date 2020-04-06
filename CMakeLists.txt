@@ -87,6 +87,13 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
 )
 
+target_include_directories(${PROJECT_NAME}
+    PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/server/
+)
+
+
+
 target_include_directories(ob-common
     PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/deps/
@@ -111,13 +118,14 @@ add_executable(tests
     tests/common/world/chunk_manager_test.cpp
     tests/common/world/coordinate_test.cpp
     tests/common/world/chunk_test.cpp
-    tests/common/network/net_host_test.cpp
-    tests/common/network/command_dispatcher_test.cpp
+
     tests/common/util/obd_parser_test.cpp
     tests/common/lua/script_engine_test.cpp
     
     tests/client/lua/client_control_api_test.cpp
     tests/client/lua/gui_widget_api_test.cpp
+
+    tests/client_server_tests.cpp
 )
 
 include_dirs(tests)

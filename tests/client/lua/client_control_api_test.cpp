@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 
 #include <client/client_state_controller.h>
-#include <client/game.h>
+#include <client/game/game.h>
 #include <client/lua/client_lua_api.h>
 #include <client/lua/client_lua_callback.h>
 #include <common/lua/script_engine.h>
