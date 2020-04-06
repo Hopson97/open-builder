@@ -2,7 +2,7 @@
 
 #include "../gl/shader.h"
 #include "../gl/vertex_array.h"
-#include "../maths.h"
+#include <common/maths.h>
 #include "../game/chunk_mesh.h"
 
 #include <SFML/System/Clock.hpp>

@@ -1,7 +1,7 @@
 #include "client_world.h"
 #include "../client_config.h"
 #include "../gl/primitive.h"
-#include "../maths.h"
+#include <common/maths.h>
 #include "../renderer/camera.h"
 #include "chunk_mesh_generation.h"
 #include <common/debug.h>
@@ -66,6 +66,38 @@ void ClientWorld::tick(float dt)
             itr++;
         }
     }
+
+    // Update voxels
+    for (auto& update : m_voxelUpdates) {
+        auto chunkPosition = toChunkPosition(update.voxelPosition);
+        m_chunks.ensureNeighbours(chunkPosition);
+        m_chunks.setVoxel(update.voxelPosition, update.voxel);
+        m_chunkUpdates.push_back(chunkPosition);
+
+        auto p = chunkPosition;
+        auto localVoxelPostion = toLocalVoxelPosition(update.voxelPosition);
+        if (localVoxelPostion.x == 0) {
+            m_chunkUpdates.push_back({p.x - 1, p.y, p.z});
+        }
+        else if (localVoxelPostion.x == CHUNK_SIZE - 1) {
+            m_chunkUpdates.push_back({p.x + 1, p.y, p.z});
+        }
+
+        if (localVoxelPostion.y == 0) {
+            m_chunkUpdates.push_back({p.x, p.y - 1, p.z});
+        }
+        else if (localVoxelPostion.y == CHUNK_SIZE - 1) {
+            m_chunkUpdates.push_back({p.x, p.y + 1, p.z});
+        }
+
+        if (localVoxelPostion.z == 0) {
+            m_chunkUpdates.push_back({p.x, p.y, p.z - 1});
+        }
+        else if (localVoxelPostion.z == CHUNK_SIZE - 1) {
+            m_chunkUpdates.push_back({p.x, p.y, p.z + 1});
+        }
+    }
+    m_voxelUpdates.clear();
 }
 
 void ClientWorld::render(const Camera& camera)
@@ -182,4 +214,9 @@ EntityState& ClientWorld::getPlayer()
 u32 ClientWorld::getPlayerId() const
 {
     return m_playerId;
+}
+
+void ClientWorld::updateVoxel(const VoxelUpdate& update)
+{
+    m_voxelUpdates.push_back(update);
 }

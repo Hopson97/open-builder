@@ -70,8 +70,26 @@ void ServerEngine::onMouseState(ServerPacket& packet, ENetPeer* peer)
 {
     AUTHENTICATE_PACKET
     auto& player = m_world.findEntity(client.getPlayerId());
-
     bool click = packet.read<u8>();
+    if (click) {
+        auto& position = player.position;
+        auto& rotation = player.rotation;
+
+        // See if a block was clicked
+        auto result = m_world.tryDig(position, rotation);
+        if (result) {
+            VoxelUpdate update;
+            update.voxelPosition = *result;
+            update.voxel = m_world.getVoxelData().getVoxelId(CommonVoxel::Air);
+
+            // Send to clients that own this chunk
+            for (auto& session : m_clients) {
+                if (session.isActive()) {
+                    session.sendVoxelUpdate(update);
+                }
+            }
+        }
+    }
 }
 
 void ServerEngine::onPlayerState(ServerPacket& packet, ENetPeer* peer)

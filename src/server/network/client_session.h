@@ -5,6 +5,7 @@
 #include <common/world/coordinate.h>
 #include <unordered_set>
 
+struct VoxelUpdate;
 class ServerWorld;
 class Chunk;
 
@@ -35,6 +36,7 @@ class ClientSession {
 
     void sendAddChunk(const Chunk& chunk);
     void sendPlayerSpawnPoint(const glm::vec3& position);
+    void sendVoxelUpdate(const VoxelUpdate& update);
 
   private:
     std::unordered_set<ChunkPosition, ChunkPositionHash> m_sentChunks;

@@ -2,6 +2,7 @@
 #include <common/network/net_command.h>
 
 #include "../world/server_world.h"
+#include <common/debug.h>
 
 void ClientSession::init(ENetPeer* peer, u32 salt, u32 playerId)
 {
@@ -73,4 +74,19 @@ void ClientSession::sendPlayerSpawnPoint(const glm::vec3& position)
     outgoing.write(position);
 
     m_clientConnection.send(outgoing.get(), 0, ENET_PACKET_FLAG_RELIABLE);
+}
+
+void ClientSession::sendVoxelUpdate(const VoxelUpdate& update)
+{
+    auto chunkPosition = toChunkPosition(update.voxelPosition);
+    if (m_sentChunks.find(chunkPosition) != m_sentChunks.end()) {
+        ServerPacket outgoing(ClientCommand::VoxelUpdate, m_salt);
+        outgoing.write(update.voxelPosition.x);
+        outgoing.write(update.voxelPosition.y);
+        outgoing.write(update.voxelPosition.z);
+
+        outgoing.write(update.voxel);
+
+        m_clientConnection.send(outgoing.get(), 0, ENET_PACKET_FLAG_RELIABLE);
+    }
 }

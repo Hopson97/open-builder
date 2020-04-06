@@ -48,6 +48,7 @@ class Client final {
     void onPlayerSpawnPoint(ClientPacket& packet);
     void onRemoveEntity(ClientPacket& packet);
     void onUpdateEntityStates(ClientPacket& packet);
+    void onVoxelUpdate(ClientPacket& packet);
 
     ConnectionState m_connectionState = ConnectionState::Disconnected;
     Connection m_serverConnection;

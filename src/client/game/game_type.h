@@ -8,7 +8,6 @@ class LocalGame final : public ClientGameDef {
     LocalGame(const std::string& worldName);
 
     bool start() final override;
-    bool isGameMode() final override;
 
   private:
     void onShutdown() final override;
@@ -22,17 +21,8 @@ class RemoteGame final : public ClientGameDef {
     RemoteGame(const std::string& ipAddress);
 
     bool start() final override;
-    bool isGameMode() final override;
+
   private:
     void onShutdown() final override;
     const std::string m_serverIp;
-};
-
-class EmptyGame final : public ClientGameDef {
-  public:
-    bool start() final override;
-    bool isGameMode() final override;
-
-  private:
-    void onShutdown() final override{};
 };

@@ -31,6 +31,7 @@ class Packet {
     Packet& read(T& t)
     {
         m_payload >> t;
+        return *this;
     }
 
     template <typename T>

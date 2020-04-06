@@ -4,6 +4,7 @@
 #include <cassert>
 
 #include "terrain_generation.h"
+#include <common/maths.h>
 
 ServerWorld::ServerWorld(int size)
     : m_luaCallbacks(m_lua)
@@ -141,4 +142,19 @@ glm::vec3 ServerWorld::getPlayerSpawnPosition(u32 playerId)
         }
     }
     return {x, CHUNK_SIZE * 3, z};
+}
+
+std::optional<VoxelPosition>
+ServerWorld::tryDig(const glm::vec3& position, const glm::vec3& rotation)
+{
+    auto voxelPositions = getIntersectedVoxels(position, forwardsVector(rotation), 8);
+    for (auto& voxelPosition : voxelPositions) {
+        auto voxelId = m_chunks.getVoxel(voxelPosition);
+        auto type = m_voxelData.getVoxelData(voxelId).type;
+        if (type == VoxelType::Solid || type == VoxelType::Flora) {
+            m_chunks.setVoxel(voxelPosition, m_voxelData.getVoxelId(CommonVoxel::Air));
+            return voxelPosition;
+        }
+    }
+    return {};
 }

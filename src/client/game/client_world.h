@@ -43,12 +43,16 @@ class ClientWorld {
     EntityState& getPlayer();
     u32 getPlayerId() const;
 
+    void updateVoxel(const VoxelUpdate& update);
+
   private:
     std::vector<EntityState> m_entities;
 
     ChunkManager m_chunks;
     ChunkRenderer m_chunkRenderer;
     std::vector<ChunkPosition> m_chunkUpdates;
+
+    std::vector<VoxelUpdate> m_voxelUpdates;
 
     VoxelDataManager m_voxelData;
     VoxelTextureMap m_voxelTextures;

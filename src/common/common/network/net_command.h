@@ -80,6 +80,12 @@ enum class ClientCommand : command_t {
     // float[3]: The X, Y, Z position of the entity
     PlayerSpawnPoint,
 
+    // Notify the client that a block has changed, and a chunk needs to be rebuilt
+    // Data:
+    // i32[3]: The X, Y, Z of the global voxel position
+    // voxel_t: The voxel to update it to
+    VoxelUpdate,
+
 
     /*
         // Send peer ID to a new connection

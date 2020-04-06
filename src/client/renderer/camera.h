@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../maths.h"
+#include <common/maths.h>
 
 #include <common/world/entity_state.h>
 

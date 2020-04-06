@@ -78,6 +78,7 @@ void Client::handlePacket(ClientPacket& packet)
         case Cmd::PlayerSpawnPoint:     onPlayerSpawnPoint      (packet);   break;
         case Cmd::RemoveEntity:         onRemoveEntity          (packet);   break;
         case Cmd::UpdateEntityStates:   onUpdateEntityStates    (packet);   break;
+        case Cmd::VoxelUpdate:          onVoxelUpdate           (packet);   break;
 
         default: std::cout << "Unhandled packet! Command ID: " << (int)packet.command() << '\n'; break;
     }
@@ -115,4 +116,3 @@ void Client::sendSpawnRequest()
     ClientPacket packet(ServerCommand::SpawnRequest, m_salt);
     m_serverConnection.send(packet.get());
 }
-

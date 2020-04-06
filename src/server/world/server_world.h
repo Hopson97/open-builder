@@ -31,6 +31,9 @@ class ServerWorld {
 
     glm::vec3 getPlayerSpawnPosition(u32 playerId);
 
+    std::optional<VoxelPosition>
+    tryDig(const glm::vec3& position, const glm::vec3& rotation);
+
   private:
     std::queue<ChunkPosition> m_chunkGenerationQueue;
     std::unordered_set<ChunkPosition, ChunkPositionHash> m_currentChunks;

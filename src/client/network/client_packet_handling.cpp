@@ -39,7 +39,9 @@ void Client::onConnectionAcceptance(ClientPacket& packet)
 void Client::onGameData(ClientPacket& packet)
 {
     u16 voxels = packet.read<u16>();
+
     mp_world->setVoxelTextureCount(voxels);
+
     for (u16 i = 0; i < voxels; i++) {
         auto voxel = packet.read<VoxelData>();
         mp_world->addVoxelType(std::move(voxel));
@@ -57,14 +59,18 @@ void Client::onGameData(ClientPacket& packet)
 
 void Client::onAddEntity(ClientPacket& packet)
 {
-    std::cout << "Player joined!\n";
     u32 count = packet.read<u32>();
     for (u32 i = 0; i < count; i++) {
-        u32 entityId = packet.read<u32>();
-        glm::vec3 position = packet.read<glm::vec3>();
-        glm::vec3 rotation = packet.read<glm::vec3>();
-        // For certain unit tests, the world doesn't exist
-        if (!mp_world) {
+        u32 entityId = 0;
+        glm::vec3 position;
+        glm::vec3 rotation;
+
+        packet.read(entityId);
+        packet.read(position);
+        packet.read(rotation);
+
+        if (!mp_world)
+        {
             return;
         }
         mp_world->addEntity(entityId, position, rotation);
@@ -98,14 +104,12 @@ void Client::onRemoveEntity(ClientPacket& packet)
 {
     u32 entityId = packet.read<u32>();
     mp_world->removeEntity(entityId);
-    std::cout << "Player left!\n";
 }
 
 void Client::onForceExit(ClientPacket& packet)
 {
     m_connectionState = ConnectionState::Disconnected;
     auto reason = packet.read<std::string>();
-    std::cout << "Forced to leave game: " << reason << "\n";
 }
 
 void Client::onPlayerSpawnPoint(ClientPacket& packet)
@@ -126,4 +130,15 @@ void Client::onUpdateEntityStates(ClientPacket& packet)
         }
         mp_world->updateEntity(entId, entPosition, entRotation);
     }
+}
+
+void Client::onVoxelUpdate(ClientPacket& packet)
+{
+    VoxelUpdate update;
+    packet.read(update.voxelPosition.x);
+    packet.read(update.voxelPosition.y);
+    packet.read(update.voxelPosition.z);
+    packet.read(update.voxel);
+
+    mp_world->updateVoxel(update);
 }

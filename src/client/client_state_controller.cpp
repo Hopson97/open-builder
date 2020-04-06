@@ -158,7 +158,7 @@ bool ClientStateController::executeAction(Game& game, ClientLuaCallbacks& callba
 {
     if (m_nextAction) {
         bool result = m_nextAction->executeAction(game, m_currentState, callbacks);
-        m_nextAction.release();
+        m_nextAction.reset();
         return result;
     }
     return true;

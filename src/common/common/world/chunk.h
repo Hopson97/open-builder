@@ -19,6 +19,12 @@ using VoxelArray = std::array<voxel_t, CHUNK_VOLUME>;
  */
 using CompressedVoxels = std::vector<std::pair<voxel_t, u16>>;
 
+struct VoxelUpdate
+{
+    VoxelPosition voxelPosition;
+    voxel_t voxel;
+};
+
 /**
  * @brief Data structure for a "chunk" of voxels of the game
  *
