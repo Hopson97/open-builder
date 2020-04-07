@@ -20,7 +20,7 @@ void Player::tick(ClientWorld& world, float dt)
     m_acceleration = {0, 0, 0};
 
     if (!m_isOnGround) {
-        velocity.y -= 9.81 * dt;
+        velocity.y -= 20 * dt;
     }
     m_isOnGround = false;
 
@@ -109,7 +109,7 @@ void Player::keyboardInput(const Keyboard& keyboard)
     }
 
     if (keyboard.isKeyDown(sf::Keyboard::Space) && m_isOnGround) {
-        m_acceleration.y += PLAYER_SPEED * 50;
+        m_acceleration.y += PLAYER_SPEED * 20;
     }
     else if (keyboard.isKeyDown(sf::Keyboard::LShift) && m_isFlying) {
         m_acceleration.y -= PLAYER_SPEED * 2;

@@ -6,7 +6,7 @@ mkdir OpenBuilder\res
 mkdir OpenBuilder\texture_packs
 
 
-xcopy /s .\Release\open-builder.exe OpenBuilder
+xcopy /s .\Release\builderverse.exe OpenBuilder
 
 xcopy /s /e .\game OpenBuilder\game
 xcopy /s /e .\shaders OpenBuilder\shaders
