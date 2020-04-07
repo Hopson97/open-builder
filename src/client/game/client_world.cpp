@@ -17,7 +17,8 @@ GLuint VoxelTextureMap::getTextureId(const std::string& name)
     return itr->second;
 }
 
-ClientWorld::ClientWorld()
+ClientWorld::ClientWorld(EntityState& playerState)
+    : mp_playerState(&playerState)
 {
     m_entities.resize(1024);
     m_chunkRenderer.init();
@@ -46,9 +47,6 @@ void ClientWorld::tick(float dt)
     if (!m_issetup) {
         return;
     }
-    auto& player = getPlayer();
-    player.position += player.velocity * dt;
-    player.velocity *= 0.90 * dt;
 
     // Update chunks
     i32 count = 0;
@@ -97,6 +95,7 @@ void ClientWorld::tick(float dt)
             m_chunkUpdates.push_back({p.x, p.y, p.z + 1});
         }
     }
+
     m_voxelUpdates.clear();
 }
 
@@ -108,7 +107,7 @@ void ClientWorld::render(const Camera& camera)
     m_voxelTextures.textures.bind();
 
     // Render chunks, getting the block at the player position for """effects"""
-    auto playerVoxel = m_chunks.getVoxel(toVoxelPosition(getPlayer().position));
+    auto playerVoxel = m_chunks.getVoxel(toVoxelPosition(mp_playerState->position));
     auto waterId = m_voxelData.getVoxelId(CommonVoxel::Water);
     m_chunkRenderer.renderChunks(camera, playerVoxel == waterId);
 
@@ -206,17 +205,23 @@ void ClientWorld::createChunkFromCompressed(const ChunkPosition& position,
     m_chunkUpdates.push_back(position);
 }
 
-EntityState& ClientWorld::getPlayer()
-{
-    return m_entities[m_playerId];
-}
-
 u32 ClientWorld::getPlayerId() const
 {
     return m_playerId;
 }
 
+EntityState& ClientWorld::getPlayer()
+{
+    return *mp_playerState;
+}
+
 void ClientWorld::updateVoxel(const VoxelUpdate& update)
 {
     m_voxelUpdates.push_back(update);
+}
+
+const VoxelData& ClientWorld::getVoxel(int x, int y, int z) const
+{
+    auto voxel = m_chunks.getVoxel({x, y, z});
+    return m_voxelData.getVoxelData(voxel);
 }

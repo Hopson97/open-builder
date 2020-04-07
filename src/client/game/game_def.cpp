@@ -58,6 +58,11 @@ void ClientGameDef::shutdown()
     onShutdown();
 }
 
+ClientGameDef::ClientGameDef()
+    : m_world(m_player.m_state)
+{
+}
+
 void ClientGameDef::handleEvent(const sf::Event& event)
 {
     if (event.type == sf::Event::MouseButtonPressed) {
@@ -82,13 +87,12 @@ void ClientGameDef::handleInput(const Keyboard& keyboard, const InputState& inpu
     }
 
     if (inputState.isMouseLocked) {
-        handlePlayerInput(keyboard);
+        m_player.input(keyboard);
     }
 
     // Test whether the voxel the player is looking at is interactable
-    auto& player = m_world.getPlayer();
-    auto& position = player.position;
-    auto& rotation = player.rotation;
+    auto& position = m_player.m_state.position;
+    auto& rotation = m_player.m_state.rotation;
 
     m_isVoxelSelected = false;
     auto voxels = getIntersectedVoxels(position, forwardsVector(rotation), 8);
@@ -108,15 +112,17 @@ void ClientGameDef::tick(float dt)
         return;
     }
 
-    m_camera.update(m_world.getPlayer());
+    m_camera.update(m_player.m_state);
     m_world.tick(dt);
     if (m_client.getConnnectionState() == ConnectionState::Disconnected) {
         shutdown();
     }
 
+    m_player.tick(m_world, dt);
+
     auto thisTime = m_timer.getElapsedTime();
     if (thisTime - m_lastTime > sf::milliseconds(50)) {
-        m_client.sendPlayerState(m_world.getPlayer());
+        m_client.sendPlayerState(m_player.m_state);
     }
 }
 
@@ -125,60 +131,5 @@ void ClientGameDef::render()
     m_world.render(m_camera);
     if (m_isVoxelSelected) {
         m_selectionBoxRenderer.render(m_camera, m_currentSelectedVoxelPos);
-    }
-}
-
-void ClientGameDef::handlePlayerInput(const Keyboard& keyboard)
-{
-    auto& ctx = *Window::context;
-    static auto lastMousePosition = sf::Mouse::getPosition(ctx);
-
-    auto& player = m_world.getPlayer();
-    glm::vec3& rotation = player.rotation;
-    glm::vec3& velocity = player.velocity;
-
-    float verticalSensitivity = ClientConfig::get().verticalSensitivity;
-    float horizontalSensitivity = ClientConfig::get().horizontalSensitivity;
-    auto change = sf::Mouse::getPosition(ctx) - lastMousePosition;
-    rotation.x += static_cast<float>(change.y / 8.0f * verticalSensitivity);
-    rotation.y += static_cast<float>(change.x / 8.0f * horizontalSensitivity);
-    sf::Mouse::setPosition({(int)ctx.getSize().x / 2, (int)ctx.getSize().y / 2}, ctx);
-
-// This fixes mouse jittering on mac
-#ifndef __APPLE__
-    lastMousePosition = sf::Mouse::getPosition(ctx);
-#else
-    lastMousePosition.x = (int)window.getSize().x / 2;
-    lastMousePosition.y = (int)window.getSize().y / 2;
-#endif
-
-    float PLAYER_SPEED = 1.0f;
-    if (keyboard.isKeyDown(sf::Keyboard::LControl)) {
-        PLAYER_SPEED *= 10;
-    }
-
-    if (keyboard.isKeyDown(sf::Keyboard::W)) {
-        velocity += forwardsVector(rotation) * PLAYER_SPEED;
-    }
-    else if (keyboard.isKeyDown(sf::Keyboard::S)) {
-        velocity += backwardsVector(rotation) * PLAYER_SPEED;
-    }
-    if (keyboard.isKeyDown(sf::Keyboard::A)) {
-        velocity += leftVector(rotation) * PLAYER_SPEED;
-    }
-    else if (keyboard.isKeyDown(sf::Keyboard::D)) {
-        velocity += rightVector(rotation) * PLAYER_SPEED;
-    }
-    if (keyboard.isKeyDown(sf::Keyboard::Space)) {
-        velocity.y += PLAYER_SPEED * 2;
-    }
-    else if (keyboard.isKeyDown(sf::Keyboard::LShift)) {
-        velocity.y -= PLAYER_SPEED * 2;
-    }
-    if (rotation.x < -80.0f) {
-        rotation.x = -79.9f;
-    }
-    else if (rotation.x > 85.0f) {
-        rotation.x = 84.9f;
     }
 }

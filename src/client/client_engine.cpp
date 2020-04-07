@@ -44,8 +44,9 @@ void ClientEngine::runClient()
 
 void ClientEngine::update()
 {
+    static sf::Clock clock;
     m_fpsCounter.update();
-    m_game.tick(0.16f);
+    m_game.tick(clock.restart().asSeconds());
     m_gui.update();
     if (((int)m_fpsCounter.frameCount % 256) == 0) {
         // std::cout << m_fpsCounter.frameTime << '\n';

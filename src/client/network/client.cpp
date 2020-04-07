@@ -236,6 +236,7 @@ void Client::onForceExit(ClientPacket& packet)
 void Client::onPlayerSpawnPoint(ClientPacket& packet)
 {
     glm::vec3 position = packet.read<glm::vec3>();
+    
     mp_world->getPlayer().position = position;
 }
 
