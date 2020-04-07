@@ -34,6 +34,12 @@ void SelectedBoxRenderer::render(const Camera& camera, const VoxelPosition& posi
     glCheck(glDisable(GL_BLEND));
 }
 
+
+ClientGameDef::ClientGameDef()
+    : m_client(m_world, m_player)
+{
+}
+
 bool ClientGameDef::start(const std::string ipAddress)
 {
     auto connection = m_client.connectTo(ipAddress);
@@ -42,8 +48,6 @@ bool ClientGameDef::start(const std::string ipAddress)
         shutdown();
         return false;
     }
-    m_client.setWorld(m_world);
-
     m_camera = Camera::createCamera();
     m_selectionBoxRenderer.create();
 
@@ -56,11 +60,6 @@ void ClientGameDef::shutdown()
 {
     m_client.disconnect();
     onShutdown();
-}
-
-ClientGameDef::ClientGameDef()
-    : m_world(m_player.m_state)
-{
 }
 
 void ClientGameDef::handleEvent(const sf::Event& event)

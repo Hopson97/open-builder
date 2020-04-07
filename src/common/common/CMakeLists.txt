@@ -1,9 +1,6 @@
 
 add_library(ob-common
-    util/file_io.cpp
-    util/obd_parser.cpp
-    util/random_number_generator.cpp
-
+    util.cpp
     maths.cpp
     debug.cpp
 
@@ -12,7 +9,6 @@ add_library(ob-common
 
     lua/script_engine.cpp
     lua/util_api.cpp
-
 
     world/chunk.cpp
     world/chunk_manager.cpp

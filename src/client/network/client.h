@@ -7,6 +7,7 @@
 
 struct EntityState;
 class ClientWorld;
+class Player;
 
 enum class ConnectionState {
     Pending,
@@ -18,10 +19,8 @@ enum class MouseEventState { Click, Release };
 
 class Client final {
   public:
-    Client();
+    Client(ClientWorld& world, Player& player);
     ~Client();
-
-    void setWorld(ClientWorld& world);
 
     ClientConnectionResult connectTo(const std::string& ipaddress);
 
@@ -55,6 +54,7 @@ class Client final {
     NetHost m_host;
 
     ClientWorld* mp_world = nullptr;
+    Player* mp_player = nullptr;
 
     u32 m_salt;
 

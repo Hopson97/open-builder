@@ -1,6 +1,7 @@
 #pragma once
 
 #include <common/world/entity_state.h>
+#include <common/types.h>
 
 class Keyboard;
 class ClientWorld;
@@ -11,6 +12,7 @@ class Player {
     void tick(ClientWorld& world, float dt);
 
     EntityState m_state;
+    u32 playerId;
 
   private:
     void collide(const ClientWorld& world, const glm::vec3& vel);

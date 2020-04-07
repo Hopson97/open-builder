@@ -17,8 +17,7 @@ GLuint VoxelTextureMap::getTextureId(const std::string& name)
     return itr->second;
 }
 
-ClientWorld::ClientWorld(EntityState& playerState)
-    : mp_playerState(&playerState)
+ClientWorld::ClientWorld()
 {
     m_entities.resize(1024);
     m_chunkRenderer.init();
@@ -29,12 +28,6 @@ ClientWorld::ClientWorld(EntityState& playerState)
     m_playerTexture.create("res/skins/player.png", false);
     m_entityProj = m_entityShader.getUniformLocation("projectionViewMatrix");
     m_entityModel = m_entityShader.getUniformLocation("modelMatrix");
-}
-
-void ClientWorld::setPlayerId(u32 id)
-{
-    std::cout << "Got player ID: " << id << std::endl;
-    m_playerId = id;
 }
 
 void ClientWorld::setupData(int maxEntities)
@@ -107,7 +100,7 @@ void ClientWorld::render(const Camera& camera)
     m_voxelTextures.textures.bind();
 
     // Render chunks, getting the block at the player position for """effects"""
-    auto playerVoxel = m_chunks.getVoxel(toVoxelPosition(mp_playerState->position));
+    auto playerVoxel = m_chunks.getVoxel(toVoxelPosition(camera.getPosition()));
     auto waterId = m_voxelData.getVoxelId(CommonVoxel::Water);
     m_chunkRenderer.renderChunks(camera, playerVoxel == waterId);
 
@@ -203,16 +196,6 @@ void ClientWorld::createChunkFromCompressed(const ChunkPosition& position,
     Chunk& chunk = m_chunks.addChunk(position);
     chunk.voxels = decompressVoxelData(voxels);
     m_chunkUpdates.push_back(position);
-}
-
-u32 ClientWorld::getPlayerId() const
-{
-    return m_playerId;
-}
-
-EntityState& ClientWorld::getPlayer()
-{
-    return *mp_playerState;
 }
 
 void ClientWorld::updateVoxel(const VoxelUpdate& update)
