@@ -13,7 +13,7 @@
 #include "client/client_config.h"
 
 #include <common/network/enet.h>
-#include <common/util/obd_parser.h>
+#include <common/util.h>
 
 #include "client/window.h"
 
@@ -28,10 +28,8 @@ _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 
 namespace {
     enum class LaunchType {
-        OLD_SERVER,
-        Client,
+        Client, Server,
     };
-
     /**
      * @brief Loads config eg window size from the config.txt file
      * @param config The config object to put the data into
@@ -56,97 +54,21 @@ namespace {
         config.texturePack = data["texture_pack"];
     }
 
-    /**
-     * @brief Parses the CLI arguments from the user
-     * @param config The config to load data into
-     * @param args CLI arguments paired as <argument, param>
-     */
     LaunchType parseArgs(const std::vector<std::pair<std::string, std::string>>& args)
     {
-
-        LaunchType launchType = LaunchType::Client;
         for (const auto& option : args) {
-            // Set launch type to be server.
-            // Option: MAX_CONNECTIONS 2-16
-            if (option.first == "-server") {
-                launchType = LaunchType::OLD_SERVER;
-                try {
-                    int maxConnections = std::stoi(option.second);
-                    if (maxConnections < 2) {
-                        throw std::invalid_argument("Max connections must be at least " +
-                                                    std::to_string(MIN_CONNECTIONS) +
-                                                    ".\n");
-                    }
-                    else if (maxConnections > 16) {
-                        throw std::invalid_argument("Max connections must be " +
-                                                    std::to_string(MAX_CONNECTIONS) +
-                                                    " or below.\n");
-                    }
-                }
-                catch (std::invalid_argument& e) {
-                    std::cout << "Unable to set max connections, defaulting to "
-                                 "4. Reason: "
-                              << e.what() << "\n";
-                    // config.server.maxConnections = 4;
-                }
-            }
-            else if (option.first == "-client") {
-                launchType = LaunchType::Client;
-            }
-            else if (option.first == "-skin") {
-                ClientConfig::get().skinName = option.second;
+            if (option.first == "server") {
+                return LaunchType::Server;
             }
         }
-        return launchType;
-    }
-
-    /**
-     * @brief Prints failure message
-     * @return int Exit failure flag
-     */
-    int exitFailure(const char* message)
-    {
-        std::cerr << "Engine exited with error: \"" << message << "\"." << '\n';
-        return EXIT_FAILURE;
-    }
-
-    void printInstructions()
-    {
-        const int width = 20;
-        auto printInstruction = [width](const char* input, const char* output) {
-            std::cout << std::setw(width) << std::left << output << input << '\n';
-        };
-        std::cout << "Take a look at the instructions before you play." << '\n'
-                  << "And also remember that the default configurations are on "
-                     "the config.obd file"
-                  << '\n';
-
-        std::cout << std::setw(width) << std::left << "Action"
-                  << "Key/Mouse" << '\n'
-                  << std::setw(width + 10) << std::setfill('-') << "" << '\n'
-                  << std::setfill(' ') << std::setw(width) << std::left;
-        printInstruction("W", "Move Forwards");
-        printInstruction("A", "Move Left");
-        printInstruction("S", "Move Back");
-        printInstruction("D", "Move Right");
-
-        printInstruction("CTRL", "Sprint");
-        printInstruction("Right Click", "Place A Voxel");
-        printInstruction("Left Click", "Removes A Voxel");
-
-        printInstruction("Move Mouse", "Look");
-
-        printInstruction("ESC", "Exit Game");
-
-        std::cout << "Press Enter to Continue...";
-        std::cin.ignore();
+        return LaunchType::Client;
     }
 } // namespace
 
 int main(int argc, char** argv)
 {
     if (enet_initialize() != 0) {
-        return exitFailure("Failed to initialise enet");
+        return EXIT_FAILURE;
     }
 
     std::vector<std::pair<std::string, std::string>> args;
@@ -158,7 +80,7 @@ int main(int argc, char** argv)
 
     loadFromConfigFile();
     switch (parseArgs(args)) {
-        case LaunchType::OLD_SERVER: {
+        case LaunchType::Server: {
             ServerEngine launcher;
             launcher.run();
             break;

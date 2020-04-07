@@ -1,6 +1,6 @@
 #include "terrain_generation.h"
 
-#include <common/util/random_number_generator.h>
+#include <common/util.h>
 #include <common/world/biome.h>
 #include <common/world/chunk.h>
 #include <common/world/chunk_manager.h>

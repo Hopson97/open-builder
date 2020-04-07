@@ -1,6 +1,6 @@
 #include "script_engine.h"
 
-#include "../util/random_number_generator.h"
+#include "../util.h"
 
 namespace {
     void addRandomNumberGeneratorApi(ScriptEngine& scriptEngine)

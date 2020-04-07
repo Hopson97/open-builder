@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include <common/util/obd_parser.h>
+#include <common/util.h>
 
 const std::string dataObd = "   \n\
     name grass                  \n\
