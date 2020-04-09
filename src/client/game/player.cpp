@@ -38,7 +38,7 @@ void Player::tick(ClientWorld& world, float dt)
 }
 
 struct {
-    glm::vec3 dimensions{0.3f, 1.f, 0.3f};
+    glm::vec3 dimensions{0.3f, 1.5f, 0.3f};
 } box;
 
 void Player::collide(const ClientWorld& world, const glm::vec3& vel)

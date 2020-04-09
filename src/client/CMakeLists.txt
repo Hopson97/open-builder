@@ -46,7 +46,6 @@ add_library(ob-client
     window.cpp
 
     network/client.cpp
-    network/client_packet_handling.cpp
 
     renderer/camera.cpp
     renderer/gui_renderer.cpp
