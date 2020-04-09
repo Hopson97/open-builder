@@ -1,0 +1,13 @@
+
+cap_fps 0
+fps_limit 60
+fov 90
+renderDistance 50.f
+fullscreen 0
+window_width 1600
+window_height 900
+vertical_sensitivity 1
+horizontal_sensitivity 1
+skin player
+texture_pack default
+shouldShowInstructions 1
