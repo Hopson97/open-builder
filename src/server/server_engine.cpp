@@ -9,7 +9,7 @@
 const int MAX_CONNECTS = 10;
 
 ServerEngine::ServerEngine()
-    : m_world(MAX_CONNECTS)
+    : m_world(16)
     , m_host({ENET_HOST_ANY, DEFAULT_PORT}, MAX_CONNECTS)
     , m_clients(MAX_CONNECTS)
     , m_maxConnections(MAX_CONNECTS)

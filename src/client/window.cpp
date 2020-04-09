@@ -41,7 +41,7 @@ namespace {
 
         window.create(mode, "Open Builder", style, settings);
         window.setPosition({window.getPosition().x, 0});
-        window.setFramerateLimit(60);
+        //window.setFramerateLimit(60);
     }
 
 } // namespace

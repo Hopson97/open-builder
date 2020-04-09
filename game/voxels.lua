@@ -63,7 +63,6 @@ game.data.addVoxel {
 game.data.addVoxel {
     name = "openbuilder_sand",
     description = "Sand",
-    collidable = false,
     render = {
         top = "sand",
         sides = "sand",
@@ -75,7 +74,6 @@ game.data.addVoxel {
 game.data.addVoxel {
     name = "openbuilder_wood",
     description = "Common Wood",
-    collidable = false,
     render = {
         top = "logtop",
         sides = "log",
