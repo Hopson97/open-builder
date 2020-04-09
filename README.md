@@ -1,5 +1,22 @@
 # Open Builder
 
+## Woah where has everything gone?
+
+Decided this project was getting a bit much, and will need to be rewritten sometime.
+
+So the nope PR noped all the code away so I could start fresh.
+
+Older version can be found here: 
+
+[Latest "prerelease"](https://github.com/Hopson97/open-builder/releases/tag/v0.0.5-prealpha)
+
+[Latest code](https://github.com/Hopson97/open-builder/tree/50321e13b8117008b9472ec1095132d29456bd79)
+
+
+Old readme is still below:
+
+## Old Readme
+
 ![Linux C/C++ CI](https://github.com/Hopson97/open-builder/workflows/Linux%20C/C++%20CI/badge.svg)
 ![macOS C/C++ CI](https://github.com/Hopson97/open-builder/workflows/macOS%20C/C++%20CI/badge.svg)
 
