@@ -19,4 +19,4 @@ ColumnLimit: 90
 
 AlwaysBreakTemplateDeclarations: true
 
-PointerAlignment: Left 
+PointerAlignment: Left
