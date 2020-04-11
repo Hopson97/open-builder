@@ -19,8 +19,6 @@ struct VoxelTextureMap {
 class ClientWorld {
   public:
     ClientWorld();
-
-    void setPlayerId(u32 id);
     void setupData(int maxEntities);
 
     void tick(float dt);
@@ -39,11 +37,9 @@ class ClientWorld {
     bool hasChunk(const ChunkPosition& position) const;
     void createChunkFromCompressed(const ChunkPosition& position,
                                    const CompressedVoxels& voxels);
-
-    EntityState& getPlayer();
-    u32 getPlayerId() const;
-
     void updateVoxel(const VoxelUpdate& update);
+
+    const VoxelData& getVoxel(int x, int y, int z) const;
 
   private:
     std::vector<EntityState> m_entities;

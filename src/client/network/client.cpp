@@ -9,9 +9,12 @@
 #include <common/network/net_constants.h>
 #include <common/world/entity_state.h>
 #include <iostream>
+#include "../game/player.h"
 
-Client::Client()
+Client::Client(ClientWorld& world, Player& player)
     : m_salt(createHandshakeRandom())
+    , mp_world(&world)
+    , mp_player(&player)
 {
 }
 
@@ -20,11 +23,6 @@ Client::~Client()
     if (getConnnectionState() == ConnectionState::Connected) {
         disconnect();
     }
-}
-
-void Client::setWorld(ClientWorld& world)
-{
-    mp_world = &world;
 }
 
 ClientConnectionResult Client::connectTo(const std::string& ipaddress)
@@ -147,7 +145,7 @@ void Client::onConnectionAcceptance(ClientPacket& packet)
         }
 
         u32 playerId = packet.read<u32>();
-        mp_world->setPlayerId(playerId);
+        mp_player->playerId = playerId;
 
         sendSpawnRequest();
     }
@@ -236,7 +234,8 @@ void Client::onForceExit(ClientPacket& packet)
 void Client::onPlayerSpawnPoint(ClientPacket& packet)
 {
     glm::vec3 position = packet.read<glm::vec3>();
-    mp_world->getPlayer().position = position;
+    
+    mp_player->m_state.position = position;
 }
 
 void Client::onUpdateEntityStates(ClientPacket& packet)
@@ -246,7 +245,7 @@ void Client::onUpdateEntityStates(ClientPacket& packet)
         auto entId = packet.read<u32>();
         auto entPosition = packet.read<glm::vec3>();
         auto entRotation = packet.read<glm::vec3>();
-        if (entId == mp_world->getPlayerId()) {
+        if (entId == mp_player->playerId) {
             continue;
         }
         mp_world->updateEntity(entId, entPosition, entRotation);

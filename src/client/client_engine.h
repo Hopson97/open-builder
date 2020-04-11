@@ -43,7 +43,7 @@ class ClientEngine {
 
     ClientStateController m_controller;
 
-    sf::Window* mp_window;
+    sf::Window* mp_window = nullptr;
     Keyboard m_keyboard;
     InputState m_inputState;
 

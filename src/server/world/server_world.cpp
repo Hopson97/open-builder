@@ -137,7 +137,7 @@ glm::vec3 ServerWorld::getPlayerSpawnPosition(u32 playerId)
             voxelPosition.y = voxelY;
             if (spawn.qGetVoxel(voxelPosition) != 0) {
                 auto worldY = chunkY * CHUNK_SIZE + voxelY + 3;
-                return {x, worldY, z};
+                return {x, worldY * 2, z};
             }
         }
     }

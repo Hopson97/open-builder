@@ -9,6 +9,7 @@
 #include "../gl/vertex_array.h"
 #include "../renderer/camera.h"
 #include "client_world.h"
+#include "player.h"
 
 class Keyboard;
 struct InputState;
@@ -25,6 +26,7 @@ struct SelectedBoxRenderer {
 
 class ClientGameDef {
   public:
+    ClientGameDef();
     virtual ~ClientGameDef() = default;
 
     void handleEvent(const sf::Event& event);
@@ -40,13 +42,13 @@ class ClientGameDef {
     bool start(const std::string ipAddress);
 
   private:
-    void handlePlayerInput(const Keyboard& keyboard);
-
     virtual void onShutdown() = 0;
 
     ClientWorld m_world;
     Camera m_camera;
     Client m_client;
+
+    Player m_player;
 
     SelectedBoxRenderer m_selectionBoxRenderer;
     VoxelPosition m_currentSelectedVoxelPos;
