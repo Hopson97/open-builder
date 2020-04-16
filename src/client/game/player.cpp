@@ -140,7 +140,7 @@ void Player::mouseInput()
 #ifndef __APPLE__
     lastMousePosition = sf::Mouse::getPosition(ctx);
 #else
-    lastMousePosition.x = (int)window.getSize().x / 2;
-    lastMousePosition.y = (int)window.getSize().y / 2;
+    lastMousePosition.x = (int)ctx.getSize().x / 2;
+    lastMousePosition.y = (int)ctx.getSize().y / 2;
 #endif
 }
