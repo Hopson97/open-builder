@@ -1,3 +1,2 @@
 #!/bin/bash
-
-./bin/debug/tests 
+./bin/debug/tests
