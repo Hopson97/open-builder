@@ -2,6 +2,7 @@
 
 #include "gl_errors.h"
 #include <utility>
+#include <stdexcept>
 
 namespace gl {
     Framebuffer::Framebuffer()
