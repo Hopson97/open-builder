@@ -4,6 +4,7 @@
 #include <common/world/coordinate.h>
 #include <common/world/world_constants.h>
 #include <vector>
+#include <string>
 
 class ChunkManager;
 class BiomeDataManager;
