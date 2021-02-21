@@ -1,8 +1,28 @@
 #!/bin/bash
 
-if [ "$1" = "release" ]
+
+
+if [ "$1" = "server" ]
 then
-    ./bin/release/open-builder $2 $3 $4 $5 $6 $7 $8 $9
+    if [ "$2" = "release" ]
+    then
+        ./bin/release/open-builder server
+    else 
+        ./bin/debug/open-builder server
+    fi
+elif [ "$1" = "client" ]
+then
+    if [ "$2" = "release" ]
+    then
+        ./bin/release/open-builder client
+    else 
+        ./bin/debug/open-builder client
+    fi
 else
-    ./bin/debug/open-builder $1 $2 $3 $4 $5 $6 $7 $8 $9 
+    if [ "$2" = "release" ]
+    then
+        ./bin/release/open-builder
+    else 
+        ./bin/debug/open-builder
+    fi
 fi
