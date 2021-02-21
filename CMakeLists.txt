@@ -180,6 +180,13 @@ project(open-builder VERSION 1.0)
 
 #Set executable
 add_executable(open-builder
+    src/Client/GL/Framebuffer.cpp
+    src/Client/GL/GLDebug.cpp 
+    src/Client/GL/Mesh.cpp
+    src/Client/GL/Shader.cpp 
+    src/Client/GL/Texture.cpp
+    src/Client/GL/VertexArray.cpp
+    src/Maths.cpp
     src/main.cpp
 )
 
