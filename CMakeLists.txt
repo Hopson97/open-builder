@@ -188,13 +188,14 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
 #Find libraries
 find_package(Threads)
-find_package(OpenGL REQUIRED)
 find_package(SFML REQUIRED audio network graphics window system)
 
-#add_subdirectory(deps/imgui)
-#add_subdirectory(deps/imgui_sfml)
+add_subdirectory(deps/imgui)
+add_subdirectory(deps/imgui_impl)
 add_subdirectory(deps/enet)
 add_subdirectory(deps/lua)
+add_subdirectory(deps/glad)
+add_subdirectory(deps/glm)
 
 function(setup_target TARGET)
     #Set C++17
@@ -220,12 +221,14 @@ endfunction(setup_target)
 setup_target(open-builder)
 
 target_link_libraries(open-builder
+    glad
     enet
     lua
-   # imgui
-    #imgui_sfml
+    imgui
+    glm
+    imgui_impl
     Threads::Threads 
-    ${OPENGL_LIBRARIES} 
     ${SFML_LIBRARIES} 
     ${SFML_DEPENDENCIES}
+    ${CMAKE_DL_LIBS}
 )

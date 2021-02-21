@@ -1,16 +1,17 @@
-#include <SFML/Graphics/Vertex.hpp>
+#include <SFML/GpuPreference.hpp>
 #include <SFML/Network/IpAddress.hpp>
-#include <atomic>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Window.hpp>
-//#include <imgui/imgui.h>
-//#include <imgui_sfml/imgui-SFML.h>
+#include <atomic>
+#include <enet/enet.h>
+#include <glad/glad.h>
+#include <imgui/imgui.h>
+#include <imgui_impl/imgui_wrapper.h>
 #include <iostream>
 #include <thread>
-#include <enet/enet.h>
 #include <vector>
 
-constexpr int REGION_SIZE = 200;
+SFML_DEFINE_DISCRETE_GPU_PREFERENCE
 
 // ================================================
 //
@@ -33,11 +34,11 @@ int serverMain()
     });
 
     std::cout << "Starting server.\n";
-    //World world;
-    //Server server(world);
+    // World world;
+    // Server server(world);
     while (isRunning) {
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    //    server.tick();
+        //    server.tick();
     }
 
     console.join();
@@ -51,71 +52,73 @@ int serverMain()
 // =================================================
 int clientMain()
 {
-    /*
-   // World world;
-  //  Client client(world);
-    if (!client.connectTo(sf::IpAddress::getLocalAddress().toString())) {
-        return -1;
+
+    // World world;
+    //  Client client(world);
+    // if (!client.connectTo(sf::IpAddress::getLocalAddress().toString())) {
+    //     return -1;
+    // }
+
+    // Set up the window
+    sf::Window window;
+    {
+        sf::ContextSettings contextSettings;
+        contextSettings.depthBits = 24;
+        contextSettings.stencilBits = 8;
+        contextSettings.antialiasingLevel = 4;
+        contextSettings.majorVersion = 3;
+        contextSettings.minorVersion = 3;
+        contextSettings.attributeFlags = sf::ContextSettings::Core;
+        window.create({1600, 900}, "open-builder", sf::Style::Close, contextSettings);
+
+        window.setFramerateLimit(60);
+        window.setKeyRepeatEnabled(false);
+        if (!gladLoadGL()) {
+            std::cerr << "Failed to load OpenGL, exiting." << std::endl;
+            return 1;
+        }
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glViewport(0, 0, window.getSize().x, window.getSize().y);
+    }
+    // Start imgui
+    ImGui_SfGl::init(window);
+    {
+        ImGuiStyle& style = ImGui::GetStyle();
+        style.WindowRounding = 2;
+        style.FrameRounding = 0;
+        style.PopupRounding = 0;
+        style.ScrollbarRounding = 0;
+        style.TabRounding = 6;
     }
 
-    // Set up the window and
-    sf::RenderWindow window({REGION_SIZE * 7, REGION_SIZE * 5}, "SFML");
-    window.setFramerateLimit(60);
-    window.setKeyRepeatEnabled(false);
-
-    // Start imgui
-  //  ImGui::SFML::Init(window);
-
     // Start the main game loop
-    //Keyboard keyboard;
+    // Keyboard keyboard;
     sf::Clock dt;
     while (window.isOpen()) {
         sf::Event e;
         while (window.pollEvent(e)) {
-         //  keyboard.update(e);
-         //   ImGui::SFML::ProcessEvent(e);
+            ImGui_ImplSfml_ProcessEvent(e);
+            // keyboard.update(e);
             switch (e.type) {
                 case sf::Event::Closed:
                     window.close();
                     break;
 
-                case sf::Event::MouseButtonReleased:
-                    switch (e.mouseButton.button) {
-                        case sf::Mouse::Button::Left:
-                            client.sendPlayerClick(e.mouseButton.x, e.mouseButton.y);
-                            break;
-
-                        default:
-                            break;
-                    }
-
                 default:
                     break;
             }
         }
-        // Update
-        client.tick();
-        ImGui::SFML::Update(window, dt.restart());
-
+        ImGui_SfGl::startFrame();
         ImGui::ShowDemoWindow();
 
-        if (!client.isConnected()) {
-            window.close();
-            break;
-        }
-
         // Render
-        window.clear();
-        ImGui::SFML::Render(window);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        window.draw(regionLines.data(), regionLines.size(), sf::Lines);
+        ImGui_SfGl::endFrame();
         window.display();
     }
-
-    ImGui::SFML::Shutdown();
-    */
+    ImGui_SfGl::shutdown();
     return 0;
-    
 }
 
 // ================================================
