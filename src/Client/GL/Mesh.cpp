@@ -128,9 +128,9 @@ namespace glpp {
 
     float getNoiseAt(float z, float vx, float vz)
     {
-        const float ROUGH = 1.8f;
-        const float SMOOTH = 11.0f;
-        const int OCTAVES = 5;
+        const float ROUGH = 1.2f;
+        const float SMOOTH = 120.0f;
+        const int OCTAVES = 3;
 
         float vertexX = vx;
         float vertexZ = vz + z;
@@ -159,8 +159,7 @@ namespace glpp {
             for (int x = 0; x < size.x; x++) {
                 terrian.positions.push_back(x * tileSize);
                 terrian.positions.push_back(
-                    getNoiseAt((float)terrainZIndex, (float)x, (float)y) * 190.0f -
-                    180.0f);
+                    getNoiseAt((float)terrainZIndex, (float)x, (float)y) * 25.0f - 25);
                 terrian.positions.push_back(y * tileSize);
 
                 terrian.normals.push_back(0);

@@ -186,6 +186,14 @@ add_executable(open-builder
     src/Client/GL/Shader.cpp 
     src/Client/GL/Texture.cpp
     src/Client/GL/VertexArray.cpp
+
+    src/Client/Screen/InGameScreen.cpp 
+    src/Client/Screen/MainMenuScreen.cpp
+    src/Client/Screen/Screen.cpp
+
+    src/Client/ClientSettings.cpp
+
+
     src/Maths.cpp
     src/main.cpp
 )
