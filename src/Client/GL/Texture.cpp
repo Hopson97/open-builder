@@ -67,7 +67,7 @@ namespace glpp {
     void Texture2d::create(const std::string& name, bool flip)
     {
         sf::Image image;
-        if (!image.loadFromFile("data/textures/" + name)) {
+        if (!image.loadFromFile("Data/Textures/" + name)) {
             throw std::runtime_error("Could not load texture.");
         }
         if (flip) {

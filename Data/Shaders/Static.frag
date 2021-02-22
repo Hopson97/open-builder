@@ -3,21 +3,24 @@
 layout (location = 0) out vec4 outColour;
 //layout (location = 1) out vec4 outBrightColour;
 
-//uniform vec3 lightPosition;
-//uniform vec3 colour;
+uniform vec3 lightPosition;
+uniform vec3 colour;
 
-//in vec3 passFragPosition;
-//in vec3 passNormal;
+in vec3 passFragPosition;
+in vec2 passTextureCoord;
+in vec3 passNormal;
+
+uniform sampler2D tex;
 
 void main() {
     outColour = vec4(1.0, 0.5, 0.5, 1.0);
-    //vec3 normal = normalize(passNormal);
-    //vec3 lightDirection = normalize(lightPosition - passFragPosition);
+    vec3 normal = normalize(passNormal);
+    vec3 lightDirection = normalize(lightPosition - passFragPosition);
 
-    //float diff = max(dot(normal, lightDirection) * 1.3, 0.3);
-    //vec3 diffuse = colour * diff * 1.1;
-    
-    //outColour = vec4(diffuse, 1.0f);
+    float diff = max(dot(normal, lightDirection) * 1.3, 0.3);
+    vec3 diffuse = texture(tex, passTextureCoord).rgb * diff;
+
+    outColour = vec4(diffuse, 1.0f);
 
     //float brightness = (colour.r * 1.5) + (colour.g * 0.5) + (colour.b * 0.5);
     //if(brightness > 0.6)

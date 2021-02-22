@@ -154,30 +154,33 @@ namespace glpp {
 
     Mesh createTerrainMesh(int terrainZIndex, const glm::vec2& size, float tileSize)
     {
-        Mesh terrian;
+        Mesh terrain;
         for (int y = 0; y < size.y; y++) {
             for (int x = 0; x < size.x; x++) {
-                terrian.positions.push_back(x * tileSize);
-                terrian.positions.push_back(
+                terrain.positions.push_back(x * tileSize);
+                terrain.positions.push_back(
                     getNoiseAt((float)terrainZIndex, (float)x, (float)y) * 25.0f - 25);
-                terrian.positions.push_back(y * tileSize);
+                terrain.positions.push_back(y * tileSize);
 
-                terrian.normals.push_back(0);
-                terrian.normals.push_back(1);
-                terrian.normals.push_back(0);
+                terrain.normals.push_back(0);
+                terrain.normals.push_back(1);
+                terrain.normals.push_back(0);
+
+                terrain.textureCoords.push_back(x % 2);
+                terrain.textureCoords.push_back(y % 2);
             }
         }
         for (int y = 0; y < size.y - 1; y++) {
             for (int x = 0; x < size.x - 1; x++) {
                 GLuint index = x + y * static_cast<int>(size.x);
-                terrian.indices.push_back(index);
-                terrian.indices.push_back(index + static_cast<int>(size.x));
-                terrian.indices.push_back(index + static_cast<int>(size.x) + 1);
-                terrian.indices.push_back(index + static_cast<int>(size.x) + 1);
-                terrian.indices.push_back(index + 1);
-                terrian.indices.push_back(index);
+                terrain.indices.push_back(index);
+                terrain.indices.push_back(index + static_cast<int>(size.x));
+                terrain.indices.push_back(index + static_cast<int>(size.x) + 1);
+                terrain.indices.push_back(index + static_cast<int>(size.x) + 1);
+                terrain.indices.push_back(index + 1);
+                terrain.indices.push_back(index);
             }
         }
-        return terrian;
+        return terrain;
     }
 } // namespace glpp

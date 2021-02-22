@@ -49,20 +49,27 @@ InGameScreen::InGameScreen(ScreenManager& screens)
     m_shader.bind();
     m_locModelMat = m_shader.getUniformLocation("modelMatrix");
     m_locPvMat = m_shader.getUniformLocation("projectionViewMatrix");
+    m_locLightPos = m_shader.getUniformLocation("lightPosition");
+    m_locColour = m_shader.getUniformLocation("colour");
 
     auto cube = glpp::createCubeMesh({1, 1, 1});
     m_cubeVao.bind();
     m_cubeVao.addAttribute(cube.positions, 3);
-    // quad.addAttribute(texCoords, 2);
-    // quad.addAttribute(normals, 3);
+    m_cubeVao.addAttribute(cube.textureCoords, 2);
+    m_cubeVao.addAttribute(cube.normals, 3);
     m_cubeVao.addElements(cube.indices);
 
     auto terrain = glpp::createTerrainMesh(0, {128, 128}, 1);
     m_terrainVao.bind();
     m_terrainVao.addAttribute(terrain.positions, 3);
-    // quad.addAttribute(texCoords, 2);
-    // quad.addAttribute(normals, 3);
+    m_terrainVao.addAttribute(terrain.textureCoords, 2);
+    m_terrainVao.addAttribute(terrain.normals, 3);
     m_terrainVao.addElements(terrain.indices);
+
+    // Update lighting
+    glpp::loadUniform(m_locLightPos, {0, 20, 0});
+
+    m_texture.create("Player.png", true);
 }
 
 InGameScreen::~InGameScreen()
@@ -118,7 +125,9 @@ void InGameScreen::onUpdate(float dt)
 
 void InGameScreen::onRender()
 {
+    glCheck(glEnable(GL_DEPTH_TEST));
     // Render GUI Stuff
+    if (ClientSettings::get().showFps) {
     auto flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration |
                  ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings |
                  ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
@@ -127,6 +136,9 @@ void InGameScreen::onRender()
         ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
     }
     ImGui::End();
+    }
+    
+    m_texture.bind();
 
     m_shader.bind();
 
@@ -150,6 +162,8 @@ void InGameScreen::onRender()
             showPauseMenu();
         }
     }
+    glCheck(glDisable(GL_DEPTH_TEST));
+
 }
 
 void InGameScreen::showPauseMenu()
