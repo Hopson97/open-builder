@@ -126,20 +126,7 @@ void InGameScreen::onUpdate(float dt)
 void InGameScreen::onRender()
 {
     glCheck(glEnable(GL_DEPTH_TEST));
-    // Render GUI Stuff
-    if (ClientSettings::get().showFps) {
-    auto flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration |
-                 ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings |
-                 ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
-    if (ImGui::Begin("FPS", nullptr, flags)) {
-        ImGuiIO& io = ImGui::GetIO();
-        ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-    }
-    ImGui::End();
-    }
-    
     m_texture.bind();
-
     m_shader.bind();
 
     // Load up projection matrix stuff
@@ -163,7 +150,6 @@ void InGameScreen::onRender()
         }
     }
     glCheck(glDisable(GL_DEPTH_TEST));
-
 }
 
 void InGameScreen::showPauseMenu()

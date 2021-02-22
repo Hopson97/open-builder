@@ -1,8 +1,11 @@
+#include "Client/ClientSettings.h"
 #include "Client/GL/GLDebug.h"
 #include "Client/GL/Mesh.h"
 #include "Client/GL/Shader.h"
 #include "Client/GL/VertexArray.h"
 #include "Client/Keyboard.h"
+#include "Client/Screen/MainMenuScreen.h"
+#include "Client/Screen/Screen.h"
 #include "Maths.h"
 #include <SFML/GpuPreference.hpp>
 #include <SFML/Network/IpAddress.hpp>
@@ -17,10 +20,28 @@
 #include <thread>
 #include <vector>
 
-#include "Client/Screen/MainMenuScreen.h"
-#include "Client/Screen/Screen.h"
-
 SFML_DEFINE_DISCRETE_GPU_PREFERENCE
+
+namespace {
+    const int TPS = 30; // ticks per seconds
+    const sf::Time timePerUpdate = sf::seconds(1.0f / float(TPS));
+
+    void showFPS()
+    {
+        if (ClientSettings::get().showFps) {
+            auto flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration |
+                         ImGuiWindowFlags_AlwaysAutoResize |
+                         ImGuiWindowFlags_NoSavedSettings |
+                         ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
+            if (ImGui::Begin("FPS", nullptr, flags)) {
+                ImGuiIO& io = ImGui::GetIO();
+                ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate,
+                            io.Framerate);
+            }
+            ImGui::End();
+        }
+    }
+} // namespace
 
 // ================================================
 //
@@ -61,13 +82,6 @@ int serverMain()
 // =================================================
 int clientMain()
 {
-
-    // World world;
-    //  Client client(world);
-    // if (!client.connectTo(sf::IpAddress::getLocalAddress().toString())) {
-    //     return -1;
-    // }
-
     // Set up the window
     sf::Window window;
     {
@@ -109,8 +123,6 @@ int clientMain()
     sf::Clock dt;
     sf::Time lastTime = sf::Time::Zero;
     sf::Time lag = sf::Time::Zero;
-    const int TPS = 30; // ticks per seconds
-    const sf::Time timePerUpdate = sf::seconds(1.0f / float(TPS));
 
     // Start the screens
     ScreenManager screens;
@@ -149,6 +161,8 @@ int clientMain()
         // Render...
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         ImGui_SfGl::startFrame();
+        showFPS();
+
         screen.onRender();
         ImGui_SfGl::endFrame();
 

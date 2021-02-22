@@ -2,8 +2,8 @@
 
 #include "../../Maths.h"
 #include "../GL/Shader.h"
-#include "../GL/VertexArray.h"
 #include "../GL/Texture.h"
+#include "../GL/VertexArray.h"
 #include "Screen.h"
 #include <SFML/System/Clock.hpp>
 
@@ -35,6 +35,6 @@ class InGameScreen final : public Screen {
     glpp::Shader m_shader;
     glpp::UniformLocation m_locModelMat;
     glpp::UniformLocation m_locPvMat;
-        glpp::UniformLocation m_locLightPos;
+    glpp::UniformLocation m_locLightPos;
     glpp::UniformLocation m_locColour;
 };
