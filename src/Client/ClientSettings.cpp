@@ -26,6 +26,7 @@ void ClientSettings::showSettingsMenu(std::function<void(void)> onBackPressed)
         ImGui::Separator();
         ImGui::Text("Basic Settings");
         ImGui::Checkbox("Show FPS Counter", &showFps);
+        ImGui::Checkbox("Enable Bloom", &useBloomShaders);
 
         ImGui::Separator();
 

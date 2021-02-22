@@ -34,7 +34,7 @@ struct Player {
 } m_player;
 
 // Some variables I guess
-auto projection = createProjectionMatrix(1280.0f / 720.0f, 75.0f);
+auto projection = createProjectionMatrix(1600.0f / 900.0f, 75.0f);
 
 InGameScreen::InGameScreen(ScreenManager& screens)
     : Screen(screens)
@@ -125,7 +125,7 @@ void InGameScreen::onUpdate(float dt)
 
 void InGameScreen::onRender()
 {
-    glCheck(glEnable(GL_DEPTH_TEST));
+    //glCheck(glEnable(GL_DEPTH_TEST));
     m_texture.bind();
     m_shader.bind();
 
@@ -149,7 +149,7 @@ void InGameScreen::onRender()
             showPauseMenu();
         }
     }
-    glCheck(glDisable(GL_DEPTH_TEST));
+   // glCheck(glDisable(GL_DEPTH_TEST));
 }
 
 void InGameScreen::showPauseMenu()

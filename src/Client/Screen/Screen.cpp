@@ -50,7 +50,7 @@ Screen::Screen(ScreenManager& screens)
 
 bool imguiBeginCustom(const char* name)
 {
-    ImVec2 windowSize(1280 / 4, 720 / 2);
+    ImVec2 windowSize(1600 / 4, 900 / 2);
     ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
     ImGui::SetNextWindowPos({windowSize.x + windowSize.x * 4 / 8.0f, windowSize.y / 2},
                             ImGuiCond_Always);

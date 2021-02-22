@@ -14,6 +14,7 @@ struct ClientSettings {
         return settings;
     }
     bool showFps = false;
+    bool useBloomShaders = false;
 
     void showSettingsMenu(std::function<void(void)> onBackPressed);
 };
