@@ -62,34 +62,6 @@ namespace {
 } // namespace
 
 namespace glpp {
-
-    Mesh createScreenMesh()
-    {
-        Mesh quad;
-        // clang-format off
-    quad.positions = {
-        -1.f, -1.f,
-        1.f, -1.f,
-        1.f, 1.f,
-        -1.f, 1.f
-    };
-
-    quad.textureCoords = {
-        0.0f, 0.0f, 
-        1.0f, 0.0f, 
-        1.0f, 1.0f, 
-        0.0f, 1.0f
-    };
-
-    quad.indices = {
-        0, 1, 2, 
-        2, 3, 0
-    };
-
-        // clang-format on
-        return quad;
-    }
-
     Mesh createCubeMesh(const glm::vec3& dimensions)
     {
         Mesh cube;

@@ -4,18 +4,11 @@
 #include "../GL/Shader.h"
 #include "../GL/Texture.h"
 #include "../GL/VertexArray.h"
+#include "../Input.h"
 #include "Screen.h"
 #include <SFML/System/Clock.hpp>
 
-#include <list>
-
 class InGameScreen final : public Screen {
-    struct Terrain {
-        int index = 0;
-        glm::vec3 location{0.0f};
-        glpp::VertexArray vertexArray;
-    };
-
   public:
     InGameScreen(ScreenManager& stack);
     ~InGameScreen();
@@ -28,6 +21,8 @@ class InGameScreen final : public Screen {
     bool m_isPaused = false;
     bool m_isSettingsOpened = false;
     void showPauseMenu();
+
+    FirstPersonController m_firstPersonController;
 
     glpp::Texture2d m_texture;
     glpp::VertexArray m_cubeVao;

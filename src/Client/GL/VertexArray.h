@@ -18,6 +18,7 @@ namespace glpp {
         const GLsizei indicesCount = 0;
         Drawable(GLuint vao, GLsizei indices);
         void draw(DrawMode mode = DrawMode::Triangles) const;
+        void drawArrays(int count = 6, DrawMode mode = DrawMode::Triangles) const;
         void bind() const;
     };
 

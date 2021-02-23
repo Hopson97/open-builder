@@ -21,9 +21,9 @@ void main() {
 
     outColour = vec4(diffuse, 1.0f);
 
-    float brightness = (outColour.r * 1.5) + (outColour.g * 0.5) + (outColour.b * 0.5);
-    if(brightness > 0.6)
+    float brightness = dot(outColour.rgb, vec3(0.2126, 0.7152, 0.0722));
+    if(brightness > 0.9) 
         outBrightColour = vec4(outColour.rgb, 1.0);
     else
-        outBrightColour = vec4(1.0, 1.0, 1.0, 1.0); 
+        outBrightColour = vec4(0.0, 0.0, 0.0, 1.0); 
 }

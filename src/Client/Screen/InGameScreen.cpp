@@ -3,7 +3,6 @@
 #include "../ClientSettings.h"
 #include "../GL/GLDebug.h"
 #include "../GL/Mesh.h"
-#include "../Keyboard.h"
 #include <SFML/Window/Keyboard.hpp>
 #include <imgui/imgui.h>
 #include <iostream>
@@ -86,14 +85,13 @@ void InGameScreen::onInput(const sf::Window& window, const Keyboard& keyboard)
     if (m_isPaused) {
         return;
     }
-    float SPEED = 0.5f;
-    // Input for mouse
-    static sf::Vector2i lastMousePosition = sf::Mouse::getPosition(window);
-    sf::Vector2i change = sf::Mouse::getPosition(window) - lastMousePosition;
+    auto SPEED = 2.0f;
+    static sf::Vector2i m_lastMousePosition;
+    sf::Vector2i change = sf::Mouse::getPosition(window) - m_lastMousePosition;
     m_player.rotation.x += static_cast<float>(change.y / 8.0f * 0.5);
     m_player.rotation.y += static_cast<float>(change.x / 8.0f * 0.5);
     sf::Mouse::setPosition({(int)window.getSize().x / 2, (int)window.getSize().y / 2});
-    lastMousePosition = sf::Mouse::getPosition(window);
+    m_lastMousePosition = sf::Mouse::getPosition(window);
 
     // Inout for keyboard
     if (keyboard.isKeyDown(sf::Keyboard::W)) {
@@ -108,6 +106,9 @@ void InGameScreen::onInput(const sf::Window& window, const Keyboard& keyboard)
     else if (keyboard.isKeyDown(sf::Keyboard::D)) {
         m_player.velocity += rightVector(m_player.rotation) * SPEED;
     }
+
+    // m_firstPersonController.control(window, keyboard, m_player.velocity,
+    //                                 m_player.rotation);
 }
 
 void InGameScreen::onUpdate(float dt)
@@ -125,7 +126,7 @@ void InGameScreen::onUpdate(float dt)
 
 void InGameScreen::onRender()
 {
-    //glCheck(glEnable(GL_DEPTH_TEST));
+    glCheck(glActiveTexture(GL_TEXTURE0));
     m_texture.bind();
     m_shader.bind();
 
@@ -149,7 +150,7 @@ void InGameScreen::onRender()
             showPauseMenu();
         }
     }
-   // glCheck(glDisable(GL_DEPTH_TEST));
+    // glCheck(glDisable(GL_DEPTH_TEST));
 }
 
 void InGameScreen::showPauseMenu()

@@ -179,7 +179,7 @@ cmake_minimum_required(VERSION 3.10)
 project(open-builder VERSION 1.0)
 
 #Set executable
-add_executable(open-builder
+add_library(open-builder-lib
     src/Client/GL/Framebuffer.cpp
     src/Client/GL/GLDebug.cpp 
     src/Client/GL/Mesh.cpp
@@ -192,9 +192,14 @@ add_executable(open-builder
     src/Client/Screen/Screen.cpp
 
     src/Client/ClientSettings.cpp
+    src/Client/Input.cpp
+
 
 
     src/Maths.cpp
+)
+
+add_executable(open-builder
     src/main.cpp
 )
 
@@ -233,9 +238,11 @@ function(setup_target TARGET)
     )
 endfunction(setup_target)
 
+setup_target(open-builder-lib)
 setup_target(open-builder)
 
 target_link_libraries(open-builder
+open-builder-lib
     glad
     enet
     lua
@@ -247,3 +254,27 @@ target_link_libraries(open-builder
     ${SFML_DEPENDENCIES}
     ${CMAKE_DL_LIBS}
 )
+
+
+
+#add_executable(tests
+#    tests/tests.cpp
+#    tests/World/CoordinateTest.cpp
+#)
+#
+#setup_target(tests)
+#target_include_directories(tests PRIVATE src)
+#
+#target_link_libraries(tests
+#open-builder-lib
+#    glad
+#    enet
+#    lua
+#    imgui
+#    glm
+#    imgui_impl
+#    Threads::Threads 
+#    ${SFML_LIBRARIES} 
+#    ${SFML_DEPENDENCIES}
+#    ${CMAKE_DL_LIBS}
+#)

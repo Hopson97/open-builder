@@ -4,7 +4,7 @@
 #include "Client/GL/Mesh.h"
 #include "Client/GL/Shader.h"
 #include "Client/GL/VertexArray.h"
-#include "Client/Keyboard.h"
+#include "Client/Input.h"
 #include "Client/Screen/InGameScreen.h"
 #include "Client/Screen/MainMenuScreen.h"
 #include "Client/Screen/Screen.h"
@@ -158,7 +158,8 @@ int clientMain()
     blurShader.addShader("Blur", glpp::ShaderType::Fragment);
     blurShader.linkShaders();
     blurShader.bind();
-    glpp::UniformLocation blurLocation = blurShader.getUniformLocation("isHorizontalBlur");
+    glpp::UniformLocation blurLocation =
+        blurShader.getUniformLocation("isHorizontalBlur");
     (void)(blurLocation);
     // Final pass
     glpp::Shader finalPassShader;
@@ -168,17 +169,10 @@ int clientMain()
     finalPassShader.bind();
     glpp::loadUniform(finalPassShader.getUniformLocation("bloomTexture"), 0);
     glpp::loadUniform(finalPassShader.getUniformLocation("colourTexture"), 1);
-    glpp::UniformLocation bloomToggle =
-     finalPassShader.getUniformLocation("bloomToggle");
+    glpp::UniformLocation bloomToggle = finalPassShader.getUniformLocation("bloomToggle");
 
     // Final pass render target
-    auto screenMesh = glpp::createScreenMesh();
-    glpp::VertexArray screenVertexArray;
-    screenVertexArray.bind();
-    screenVertexArray.addAttribute(screenMesh.positions, 2);
-    screenVertexArray.addAttribute(screenMesh.textureCoords, 2);
-    screenVertexArray.addElements(screenMesh.indices);
-    glpp::Drawable screenDrawable = screenVertexArray.getDrawable();
+    glpp::VertexArray quad;
 
     // Start the main game loop
     Keyboard keyboard;
@@ -208,14 +202,15 @@ int clientMain()
 
         showFPS();
 
-// Render the scene to a framebuffer
+        // Render the scene to a framebuffer
         glCheck(glEnable(GL_DEPTH_TEST));
         framebuffer.bind();
         glCheck(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
         screen.onRender();
 
         // Begin Post Processing
-        screenDrawable.bind();
+
+        quad.getDrawable().bind();
         glCheck(glDisable(GL_DEPTH_TEST));
         glCheck(glActiveTexture(GL_TEXTURE0));
 
@@ -226,14 +221,14 @@ int clientMain()
             glCheck(glClear(GL_COLOR_BUFFER_BIT));
             framebuffer.bindTexture(1);
             loadUniform(blurLocation, 1);
-            screenDrawable.draw();
+            quad.getDrawable().drawArrays();
 
             // Blur the image vertical
             blurVerticalFbo.bind();
             glCheck(glClear(GL_COLOR_BUFFER_BIT));
             blurHorizontalFbo.bindTexture(0);
             loadUniform(blurLocation, 0);
-            screenDrawable.draw();
+            quad.getDrawable().drawArrays();
 
             // Keep on blurring
             for (int i = 0; i < 10; i++) {
@@ -242,13 +237,13 @@ int clientMain()
                 blurVerticalFbo.bindTexture(0);
 
                 loadUniform(blurLocation, 1);
-                screenDrawable.draw();
+                quad.getDrawable().drawArrays();
 
                 blurVerticalFbo.bind();
                 glCheck(glClear(GL_COLOR_BUFFER_BIT));
                 blurHorizontalFbo.bindTexture(0);
                 loadUniform(blurLocation, 0);
-                screenDrawable.draw();
+                quad.getDrawable().drawArrays();
             }
         }
 
@@ -265,7 +260,7 @@ int clientMain()
 
         loadUniform(bloomToggle, ClientSettings::get().useBloomShaders);
 
-        screenDrawable.draw();
+        quad.getDrawable().drawArrays();
 
         // Display
         ImGui_SfGl::endFrame();

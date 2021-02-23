@@ -19,7 +19,7 @@ then
         ./bin/debug/open-builder client
     fi
 else
-    if [ "$2" = "release" ]
+    if [ "$1" = "release" ]
     then
         ./bin/release/open-builder
     else 

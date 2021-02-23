@@ -103,6 +103,11 @@ namespace glpp {
         glCheck(glDrawElements(mode, indicesCount, GL_UNSIGNED_INT, nullptr));
     }
 
+    void Drawable::drawArrays(int count, DrawMode mode) const
+    {
+        glCheck(glDrawArrays(mode, 0, count));
+    }
+
     void Drawable::bind() const
     {
         assert(vertexArray != 0);

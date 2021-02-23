@@ -17,7 +17,6 @@ namespace glpp {
         int currentIndex = 0;
     };
 
-    Mesh createScreenMesh();
     Mesh createCubeMesh(const glm::vec3& dimensions);
     Mesh createWireCubeMesh(const glm::vec3& dimensions, float wireThickness = 0.1);
     Mesh createTerrainMesh(int terrainZIndex, const glm::vec2& size, float tileSize);
