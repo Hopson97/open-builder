@@ -1,3 +1,8 @@
+
+As of ~April 2020, I stopped working on this project for several reasons.
+
+The way I created this was quite "over done" to the point it got hard to work out how to add new features, perhaps due to trying to be an engine rather than a game. However, I am interested in one day revisiting this concept, however perhaps in a different repository rather than this one.
+
 # Open Builder
 
 ![Linux C/C++ CI](https://github.com/Hopson97/open-builder/workflows/Linux%20C/C++%20CI/badge.svg)
