@@ -103,9 +103,9 @@ namespace gl {
                         const std::string_view fragmentFile)
     {
         glCheck(glUseProgram(0));
-        const std::string vertFileFull("shaders/" + std::string(vertexFile) +
+        const std::string vertFileFull("assets/shaders/" + std::string(vertexFile) +
                                        "_vertex.glsl");
-        const std::string fragFileFull("shaders/" + std::string(fragmentFile) +
+        const std::string fragFileFull("assets/shaders/" + std::string(fragmentFile) +
                                        "_fragment.glsl");
 
         try {

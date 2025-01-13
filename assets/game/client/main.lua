@@ -1,25 +1,25 @@
 --
 -- Helpers
 --
-dofile("game/client/gui_helpers/common.lua")   
-dofile("game/client/gui_helpers/stack_menu.lua")   
+dofile("assets/game/client/gui_helpers/common.lua")   
+dofile("assets/game/client/gui_helpers/stack_menu.lua")   
 
 --
 --  Menus
 --
-dofile("game/client/menus/main_menu.lua")
-dofile("game/client/menus/settings_menu.lua")
-dofile("game/client/menus/new_world_menu.lua")
-dofile("game/client/menus/join_world_menu.lua")
-dofile("game/client/menus/world_select.lua")
-dofile("game/client/menus/pause_menu.lua")
-dofile("game/client/menus/error_screen.lua")
-dofile("game/client/menus/transition_screen.lua")
+dofile("assets/game/client/menus/main_menu.lua")
+dofile("assets/game/client/menus/settings_menu.lua")
+dofile("assets/game/client/menus/new_world_menu.lua")
+dofile("assets/game/client/menus/join_world_menu.lua")
+dofile("assets/game/client/menus/world_select.lua")
+dofile("assets/game/client/menus/pause_menu.lua")
+dofile("assets/game/client/menus/error_screen.lua")
+dofile("assets/game/client/menus/transition_screen.lua")
 
 -- 
 -- In Game GUIs
 --
-dofile("game/client/hud.lua")
+dofile("assets/game/client/hud.lua")
 
 game.onClientStartup(function()
     game.gui():change("main_menu")

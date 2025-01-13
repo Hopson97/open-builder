@@ -6,12 +6,9 @@
 #include <thread>
 #include <vector>
 
-
-
 #include <common/debug.h>
 #include <common/network/enet.h>
 #include <common/util.h>
-
 
 #include "client/client_config.h"
 #include "client/client_engine.h"

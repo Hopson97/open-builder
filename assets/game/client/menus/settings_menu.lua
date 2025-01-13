@@ -1,6 +1,6 @@
 
-local backgroundTexture = game.getTexture("res/menu_bg.png")
-local logoTexture = game.getTexture("res/logo.png")
+local backgroundTexture = game.getTexture("assets/textures/menu_bg.png")
+local logoTexture = game.getTexture("assets/textures/logo.png")
 
 local function onCreate(overlay)
     local menu = StackMenu:create(900, overlay, 15, "Settings")

@@ -1,6 +1,6 @@
 
-local backgroundTexture = game.getTexture("res/error_bg.png")
-local logoTexture = game.getTexture("res/logo.png")
+local backgroundTexture = game.getTexture("assets/textures/error_bg.png")
+local logoTexture = game.getTexture("assets/textures/logo.png")
 
 local function onCreate(overlay, data)
 

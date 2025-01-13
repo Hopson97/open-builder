@@ -16,16 +16,17 @@ ServerWorld::ServerWorld(int size)
     luaInitWorldApi(m_lua);
 
     // Load game data. Must be in this order!
-    m_lua.lua["path"] = "game/";
-    m_lua.runLuaFile("game/voxels.lua");
-    m_lua.runLuaFile("game/biomes.lua");
+    m_lua.lua["path"] = "assets/game/";
+    m_lua.runLuaFile("assets/game/voxels.lua");
+    m_lua.runLuaFile("assets/game/biomes.lua");
 
     m_voxelData.initCommonVoxelTypes();
 
-    for (int z = 0; z < size; z++) {
-        for (int x = 0; x < size; x++) {
-            auto chunks =
-                generateTerrain(m_chunks, x, z, m_voxelData, m_biomeData, 9000, size);
+    for (int z = 0; z < size; z++)
+    {
+        for (int x = 0; x < size; x++)
+        {
+            auto chunks = generateTerrain(m_chunks, x, z, m_voxelData, m_biomeData, 9000, size);
             for (auto& chunk : chunks)
                 m_currentChunks.insert(chunk);
         }
@@ -60,9 +61,11 @@ const std::vector<EntityState>& ServerWorld::getEntities() const
 void ServerWorld::serialiseEntities(ServerPacket& packet) const
 {
     packet.write(entityCount);
-    for (u32 i = 1; i < m_entities.size(); i++) {
+    for (u32 i = 1; i < m_entities.size(); i++)
+    {
         const auto& state = m_entities[i];
-        if (state.active) {
+        if (state.active)
+        {
             packet.write(static_cast<u32>(i));
             packet.write(state.position);
             packet.write(state.rotation);
@@ -72,9 +75,11 @@ void ServerWorld::serialiseEntities(ServerPacket& packet) const
 
 u32 ServerWorld::addEntity()
 {
-    for (u32 i = 1; i < m_entities.size(); i++) {
+    for (u32 i = 1; i < m_entities.size(); i++)
+    {
         auto& state = m_entities[i];
-        if (!state.active) {
+        if (!state.active)
+        {
             entityCount++;
             state.active = true;
             return i;
@@ -108,10 +113,12 @@ const BiomeDataManager& ServerWorld::getBiomeData() const
 
 const Chunk* ServerWorld::getChunk(const ChunkPosition& chunkPosition)
 {
-    if (m_currentChunks.find(chunkPosition) != m_currentChunks.end()) {
+    if (m_currentChunks.find(chunkPosition) != m_currentChunks.end())
+    {
         return &m_chunks.getChunk(chunkPosition);
     }
-    else {
+    else
+    {
         m_chunkGenerationQueue.push(chunkPosition);
         return nullptr;
     }
@@ -127,15 +134,18 @@ glm::vec3 ServerWorld::getPlayerSpawnPosition(u32 playerId)
     int x = CHUNK_SIZE * 4;
     int z = CHUNK_SIZE * 4;
 
-    for (int chunkY = 10 - 1; chunkY >= 0; chunkY--) {
+    for (int chunkY = 10 - 1; chunkY >= 0; chunkY--)
+    {
         auto chunkPosition = worldToChunkPosition({x, 0, z});
         chunkPosition.y = chunkY;
         auto& spawn = m_chunks.getChunk(chunkPosition);
 
-        for (int voxelY = CHUNK_SIZE - 1; voxelY >= 0; voxelY--) {
+        for (int voxelY = CHUNK_SIZE - 1; voxelY >= 0; voxelY--)
+        {
             auto voxelPosition = toLocalVoxelPosition({x, 0, z});
             voxelPosition.y = voxelY;
-            if (spawn.qGetVoxel(voxelPosition) != 0) {
+            if (spawn.qGetVoxel(voxelPosition) != 0)
+            {
                 auto worldY = chunkY * CHUNK_SIZE + voxelY + 3;
                 return {x, worldY * 2, z};
             }
@@ -144,27 +154,28 @@ glm::vec3 ServerWorld::getPlayerSpawnPosition(u32 playerId)
     return {x, CHUNK_SIZE * 3, z};
 }
 
-std::optional<VoxelPosition> ServerWorld::tryInteract(InteractionKind kind,
-                                                      const glm::vec3& position,
-                                                      const glm::vec3& rotation)
+std::optional<VoxelPosition>
+ServerWorld::tryInteract(InteractionKind kind, const glm::vec3& position, const glm::vec3& rotation)
 {
     auto voxelPositions = getIntersectedVoxels(position, forwardsVector(rotation), 8);
-    if (voxelPositions.empty()) {
+    if (voxelPositions.empty())
+    {
         return {};
     }
     VoxelPosition& previous = voxelPositions.at(0);
 
-    for (auto& voxelPosition : voxelPositions) {
+    for (auto& voxelPosition : voxelPositions)
+    {
         auto voxelId = m_chunks.getVoxel(voxelPosition);
         auto type = m_voxelData.getVoxelData(voxelId).type;
-        if (type == VoxelType::Solid || type == VoxelType::Flora) {
+        if (type == VoxelType::Solid || type == VoxelType::Flora)
+        {
             auto air = m_voxelData.getVoxelId(CommonVoxel::Air);
             auto stone = m_voxelData.getVoxelId(CommonVoxel::Stone);
 
             VoxelUpdate update;
             update.voxel = kind == InteractionKind::DigBlock ? air : stone;
-            update.voxelPosition =
-                kind == InteractionKind::DigBlock ? voxelPosition : previous;
+            update.voxelPosition = kind == InteractionKind::DigBlock ? voxelPosition : previous;
 
             m_chunks.setVoxel(update.voxelPosition, update.voxel);
             return update.voxelPosition;

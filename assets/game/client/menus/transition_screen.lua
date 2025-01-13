@@ -1,5 +1,5 @@
 
-local backgroundTexture = game.getTexture("res/menu_bg.png")
+local backgroundTexture = game.getTexture("assets/textures/menu_bg.png")
 
 local function onCreate(overlay, data)
     local label = overlay:addLabel()

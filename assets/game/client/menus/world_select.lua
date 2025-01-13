@@ -1,6 +1,6 @@
 
-local backgroundTexture = game.getTexture("res/menu_bg.png")
-local buttonTexture = game.getTexture("res/button_small.png")
+local backgroundTexture = game.getTexture("assets/textures/menu_bg.png")
+local buttonTexture = game.getTexture("assets/textures/button_small.png")
 
 
 local function createWorldSelectButton(menu, slot)

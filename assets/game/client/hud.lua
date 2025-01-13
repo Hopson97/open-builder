@@ -1,5 +1,5 @@
-local crosshairTexture = game.getTexture("res/crosshair.png")
-local grass = game.getTexture("texture_packs/default/voxels/grass_side.png")
+local crosshairTexture = game.getTexture("assets/textures/crosshair.png")
+local grass = game.getTexture("assets/texture_packs/default/voxels/grass_side.png")
 
 local function createHUD(hud) 
     local crosshair = hud:addImage()

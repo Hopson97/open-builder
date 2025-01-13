@@ -16,12 +16,11 @@ bool ClientEngine::init(sf::Window& window)
     luaInitClientControlApi(m_lua, m_controller);
     luaInitGuiApi(m_lua, m_gui, &m_guiRenderer);
 
-    m_lua.runLuaFile("game/client/main.lua");
+    m_lua.runLuaFile("assets/game/client/main.lua");
     m_luaCallbacks.onClientStartup();
 
     m_guiRenderTarget.create(GUI_WIDTH, GUI_HEIGHT);
-    m_worldRenderTarget.create(ClientConfig::get().windowHeight,
-                               ClientConfig::get().windowWidth);
+    m_worldRenderTarget.create(ClientConfig::get().windowHeight, ClientConfig::get().windowWidth);
 
     m_screenShader.create("minimal", "minimal");
     m_screenBuffer = makeScreenQuadVertexArray();
@@ -30,13 +29,15 @@ bool ClientEngine::init(sf::Window& window)
 
 void ClientEngine::runClient()
 {
-    while (mp_window->isOpen()) {
+    while (mp_window->isOpen())
+    {
         pollWindowEvents();
         m_game.handleInput(m_keyboard, m_inputState);
         update();
         render();
 
-        if (!m_controller.executeAction(m_game, m_luaCallbacks)) {
+        if (!m_controller.executeAction(m_game, m_luaCallbacks))
+        {
             mp_window->close();
         }
     }
@@ -48,7 +49,8 @@ void ClientEngine::update()
     m_fpsCounter.update();
     m_game.tick(clock.restart().asSeconds());
     m_gui.update();
-    if (((int)m_fpsCounter.frameCount % 256) == 0) {
+    if (((int)m_fpsCounter.frameCount % 256) == 0)
+    {
         std::cout << m_fpsCounter.frameTime << '\n';
     }
 }
@@ -68,8 +70,7 @@ void ClientEngine::render()
     m_gui.render(m_guiRenderer);
 
     // Buffer to window
-    gl::unbindFramebuffers(ClientConfig::get().windowWidth,
-                           ClientConfig::get().windowHeight);
+    gl::unbindFramebuffers(ClientConfig::get().windowWidth, ClientConfig::get().windowHeight);
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
     auto drawable = m_screenBuffer.getDrawable();
@@ -91,13 +92,16 @@ void ClientEngine::render()
 void ClientEngine::pollWindowEvents()
 {
     sf::Event event;
-    while (mp_window->pollEvent(event)) {
-        if (mp_window->hasFocus()) {
+    while (mp_window->pollEvent(event))
+    {
+        if (mp_window->hasFocus())
+        {
             m_keyboard.update(event);
             m_gui.handleEvent(event);
             m_game.handleEvent(event);
         }
-        switch (event.type) {
+        switch (event.type)
+        {
             case sf::Event::MouseWheelScrolled:
                 m_luaCallbacks.onMouseWheelScroll(event.mouseWheelScroll);
                 break;

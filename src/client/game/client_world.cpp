@@ -9,7 +9,8 @@
 GLuint VoxelTextureMap::getTextureId(const std::string& name)
 {
     auto itr = textureMap.find(name);
-    if (itr == textureMap.end()) {
+    if (itr == textureMap.end())
+    {
         GLuint textureId = textures.addTexture(name);
         textureMap.emplace(name, textureId);
         return textureId;
@@ -25,7 +26,7 @@ ClientWorld::ClientWorld()
     m_vao = makeCubeVertexArray(1, 2, 1);
     m_entityShader.create("static", "static");
     m_entityShader.bind();
-    m_playerTexture.create("res/skins/player.png", false);
+    m_playerTexture.create("assets/skins/player.png", false);
     m_entityProj = m_entityShader.getUniformLocation("projectionViewMatrix");
     m_entityModel = m_entityShader.getUniformLocation("modelMatrix");
 }
@@ -37,29 +38,35 @@ void ClientWorld::setupData(int maxEntities)
 
 void ClientWorld::tick(float dt)
 {
-    if (!m_issetup) {
+    if (!m_issetup)
+    {
         return;
     }
 
     // Update chunks
     i32 count = 0;
-    for (auto itr = m_chunkUpdates.begin(); itr != m_chunkUpdates.end();) {
-        if (m_chunks.hasNeighbours(*itr)) {
+    for (auto itr = m_chunkUpdates.begin(); itr != m_chunkUpdates.end();)
+    {
+        if (m_chunks.hasNeighbours(*itr))
+        {
             const Chunk& chunk = m_chunks.getChunk(*itr);
             ChunkMeshCollection meshes = makeChunkMesh(chunk, m_voxelData);
             m_chunkRenderer.updateMesh(*itr, std::move(meshes));
             itr = m_chunkUpdates.erase(itr);
-            if (count++ > 3) {
+            if (count++ > 3)
+            {
                 break;
             }
         }
-        else {
+        else
+        {
             itr++;
         }
     }
 
     // Update voxels
-    for (auto& update : m_voxelUpdates) {
+    for (auto& update : m_voxelUpdates)
+    {
         auto chunkPosition = toChunkPosition(update.voxelPosition);
         m_chunks.ensureNeighbours(chunkPosition);
         m_chunks.setVoxel(update.voxelPosition, update.voxel);
@@ -67,24 +74,30 @@ void ClientWorld::tick(float dt)
 
         auto p = chunkPosition;
         auto localVoxelPostion = toLocalVoxelPosition(update.voxelPosition);
-        if (localVoxelPostion.x == 0) {
+        if (localVoxelPostion.x == 0)
+        {
             m_chunkUpdates.push_back({p.x - 1, p.y, p.z});
         }
-        else if (localVoxelPostion.x == CHUNK_SIZE - 1) {
+        else if (localVoxelPostion.x == CHUNK_SIZE - 1)
+        {
             m_chunkUpdates.push_back({p.x + 1, p.y, p.z});
         }
 
-        if (localVoxelPostion.y == 0) {
+        if (localVoxelPostion.y == 0)
+        {
             m_chunkUpdates.push_back({p.x, p.y - 1, p.z});
         }
-        else if (localVoxelPostion.y == CHUNK_SIZE - 1) {
+        else if (localVoxelPostion.y == CHUNK_SIZE - 1)
+        {
             m_chunkUpdates.push_back({p.x, p.y + 1, p.z});
         }
 
-        if (localVoxelPostion.z == 0) {
+        if (localVoxelPostion.z == 0)
+        {
             m_chunkUpdates.push_back({p.x, p.y, p.z - 1});
         }
-        else if (localVoxelPostion.z == CHUNK_SIZE - 1) {
+        else if (localVoxelPostion.z == CHUNK_SIZE - 1)
+        {
             m_chunkUpdates.push_back({p.x, p.y, p.z + 1});
         }
     }
@@ -94,7 +107,8 @@ void ClientWorld::tick(float dt)
 
 void ClientWorld::render(const Camera& camera)
 {
-    if (!m_issetup) {
+    if (!m_issetup)
+    {
         return;
     }
     m_voxelTextures.textures.bind();
@@ -110,12 +124,14 @@ void ClientWorld::render(const Camera& camera)
     gl::loadUniform(m_entityProj, camera.getProjectionView());
     auto d = m_vao.getDrawable();
     d.bind();
-    for (u32 i = 1; i < m_entities.size(); i++) {
+    for (u32 i = 1; i < m_entities.size(); i++)
+    {
         auto& entity = m_entities[i];
-        if (entity.active && i != m_playerId) {
+        if (entity.active && i != m_playerId)
+        {
             glm::mat4 model{1.0f};
-            translateMatrix(model, {entity.position.x - 0.5, entity.position.y - 3,
-                                    entity.position.z - 0.5});
+            translateMatrix(
+                model, {entity.position.x - 0.5, entity.position.y - 3, entity.position.z - 0.5});
             gl::loadUniform(m_entityModel, model);
             d.draw();
         }
@@ -131,11 +147,11 @@ void ClientWorld::addEntity(u32 id, const glm::vec3& position, const glm::vec3& 
     m_entities[id].rotation = rotation;
 }
 
-void ClientWorld::updateEntity(u32 id, const glm::vec3& position,
-                               const glm::vec3& rotation)
+void ClientWorld::updateEntity(u32 id, const glm::vec3& position, const glm::vec3& rotation)
 {
     assert(id <= m_entities.size());
-    if (!m_entities[id].active) {
+    if (!m_entities[id].active)
+    {
         return;
     }
     m_entities[id].position = position;
@@ -159,7 +175,7 @@ void ClientWorld::setVoxelTextureCount(int count)
 void ClientWorld::addVoxelType(VoxelData&& voxel)
 {
     const std::string texturePath =
-        "texture_packs/" + ClientConfig::get().texturePack + "/voxels/";
+        "assets/texture_packs/" + ClientConfig::get().texturePack + "/voxels/";
 
     std::string& top = voxel.topTexture;
     std::string& side = voxel.sideTexture;

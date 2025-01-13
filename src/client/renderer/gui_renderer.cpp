@@ -15,7 +15,7 @@ GuiRenderer::GuiRenderer()
     m_shader.bind();
     m_shader.updateProjection(projectionMatrix);
 
-    m_font.init("res/VeraMono-Bold.ttf");
+    m_font.init("assets/fonts/VeraMono-Bold.ttf");
 }
 
 int GuiRenderer::getTexture(const std::string& textureName)
