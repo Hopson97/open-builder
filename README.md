@@ -1,4 +1,3 @@
-
 As of ~April 2020, I stopped working on this project for several reasons.
 
 The way I created this was quite "over done" to the point it got hard to work out how to add new features, perhaps due to trying to be an engine rather than a game. However, I am interested in one day revisiting this concept, however perhaps in a different repository rather than this one.
@@ -14,13 +13,74 @@ More information about the project can be found in the **[Open Builder Wiki](htt
 
 This was made mostly for a YouTube series which can be found here: **[Lets Code A Multiplayer Voxel Game](https://www.youtube.com/watch?v=4Rg1RriQZ9Q&list=PLMZ_9w2XRxiYb-ewSron6jd2fC1UHbDbJ&index=2)**
 
-## Compiling/ Running
+## Building and Running
 
-[Windows With Visual Studio](https://github.com/Hopson97/open-builder/blob/master/docs/building/Building_windows_vs.md)
+### Windows (Visual Studio)
 
-[MacOS With CMake](https://github.com/Hopson97/open-builder/blob/master/docs/building/Building_macos_cmake.md)
+The easiest way to build is to use [vcpkg](https://vcpkg.io/en/index.html) and install dependencies through this:
 
-[Linux With CMake](https://github.com/Hopson97/open-builder/blob/master/docs/building/Building_linux_cmake.md)
+```bash
+vcpkg install sfml
+vcpkg install imgui
+vcpkg install glm
+vcpkg integrate install
+```
+
+Then open the Visual Studio project file to build and run.
+
+### Linux
+
+#### Pre-requisites
+
+Install Vcpkg and other required packages using your distribution's package manager:
+
+```sh
+git clone https://github.com/microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+
+# These are required to build some packages
+sudo apt install cmake make autoconf libtool pkg-config
+
+# The following are required for SFML
+sudo apt install libx11-dev xorg-dev freeglut3-dev libudev-dev
+```
+
+Ensure paths are set correctly:
+
+```sh
+export VCPKG_ROOT=/path/to/vcpkg
+export PATH=$VCPKG_ROOT:$PATH
+```
+
+RECOMMENDED: Add the above lines to your `.bashrc` or `.zshrc` file:
+
+```sh
+echo 'export VCPKG_ROOT=/path/to/vcpkg' >> ~/.bashrc
+echo 'export PATH=$VCPKG_ROOT:$PATH' >> ~/.bashrc
+```
+
+#### Build and Run
+
+To build, at the root of the project:
+
+```sh
+vcpkg install # First time only
+sh scripts/build.sh
+```
+
+To run, at the root of the project:
+
+```sh
+sh scripts/run.sh
+```
+
+To build and run in release mode, simply add the `release` suffix:
+
+```sh
+sh scripts/build.sh release
+sh scripts/run.sh release
+```
 
 ## Project Structure
 
@@ -33,7 +93,6 @@ A quick overview of the code and project structure can be found in the wiki arti
 Please see main article here:
 
 **[Contributing](https://github.com/Hopson97/open-builder/wiki/Contributing)**
-
 
 ## Screenshots
 

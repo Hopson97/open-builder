@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{a8f1dcc1-7e1a-43fd-96c4-e6bd9c626405}</ProjectGuid>
+    <RootNamespace>open-builder</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>open-builder</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <VcpkgUseStatic>false</VcpkgUseStatic>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <VcpkgUseStatic>false</VcpkgUseStatic>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgUseStatic>false</VcpkgUseStatic>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <VcpkgUseStatic>false</VcpkgUseStatic>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\common;$(SolutionDir)deps;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\common;$(SolutionDir)deps;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="deps\enet\enet_impl.cpp" />
+    <ClCompile Include="deps\glad\glad.c" />
+    <ClCompile Include="src\client\client_engine.cpp" />
+    <ClCompile Include="src\client\client_state_controller.cpp" />
+    <ClCompile Include="src\client\game\chunk_mesh.cpp" />
+    <ClCompile Include="src\client\game\chunk_mesh_generation.cpp" />
+    <ClCompile Include="src\client\game\client_world.cpp" />
+    <ClCompile Include="src\client\game\game.cpp" />
+    <ClCompile Include="src\client\game\game_def.cpp" />
+    <ClCompile Include="src\client\game\game_type.cpp" />
+    <ClCompile Include="src\client\game\player.cpp" />
+    <ClCompile Include="src\client\gl\font.cpp" />
+    <ClCompile Include="src\client\gl\framebuffer.cpp" />
+    <ClCompile Include="src\client\gl\gl_errors.cpp" />
+    <ClCompile Include="src\client\gl\primitive.cpp" />
+    <ClCompile Include="src\client\gl\shader.cpp" />
+    <ClCompile Include="src\client\gl\textures.cpp" />
+    <ClCompile Include="src\client\gl\vertex_array.cpp" />
+    <ClCompile Include="src\client\gui\component\rectangle_component.cpp" />
+    <ClCompile Include="src\client\gui\component\text_component.cpp" />
+    <ClCompile Include="src\client\gui\gui_system.cpp" />
+    <ClCompile Include="src\client\gui\overlay.cpp" />
+    <ClCompile Include="src\client\gui\overlay_factory.cpp" />
+    <ClCompile Include="src\client\gui\widget\button_widget.cpp" />
+    <ClCompile Include="src\client\gui\widget\checkbox_widget.cpp" />
+    <ClCompile Include="src\client\gui\widget\image_widget.cpp" />
+    <ClCompile Include="src\client\gui\widget\label_widget.cpp" />
+    <ClCompile Include="src\client\gui\widget\text_box_widget.cpp" />
+    <ClCompile Include="src\client\gui\widget\widget.cpp" />
+    <ClCompile Include="src\client\gui\widget\widget_helper.cpp" />
+    <ClCompile Include="src\client\input\keyboard.cpp" />
+    <ClCompile Include="src\client\lua\client_control_api.cpp" />
+    <ClCompile Include="src\client\lua\client_input_api.cpp" />
+    <ClCompile Include="src\client\lua\client_lua_callback.cpp" />
+    <ClCompile Include="src\client\lua\gui_api.cpp" />
+    <ClCompile Include="src\client\lua\gui_widget_api.cpp" />
+    <ClCompile Include="src\client\network\client.cpp" />
+    <ClCompile Include="src\client\renderer\camera.cpp" />
+    <ClCompile Include="src\client\renderer\chunk_renderer.cpp" />
+    <ClCompile Include="src\client\renderer\gui_renderer.cpp" />
+    <ClCompile Include="src\client\window.cpp" />
+    <ClCompile Include="src\common\common\debug.cpp" />
+    <ClCompile Include="src\common\common\lua\script_engine.cpp" />
+    <ClCompile Include="src\common\common\lua\util_api.cpp" />
+    <ClCompile Include="src\common\common\maths.cpp" />
+    <ClCompile Include="src\common\common\network\enet.cpp" />
+    <ClCompile Include="src\common\common\network\packet.cpp" />
+    <ClCompile Include="src\common\common\util.cpp" />
+    <ClCompile Include="src\common\common\world\biome.cpp" />
+    <ClCompile Include="src\common\common\world\chunk.cpp" />
+    <ClCompile Include="src\common\common\world\chunk_manager.cpp" />
+    <ClCompile Include="src\common\common\world\coordinate.cpp" />
+    <ClCompile Include="src\common\common\world\voxel_data.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\server\lua\data_api.cpp" />
+    <ClCompile Include="src\server\lua\server_lua_callback.cpp" />
+    <ClCompile Include="src\server\lua\world_api.cpp" />
+    <ClCompile Include="src\server\network\client_session.cpp" />
+    <ClCompile Include="src\server\network\pending_client_session.cpp" />
+    <ClCompile Include="src\server\server_engine.cpp" />
+    <ClCompile Include="src\server\world\server_world.cpp" />
+    <ClCompile Include="src\server\world\terrain_generation.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".clang-format" />
+    <None Include=".gitignore" />
+    <None Include="imgui.ini" />
+    <None Include="README.md" />
+    <None Include="scripts\build.sh" />
+    <None Include="scripts\debug.sh" />
+    <None Include="scripts\run.sh" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="deps\enet\enet.h" />
+    <ClInclude Include="deps\glad\glad.h" />
+    <ClInclude Include="deps\glad\khrplatform.h" />
+    <ClInclude Include="deps\sol\config.hpp" />
+    <ClInclude Include="deps\sol\sol.hpp" />
+    <ClInclude Include="src\client\client_config.h" />
+    <ClInclude Include="src\client\client_engine.h" />
+    <ClInclude Include="src\client\client_state_controller.h" />
+    <ClInclude Include="src\client\game\chunk_mesh.h" />
+    <ClInclude Include="src\client\game\chunk_mesh_generation.h" />
+    <ClInclude Include="src\client\game\client_world.h" />
+    <ClInclude Include="src\client\game\game.h" />
+    <ClInclude Include="src\client\game\game_def.h" />
+    <ClInclude Include="src\client\game\game_type.h" />
+    <ClInclude Include="src\client\game\player.h" />
+    <ClInclude Include="src\client\gl\font.h" />
+    <ClInclude Include="src\client\gl\framebuffer.h" />
+    <ClInclude Include="src\client\gl\gl_errors.h" />
+    <ClInclude Include="src\client\gl\primitive.h" />
+    <ClInclude Include="src\client\gl\shader.h" />
+    <ClInclude Include="src\client\gl\textures.h" />
+    <ClInclude Include="src\client\gl\vertex_array.h" />
+    <ClInclude Include="src\client\gui\component\component.h" />
+    <ClInclude Include="src\client\gui\component\rectangle_component.h" />
+    <ClInclude Include="src\client\gui\component\text_component.h" />
+    <ClInclude Include="src\client\gui\gui_constants.h" />
+    <ClInclude Include="src\client\gui\gui_system.h" />
+    <ClInclude Include="src\client\gui\overlay.h" />
+    <ClInclude Include="src\client\gui\overlay_factory.h" />
+    <ClInclude Include="src\client\gui\widget\button_widget.h" />
+    <ClInclude Include="src\client\gui\widget\checkbox_widget.h" />
+    <ClInclude Include="src\client\gui\widget\image_widget.h" />
+    <ClInclude Include="src\client\gui\widget\label_widget.h" />
+    <ClInclude Include="src\client\gui\widget\text_box_widget.h" />
+    <ClInclude Include="src\client\gui\widget\widget.h" />
+    <ClInclude Include="src\client\gui\widget\widget_helper.h" />
+    <ClInclude Include="src\client\input\input_state.h" />
+    <ClInclude Include="src\client\input\keyboard.h" />
+    <ClInclude Include="src\client\lua\client_lua_api.h" />
+    <ClInclude Include="src\client\lua\client_lua_callback.h" />
+    <ClInclude Include="src\client\network\client.h" />
+    <ClInclude Include="src\client\renderer\camera.h" />
+    <ClInclude Include="src\client\renderer\chunk_renderer.h" />
+    <ClInclude Include="src\client\renderer\gui_renderer.h" />
+    <ClInclude Include="src\client\renderer\gui_shader.h" />
+    <ClInclude Include="src\client\window.h" />
+    <ClInclude Include="src\common\common\debug.h" />
+    <ClInclude Include="src\common\common\lua\script_engine.h" />
+    <ClInclude Include="src\common\common\macros.h" />
+    <ClInclude Include="src\common\common\maths.h" />
+    <ClInclude Include="src\common\common\network\enet.h" />
+    <ClInclude Include="src\common\common\network\net_command.h" />
+    <ClInclude Include="src\common\common\network\net_constants.h" />
+    <ClInclude Include="src\common\common\network\net_types.h" />
+    <ClInclude Include="src\common\common\network\packet.h" />
+    <ClInclude Include="src\common\common\types.h" />
+    <ClInclude Include="src\common\common\util.h" />
+    <ClInclude Include="src\common\common\world\biome.h" />
+    <ClInclude Include="src\common\common\world\chunk.h" />
+    <ClInclude Include="src\common\common\world\chunk_manager.h" />
+    <ClInclude Include="src\common\common\world\coordinate.h" />
+    <ClInclude Include="src\common\common\world\entity_state.h" />
+    <ClInclude Include="src\common\common\world\voxel_data.h" />
+    <ClInclude Include="src\common\common\world\world_constants.h" />
+    <ClInclude Include="src\server\lua\server_lua_api.h" />
+    <ClInclude Include="src\server\lua\server_lua_callback.h" />
+    <ClInclude Include="src\server\network\client_session.h" />
+    <ClInclude Include="src\server\server_engine.h" />
+    <ClInclude Include="src\server\world\server_world.h" />
+    <ClInclude Include="src\server\world\terrain_generation.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+    <Text Include="deps\CMakeLists.txt" />
+    <Text Include="deps\glad\CMakeLists.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

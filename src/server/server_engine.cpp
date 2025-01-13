@@ -1,4 +1,5 @@
 #include "server_engine.h"
+
 #include <SFML/System/Clock.hpp>
 #include <atomic>
 #include <common/debug.h>
@@ -31,16 +32,20 @@ bool ServerEngine::isSetup() const
 void ServerEngine::run()
 {
     printf("Type 'exit' to shutdown server");
-    m_serverThread = std::thread([this] {
-        std::string input;
-        while (m_isServerRunning) {
-            std::getline(std::cin, input);
-            if (input == "exit") {
-                std::cout << "Exiting server.\n\n";
-                m_isServerRunning = false;
+    m_serverThread = std::thread(
+        [this]
+        {
+            std::string input;
+            while (m_isServerRunning)
+            {
+                std::getline(std::cin, input);
+                if (input == "exit")
+                {
+                    std::cout << "Exiting server.\n\n";
+                    m_isServerRunning = false;
+                }
             }
-        }
-    });
+        });
 
     launch();
 }
@@ -52,13 +57,15 @@ void ServerEngine::runAsThread()
 
 void ServerEngine::launch()
 {
-    if (!isSetup()) {
+    if (!isSetup())
+    {
         return;
     }
 
     m_isServerRunning = true;
 
-    while (m_isServerRunning) {
+    while (m_isServerRunning)
+    {
 
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
@@ -74,8 +81,10 @@ void ServerEngine::tick()
 {
     assert(m_host.handle);
     NetEvent event;
-    while (m_host.pumpEvent(event)) {
-        switch (event.type) {
+    while (m_host.pumpEvent(event))
+    {
+        switch (event.type)
+        {
             case NetEventType::Connection:
                 addPendingConnection(event.peer);
                 break;
@@ -85,19 +94,23 @@ void ServerEngine::tick()
                 handleDisconnection(event.peer);
                 break;
 
-            case NetEventType::Data: {
+            case NetEventType::Data:
+            {
                 ServerPacket packet(event.packet);
                 handlePacket(packet, event.peer);
                 enet_packet_destroy(event.packet);
-            } break;
+            }
+            break;
 
             default:
                 break;
         }
     }
 
-    for (auto& client : m_clients) {
-        if (client.isActive()) {
+    for (auto& client : m_clients)
+    {
+        if (client.isActive())
+        {
             client.tick(m_world);
         }
     }
@@ -106,23 +119,27 @@ void ServerEngine::tick()
 void ServerEngine::stop()
 {
     m_isServerRunning = false;
-    if (m_isServerRunning) {
+    if (m_isServerRunning)
+    {
 
         broadcastServerShutdown();
 
         enet_host_flush(m_host.handle);
-        for (auto& session : m_clients) {
+        for (auto& session : m_clients)
+        {
             session.disconnect();
         }
     }
-    if (m_serverThread.joinable()) {
+    if (m_serverThread.joinable())
+    {
         m_serverThread.join();
     }
 }
 
 void ServerEngine::broadcastPacket(ServerPacket& packet, int channel, int flags)
 {
-    for (auto& client : m_clients) {
+    for (auto& client : m_clients)
+    {
         if (client.isActive())
             client.sendPacket(packet, channel, flags);
     }
@@ -130,9 +147,11 @@ void ServerEngine::broadcastPacket(ServerPacket& packet, int channel, int flags)
 
 std::vector<PendingClientSession>::iterator ServerEngine::findPendingSession(u32 peerId)
 {
-    for (auto itr = m_pendingConnections.begin(); itr != m_pendingConnections.end();) {
+    for (auto itr = m_pendingConnections.begin(); itr != m_pendingConnections.end();)
+    {
         auto thepeer = itr->connection.peer;
-        if (thepeer->incomingPeerID == peerId) {
+        if (thepeer->incomingPeerID == peerId)
+        {
             return itr;
         }
     }
@@ -148,8 +167,10 @@ void ServerEngine::addPendingConnection(ENetPeer* peer)
 
 int ServerEngine::createClientSession(ENetPeer* peer, u32 salt)
 {
-    for (unsigned i = 0; i < m_clients.size(); i++) {
-        if (!m_clients[i].isActive()) {
+    for (unsigned i = 0; i < m_clients.size(); i++)
+    {
+        if (!m_clients[i].isActive())
+        {
             u32 playerId = m_world.addEntity();
             m_clients[i].init(peer, salt, playerId);
             m_clientsMap[peer->incomingPeerID] = i;
@@ -202,14 +223,16 @@ void ServerEngine::broadcastServerShutdown()
 //
 //          Packet handling functions
 //
-#define AUTHENTICATE_PACKET                                                              \
-    auto itr = m_clientsMap.find(peer->incomingPeerID);                                  \
-    if (itr == m_clientsMap.end()) {                                                     \
-        return;                                                                          \
-    }                                                                                    \
-    auto& client = m_clients.at(itr->second);                                            \
-    if (!client.verify(packet.getSalt())) {                                              \
-        return;                                                                          \
+#define AUTHENTICATE_PACKET                                                                        \
+    auto itr = m_clientsMap.find(peer->incomingPeerID);                                            \
+    if (itr == m_clientsMap.end())                                                                 \
+    {                                                                                              \
+        return;                                                                                    \
+    }                                                                                              \
+    auto& client = m_clients.at(itr->second);                                                      \
+    if (!client.verify(packet.getSalt()))                                                          \
+    {                                                                                              \
+        return;                                                                                    \
     }
 
 void ServerEngine::handlePacket(ServerPacket& packet, ENetPeer* peer)
@@ -230,8 +253,10 @@ void ServerEngine::handlePacket(ServerPacket& packet, ENetPeer* peer)
 
 void ServerEngine::onHandshakePartOne(ServerPacket& packet, ENetPeer* peer)
 {
-    for (auto& pending : m_pendingConnections) {
-        if (pending.connection.peer->incomingPeerID == peer->incomingPeerID) {
+    for (auto& pending : m_pendingConnections)
+    {
+        if (pending.connection.peer->incomingPeerID == peer->incomingPeerID)
+        {
             pending.salt = packet.getSalt();
             pending.sendHandshakeChallenge(m_salt);
         }
@@ -241,19 +266,24 @@ void ServerEngine::onHandshakePartOne(ServerPacket& packet, ENetPeer* peer)
 void ServerEngine::onHandshakeResponse(ServerPacket& packet, ENetPeer* peer)
 {
     auto itr = findPendingSession(peer->incomingPeerID);
-    if (itr != m_pendingConnections.end()) {
+    if (itr != m_pendingConnections.end())
+    {
         auto& pending = *itr;
         auto thepeer = pending.connection.peer;
-        if (thepeer->incomingPeerID == peer->incomingPeerID) {
+        if (thepeer->incomingPeerID == peer->incomingPeerID)
+        {
             u32 salt = itr->salt ^ m_salt;
-            if (salt == packet.getSalt()) {
+            if (salt == packet.getSalt())
+            {
                 itr->salt = salt;
                 int slot = createClientSession(peer, salt);
-                if (slot != -1) {
+                if (slot != -1)
+                {
                     pending.sendAcceptConnection(m_clients[slot].getPlayerId());
                     pending.sendGameData(m_world);
                 }
-                else {
+                else
+                {
                     pending.sendRejectConnection("Game Full");
                 }
             }
@@ -271,14 +301,17 @@ void ServerEngine::onInteraction(ServerPacket& packet, ENetPeer* peer)
 
     // See if a block was clicked
     auto result = m_world.tryInteract(InteractionKind::PlaceBlock, position, rotation);
-    if (result) {
+    if (result)
+    {
         VoxelUpdate update;
         update.voxelPosition = *result;
         update.voxel = m_world.getVoxelData().getVoxelId(CommonVoxel::Stone);
 
         // Send to clients that own this chunk
-        for (auto& session : m_clients) {
-            if (session.isActive()) {
+        for (auto& session : m_clients)
+        {
+            if (session.isActive())
+            {
                 session.sendVoxelUpdate(update);
             }
         }
@@ -290,20 +323,24 @@ void ServerEngine::onMouseState(ServerPacket& packet, ENetPeer* peer)
     AUTHENTICATE_PACKET
     auto& player = m_world.findEntity(client.getPlayerId());
     bool click = packet.read<u8>();
-    if (click) {
+    if (click)
+    {
         auto& position = player.position;
         auto& rotation = player.rotation;
 
         // See if a block was clicked
         auto result = m_world.tryInteract(InteractionKind::DigBlock, position, rotation);
-        if (result) {
+        if (result)
+        {
             VoxelUpdate update;
             update.voxelPosition = *result;
             update.voxel = m_world.getVoxelData().getVoxelId(CommonVoxel::Air);
 
             // Send to clients that own this chunk
-            for (auto& session : m_clients) {
-                if (session.isActive()) {
+            for (auto& session : m_clients)
+            {
+                if (session.isActive())
+                {
                     session.sendVoxelUpdate(update);
                 }
             }
@@ -335,16 +372,19 @@ void ServerEngine::onSpawnRequest(ServerPacket& packet, ENetPeer* peer)
 void ServerEngine::handleDisconnection(ENetPeer* peer)
 {
     auto itr = m_clientsMap.find(peer->incomingPeerID);
-    if (itr != m_clientsMap.end()) {
+    if (itr != m_clientsMap.end())
+    {
         auto index = itr->second;
         m_world.removeEntity(m_clients[index].getPlayerId());
         m_clients[index].disconnect();
         broadcastPlayerLeave(m_clients[index].getPlayerId());
         m_clientsMap.erase(itr);
     }
-    else {
+    else
+    {
         auto pending = findPendingSession(peer->incomingPeerID);
-        if (pending != m_pendingConnections.end()) {
+        if (pending != m_pendingConnections.end())
+        {
             m_pendingConnections.erase(pending);
         }
     }

@@ -38,7 +38,10 @@ void ClientLuaCallbacks::onError(const std::string& error)
 
 void ClientLuaCallbacks::onKeyboardKeyReleased(sf::Keyboard::Key key)
 {
-    runLuaCallbacks(m_onKeyReleaseCallbacks[key]);
+    if (key < m_onKeyReleaseCallbacks.size())
+    {
+        runLuaCallbacks(m_onKeyReleaseCallbacks[key]);
+    }
 }
 
 void ClientLuaCallbacks::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& wheelEvent)

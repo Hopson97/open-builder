@@ -1,7 +1,7 @@
 #pragma once
 
 #include "game_def.h"
-#include <server_engine.h>
+#include "../../server/server_engine.h"
 
 class LocalGame final : public ClientGameDef {
   public:

@@ -1,15 +1,16 @@
 #include "client.h"
 
-#include "../game/client_world.h"
-#include "client.h"
-#include <SFML/System/Clock.hpp>
+#include <iostream>
 #include <cassert>
+
+#include <SFML/System/Clock.hpp>
+
 #include <common/debug.h>
 #include <common/network/net_command.h>
 #include <common/network/net_constants.h>
 #include <common/world/entity_state.h>
-#include <iostream>
 #include "../game/player.h"
+#include "../game/client_world.h"
 
 Client::Client(ClientWorld& world, Player& player)
     : m_salt(createHandshakeRandom())

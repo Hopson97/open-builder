@@ -4,15 +4,16 @@
 #include <array>
 #include <common/world/coordinate.h>
 
-struct MeshFace {
+struct MeshFace
+{
     std::array<GLbyte, 12> vertices;
     GLbyte lightLevel;
 };
 
-struct ChunkMesh {
+struct ChunkMesh
+{
     ChunkMesh(const ChunkPosition& chunkPosition);
-    void addFace(const MeshFace& face, const VoxelPosition& voxelPosition,
-                 GLuint texture);
+    void addFace(const MeshFace& face, const VoxelPosition& voxelPosition, GLuint texture);
 
     gl::VertexArray createBuffer();
 
@@ -25,7 +26,8 @@ struct ChunkMesh {
     ChunkPosition position;
 };
 
-struct ChunkMeshCollection {
+struct ChunkMeshCollection
+{
     ChunkMeshCollection(const ChunkPosition& chunkPosition);
     ChunkMesh voxelMesh;
     ChunkMesh fluidMesh;

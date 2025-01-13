@@ -1,4 +1,3 @@
-#include <common/debug.h>
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
@@ -7,28 +6,35 @@
 #include <thread>
 #include <vector>
 
-#include "client/client_engine.h"
-#include "server/server_engine.h"
 
-#include "client/client_config.h"
 
+#include <common/debug.h>
 #include <common/network/enet.h>
 #include <common/util.h>
 
+
+#include "client/client_config.h"
+#include "client/client_engine.h"
 #include "client/window.h"
+#include "server/server_engine.h"
 
 // Enable nvidia
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <Windows.h>
-extern "C" {
-_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+extern "C"
+{
+    _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }
 #endif
 
-namespace {
-    enum class LaunchType {
-        Client, Server,
+namespace
+{
+    enum class LaunchType
+    {
+        Client,
+        Server,
     };
     /**
      * @brief Loads config eg window size from the config.txt file
@@ -56,8 +62,10 @@ namespace {
 
     LaunchType parseArgs(const std::vector<std::pair<std::string, std::string>>& args)
     {
-        for (const auto& option : args) {
-            if (option.first == "server") {
+        for (const auto& option : args)
+        {
+            if (option.first == "server")
+            {
                 return LaunchType::Server;
             }
         }
@@ -67,32 +75,40 @@ namespace {
 
 int main(int argc, char** argv)
 {
-    if (enet_initialize() != 0) {
+    if (enet_initialize() != 0)
+    {
         return EXIT_FAILURE;
     }
 
     std::vector<std::pair<std::string, std::string>> args;
-    for (int i = 1; i < argc; i++) {
-        if (argv[i][0] == '-' && argc > i + 1) {
+    for (int i = 1; i < argc; i++)
+    {
+        if (argv[i][0] == '-' && argc > i + 1)
+        {
             args.emplace_back(argv[i], argv[i + 1]);
         }
     }
 
     loadFromConfigFile();
-    switch (parseArgs(args)) {
-        case LaunchType::Server: {
+    switch (parseArgs(args))
+    {
+        case LaunchType::Server:
+        {
             ServerEngine launcher;
             launcher.run();
             break;
         }
 
-        case LaunchType::Client: {
+        case LaunchType::Client:
+        {
             sf::Window window;
-            if (!Window::createWindowInitOpengl(window)) {
+            if (!Window::createWindowInitOpengl(window))
+            {
                 return -1;
             }
             ClientEngine client;
-            if (client.init(window)) {
+            if (client.init(window))
+            {
                 client.runClient();
             }
             break;

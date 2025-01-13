@@ -41,6 +41,7 @@ namespace {
 
         window.create(mode, "Open Builder", style, settings);
         window.setPosition({window.getPosition().x, 0});
+        window.setVerticalSyncEnabled(true);
         //window.setFramerateLimit(60);
     }
 

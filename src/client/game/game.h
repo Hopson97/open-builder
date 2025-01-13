@@ -3,9 +3,9 @@
 #include "game_def.h"
 #include <SFML/Window/Event.hpp>
 #include <memory>
-#include <server_engine.h>
 
-class Game {
+class Game
+{
   public:
     template <typename T, typename... Args>
     void setGameDefintion(Args&&... args)

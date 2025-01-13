@@ -1,54 +1,24 @@
-#
-#   Common
-#
+# Linux
+build/
 
+# Windows
+*.dll
+*.exe
+*.filters
+*.user
+*.vs
 .vscode
-tags
+Debug/
+Release/
 
-*.temp
-
-open-builder/
-OpenBuilder/
+# Misc
 *.zip
-
-texture_packs/ElijahHyper
-
+*.temp
 *.srctrlprj
 *.srctrldb
 *.srctrlbm
 
+# Vcpkg
+vcpkg_installed/
 
-#
-#   Linux
-#
-
-build/
-bin/
-custom_run.sh
-zcustom_run.sh
-ybuild.sh
-
-#
-#   Windows
-#
-
-*.dll
-CMakeFiles/
-CMakeCache.txt
-*.exe
-
-# Visual Studio
-*.sln
-*.vcxproj
-*.filters
-*.user
-*.vs
-
-Debug/
-Release/
-UnitTests/
-open-builder-unit-tests/
-
-# Experimental 
-
-experimental/
+open-builder/

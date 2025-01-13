@@ -1,12 +1,16 @@
 #include "chunk_renderer.h"
 
+#include <algorithm>
+#include <numeric>
+
+#include <common/world/world_constants.h>
+
 #include "../client_config.h"
 #include "../gl/gl_errors.h"
 #include "camera.h"
-#include <common/world/world_constants.h>
-#include <numeric>
 
-namespace {
+namespace
+{
     /**
      * @brief Find the index of a chunk in a chunk renderable list given its position
      *
@@ -14,11 +18,12 @@ namespace {
      * @param drawables List of chunk renderable objects to search
      * @return int The index of the chunk, -1 if not found
      */
-    int findChunkDrawableIndex(const ChunkPosition& position,
-                               const ChunkRenderList& drawables)
+    int findChunkDrawableIndex(const ChunkPosition& position, const ChunkRenderList& drawables)
     {
-        for (unsigned i = 0; i < drawables.size(); i++) {
-            if (drawables[i].position == position) {
+        for (unsigned i = 0; i < drawables.size(); i++)
+        {
+            if (drawables[i].position == position)
+            {
                 return i;
             }
         }
@@ -34,7 +39,8 @@ namespace {
     void deleteChunkRenderable(const ChunkPosition& position, ChunkRenderList& drawables)
     {
         auto index = findChunkDrawableIndex(position, drawables);
-        if (index > -1) {
+        if (index > -1)
+        {
             drawables[index].vao.destroy();
             std::iter_swap(drawables.begin() + index, drawables.end() - 1);
             drawables.pop_back();
@@ -67,12 +73,14 @@ namespace {
      * @param outResult Count of chunks rendered this frame
      */
     void renderChunks(const ChunkRenderList& chunks, const ViewFrustum& frustum,
-                      gl::UniformLocation chunkPositionLocation,
-                      ChunkRenderResult& outResult, const glm::vec3& cameraPosition)
+                      gl::UniformLocation chunkPositionLocation, ChunkRenderResult& outResult,
+                      const glm::vec3& cameraPosition)
     {
-        for (const auto& chunk : chunks) {
+        for (const auto& chunk : chunks)
+        {
             if (isChunkInRenderDistance(cameraPosition, chunk.position) &&
-                frustum.chunkIsInFrustum(chunk.position)) {
+                frustum.chunkIsInFrustum(chunk.position))
+            {
 
                 glm::vec3 cp{chunk.position.x, chunk.position.y, chunk.position.z};
                 cp *= CHUNK_SIZE;
@@ -94,9 +102,9 @@ namespace {
      */
     void bufferChunks(ChunkMesh& mesh, ChunkRenderList& renderList)
     {
-        if (mesh.indicesCount > 0) {
-            renderList.push_back(
-                {mesh.position, mesh.createBuffer(), mesh.calculateBufferSize()});
+        if (mesh.indicesCount > 0)
+        {
+            renderList.push_back({mesh.position, mesh.createBuffer(), mesh.calculateBufferSize()});
         }
     }
 } // namespace
@@ -105,13 +113,11 @@ void ChunkRenderer::init()
 { // Chunk shader
     m_shader.program.create("chunk", "chunk");
     m_shader.program.bind();
-    m_shader.projectionViewLocation =
-        m_shader.program.getUniformLocation("projectionViewMatrix");
+    m_shader.projectionViewLocation = m_shader.program.getUniformLocation("projectionViewMatrix");
     m_shader.chunkPositionLocation = m_shader.program.getUniformLocation("chunkPosition");
 }
 
-void ChunkRenderer::updateMesh(const ChunkPosition& position,
-                               ChunkMeshCollection&& meshes)
+void ChunkRenderer::updateMesh(const ChunkPosition& position, ChunkMeshCollection&& meshes)
 {
     m_chunkMeshes.push_back(std::move(meshes));
     deleteChunkRenderables(position);
@@ -123,7 +129,8 @@ ChunkRenderResult ChunkRenderer::renderChunks(const Camera& camera, bool cameraI
     auto& fluidDrawables = m_chunkRenderables[static_cast<int>(ChunkRenderType::Fluid)];
     auto& floraDrawables = m_chunkRenderables[static_cast<int>(ChunkRenderType::Flora)];
 
-    for (auto& meshes : m_chunkMeshes) {
+    for (auto& meshes : m_chunkMeshes)
+    {
         bufferChunks(meshes.voxelMesh, solidDrawables);
         bufferChunks(meshes.fluidMesh, fluidDrawables);
         bufferChunks(meshes.floraMesh, floraDrawables);
@@ -147,7 +154,8 @@ ChunkRenderResult ChunkRenderer::renderChunks(const Camera& camera, bool cameraI
 
     // Fluid voxels
     glCheck(glEnable(GL_BLEND));
-    if (cameraInWater) {
+    if (cameraInWater)
+    {
         glCheck(glCullFace(GL_FRONT));
     }
     ::renderChunks(fluidDrawables, frustum, m_shader.chunkPositionLocation, result, pos);
@@ -159,31 +167,30 @@ ChunkRenderResult ChunkRenderer::renderChunks(const Camera& camera, bool cameraI
 
 int ChunkRenderer::getTotalChunks() const
 {
-    auto addSize = [](int sum, const ChunkRenderList& chunks) {
-        return sum + chunks.size();
-    };
+    auto addSize = [](int sum, const ChunkRenderList& chunks) { return sum + chunks.size(); };
 
-    return std::accumulate(m_chunkRenderables.begin(), m_chunkRenderables.end(), 0,
-                           addSize);
+    return std::accumulate(m_chunkRenderables.begin(), m_chunkRenderables.end(), 0, addSize);
 }
 
 int ChunkRenderer::getTotalBufferSize() const
 {
-    auto addSize = [](int sum, const ChunkRenderList& chunks) {
+    auto addSize = [](int sum, const ChunkRenderList& chunks)
+    {
         size_t totalSize = 0;
-        for (auto& chunk : chunks) {
+        for (auto& chunk : chunks)
+        {
             totalSize += chunk.bufferSize;
         }
         return sum + totalSize;
     };
 
-    return std::accumulate(m_chunkRenderables.begin(), m_chunkRenderables.end(), 0,
-                           addSize);
+    return std::accumulate(m_chunkRenderables.begin(), m_chunkRenderables.end(), 0, addSize);
 }
 
 void ChunkRenderer::deleteChunkRenderables(const ChunkPosition& position)
 {
-    for (auto& chunkRenderList : m_chunkRenderables) {
+    for (auto& chunkRenderList : m_chunkRenderables)
+    {
         deleteChunkRenderable(position, chunkRenderList);
     }
 }
