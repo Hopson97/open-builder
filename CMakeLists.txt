@@ -34,20 +34,8 @@ function (include_dirs target)
     )
 endfunction(include_dirs)
 
-function (link_exe target)
-    target_link_libraries(${target} 
-        ob-common
-        ob-client
-        ob-server
-        glad
-        enet
-        ${CMAKE_DL_LIBS}
-    )
-endfunction(link_exe)
-
-
 find_package(glm CONFIG REQUIRED)
-find_package(lua CONFIG REQUIRED)
+find_package(lua REQUIRED)
 find_package(SFML COMPONENTS system audio network window graphics CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
@@ -66,6 +54,8 @@ add_executable(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME}
     PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/server/
+    ${LUA_INCLUDE_DIR}
+    
 )
 
 target_include_directories(ob-common
@@ -104,6 +94,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     glm::glm
     # imgui_sfml
     glad 
+    ${LUA_LIBRARIES}
 )
 
 target_include_directories(ob-client

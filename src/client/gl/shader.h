@@ -2,23 +2,33 @@
 
 #include <glad/glad.h>
 #include <string>
+#include <vector>
 #include <string_view>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace gl {
+namespace gl
+{
     /**
      * @brief A uniform location in a shader
      */
-    struct UniformLocation final {
+    struct UniformLocation final
+    {
         GLuint ptr = 0;
     };
 
     /**
      * @brief Wrapper for a OpenGL shder object
      */
-    class Shader final {
+    class Shader final
+    {
+        enum class ShaderType
+        {
+            Vertex = GL_VERTEX_SHADER,
+            Fragment = GL_FRAGMENT_SHADER,
+        };
+
       public:
         Shader() = default;
         ~Shader();
@@ -29,15 +39,17 @@ namespace gl {
         Shader(const Shader&) = delete;
         Shader& operator=(const Shader&) = delete;
 
-        void create(const std::string_view vertexFile,
-                    const std::string_view fragmentFile);
+        bool create(const std::string_view vertexFile, const std::string_view fragmentFile);
         void destroy();
         void bind() const;
 
         UniformLocation getUniformLocation(const char* name);
 
       private:
+        bool loadStage(const std::string_view file, ShaderType shader_type);
+        bool linkStages();
         GLuint m_handle = 0;
+        std::vector<GLuint> m_stages;
     };
 
     // Functons for shaders

@@ -5,81 +5,83 @@
 
 #include <iostream>
 
-namespace {
-    class shader_compilation_error : public std::runtime_error {
-      public:
-        shader_compilation_error(const std::string& err)
-            : std::runtime_error(err)
-        {
-        }
-    };
-    class shader_linkage_error : public std::runtime_error {
-      public:
-        shader_linkage_error(const std::string& err)
-            : std::runtime_error(err)
-        {
-        }
-    };
-    GLuint compileShader(const std::string_view source, GLenum shaderType)
+namespace
+{
+    enum class IVParameter
     {
-        auto shaderID = glCheck(glCreateShader(shaderType));
+        CompileStatus = GL_COMPILE_STATUS,
+        LinkStatus = GL_LINK_STATUS
+    };
 
-        const GLchar* const shaderSourcePtr = source.data();
-        const GLint shaderSourceLength = source.length();
-        glCheck(glShaderSource(shaderID, 1, &shaderSourcePtr, &shaderSourceLength));
-        glCheck(glCompileShader(shaderID));
+    [[nodiscard]] constexpr auto to_string(IVParameter param)
+    {
+        switch (param)
+        {
+            case IVParameter::CompileStatus:
+                return "compile";
 
-        GLint logLength;
-
-        glCheck(glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &logLength));
-        if (logLength) {
-            std::string infoLog(logLength, 0);
-            glCheck(glGetShaderInfoLog(shaderID, logLength, nullptr, infoLog.data()));
-
-            throw shader_compilation_error(infoLog);
+            case IVParameter::LinkStatus:
+                return "link";
         }
-
-        return shaderID;
+        return "ShouldNeverGetHere";
     }
 
-    GLuint linkProgram(GLuint vertexShaderID, GLuint fragmentShaderID)
+    template <IVParameter parameter>
+    [[nodiscard]] auto verify_shader(GLuint shader)
     {
-        auto id = glCheck(glCreateProgram());
-
-        glCheck(glAttachShader(id, vertexShaderID));
-        glCheck(glAttachShader(id, fragmentShaderID));
-
-        glCheck(glLinkProgram(id));
-
-        glCheck(glDetachShader(id, fragmentShaderID));
-        glCheck(glDetachShader(id, vertexShaderID));
-
-        GLint logLength;
-
-        glCheck(glGetProgramiv(id, GL_INFO_LOG_LENGTH, &logLength));
-        if (logLength) {
-            std::string infoLog(logLength, 0);
-            glCheck(glGetProgramInfoLog(id, logLength, nullptr, infoLog.data()));
-            throw shader_linkage_error(infoLog);
+        // Verify
+        GLint status = 0;
+        if constexpr (parameter == IVParameter::CompileStatus)
+        {
+            glGetShaderiv(shader, static_cast<GLenum>(parameter), &status);
+        }
+        else if constexpr (parameter == IVParameter::LinkStatus)
+        {
+            glGetProgramiv(shader, static_cast<GLenum>(parameter), &status);
+        }
+        else
+        {
+            std::println(std::cerr, "Unkown verify type for action '{}'.", to_string(parameter));
         }
 
-        return id;
+        if (status == GL_FALSE)
+        {
+            GLsizei length;
+            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+
+            if constexpr (parameter == IVParameter::CompileStatus)
+            {
+                glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+            }
+            else if constexpr (parameter == IVParameter::LinkStatus)
+            {
+                glGetProgramiv(shader, GL_INFO_LOG_LENGTH, &length);
+            }
+            std::string buffer(1024, ' ');
+            glGetShaderInfoLog(shader, 1024, NULL, buffer.data());
+            std::println(std::cerr, "Failed to {} shader. Error: {}", to_string(parameter), buffer);
+            return false;
+        }
+        return true;
     }
 
-    struct ShaderStage {
-        const GLuint shaderID;
-        ShaderStage(const std::string_view shaderPath, const GLenum shaderType)
-            : shaderID(compileShader(loadFileContents(shaderPath), shaderType))
+    [[nodiscard]] GLuint compile_shader(const char* source, GLuint shader_type)
+    {
+        GLuint shader = glCreateShader(shader_type);
+        glShaderSource(shader, 1, (const GLchar* const*)&source, nullptr);
+        glCompileShader(shader);
+
+        if (!verify_shader<IVParameter::CompileStatus>(shader))
         {
+            return 0;
         }
-        ~ShaderStage()
-        {
-            glCheck(glDeleteShader(shaderID));
-        }
-    };
+        return shader;
+    }
+
 } // namespace
 
-namespace gl {
+namespace gl
+{
 
     Shader::~Shader()
     {
@@ -99,8 +101,7 @@ namespace gl {
         return *this;
     }
 
-    void Shader::create(const std::string_view vertexFile,
-                        const std::string_view fragmentFile)
+    bool Shader::create(const std::string_view vertexFile, const std::string_view fragmentFile)
     {
         glCheck(glUseProgram(0));
         const std::string vertFileFull("assets/shaders/" + std::string(vertexFile) +
@@ -108,20 +109,64 @@ namespace gl {
         const std::string fragFileFull("assets/shaders/" + std::string(fragmentFile) +
                                        "_fragment.glsl");
 
-        try {
-            const ShaderStage vertexShader(vertFileFull, GL_VERTEX_SHADER);
-            const ShaderStage fragmentShader(fragFileFull, GL_FRAGMENT_SHADER);
-            m_handle = linkProgram(vertexShader.shaderID, fragmentShader.shaderID);
+        return loadStage(vertFileFull, ShaderType::Vertex) &&
+               loadStage(fragFileFull, ShaderType::Fragment) && linkStages();
+    }
+
+    bool Shader::loadStage(const std::string_view file_path, ShaderType shader_type)
+    {
+        // Load the files into strings and verify
+        auto source = loadFileContents(file_path);
+        if (source.length() == 0)
+        {
+            return false;
         }
-        catch (const shader_compilation_error& e) {
-            throw std::runtime_error("Shader " + vertFileFull + " failed to compile:\n" +
-                                     e.what());
+
+        GLuint shader = compile_shader(source.c_str(), static_cast<GLenum>(shader_type));
+        if (!shader)
+        {
+            return false;
         }
-        catch (const shader_linkage_error& e) {
-            throw std::runtime_error("Linking failed for shaders " + vertFileFull +
-                                     " and " + fragFileFull + ", with reason:\n" +
-                                     e.what());
+        m_stages.push_back(shader);
+
+        return true;
+    }
+
+    bool Shader::linkStages()
+    {
+        // Link the shaders together and verify the link status
+        m_handle = glCreateProgram();
+        for (auto stage : m_stages)
+        {
+            glAttachShader(m_handle, stage);
         }
+        glLinkProgram(m_handle);
+
+        if (!verify_shader<IVParameter::LinkStatus>(m_handle))
+        {
+            std::println(std::cerr, "Failed to link shader.");
+
+            return false;
+        }
+        glValidateProgram(m_handle);
+
+        int status = 0;
+        glGetProgramiv(m_handle, GL_VALIDATE_STATUS, &status);
+        if (status == GL_FALSE)
+        {
+            std::println(std::cerr, "Failed to validate shader program.");
+            return false;
+        }
+
+        // Delete the temporary shaders
+        for (auto& shader : m_stages)
+        {
+            glDeleteShader(shader);
+        }
+        m_stages.clear();
+        m_stages.shrink_to_fit();
+
+        return true;
     }
 
     void Shader::destroy()
