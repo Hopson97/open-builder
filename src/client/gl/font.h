@@ -17,7 +17,7 @@ namespace gl {
      */
     class Font final {
       public:
-        void init(const std::string& fontFile);
+        Font(const std::string& fontFile);
         const sf::Glyph& getGlyph(char character, unsigned textSize) const;
 
         float getKerning(char before, char next, unsigned textSize) const;

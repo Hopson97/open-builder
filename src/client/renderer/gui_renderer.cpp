@@ -7,6 +7,7 @@
 
 GuiRenderer::GuiRenderer()
     : m_quadVao(makeQuadVertexArray(1.f, 1.f))
+    , m_font("assets/fonts/VeraMono-Bold.ttf")
 {
     glm::mat4 projectionMatrix{1.0f};
     projectionMatrix = glm::ortho(0.0f, static_cast<float>(GUI_WIDTH), 0.0f,
@@ -14,8 +15,6 @@ GuiRenderer::GuiRenderer()
 
     m_shader.bind();
     m_shader.updateProjection(projectionMatrix);
-
-    m_font.init("assets/fonts/VeraMono-Bold.ttf");
 }
 
 int GuiRenderer::getTexture(const std::string& textureName)

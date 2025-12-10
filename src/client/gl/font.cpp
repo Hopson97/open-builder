@@ -5,11 +5,9 @@
 
 namespace gl {
 
-    void Font::init(const std::string& fontFile)
+    Font::Font(const std::string& fontFile)
+        : m_font(fontFile)
     {
-        if (!m_font.loadFromFile(fontFile)) {
-            throw std::runtime_error("Unable to load font from file: " + fontFile);
-        }
     }
 
     const sf::Glyph& Font::getGlyph(char character, unsigned textSize) const

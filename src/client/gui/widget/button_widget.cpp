@@ -47,7 +47,7 @@ namespace gui {
 
     void ButtonWidget::handleClick(sf::Mouse::Button button, float mx, float my)
     {
-        if (mp_rectangle->isInBounds(mx, my) && button == sf::Mouse::Left) {
+        if (mp_rectangle->isInBounds(mx, my) && button == sf::Mouse::Button::Left) {
             if (m_onClick.valid()) {
                 m_onClick();
             }

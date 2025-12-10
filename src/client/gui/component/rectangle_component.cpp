@@ -48,7 +48,7 @@ namespace gui {
     {
         auto topLeft = m_position.apply();
         auto size = m_size.apply();
-        m_bounds = {topLeft.x, GUI_VIEWPORT.y - topLeft.y - size.y, size.x, size.y};
+        m_bounds = {{topLeft.x, GUI_VIEWPORT.y - topLeft.y - size.y}, {size.x, size.y}};
     }
 
     const sf::FloatRect& RectangleComponent::getBounds() const

@@ -151,7 +151,7 @@ namespace gl
         m_hasTexture = true;
     }
 
-    void Texture2d::create(unsigned int width, unsigned int height, const sf::Uint8* pixels)
+    void Texture2d::create(unsigned int width, unsigned int height, const std::uint8_t* pixels)
     {
         if (!m_handle)
         {
@@ -159,8 +159,7 @@ namespace gl
         }
         bind();
 
-        sf::Image img;
-        img.create(width, height, pixels);
+        sf::Image img({width, height}, pixels);
         glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getSize().x, img.getSize().y, 0,
                              GL_RGBA, GL_UNSIGNED_BYTE, img.getPixelsPtr()));
 
@@ -263,7 +262,8 @@ namespace gl
         if (!image.loadFromFile(file + ".png"))
         {
             // Create a error image
-            image.create(m_textureSize, m_textureSize);
+
+            image = sf::Image{{m_textureSize, m_textureSize}, sf::Color::Black};
             for (GLuint y = 0; y < m_textureSize; y++)
             {
                 for (GLuint x = 0; x < m_textureSize; x++)
@@ -271,7 +271,7 @@ namespace gl
                     uint8_t r = static_cast<uint8_t>(rand() % 255);
                     uint8_t g = static_cast<uint8_t>(rand() % 255);
                     uint8_t b = static_cast<uint8_t>(rand() % 255);
-                    image.setPixel(x, y, {r, g, b});
+                    image.setPixel({x, y}, {r, g, b});
                 }
             }
         };

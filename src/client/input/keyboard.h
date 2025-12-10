@@ -18,7 +18,7 @@ class Keyboard final {
      *
      * @param e The event to check key events for
      */
-    void update(sf::Event e);
+    void update(sf::Event& e);
 
     /**
      * @brief Check if a key is currently down

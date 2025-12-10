@@ -1,10 +1,13 @@
 #include "window.h"
 
+#include <iostream>
+
+#include <glad/glad.h>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/VideoMode.hpp>
+
 #include "client_config.h"
 #include "gl/gl_errors.h"
-#include <SFML/Window/Event.hpp>
-#include <glad/glad.h>
-#include <iostream>
 
 const sf::Window* Window::context = nullptr;
 
@@ -23,15 +26,14 @@ namespace {
         return true;
     }
 
-    void createWindow(sf::Window& window, const sf::VideoMode& mode, u32 style)
+    void createWindow(sf::Window& window, const sf::VideoMode& mode, u32 style, sf::State state)
     {
         sf::ContextSettings settings;
         settings.depthBits = 24;
         settings.stencilBits = 8;
-        settings.antialiasingLevel = 4;
-        settings.majorVersion = 3;
-        settings.minorVersion = 3;
-        settings.attributeFlags = sf::ContextSettings::Core;
+        settings.antiAliasingLevel = 4;
+        settings.majorVersion = 4;
+        settings.minorVersion = 6;
 #ifndef NDEBUG
         settings.attributeFlags |= sf::ContextSettings::Debug;
 #else
@@ -39,7 +41,7 @@ namespace {
             settings.attributeFlags |= GL_CONTEXT_FLAG_NO_ERROR_BIT_KHR;
 #endif
 
-        window.create(mode, "Open Builder", style, settings);
+        window.create(mode, "Open Builder", style, state, settings);
         window.setPosition({window.getPosition().x, 0});
         window.setVerticalSyncEnabled(true);
         //window.setFramerateLimit(60);
@@ -52,12 +54,12 @@ bool Window::createWindowInitOpengl(sf::Window& window)
     context = &window;
     window.setKeyRepeatEnabled(false);
     if (ClientConfig::get().fullScreen) {
-        createWindow(window, sf::VideoMode::getDesktopMode(), sf::Style::Fullscreen);
+        createWindow(window, sf::VideoMode::getDesktopMode(), sf::Style::None, sf::State::Fullscreen);
     }
     else {
         unsigned width = static_cast<unsigned>(ClientConfig::get().windowWidth);
         unsigned height = static_cast<unsigned>(ClientConfig::get().windowHeight);
-        createWindow(window, {width, height}, sf::Style::Close);
+        createWindow(window, sf::VideoMode{{width, height}}, sf::Style::Close, sf::State::Windowed);
     }
     if (ClientConfig::get().isFpsCapped) {
         window.setFramerateLimit(ClientConfig::get().fpsLimit);

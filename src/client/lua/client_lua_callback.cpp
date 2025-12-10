@@ -12,7 +12,7 @@ void ClientLuaCallbacks::initCallbacks(ScriptEngine& scriptEngine)
 
     scriptEngine.addFunction("onKeyReleased",
                              [this](sf::Keyboard::Key key, sol::function f) {
-                                 m_onKeyReleaseCallbacks[key].push_back(f);
+                                 m_onKeyReleaseCallbacks[(int)key].push_back(f);
                              });
 }
 
@@ -38,13 +38,13 @@ void ClientLuaCallbacks::onError(const std::string& error)
 
 void ClientLuaCallbacks::onKeyboardKeyReleased(sf::Keyboard::Key key)
 {
-    if (key < m_onKeyReleaseCallbacks.size())
+    if ((int)key < m_onKeyReleaseCallbacks.size())
     {
-        runLuaCallbacks(m_onKeyReleaseCallbacks[key]);
+        runLuaCallbacks(m_onKeyReleaseCallbacks[(int)key]);
     }
 }
 
-void ClientLuaCallbacks::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& wheelEvent)
+void ClientLuaCallbacks::onMouseWheelScroll(sf::Event::MouseWheelScrolled wheelEvent)
 {
     runLuaCallbacks(m_onMouseWheelScroll, wheelEvent.delta);
 }

@@ -33,7 +33,7 @@ namespace gui {
         Overlay(const OverlayDefinition& overlayDefinition);
 
         void handleClick(sf::Mouse::Button button, float mx, float my);
-        void handleMouseMove(sf::Event::MouseMoveEvent);
+        void handleMouseMove(sf::Event::MouseMoved);
         void handleKeyRelease(sf::Keyboard::Key);
         void handleTextEntered(unsigned char keycode);
 

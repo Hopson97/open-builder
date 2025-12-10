@@ -39,7 +39,7 @@ namespace gl {
         GLuint createFramebufferTexture(unsigned width, unsigned height);
         void create(const sf::Image& image);
         void create(const std::string& file, bool flipImage);
-        void create(unsigned int width, unsigned int height, const sf::Uint8* pixels);
+        void create(unsigned int width, unsigned int height, const std::uint8_t* pixels);
         void destroy();
         void bind() const;
         bool textureExists() const;

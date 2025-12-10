@@ -5,8 +5,10 @@
 #include "../gui_constants.h"
 #include <common/maths.h>
 
-namespace {
-    struct Mesh {
+namespace
+{
+    struct Mesh
+    {
         std::vector<GLfloat> vertices;
         std::vector<GLfloat> textureCoords;
         std::vector<GLuint> indices;
@@ -15,8 +17,10 @@ namespace {
 
     // Adapted from https://github.com/SFML/SFML/blob/master/src/SFML/Graphics/Text.cpp
     // void addGlyphQuad and ensureGeometryUpdate
-    struct Character {
-        struct {
+    struct Character
+    {
+        struct
+        {
             float left = 0;
             float top = 0;
             float right = 0;
@@ -29,18 +33,18 @@ namespace {
             : position(pos)
         {
             // clang-format off
-        vertexBounds.left   = glyph.bounds.left;
-        vertexBounds.top    = glyph.bounds.top;
-        vertexBounds.right  = glyph.bounds.left + glyph.bounds.width;
-        vertexBounds.bottom = glyph.bounds.top + glyph.bounds.height;
+        vertexBounds.left   = glyph.bounds.position.x;
+        vertexBounds.top    = glyph.bounds.position.y;
+        vertexBounds.right  = glyph.bounds.position.x + glyph.bounds.size.x;
+        vertexBounds.bottom = glyph.bounds.position.y + glyph.bounds.size.y;
 
         // Find the texture coords in the texture
         const auto& textureRect = glyph.textureRect;
         float pad = 1.0f;
-        textureBounds.left   = (static_cast<float>(textureRect.left) - pad);
-        textureBounds.right  = (static_cast<float>(textureRect.left  + textureRect.width) + pad);
-        textureBounds.top    = (static_cast<float>(textureRect.top)  - pad);
-        textureBounds.bottom = (static_cast<float>(textureRect.top   + textureRect.height) + pad);
+        textureBounds.left   = (static_cast<float>(textureRect.position.x) - pad);
+        textureBounds.right  = (static_cast<float>(textureRect.position.x  + textureRect.size.x) + pad);
+        textureBounds.top    = (static_cast<float>(textureRect.position.y)  - pad);
+        textureBounds.bottom = (static_cast<float>(textureRect.position.y   + textureRect.size.y) + pad);
             // clang-format on
         }
 
@@ -81,7 +85,8 @@ namespace {
 
 } // namespace
 
-namespace gui {
+namespace gui
+{
 
     void TextComponent::setPosition(const GuiDimension& position)
     {
@@ -114,10 +119,12 @@ namespace gui {
 
     void TextComponent::render(gl::Font& font, GuiShader& shader)
     {
-        if (isHidden()) {
+        if (isHidden())
+        {
             return;
         }
-        if (m_isGeometryUpdateNeeded) {
+        if (m_isGeometryUpdateNeeded)
+        {
             updateGeometry(font);
         }
         auto& texture = font.getFontTexture(m_fontSize);
@@ -150,12 +157,14 @@ namespace gui {
         std::vector<Character> chars;
         sf::Vector2f pos{0, 0};
         char previous = 0;
-        for (auto character : m_text) {
+        for (auto character : m_text)
+        {
             pos.x += font.getKerning(previous, character, m_fontSize);
             previous = character;
 
             // New line handler
-            if (character == '\n') {
+            if (character == '\n')
+            {
                 pos.y += font.getLineHeight(m_fontSize);
                 pos.x = 0;
                 previous = 0;
@@ -173,7 +182,8 @@ namespace gui {
         auto& texture = font.getFontTexture(m_fontSize);
 
         Mesh mesh;
-        for (auto& c : chars) {
+        for (auto& c : chars)
+        {
             c.createCharacter(texture.size, mesh);
         }
 

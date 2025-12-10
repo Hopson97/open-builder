@@ -91,10 +91,10 @@ namespace gui {
         }
     }
 
-    void Overlay::handleMouseMove(sf::Event::MouseMoveEvent mouseMoveEvent)
+    void Overlay::handleMouseMove(sf::Event::MouseMoved mouseMoveEvent)
     {
-        float mouseX = static_cast<float>(mouseMoveEvent.x);
-        float mouseY = static_cast<float>(mouseMoveEvent.y);
+        float mouseX = static_cast<float>(mouseMoveEvent.position.x);
+        float mouseY = static_cast<float>(mouseMoveEvent.position.y);
         for (auto& widget : m_widgets) {
             widget->handleMouseMove(mouseX, mouseY);
         }

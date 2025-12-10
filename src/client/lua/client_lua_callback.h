@@ -17,7 +17,7 @@ class ClientLuaCallbacks {
     void onExitGame();
     void onError(const std::string& error);
     void onKeyboardKeyReleased(sf::Keyboard::Key key);
-    void onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& wheelEvent);
+    void onMouseWheelScroll(sf::Event::MouseWheelScrolled wheelEvent);
 
   private:
     std::vector<sol::function> m_onClientStartupCallbacks;

@@ -3,6 +3,7 @@
 #include "../network/client.h"
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/System/Time.hpp>
 
 #include "../gl/shader.h"
 #include "../gl/textures.h"

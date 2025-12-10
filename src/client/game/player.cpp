@@ -84,34 +84,40 @@ void Player::collide(const ClientWorld& world, const glm::vec3& vel)
 void Player::keyboardInput(const Keyboard& keyboard)
 {
     float PLAYER_SPEED = 0.4f;
-    if (keyboard.isKeyDown(sf::Keyboard::LControl)) {
+    if (keyboard.isKeyDown(sf::Keyboard::Key::LControl)) {
         PLAYER_SPEED *= 10;
     }
 
     glm::vec3& rotation = m_state.rotation;
     glm::vec3& velocity = m_state.velocity;
 
-    if (keyboard.isKeyDown(sf::Keyboard::W)) {
+    if (keyboard.isKeyDown(sf::Keyboard::Key::W))
+    {
         //m_acceleration += forwardsVector(rotation) * PLAYER_SPEED;
         m_acceleration.x += -glm::cos(glm::radians(rotation.y + 90)) * PLAYER_SPEED;
         m_acceleration.z += -glm::sin(glm::radians(rotation.y + 90)) * PLAYER_SPEED;
     }
-    else if (keyboard.isKeyDown(sf::Keyboard::S)) {
+    else if (keyboard.isKeyDown(sf::Keyboard::Key::S))
+    {
         //m_acceleration += backwardsVector(rotation) * PLAYER_SPEED;
         m_acceleration.x += glm::cos(glm::radians(rotation.y + 90)) * PLAYER_SPEED;
         m_acceleration.z += glm::sin(glm::radians(rotation.y + 90)) * PLAYER_SPEED;
     }
-    if (keyboard.isKeyDown(sf::Keyboard::A)) {
+    if (keyboard.isKeyDown(sf::Keyboard::Key::A))
+    {
         m_acceleration += leftVector(rotation) * PLAYER_SPEED;
     }
-    else if (keyboard.isKeyDown(sf::Keyboard::D)) {
+    else if (keyboard.isKeyDown(sf::Keyboard::Key::D))
+    {
         m_acceleration += rightVector(rotation) * PLAYER_SPEED;
     }
 
-    if (keyboard.isKeyDown(sf::Keyboard::Space) && m_isOnGround) {
+    if (keyboard.isKeyDown(sf::Keyboard::Key::Space) && m_isOnGround)
+    {
         m_acceleration.y += PLAYER_SPEED * 20;
     }
-    else if (keyboard.isKeyDown(sf::Keyboard::LShift) && m_isFlying) {
+    else if (keyboard.isKeyDown(sf::Keyboard::Key::LShift) && m_isFlying)
+    {
         m_acceleration.y -= PLAYER_SPEED * 2;
     }
     if (rotation.x < -80.0f) {

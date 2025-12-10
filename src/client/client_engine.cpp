@@ -91,27 +91,22 @@ void ClientEngine::render()
 
 void ClientEngine::pollWindowEvents()
 {
-    sf::Event event;
-    while (mp_window->pollEvent(event))
+    while (auto event = mp_window->pollEvent())
     {
         if (mp_window->hasFocus())
         {
-            m_keyboard.update(event);
-            m_gui.handleEvent(event);
-            m_game.handleEvent(event);
+            m_keyboard.update(*event);
+            m_gui.handleEvent(*event);
+            m_game.handleEvent(*event);
         }
-        switch (event.type)
+
+        if (auto key = event->getIf<sf::Event::KeyReleased>())
         {
-            case sf::Event::MouseWheelScrolled:
-                m_luaCallbacks.onMouseWheelScroll(event.mouseWheelScroll);
-                break;
-
-            case sf::Event::KeyReleased:
-                m_luaCallbacks.onKeyboardKeyReleased(event.key.code);
-                break;
-
-            default:
-                break;
+            m_luaCallbacks.onKeyboardKeyReleased(key->code);
+        }
+        else if (auto mouseScroll = event->getIf<sf::Event::MouseWheelScrolled>())
+        {
+            m_luaCallbacks.onMouseWheelScroll(*mouseScroll);
         }
     }
 }

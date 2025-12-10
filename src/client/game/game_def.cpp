@@ -64,16 +64,17 @@ void ClientGameDef::shutdown()
 
 void ClientGameDef::handleEvent(const sf::Event& event)
 {
-    if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Left) {
+    if (auto mousePress = event.getIf<sf::Event::MouseButtonPressed>())
+    {
+        if (mousePress->button == sf::Mouse::Button::Left)
+        {
             m_client.sendMouseEvent(MouseEventState::Click);
         }
-        else {
-            m_client.sendInteraction();
-        }
     }
-    else if (event.type == sf::Event::MouseButtonReleased) {
-        if (event.mouseButton.button == sf::Mouse::Left) {
+    if (auto mousePress = event.getIf<sf::Event::MouseButtonReleased>())
+    {
+        if (mousePress->button == sf::Mouse::Button::Left)
+        {
             m_client.sendMouseEvent(MouseEventState::Release);
         }
     }

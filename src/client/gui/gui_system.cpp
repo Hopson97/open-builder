@@ -3,7 +3,8 @@
 #include "../client_config.h"
 #include "../lua/client_lua_api.h"
 
-namespace gui {
+namespace gui
+{
     GuiSystem::GuiSystem()
         : m_windowWidth(ClientConfig::get().windowWidth)
         , m_windowHeight(ClientConfig::get().windowHeight)
@@ -12,42 +13,42 @@ namespace gui {
 
     void GuiSystem::handleEvent(const sf::Event& event)
     {
-        if (!m_activeGuis.empty()) {
+        if (!m_activeGuis.empty())
+        {
             auto& gui = getTop();
-            switch (event.type) {
-                case sf::Event::TextEntered:
-                    gui.handleTextEntered(event.text.unicode);
-                    break;
 
-                case sf::Event::KeyReleased:
-                    gui.handleKeyRelease(event.key.code);
-                    break;
-
-                case sf::Event::MouseMoved: {
-                    auto mouseMoveEvent = event.mouseMove;
-                    auto p = windowToGuiCoords(static_cast<float>(mouseMoveEvent.x),
-                                               static_cast<float>(mouseMoveEvent.y));
-                    mouseMoveEvent.x = static_cast<int>(p.x);
-                    mouseMoveEvent.y = static_cast<int>(p.y);
-                    gui.handleMouseMove(mouseMoveEvent);
-                } break;
-
-                case sf::Event::MouseButtonReleased: {
-                    auto p = windowToGuiCoords(static_cast<float>(event.mouseButton.x),
-                                               static_cast<float>(event.mouseButton.y));
-                    gui.handleClick(event.mouseButton.button, p.x, p.y);
-                } break;
-
-                default:
-                    break;
+            if (auto text = event.getIf<sf::Event::TextEntered>())
+            {
+                gui.handleTextEntered(text->unicode);
+            }
+            else if (auto key = event.getIf<sf::Event::KeyReleased>())
+            {
+                gui.handleKeyRelease(key->code);
+            }
+            else if (auto mouseMove = event.getIf<sf::Event::MouseMoved>())
+            {
+                auto mouseMoveEvent = *mouseMove;
+                auto p = windowToGuiCoords(static_cast<float>(mouseMoveEvent.position.x),
+                                           static_cast<float>(mouseMoveEvent.position.y));
+                mouseMoveEvent.position.x = static_cast<int>(p.x);
+                mouseMoveEvent.position.y = static_cast<int>(p.y);
+                gui.handleMouseMove(mouseMoveEvent);
+            }
+            else if (auto mouseButton = event.getIf<sf::Event::MouseButtonReleased>())
+            {
+                auto p = windowToGuiCoords(static_cast<float>(mouseButton->position.x),
+                                           static_cast<float>(mouseButton->position.y));
+                gui.handleClick(mouseButton->button, p.x, p.y);
             }
         }
     }
 
     void GuiSystem::update()
     {
-        if (m_nextAction != Action::None) {
-            switch (m_nextAction) {
+        if (m_nextAction != Action::None)
+        {
+            switch (m_nextAction)
+            {
                 case gui::GuiSystem::Action::Push:
                     m_activeGuis.push(std::move(m_pendingGui));
                     break;
@@ -103,9 +104,11 @@ namespace gui {
 
     void GuiSystem::render(GuiRenderer& guiRenderer)
     {
-        if (!m_activeGuis.empty()) {
+        if (!m_activeGuis.empty())
+        {
             auto& gui = getTop();
-            if (!gui.isHidden()) {
+            if (!gui.isHidden())
+            {
                 gui.prepareWidgetsForRender();
                 guiRenderer.render(gui);
             }
@@ -114,7 +117,8 @@ namespace gui {
 
     void GuiSystem::clearGuis()
     {
-        while (!m_activeGuis.empty()) {
+        while (!m_activeGuis.empty())
+        {
             m_activeGuis.pop();
         }
     }

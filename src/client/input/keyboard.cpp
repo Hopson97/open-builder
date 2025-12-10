@@ -5,31 +5,28 @@ Keyboard::Keyboard()
     std::fill(m_keys.begin(), m_keys.end(), false);
 }
 
-void Keyboard::update(sf::Event e)
+void Keyboard::update(sf::Event& event)
 {
-    m_recentlyReleased = sf::Keyboard::KeyCount;
-    switch (e.type) {
-        case sf::Event::KeyReleased:
-            if (e.key.code == -1)
-                return;
-            m_recentlyReleased = e.key.code;
-            m_keys[e.key.code] = false;
-            break;
-
-        case sf::Event::KeyPressed:
-            if (e.key.code == -1)
-                return;
-            m_keys[e.key.code] = true;
-            break;
-
-        default:
-            break;
+    if (auto* key = event.getIf<sf::Event::KeyPressed>())
+    {
+        if ((size_t)key->code < m_keys.size())
+        {
+            m_keys[(size_t)key->code] = true;
+            m_recentlyReleased = key->code;
+        }
+    }
+    else if (auto* key = event.getIf<sf::Event::KeyReleased>())
+    {
+        if ((size_t)key->code < m_keys.size())
+        {
+            m_keys[(size_t)key->code] = false;
+        }
     }
 }
 
 bool Keyboard::isKeyDown(sf::Keyboard::Key key) const
 {
-    return m_keys[key];
+    return m_keys[(size_t)key];
 }
 
 bool Keyboard::keyReleased(sf::Keyboard::Key key) const

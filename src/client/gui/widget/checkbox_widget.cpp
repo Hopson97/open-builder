@@ -64,7 +64,7 @@ namespace gui {
 
     void CheckBoxWidget::handleClick(sf::Mouse::Button button, float mx, float my)
     {
-        if (mp_rectangle->isInBounds(mx, my) && button == sf::Mouse::Left) {
+        if (mp_rectangle->isInBounds(mx, my) && button == sf::Mouse::Button::Left) {
             onClick();
         }
     }
@@ -105,7 +105,7 @@ namespace gui {
     void CheckBoxWidget::prepareRender()
     {
         GuiDimension pos = centerText(mp_rectangle->getBounds(), *mp_label);
-        pos.offset.x -= mp_rectangle->getBounds().width / 6;
+        pos.offset.x -= mp_rectangle->getBounds().size.x / 6;
 
         mp_label->setPosition(pos);
     }

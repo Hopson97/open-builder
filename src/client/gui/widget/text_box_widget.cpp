@@ -40,7 +40,7 @@ namespace gui {
     void TextBoxWidget::setPosition(const GuiDimension& position)
     {
         GuiDimension textPosition = position;
-        textPosition.offset.y += mp_rectangle->getBounds().height;
+        textPosition.offset.y += mp_rectangle->getBounds().size.y;
 
         mp_label->setPosition(textPosition);
         mp_rectangle->setPosition(position);
@@ -101,7 +101,7 @@ namespace gui {
 
     void TextBoxWidget::handleClick(sf::Mouse::Button button, float mx, float my)
     {
-        m_isActive = mp_rectangle->isInBounds(mx, my) && button == sf::Mouse::Left;
+        m_isActive = mp_rectangle->isInBounds(mx, my) && button == sf::Mouse::Button::Left;
     }
 
     void TextBoxWidget::handleMouseMove(float mx, float my)
